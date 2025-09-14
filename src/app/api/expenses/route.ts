@@ -105,9 +105,10 @@ export async function GET(request: NextRequest) {
         $lte: new Date(endDate)
       };
     } else if (from || to) {
-      query.date = {};
-      if (from) query.date.$gte = new Date(from);
-      if (to) query.date.$lte = new Date(to);
+      const dateQuery: Record<string, Date> = {};
+      if (from) dateQuery.$gte = new Date(from);
+      if (to) dateQuery.$lte = new Date(to);
+      query.date = dateQuery;
     }
 
     const skip = (page - 1) * limit;

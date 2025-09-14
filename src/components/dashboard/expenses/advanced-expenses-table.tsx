@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -68,11 +68,7 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const pageSize = 10;
 
-  useEffect(() => {
-    fetchExpenses();
-  }, [filters, currentPage, searchTerm, refreshTrigger, fetchExpenses]);
-
-  const fetchExpenses = async () => {
+  const fetchExpenses = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -99,7 +95,11 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, searchTerm, filters]);
+
+  useEffect(() => {
+    fetchExpenses();
+  }, [fetchExpenses, refreshTrigger]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this expense?')) {
