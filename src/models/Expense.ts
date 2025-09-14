@@ -4,10 +4,12 @@ export interface IExpense {
   _id?: string;
   userId: string;
   amount: number;
-  category: 'Food' | 'Travel' | 'Shopping' | 'Bills' | 'Others';
+  category: string;
   reason: string;
+  type: 'free' | 'budget';
   date: Date;
   createdAt: Date;
+  updatedAt?: Date;
 }
 
 const ExpenseSchema = new mongoose.Schema({
@@ -16,11 +18,22 @@ const ExpenseSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['Food', 'Travel', 'Shopping', 'Bills', 'Others'],
   },
   reason: { type: String, required: true },
+  type: {
+    type: String,
+    required: true,
+    enum: ['free', 'budget'],
+    default: 'free'
+  },
   date: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.Expense || mongoose.model('Expense', ExpenseSchema);
+// Clear existing model to ensure schema updates
+if (mongoose.models.Expense) {
+  delete mongoose.models.Expense;
+}
+
+export default mongoose.model('Expense', ExpenseSchema);

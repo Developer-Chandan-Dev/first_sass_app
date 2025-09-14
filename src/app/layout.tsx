@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
 import { ReduxProvider } from '@/components/common/providers';
 import { ThemeProvider } from '@/components/common/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import './globals.css';
 
 const geistSans = Geist({
@@ -38,6 +39,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <ReduxProvider>{children}</ReduxProvider>
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

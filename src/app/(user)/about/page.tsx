@@ -20,7 +20,7 @@ export default function AboutPage() {
               <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Financial Management</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              We're on a mission to make financial management accessible, intelligent, and effortless for everyone.
+              We&apos;re on a mission to make financial management accessible, intelligent, and effortless for everyone.
             </p>
           </div>
 
@@ -45,13 +45,13 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold mb-8 text-center">Our Story</h2>
             <div className="prose prose-lg max-w-none text-muted-foreground">
               <p className="mb-6">
-                Founded in 2020, ExpenseTracker emerged from a simple observation: managing personal and business finances shouldn't be complicated. Our founders, experienced in both technology and finance, recognized the gap between powerful financial tools and user-friendly design.
+                Founded in 2020, ExpenseTracker emerged from a simple observation: managing personal and business finances shouldn&apos;t be complicated. Our founders, experienced in both technology and finance, recognized the gap between powerful financial tools and user-friendly design.
               </p>
               <p className="mb-6">
                 Today, we serve over 1 million users worldwide, from individual freelancers to enterprise teams. Our AI-powered platform has processed over $50 billion in expenses, helping users save an average of 30% on their monthly spending through intelligent insights and automation.
               </p>
               <p>
-                We believe that everyone deserves access to sophisticated financial management tools, regardless of their technical expertise or company size. That's why we've built ExpenseTracker to be both powerful and intuitive.
+                We believe that everyone deserves access to sophisticated financial management tools, regardless of their technical expertise or company size. That&apos;s why we&apos;ve built ExpenseTracker to be both powerful and intuitive.
               </p>
             </div>
           </div>

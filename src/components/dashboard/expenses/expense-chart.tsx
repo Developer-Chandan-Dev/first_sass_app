@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { useTheme } from 'next-themes';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { useUser } from '@clerk/nextjs';
 
 interface ChartData {
@@ -10,9 +11,12 @@ interface ChartData {
 }
 
 export function ExpenseChart() {
+  const { theme } = useTheme();
   const { user } = useUser();
   const [data, setData] = useState<ChartData[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     if (!user) return;
@@ -28,7 +32,8 @@ export function ExpenseChart() {
         );
         
         if (response.ok) {
-          const expenses = await response.json();
+          const result = await response.json();
+          const expenses = result.expenses || result; // Handle both formats
           
           // Group expenses by date
           const dailyTotals: { [key: string]: number } = {};
@@ -68,16 +73,49 @@ export function ExpenseChart() {
   }, [user]);
 
   if (loading) {
-    return <div className="h-64 flex items-center justify-center">Loading chart...</div>;
+    return <div className="h-48 md:h-64 flex items-center justify-center text-sm">Loading chart...</div>;
   }
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <BarChart data={data}>
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Bar dataKey="amount" fill="hsl(var(--primary))" />
-      </BarChart>
-    </ResponsiveContainer>
+    <div className="w-full overflow-hidden">
+      <ResponsiveContainer width="100%" height={180} className="md:!h-[220px]">
+        <BarChart 
+          data={data}
+          margin={{ top: 10, right: 5, left: -10, bottom: 0 }}
+        >
+          <XAxis 
+            dataKey="date" 
+            tick={{ fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            className="text-xs md:text-sm"
+          />
+          <YAxis 
+            tick={{ fontSize: 10 }}
+            axisLine={false}
+            tickLine={false}
+            width={25}
+            className="text-xs"
+            tickFormatter={(value) => `₹${value}`}
+          />
+          <Tooltip 
+            formatter={(value: number) => [`₹${value.toFixed(2)}`, 'Amount']}
+            contentStyle={{ 
+              backgroundColor: isDark ? '#1f2937' : 'white', 
+              border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
+              borderRadius: '6px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              color: isDark ? '#f9fafb' : '#111827'
+            }}
+          />
+          <Bar 
+            dataKey="amount" 
+            fill="#3b82f6" 
+            radius={[2, 2, 0, 0]}
+            maxBarSize={35}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

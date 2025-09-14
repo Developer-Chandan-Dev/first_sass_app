@@ -86,7 +86,7 @@ export default function ServicesPage() {
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Choose the plan that's right for you and start transforming your financial management today.
+              Choose the plan that&apos;s right for you and start transforming your financial management today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">

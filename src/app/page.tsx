@@ -12,6 +12,7 @@ import {
   Smartphone, 
   ArrowRight,
   CheckCircle,
+  Globe,
   Star
 } from 'lucide-react';
 
@@ -121,7 +122,7 @@ export default function Home() {
                 description: "Seamless experience across all devices with real-time synchronization"
               },
               {
-                icon: <Smartphone className="w-8 h-8" />,
+                icon: <Globe className="w-8 h-8" />,
                 title: "Global Currency Support",
                 description: "Track expenses in 150+ currencies with real-time exchange rates"
               }
