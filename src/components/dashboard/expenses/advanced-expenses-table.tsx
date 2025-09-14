@@ -85,7 +85,7 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
       const response = await fetch(`/api/expenses?${params}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Data: ",data, 76);
+
         setExpenses(data.expenses);
         setTotalPages(data.totalPages);
         setTotalCount(data.totalCount);
@@ -107,10 +107,13 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
     }
     
     try {
-      toast.loading('Deleting expense...');
+      const loadingToast = toast.loading('Deleting expense...');
       const response = await fetch(`/api/expenses/${id}`, {
         method: 'DELETE',
       });
+      
+      toast.dismiss(loadingToast);
+      
       if (response.ok) {
         toast.success('Expense deleted successfully!');
         fetchExpenses();
@@ -129,12 +132,15 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
     }
     
     try {
-      toast.loading('Deleting expenses...');
+      const loadingToast = toast.loading('Deleting expenses...');
       const response = await fetch('/api/expenses/bulk', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: selectedRows }),
       });
+      
+      toast.dismiss(loadingToast);
+      
       if (response.ok) {
         toast.success(`${selectedRows.length} expenses deleted successfully!`);
         setSelectedRows([]);
@@ -185,21 +191,21 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle>Expenses ({totalCount})</CardTitle>
-          <div className="flex items-center gap-2">
-            <div className="relative">
+      <CardHeader className="pb-3">
+        <div className="flex flex-col gap-4">
+          <CardTitle className="text-lg sm:text-xl">Expenses ({totalCount})</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search expenses..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 w-64"
+                className="pl-8 w-full"
               />
             </div>
             {selectedRows.length > 0 && (
-              <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+              <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="w-full sm:w-auto">
                 Delete ({selectedRows.length})
               </Button>
             )}
@@ -207,23 +213,24 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
         </div>
       </CardHeader>
       <CardContent>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={selectedRows.length === expenses.length && expenses.length > 0}
-                    onCheckedChange={toggleAllRows}
-                  />
-                </TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
+        <div className="rounded-md border overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-8 sm:w-12">
+                    <Checkbox
+                      checked={selectedRows.length === expenses.length && expenses.length > 0}
+                      onCheckedChange={toggleAllRows}
+                    />
+                  </TableHead>
+                  <TableHead className="min-w-[80px]">Date</TableHead>
+                  <TableHead className="min-w-[120px]">Description</TableHead>
+                  <TableHead className="hidden sm:table-cell min-w-[100px]">Category</TableHead>
+                  <TableHead className="text-right min-w-[80px]">Amount</TableHead>
+                  <TableHead className="w-8 sm:w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
             <TableBody>
               {expenses.length === 0 ? (
                 <TableRow>
@@ -234,28 +241,36 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
               ) : (
                 expenses.map((expense) => (
                   <TableRow key={expense._id}>
-                    <TableCell>
+                    <TableCell className="py-2">
                       <Checkbox
                         checked={selectedRows.includes(expense._id)}
                         onCheckedChange={() => toggleRowSelection(expense._id)}
                       />
                     </TableCell>
-                    <TableCell>
-                      {new Date(expense.date).toLocaleDateString()}
+                    <TableCell className="py-2 text-xs sm:text-sm">
+                      {new Date(expense.date).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric' 
+                      })}
                     </TableCell>
-                    <TableCell className="font-medium">
-                      {expense.reason}
+                    <TableCell className="py-2">
+                      <div className="font-medium text-sm truncate max-w-[120px] sm:max-w-none">
+                        {expense.reason}
+                      </div>
+                      <div className="sm:hidden">
+                        <Badge variant="secondary" className="text-xs mt-1">{expense.category}</Badge>
+                      </div>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{expense.category}</Badge>
+                    <TableCell className="hidden sm:table-cell py-2">
+                      <Badge variant="secondary" className="text-xs">{expense.category}</Badge>
                     </TableCell>
-                    <TableCell className="text-right font-medium">
+                    <TableCell className="text-right font-medium py-2 text-sm">
                       ₹{expense.amount.toLocaleString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="py-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -267,7 +282,7 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
                           <DropdownMenuItem 
                             className="text-destructive"
                             onClick={() => handleDelete(expense._id)}
-          >
+                          >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
@@ -277,50 +292,55 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
                   </TableRow>
                 ))
               )}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          </div>
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-2 py-4">
-          <div className="text-sm text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
+          <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
             Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
+              className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
-              <ChevronsLeft className="h-4 w-4" />
+              <ChevronsLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
+              className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
+            <span className="text-xs sm:text-sm px-2">
+              {currentPage}/{totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
+              className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
+              className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
-              <ChevronsRight className="h-4 w-4" />
+              <ChevronsRight className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </div>
         </div>

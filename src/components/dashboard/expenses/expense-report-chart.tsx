@@ -49,16 +49,17 @@ export function ExpenseReportChart() {
 
   return (
     <Card className="col-span-full">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle>Expense Report</CardTitle>
-          <div className="flex gap-2 flex-wrap">
+      <CardHeader className="pb-3">
+        <div className="flex flex-col gap-3">
+          <CardTitle className="text-base sm:text-lg">Expense Report</CardTitle>
+          <div className="grid grid-cols-2 sm:flex gap-1 sm:gap-2">
             {periods.map((p) => (
               <Button
                 key={p.key}
                 variant={period === p.key ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setPeriod(p.key as ReportPeriod)}
+                className="text-xs px-2 py-1 h-8"
               >
                 {p.label}
               </Button>
@@ -66,23 +67,25 @@ export function ExpenseReportChart() {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         {loading ? (
-          <div className="h-80 flex items-center justify-center">Loading report...</div>
+          <div className="h-48 sm:h-80 flex items-center justify-center text-sm">Loading report...</div>
         ) : (
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 200 : 320}>
+            <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
               <XAxis 
                 dataKey="period" 
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: window.innerWidth < 640 ? 10 : 12 }}
                 axisLine={false}
                 tickLine={false}
+                interval={window.innerWidth < 400 ? 1 : 0}
               />
               <YAxis 
-                tick={{ fontSize: 12 }}
+                tick={{ fontSize: window.innerWidth < 640 ? 10 : 12 }}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={(value) => `₹${value}`}
+                tickFormatter={(value) => window.innerWidth < 400 ? `₹${value/1000}k` : `₹${value}`}
+                width={window.innerWidth < 400 ? 40 : 60}
               />
               <Tooltip 
                 formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Amount']}
@@ -91,13 +94,14 @@ export function ExpenseReportChart() {
                   border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
                   borderRadius: '6px',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                  color: isDark ? '#f9fafb' : '#111827'
+                  color: isDark ? '#f9fafb' : '#111827',
+                  fontSize: '12px'
                 }}
               />
               <Bar 
                 dataKey="amount" 
                 fill="#3b82f6" 
-                radius={[4, 4, 0, 0]}
+                radius={[2, 2, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>

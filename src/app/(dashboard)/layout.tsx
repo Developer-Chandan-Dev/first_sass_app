@@ -35,12 +35,12 @@ export default function DashboardLayout({
   if (!mounted) {
     return (
       <div className="flex h-screen bg-background">
-        <div className="w-64 bg-card border-r border-border" />
+        <div className="hidden lg:block w-64 bg-card border-r border-border" />
         <div className="flex-1 flex flex-col">
-          <header className="bg-card border-b border-border p-4 flex justify-between items-center">
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
+          <header className="bg-card border-b border-border p-3 sm:p-4 flex justify-between items-center">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold">Dashboard</h1>
           </header>
-          <main className="flex-1 overflow-y-auto p-6">
+          <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
             {children}
           </main>
         </div>
@@ -85,25 +85,26 @@ export default function DashboardLayout({
       
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-card border-b border-border p-4 flex justify-between items-center">
-          <div className="flex items-center space-x-4">
+        <header className="bg-card border-b border-border p-3 sm:p-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2 sm:space-x-4 min-w-0">
             {isMobile && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={toggleSidebar}
+                className="p-1 sm:p-2"
               >
-                <Menu className="h-5 w-5" />
+                <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             )}
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
+            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold truncate">Dashboard</h1>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
             <ThemeToggle />
             <UserButton />
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
           {children}
         </main>
       </div>

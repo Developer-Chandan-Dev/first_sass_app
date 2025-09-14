@@ -65,7 +65,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
   const onSubmit = async (data: ExpenseFormData) => {
     try {
-      toast.loading('Updating expense...');
+      const loadingToast = toast.loading('Updating expense...');
       
       const response = await fetch(`/api/expenses/${expense?._id}`, {
         method: 'PUT',
@@ -75,6 +75,8 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
           amount: Number(data.amount),
         }),
       });
+      
+      toast.dismiss(loadingToast);
       
       if (response.ok) {
         toast.success('Expense updated successfully!');
@@ -96,12 +98,12 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Expense</DialogTitle>
+      <DialogContent className="w-[95vw] max-w-md mx-auto">
+        <DialogHeader className="pb-3">
+          <DialogTitle className="text-lg">Edit Expense</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
           <div>
             <Label htmlFor="amount">Amount</Label>
             <Input
@@ -195,14 +197,15 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
             )}
           </div>
 
-          <div className="flex gap-2 pt-4">
-            <Button type="submit" disabled={isSubmitting}>
+          <div className="flex flex-col sm:flex-row gap-2 pt-3 sm:pt-4">
+            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
               {isSubmitting ? 'Updating...' : 'Update Expense'}
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>

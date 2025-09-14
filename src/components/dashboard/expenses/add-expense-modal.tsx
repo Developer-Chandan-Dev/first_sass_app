@@ -72,7 +72,7 @@ export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onEx
 
   const onSubmit = async (data: ExpenseFormData) => {
     try {
-      toast.loading('Adding expense...');
+      const loadingToast = toast.loading('Adding expense...');
       
       const requestData = {
         ...data,
@@ -85,6 +85,8 @@ export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onEx
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData),
       });
+      
+      toast.dismiss(loadingToast);
       
       if (response.ok) {
         toast.success('Expense added successfully!');
@@ -106,34 +108,36 @@ export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onEx
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New Expense</DialogTitle>
+      <DialogContent className="w-[95vw] max-w-md mx-auto">
+        <DialogHeader className="pb-3">
+          <DialogTitle className="text-lg">Add New Expense</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
           <div>
-            <Label htmlFor="amount">Amount</Label>
+            <Label htmlFor="amount" className="text-sm">Amount</Label>
             <Input
               id="amount"
               type="number"
               step="0.01"
               {...register('amount', { valueAsNumber: true })}
               placeholder="0.00"
+              className="mt-1"
             />
             {errors.amount && (
-              <p className="text-sm text-red-500">{errors.amount.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.amount.message}</p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category" className="text-sm">Category</Label>
             {showCustomCategory ? (
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 mt-1">
                 <Input
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
                   placeholder="Enter custom category"
+                  className="flex-1"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -150,16 +154,17 @@ export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onEx
                   type="button"
                   variant="outline"
                   onClick={() => setShowCustomCategory(false)}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
               </div>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex gap-2 mt-1">
                 <select
                   id="category"
                   {...register('category')}
-                  className="flex-1 p-2 border rounded-md bg-background text-foreground border-input"
+                  className="flex-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
                 >
                   <option value="">Select category</option>
                   {categories.map((cat) => (
@@ -171,48 +176,53 @@ export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onEx
                   variant="outline"
                   size="sm"
                   onClick={() => setShowCustomCategory(true)}
+                  className="px-2"
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
             )}
             {errors.category && (
-              <p className="text-sm text-red-500">{errors.category.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.category.message}</p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="reason">Reason</Label>
+            <Label htmlFor="reason" className="text-sm">Reason</Label>
             <Textarea
               id="reason"
               {...register('reason')}
               placeholder="What was this expense for?"
+              className="mt-1 text-sm"
+              rows={3}
             />
             {errors.reason && (
-              <p className="text-sm text-red-500">{errors.reason.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.reason.message}</p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date" className="text-sm">Date</Label>
             <Input
               id="date"
               type="date"
               {...register('date')}
+              className="mt-1"
             />
             {errors.date && (
-              <p className="text-sm text-red-500">{errors.date.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.date.message}</p>
             )}
           </div>
 
-          <div className="flex gap-2 pt-4">
-            <Button type="submit" disabled={isSubmitting}>
+          <div className="flex flex-col sm:flex-row gap-2 pt-3 sm:pt-4">
+            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
               {isSubmitting ? 'Adding...' : 'Add Expense'}
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>

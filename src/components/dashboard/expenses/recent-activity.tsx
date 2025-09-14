@@ -64,13 +64,13 @@ export function RecentActivity() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {[1, 2, 3].map(i => (
-          <div key={i} className="flex items-center space-x-3 animate-pulse">
-            <div className="w-9 h-9 bg-muted rounded-full"></div>
-            <div className="flex-1 space-y-2">
-              <div className="h-4 bg-muted rounded w-3/4"></div>
-              <div className="h-3 bg-muted rounded w-1/2"></div>
+          <div key={i} className="flex items-center space-x-2 sm:space-x-3 animate-pulse">
+            <div className="w-7 h-7 sm:w-9 sm:h-9 bg-muted rounded-full"></div>
+            <div className="flex-1 space-y-1 sm:space-y-2">
+              <div className="h-3 sm:h-4 bg-muted rounded w-3/4"></div>
+              <div className="h-2 sm:h-3 bg-muted rounded w-1/2"></div>
             </div>
           </div>
         ))}
@@ -80,37 +80,39 @@ export function RecentActivity() {
 
   if (expenses.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <p>No recent expenses</p>
-        <p className="text-sm">Add your first expense to see activity here</p>
+      <div className="text-center py-6 sm:py-8 text-muted-foreground">
+        <p className="text-sm">No recent expenses</p>
+        <p className="text-xs sm:text-sm">Add your first expense to see activity here</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 w-full max-w-full overflow-hidden">
       {expenses.map((expense) => (
-        <div key={expense._id} className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-9 w-9">
-              <AvatarFallback>
-                {categoryIcons[expense.category] || '💰'}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm font-medium">{expense.reason}</p>
-              <p className="text-xs text-muted-foreground">
-                {getTimeAgo(expense.createdAt)}
-              </p>
+        <div key={expense._id} className="flex items-center gap-2 w-full min-w-0">
+          <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+            <AvatarFallback className="text-xs">
+              {categoryIcons[expense.category] || '💰'}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <p className="text-xs sm:text-sm font-medium truncate max-w-full">
+              {expense.reason}
+            </p>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span className="flex-shrink-0">{getTimeAgo(expense.createdAt)}</span>
+              <Badge variant="secondary" className="text-xs px-1 py-0 h-4 truncate max-w-[60px]">
+                {expense.category}
+              </Badge>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm font-medium text-red-600">
+          
+          <div className="flex-shrink-0 text-right">
+            <p className="text-xs font-medium text-red-600 whitespace-nowrap">
               -₹{expense.amount.toLocaleString()}
             </p>
-            <Badge variant="secondary" className="text-xs">
-              {expense.category}
-            </Badge>
           </div>
         </div>
       ))}

@@ -39,43 +39,43 @@ export default function ExpensesPage() {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center flex-wrap gap-2">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Free Expenses</h2>
-          <p className="text-muted-foreground">Track and manage your daily expenses</p>
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div className="text-center sm:text-left">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Free Expenses</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">Track and manage your daily expenses</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)}>
+        <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
-          Add Expense
+          <span className="sm:inline">Add Expense</span>
         </Button>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-3">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="expenses">Expenses</TabsTrigger>
+      <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
+        <TabsList className="grid w-full grid-cols-3 h-auto p-1">
+          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">Overview</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">Analytics</TabsTrigger>
+          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">Expenses</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-4 md:space-y-6">
           <ExpenseStats />
           
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Expenses by Category</CardTitle>
+          <div className="grid gap-4 md:gap-6 lg:grid-cols-2 w-full max-w-full">
+            <Card className="min-w-0 overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Expenses by Category</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0 overflow-hidden">
                 <ExpenseCategoryChart />
               </CardContent>
             </Card>
             
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+            <Card className="min-w-0 overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Recent Activity</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0 overflow-hidden">
                 <RecentActivity />
               </CardContent>
             </Card>
@@ -86,7 +86,7 @@ export default function ExpensesPage() {
           <ExpenseReportChart />
         </TabsContent>
 
-        <TabsContent value="expenses" className="space-y-6">
+        <TabsContent value="expenses" className="space-y-4 md:space-y-6">
           <ExpenseFilters 
             filters={filters}
             onFiltersChange={setFilters}

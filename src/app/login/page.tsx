@@ -19,22 +19,35 @@ export default function LoginPage() {
     return null;
   }
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center">Welcome Back</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SignIn 
-            appearance={{
-              elements: {
-                formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-                card: 'shadow-none',
-              }
-            }}
-          />
-        </CardContent>
-      </Card>
+    <div className="min-h-screen flex items-center justify-center p-2 sm:p-4 bg-background">
+      <div className="w-full max-w-sm sm:max-w-md">
+        <Card className="border-0 shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-center text-xl sm:text-2xl">Welcome Back</CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 sm:px-6 pb-6">
+            <SignIn 
+              appearance={{
+                elements: {
+                  formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90 w-full',
+                  card: 'shadow-none border-0 p-0 w-full',
+                  rootBox: 'w-full',
+                  formContainer: 'w-full',
+                  form: 'w-full space-y-4',
+                  formField: 'w-full',
+                  formFieldInput: 'w-full px-3 py-2 text-sm',
+                  identityPreview: 'w-full',
+                  formResendCodeLink: 'text-sm',
+                  footerAction: 'w-full text-center',
+                  footerActionLink: 'text-primary hover:text-primary/80',
+                }
+              }}
+              routing="path"
+              path="/login"
+            />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

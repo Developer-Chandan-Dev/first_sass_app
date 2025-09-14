@@ -46,45 +46,58 @@ export function ExpenseCategoryChart() {
   }, []);
 
   if (loading) {
-    return <div className="h-64 flex items-center justify-center">Loading chart...</div>;
+    return <div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>;
   }
 
   if (data.length === 0) {
-    return <div className="h-64 flex items-center justify-center text-muted-foreground">No data available</div>;
+    return <div className="h-48 sm:h-64 flex items-center justify-center text-muted-foreground text-sm">No data available</div>;
   }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={100}
-          paddingAngle={2}
-          dataKey="value"
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
-          ))}
-        </Pie>
-        <Tooltip 
-          formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Amount']}
-          contentStyle={{ 
-            backgroundColor: isDark ? '#1f2937' : 'white', 
-            border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
-            borderRadius: '6px',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            color: isDark ? '#f9fafb' : '#111827'
-          }}
-        />
-        <Legend 
-          verticalAlign="bottom" 
-          height={36}
-          formatter={(value) => <span className="text-sm">{value}</span>}
-        />
-      </PieChart>
-    </ResponsiveContainer>
+    <div className="w-full max-w-full overflow-hidden">
+      <ResponsiveContainer width="100%" height={250} className="!max-w-full">
+        <PieChart width={300} height={250}>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="45%"
+            innerRadius={40}
+            outerRadius={80}
+            paddingAngle={1}
+            dataKey="value"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip 
+            formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Amount']}
+            contentStyle={{ 
+              backgroundColor: isDark ? '#1f2937' : 'white', 
+              border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
+              borderRadius: '6px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              color: isDark ? '#f9fafb' : '#111827',
+              fontSize: '11px'
+            }}
+          />
+          <Legend 
+            verticalAlign="bottom" 
+            height={30}
+            iconSize={8}
+            wrapperStyle={{ 
+              fontSize: '10px',
+              paddingTop: '10px',
+              maxWidth: '100%'
+            }}
+            formatter={(value) => (
+              <span className="text-xs truncate inline-block max-w-[60px]" title={value}>
+                {value}
+              </span>
+            )}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

@@ -50,24 +50,26 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
 
   return (
     <Card>
-      <CardContent className="p-4 space-y-4">
+      <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
         {/* Search */}
         <div>
           <Input
             placeholder="Search expenses..."
             value={filters.search}
             onChange={(e) => updateFilter('search', e.target.value)}
+            className="w-full"
           />
         </div>
 
         {/* Quick Filters */}
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
           {periods.map((period) => (
             <Button
               key={period.key}
               variant={filters.period === period.key ? 'default' : 'outline'}
               size="sm"
               onClick={() => updateFilter('period', period.key)}
+              className="text-xs sm:text-sm"
             >
               {period.label}
             </Button>
@@ -75,23 +77,24 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
         </div>
 
         {/* Advanced Filters Toggle */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowAdvanced(!showAdvanced)}
+            className="w-full sm:w-auto justify-start"
           >
             <Filter className="w-4 h-4 mr-2" />
             Advanced Filters
             {activeFiltersCount > 0 && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ml-2 text-xs">
                 {activeFiltersCount}
               </Badge>
             )}
           </Button>
           
           {activeFiltersCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={clearFilters}>
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto">
               <X className="w-4 h-4 mr-1" />
               Clear
             </Button>
@@ -100,17 +103,18 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
 
         {/* Advanced Filters */}
         {showAdvanced && (
-          <div className="space-y-4 pt-4 border-t">
+          <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4 border-t">
             {/* Category Filter */}
             <div>
               <Label className="text-sm font-medium">Category</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mt-2">
                 <Button
                   variant={filters.category === '' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => updateFilter('category', '')}
+                  className="text-xs sm:text-sm"
                 >
-                  All Categories
+                  All
                 </Button>
                 {categories.map((category) => (
                   <Button
@@ -118,6 +122,7 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
                     variant={filters.category === category ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => updateFilter('category', category)}
+                    className="text-xs sm:text-sm truncate"
                   >
                     {category}
                   </Button>
@@ -126,13 +131,14 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
             </div>
 
             {/* Date Range */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <Label className="text-sm font-medium">Start Date</Label>
                 <Input
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => updateFilter('startDate', e.target.value)}
+                  className="mt-1"
                 />
               </div>
               <div>
@@ -141,6 +147,7 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => updateFilter('endDate', e.target.value)}
+                  className="mt-1"
                 />
               </div>
             </div>
