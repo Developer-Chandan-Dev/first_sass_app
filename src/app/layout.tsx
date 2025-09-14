@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
-import { ReduxProvider } from '@/components/providers';
+import { ReduxProvider } from '@/components/common/providers';
+import { ThemeProvider } from '@/components/common/theme-provider';
 import './globals.css';
 
 const geistSans = Geist({
@@ -26,11 +27,18 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ReduxProvider>{children}</ReduxProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ReduxProvider>{children}</ReduxProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

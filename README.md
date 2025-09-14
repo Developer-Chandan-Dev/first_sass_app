@@ -29,6 +29,31 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - Clerk account for authentication
 - Cloudinary account for image uploads
 
+### Step 1 Features Implemented
+
+✅ **Landing Page (`/`)**
+- Hero section with app title and CTA buttons
+- Features showcase (Expense tracking, Dashboard)
+- Pricing teaser (Free/Pro/Premium/Ultra)
+- Contact footer
+
+✅ **Authentication (Clerk)**
+- `/login` and `/register` pages with Clerk UI
+- Protected dashboard routes
+- Automatic redirect to login for unauthenticated users
+
+✅ **Expense Management**
+- Mongoose Expense model with categories
+- API routes: `POST /api/expenses`, `GET /api/expenses`
+- Dashboard with monthly summary and 7-day chart
+- Add expense modal with form validation
+- Expenses table with recent transactions
+
+✅ **UI Components**
+- Responsive design with Shadcn/UI
+- React Hook Form + Zod validation
+- Recharts integration for expense visualization
+
 ### Setup
 
 1. Install dependencies:
@@ -43,7 +68,10 @@ npm i
 cp .env.example .env.local
 ```
 
-3. Update `.env.local` with your actual values
+3. Update `.env.local` with your actual Clerk and MongoDB values:
+   - Get Clerk keys from https://clerk.com/
+   - Set up MongoDB connection string
+   - Configure Cloudinary for image uploads
 
 4. Seed the database:
 
