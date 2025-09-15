@@ -1,107 +1,161 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AddExpenseModal } from '@/components/dashboard/expenses/add-expense-modal';
-import { AdvancedExpensesTable } from '@/components/dashboard/expenses/advanced-expenses-table';
-import { ExpenseStats } from '@/components/dashboard/expenses/expense-stats';
-import { ExpenseCategoryChart } from '@/components/dashboard/expenses/expense-category-chart';
-import { ExpenseReportChart } from '@/components/dashboard/expenses/expense-report-chart';
-import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters';
-import { RecentActivity } from '@/components/dashboard/expenses/recent-activity';
-import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-interface ExpenseFiltersType {
-  period: 'all' | 'today' | 'week' | 'month';
-  category: string;
-  startDate: string;
-  endDate: string;
-  search: string;
-}
+import Link from 'next/link';
+import { 
+  Wallet, 
+  Target, 
+ 
+  PieChart, 
+  ArrowRight,
+  DollarSign,
+  Calendar,
+  BarChart3
+} from 'lucide-react';
 
-export default function ExpensesPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [filters, setFilters] = useState<ExpenseFiltersType>({
-    period: 'all',
-    category: '',
-    startDate: '',
-    endDate: '',
-    search: ''
-  });
+export default function ExpensesOverviewPage() {
+  const expenseTypes = [
+    {
+      title: 'Free Expenses',
+      description: 'Track your daily expenses without budget constraints',
+      icon: Wallet,
+      href: '/dashboard/expenses/free',
+      color: 'bg-blue-500',
+      features: ['Unlimited tracking', 'Category management', 'Analytics & reports', 'Export data']
+    },
+    {
+      title: 'Budget Expenses',
+      description: 'Manage expenses within predefined budget limits',
+      icon: Target,
+      href: '/dashboard/expenses/budget',
+      color: 'bg-green-500',
+      features: ['Budget limits', 'Spending alerts', 'Goal tracking', 'Budget analysis']
+    }
+  ];
 
-  useEffect(() => {
-    // Set default categories
-    setCategories(['Food', 'Travel', 'Shopping', 'Bills', 'Others']);
-  }, []);
+  const quickStats = [
+    { label: 'Total Expenses', value: '₹45,230', icon: DollarSign, change: '+12%' },
+    { label: 'This Month', value: '₹8,450', icon: Calendar, change: '+8%' },
+    { label: 'Categories', value: '12', icon: PieChart, change: '+2' },
+    { label: 'Avg/Day', value: '₹280', icon: BarChart3, change: '-5%' }
+  ];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div className="text-center sm:text-left">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Free Expenses</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">Track and manage your daily expenses</p>
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Expense Management</h2>
+          <p className="text-muted-foreground">Choose how you want to track your expenses</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
-          <span className="sm:inline">Add Expense</span>
-        </Button>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
-        <TabsList className="grid w-full grid-cols-3 h-auto p-1">
-          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">Overview</TabsTrigger>
-          <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">Analytics</TabsTrigger>
-          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">Expenses</TabsTrigger>
-        </TabsList>
+      {/* Quick Stats */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {quickStats.map((stat) => {
+          const Icon = stat.icon;
+          return (
+            <Card key={stat.label}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.label}
+                </CardTitle>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <p className="text-xs text-green-600">
+                  {stat.change} from last month
+                </p>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-        <TabsContent value="overview" className="space-y-4 md:space-y-6">
-          <ExpenseStats />
-          
-          <div className="grid gap-4 md:gap-6 lg:grid-cols-2 w-full max-w-full">
-            <Card className="min-w-0 overflow-hidden">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Expenses by Category</CardTitle>
+      {/* Expense Types */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {expenseTypes.map((type) => {
+          const Icon = type.icon;
+          return (
+            <Card key={type.title} className="relative overflow-hidden">
+              <CardHeader>
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${type.color} text-white`}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="flex items-center gap-2">
+                      {type.title}
+
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {type.description}
+                    </p>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent className="pt-0 overflow-hidden">
-                <ExpenseCategoryChart />
+              <CardContent>
+                <ul className="space-y-2 mb-4">
+                  {type.features.map((feature, index) => (
+                    <li key={index} className="flex items-center text-sm">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Button 
+                  asChild 
+                  className="w-full" 
+                  variant="default"
+                >
+                  <Link href={type.href}>
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
-            
-            <Card className="min-w-0 overflow-hidden">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0 overflow-hidden">
-                <RecentActivity />
-              </CardContent>
-            </Card>
+          );
+        })}
+      </div>
+
+      {/* Recent Activity Preview */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Recent Activity</CardTitle>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/dashboard/expenses/free">
+                View All <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-6">
-          <ExpenseReportChart />
-        </TabsContent>
-
-        <TabsContent value="expenses" className="space-y-4 md:space-y-6">
-          <ExpenseFilters 
-            filters={filters}
-            onFiltersChange={setFilters}
-            categories={categories}
-          />
-          <AdvancedExpensesTable filters={filters} refreshTrigger={refreshTrigger} />
-        </TabsContent>
-      </Tabs>
-      
-      <AddExpenseModal 
-        open={isModalOpen} 
-        onOpenChange={setIsModalOpen}
-        expenseType="free"
-        onExpenseAdded={() => setRefreshTrigger(prev => prev + 1)}
-      />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[
+              { category: 'Food', amount: '₹450', time: '2 hours ago', color: 'bg-orange-500' },
+              { category: 'Transport', amount: '₹120', time: '5 hours ago', color: 'bg-blue-500' },
+              { category: 'Shopping', amount: '₹2,300', time: '1 day ago', color: 'bg-purple-500' }
+            ].map((activity, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${activity.color}`}></div>
+                  <div>
+                    <p className="font-medium">{activity.category}</p>
+                    <p className="text-sm text-muted-foreground">{activity.time}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-medium text-red-600">-{activity.amount}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

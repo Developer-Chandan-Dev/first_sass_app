@@ -7,6 +7,7 @@ export interface IExpense {
   category: string;
   reason: string;
   type: 'free' | 'budget';
+  budgetId?: string;
   date: Date;
   createdAt: Date;
   updatedAt?: Date;
@@ -26,6 +27,7 @@ const ExpenseSchema = new mongoose.Schema({
     enum: ['free', 'budget'],
     default: 'free'
   },
+  budgetId: { type: String, index: true }, // Reference to budget for budget expenses
   date: { type: Date, default: Date.now },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

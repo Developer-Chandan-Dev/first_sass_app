@@ -13,7 +13,11 @@ interface ReportData {
 
 type ReportPeriod = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
-export function ExpenseReportChart() {
+interface ExpenseReportChartProps {
+  expenseType?: 'free' | 'budget';
+}
+
+export function ExpenseReportChart({ expenseType = 'free' }: ExpenseReportChartProps) {
   const { theme } = useTheme();
   const [data, setData] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +29,7 @@ export function ExpenseReportChart() {
     const fetchReportData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/expenses/report?period=${period}&type=free`);
+        const response = await fetch(`/api/expenses/report?period=${period}&type=${expenseType}`);
         if (response.ok) {
           const reportData = await response.json();
           setData(reportData);
@@ -38,7 +42,7 @@ export function ExpenseReportChart() {
     };
 
     fetchReportData();
-  }, [period]);
+  }, [period, expenseType]);
 
   const periods = [
     { key: 'daily', label: 'Daily' },

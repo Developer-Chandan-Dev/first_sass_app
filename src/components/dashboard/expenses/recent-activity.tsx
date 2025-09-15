@@ -26,14 +26,18 @@ const categoryIcons: { [key: string]: string } = {
   'Groceries': '🥬'
 };
 
-export function RecentActivity() {
+interface RecentActivityProps {
+  expenseType?: 'free' | 'budget';
+}
+
+export function RecentActivity({ expenseType = 'free' }: RecentActivityProps) {
   const [expenses, setExpenses] = useState<RecentExpense[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRecentExpenses = async () => {
       try {
-        const response = await fetch('/api/expenses?type=free&limit=5&page=1');
+        const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
         if (response.ok) {
           const data = await response.json();
           setExpenses(data.expenses || []);
@@ -46,7 +50,7 @@ export function RecentActivity() {
     };
 
     fetchRecentExpenses();
-  }, []);
+  }, [expenseType]);
 
   const getTimeAgo = (dateString: string) => {
     const now = new Date();

@@ -2,22 +2,22 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, DollarSign, Calendar, BarChart3, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, DollarSign, Wallet, BarChart3 } from 'lucide-react';
 
-interface ExpenseStats {
-  totalSpent: number;
-  totalExpenses: number;
-  averageExpense: number;
-  thisMonth: number;
+interface BudgetStats {
+  totalBudget: number;
+  budgetSpent: number;
+  remaining: number;
+  totalBudgetExpenses: number;
   monthlyChange: number;
 }
 
-export function ExpenseStats() {
-  const [stats, setStats] = useState<ExpenseStats>({
-    totalSpent: 0,
-    totalExpenses: 0,
-    averageExpense: 0,
-    thisMonth: 0,
+export function BudgetStats() {
+  const [stats, setStats] = useState<BudgetStats>({
+    totalBudget: 0,
+    budgetSpent: 0,
+    remaining: 0,
+    totalBudgetExpenses: 0,
     monthlyChange: 0
   });
   const [loading, setLoading] = useState(true);
@@ -25,19 +25,19 @@ export function ExpenseStats() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/expenses/dashboard?type=free');
+        const response = await fetch('/api/expenses/dashboard?type=budget');
         if (response.ok) {
           const data = await response.json();
           setStats({
-            totalSpent: data.stats.totalSpent,
-            totalExpenses: data.stats.totalExpenses,
-            averageExpense: data.stats.totalExpenses > 0 ? data.stats.totalSpent / data.stats.totalExpenses : 0,
-            thisMonth: data.stats.totalSpent,
+            totalBudget: data.stats.totalBudget,
+            budgetSpent: data.stats.totalSpent,
+            remaining: data.stats.totalBudget - data.stats.totalSpent,
+            totalBudgetExpenses: data.stats.totalExpenses,
             monthlyChange: 0
           });
         }
       } catch (error) {
-        console.error('Failed to fetch expense stats:', error);
+        console.error('Failed to fetch budget stats:', error);
       } finally {
         setLoading(false);
       }
@@ -48,36 +48,36 @@ export function ExpenseStats() {
 
   const statsData = [
     {
-      title: 'Total Spent',
-      value: `₹${stats.totalSpent.toLocaleString()}`,
+      title: 'Total Budget',
+      value: `₹${stats.totalBudget.toLocaleString()}`,
+      change: '+5%',
+      trend: 'up',
+      icon: Target,
+      description: 'active budgets'
+    },
+    {
+      title: 'Budget Spent',
+      value: `₹${stats.budgetSpent.toLocaleString()}`,
       change: `${stats.monthlyChange > 0 ? '+' : ''}${stats.monthlyChange}%`,
       trend: stats.monthlyChange >= 0 ? 'up' : 'down',
       icon: DollarSign,
       description: 'vs last month'
     },
     {
-      title: 'Total Expenses',
-      value: stats.totalExpenses.toString(),
-      change: '+12',
+      title: 'Remaining',
+      value: `₹${stats.remaining.toLocaleString()}`,
+      change: stats.remaining > 0 ? 'Available' : 'Exceeded',
+      trend: stats.remaining > 0 ? 'up' : 'down',
+      icon: Wallet,
+      description: 'budget left'
+    },
+    {
+      title: 'Budget Expenses',
+      value: stats.totalBudgetExpenses.toString(),
+      change: '+8',
       trend: 'up',
       icon: BarChart3,
       description: 'this month'
-    },
-    {
-      title: 'Average Expense',
-      value: `₹${stats.averageExpense.toLocaleString()}`,
-      change: '-5%',
-      trend: 'down',
-      icon: Target,
-      description: 'per transaction'
-    },
-    {
-      title: 'This Month',
-      value: `₹${stats.thisMonth.toLocaleString()}`,
-      change: '+18%',
-      trend: 'up',
-      icon: Calendar,
-      description: 'current month'
     }
   ];
 

@@ -15,7 +15,11 @@ const COLORS = [
   '#8b5cf6', '#06b6d4', '#f97316', '#84cc16'
 ];
 
-export function ExpenseCategoryChart() {
+interface ExpenseCategoryChartProps {
+  expenseType?: 'free' | 'budget';
+}
+
+export function ExpenseCategoryChart({ expenseType = 'free' }: ExpenseCategoryChartProps) {
   const { theme } = useTheme();
   const [data, setData] = useState<CategoryData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +29,7 @@ export function ExpenseCategoryChart() {
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        const response = await fetch('/api/expenses/categories?type=free');
+        const response = await fetch(`/api/expenses/categories?type=${expenseType}`);
         if (response.ok) {
           const categories = await response.json();
           const chartData = categories.map((cat: { category: string; total: number }, index: number) => ({
@@ -43,7 +47,7 @@ export function ExpenseCategoryChart() {
     };
 
     fetchCategoryData();
-  }, []);
+  }, [expenseType]);
 
   if (loading) {
     return <div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>;

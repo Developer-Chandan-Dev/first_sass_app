@@ -54,9 +54,10 @@ interface ExpenseFiltersType {
 interface AdvancedExpensesTableProps {
   filters: ExpenseFiltersType;
   refreshTrigger?: number;
+  expenseType?: 'free' | 'budget';
 }
 
-export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpensesTableProps) {
+export function AdvancedExpensesTable({ filters, refreshTrigger, expenseType = 'free' }: AdvancedExpensesTableProps) {
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -66,13 +67,13 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
   const [searchTerm, setSearchTerm] = useState('');
   const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
 
   const fetchExpenses = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
-        type: 'free',
+        type: expenseType,
         page: currentPage.toString(),
         limit: pageSize.toString(),
         search: searchTerm || filters.search,
@@ -95,7 +96,7 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchTerm, filters]);
+  }, [currentPage, pageSize, searchTerm, filters, expenseType]);
 
   useEffect(() => {
     fetchExpenses();
@@ -299,8 +300,30 @@ export function AdvancedExpensesTable({ filters, refreshTrigger }: AdvancedExpen
 
         {/* Pagination */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
-          <div className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-            Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
+          <div className="flex flex-col sm:flex-row items-center gap-2">
+            <div className="text-xs sm:text-sm text-muted-foreground">
+              Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8">
+                  {pageSize} per page
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {[10, 20, 30, 40, 50, 100].map((size) => (
+                  <DropdownMenuItem
+                    key={size}
+                    onClick={() => {
+                      setPageSize(size);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    {size} per page
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="flex items-center space-x-1 sm:space-x-2">
             <Button

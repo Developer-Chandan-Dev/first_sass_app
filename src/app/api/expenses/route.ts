@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log('Received body:', body);
     
-    const { amount, category, reason, date, type = 'free' } = body;
-    console.log('Extracted type:', type);
+    const { amount, category, reason, date, type = 'free', budgetId } = body;
+    console.log('Extracted data:', { amount, category, reason, type, budgetId });
 
     if (!amount || !category || !reason) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       reason,
       type,
       date: date ? new Date(date) : new Date(),
+      ...(budgetId && { budgetId })
     };
     
     console.log('Creating expense with data:', expenseData);
@@ -36,6 +37,12 @@ export async function POST(request: NextRequest) {
     await expense.save();
     const savedExpense = await Expense.findById(expense._id).lean();
     console.log('Saved expense:', savedExpense);
+    
+    // If this is a budget expense, log for debugging
+    if (type === 'budget' && budgetId) {
+      console.log(`Budget expense created: ${amount} for budget ${budgetId}`);
+    }
+    
     return NextResponse.json(savedExpense);
   } catch {
     return NextResponse.json({ error: 'Failed to create expense' }, { status: 500 });
