@@ -29,11 +29,11 @@ export function ExpenseCategoryChart({ expenseType = 'free' }: ExpenseCategoryCh
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        const response = await fetch(`/api/expenses/categories?type=${expenseType}`);
+        const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
         if (response.ok) {
-          const categories = await response.json();
-          const chartData = categories.map((cat: { category: string; total: number }, index: number) => ({
-            name: cat.category,
+          const data = await response.json();
+          const chartData = data.stats.categoryBreakdown.map((cat: { _id: string; total: number }, index: number) => ({
+            name: cat._id,
             value: cat.total,
             color: COLORS[index % COLORS.length]
           }));
@@ -77,12 +77,15 @@ export function ExpenseCategoryChart({ expenseType = 'free' }: ExpenseCategoryCh
           <Tooltip 
             formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Amount']}
             contentStyle={{ 
-              backgroundColor: isDark ? '#1f2937' : 'white', 
+              backgroundColor: isDark ? '#f9fafb' : 'white', 
               border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
               borderRadius: '6px',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               color: isDark ? '#f9fafb' : '#111827',
               fontSize: '11px'
+            }}
+            labelStyle={{
+              color: isDark ? '#f9fafb' : '#111827'
             }}
           />
           <Legend 

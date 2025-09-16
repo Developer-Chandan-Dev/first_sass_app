@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { Navbar } from '@/components/users/navbar';
 import { Footer } from '@/components/users/footer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -5,6 +6,18 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+
+import { seoConfig } from '@/lib/seo'
+
+export const metadata: Metadata = {
+  title: `${seoConfig.siteName} Pricing - Affordable Expense Management Plans`,
+  description: `Choose the perfect ${seoConfig.siteName} plan for your expense tracking needs. Free plan available. Pro features starting at $9/month with 14-day free trial.`,
+  openGraph: {
+    title: `${seoConfig.siteName} Pricing - Affordable Expense Management Plans`,
+    description: `Choose the perfect ${seoConfig.siteName} plan for your expense tracking needs.`,
+    url: `${seoConfig.siteUrl}/pricing`,
+  },
+}
 
 export default function PricingPage() {
   return (

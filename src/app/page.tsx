@@ -36,18 +36,18 @@ export default function Home() {
             </Badge>
             
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-gray-900 to-gray-700 dark:from-foreground dark:via-blue-100 dark:to-purple-100 bg-clip-text text-transparent">
-                The Future of
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                TrackWise
               </span>
               <br />
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                Expense Tracking
+              <span className="bg-gradient-to-r from-gray-900 to-gray-700 dark:from-foreground dark:via-blue-100 dark:to-purple-100 bg-clip-text text-transparent">
+                The Future of Expense Tracking
               </span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 dark:text-muted-foreground mb-8 leading-relaxed">
-              Harness the power of AI to transform your financial habits. 
-              Smart insights, predictive analytics, and seamless automation.
+              Take control of your finances with intelligent expense tracking and budget management. 
+              Get insights, set budgets, and achieve your financial goals with TrackWise.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -264,7 +264,7 @@ export default function Home() {
               {
                 name: "Sarah Chen",
                 role: "Startup Founder",
-                content: "ExpenseTracker's AI insights helped me reduce business expenses by 30%. The predictive analytics are game-changing.",
+                content: "TrackWise's AI insights helped me reduce business expenses by 30%. The predictive analytics are game-changing.",
                 rating: 5
               },
               {

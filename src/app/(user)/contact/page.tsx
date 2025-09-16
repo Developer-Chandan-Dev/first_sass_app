@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { Navbar } from '@/components/users/navbar';
 import { Footer } from '@/components/users/footer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,6 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { seoConfig } from '@/lib/seo';
+
+export const metadata: Metadata = {
+  title: `Contact ${seoConfig.siteName} - Get Support for Expense Management`,
+  description: `Need help with ${seoConfig.siteName}? Contact our support team for assistance with expense tracking, budget management, and account questions.`,
+  openGraph: {
+    title: `Contact ${seoConfig.siteName} - Get Support for Expense Management`,
+    description: `Need help with ${seoConfig.siteName}? Contact our support team for assistance.`,
+    url: `${seoConfig.siteUrl}/contact`,
+  },
+}
 
 export default function ContactPage() {
   return (
@@ -32,7 +44,7 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
               <div className="space-y-6">
                 {[
-                  { icon: <Mail className="w-5 h-5" />, title: "Email", info: "support@expensetracker.com" },
+                  { icon: <Mail className="w-5 h-5" />, title: "Email", info: seoConfig.supportEmail },
                   { icon: <Phone className="w-5 h-5" />, title: "Phone", info: "+1 (555) 123-4567" },
                   { icon: <MapPin className="w-5 h-5" />, title: "Address", info: "123 Tech Street, San Francisco, CA 94105" },
                   { icon: <Clock className="w-5 h-5" />, title: "Hours", info: "Mon-Fri 9AM-6PM PST" }

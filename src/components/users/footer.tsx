@@ -13,7 +13,7 @@ export function Footer() {
                 <Zap className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                ExpenseTracker
+                TrackWise
               </span>
             </div>
             <p className="text-muted-foreground text-sm">
@@ -63,28 +63,28 @@ export function Footer() {
           <div>
             <h3 className="text-foreground font-semibold mb-4">Connect</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="https://github.com/Developer-Chandan-Dev/" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Github className="w-5 h-5" />
               </a>
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="https://www.linkedin.com/in/chandan-dev-developer/" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="mailto:support@expensetracker.com" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a href="mailto:support@chandandev285@gmail.com.com" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Mail className="w-5 h-5" />
               </a>
             </div>
             <div className="mt-4">
-              <p className="text-muted-foreground text-sm">support@expensetracker.com</p>
+              <p className="text-muted-foreground text-sm">support@trackwise.vercel.app</p>
             </div>
           </div>
         </div>
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © 2024 ExpenseTracker. All rights reserved.
+            © 2025 TrackWise. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">

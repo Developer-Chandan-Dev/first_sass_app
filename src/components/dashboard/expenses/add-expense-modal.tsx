@@ -49,19 +49,17 @@ export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onEx
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`/api/expenses/categories/list?type=${expenseType}`);
+        const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
         if (response.ok) {
           const data = await response.json();
           const defaultCategories = ['Food', 'Travel', 'Shopping', 'Bills', 'Others'];
-          const allCategories = [...new Set([...defaultCategories, ...data])];
+          const allCategories = [...new Set([...defaultCategories, ...data.categories])];
           setCategories(allCategories);
         } else {
           console.error('API response not ok:', response.status);
-          // Keep default categories if API fails
         }
       } catch (error) {
         console.error('Failed to fetch categories:', error);
-        // Keep default categories on error
       }
     };
 

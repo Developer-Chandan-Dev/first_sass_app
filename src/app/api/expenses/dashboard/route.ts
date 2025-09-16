@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     } else {
       // Free expenses dashboard data
       const [expenses, expenseStats] = await Promise.all([
-        Expense.find({ userId, type: 'free' }).sort({ date: -1 }).limit(10),
+        Expense.find({ userId, type: 'free' }).sort({ date: -1 }).limit(7),
         Expense.aggregate([
           { $match: { userId, type: 'free' } },
           {

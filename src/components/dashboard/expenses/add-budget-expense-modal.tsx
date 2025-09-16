@@ -71,7 +71,7 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
   useEffect(() => {
     const fetchBudgets = async () => {
       try {
-        const response = await fetch('/api/budgets?active=true');
+        const response = await fetch('/api/expenses/budget?active=true');
         if (response.ok) {
           const data = await response.json();
           setBudgets(data);
@@ -116,8 +116,6 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
         amount: Number(data.amount),
       };
 
-      console.log('Sending expense data:', requestData);
-      
       const response = await fetch('/api/expenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -128,7 +126,6 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
 
       if (response.ok) {
         const savedExpense = await response.json();
-        console.log('Expense saved:', savedExpense);
         toast.success('Budget expense added successfully!');
         reset();
         onOpenChange(false);

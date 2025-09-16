@@ -54,7 +54,7 @@ export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: Side
         {!isCollapsed && (
           <div className="flex items-center space-x-2 min-w-0">
             <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 flex-shrink-0" />
-            <h2 className="text-base sm:text-lg font-bold truncate">ExpenseTracker</h2>
+            <h2 className="text-base sm:text-lg font-bold truncate">TrackWise</h2>
           </div>
         )}
         {!isMobile && (
