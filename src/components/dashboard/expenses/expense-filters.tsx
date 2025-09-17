@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, RefreshCw } from 'lucide-react';
 
 interface ExpenseFiltersType {
   period: 'all' | 'today' | 'week' | 'month';
@@ -20,9 +20,12 @@ interface ExpenseFiltersProps {
   filters: ExpenseFiltersType;
   onFiltersChange: (filters: ExpenseFiltersType) => void;
   categories: string[];
+  onRefresh?: () => void;
+  expenseType?: 'free' | 'budget';
+  isRefreshing?: boolean;
 }
 
-export function ExpenseFilters({ filters, onFiltersChange, categories }: ExpenseFiltersProps) {
+export function ExpenseFilters({ filters, onFiltersChange, categories, onRefresh, expenseType = 'free', isRefreshing = false }: ExpenseFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const periods = [
@@ -51,16 +54,6 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
   return (
     <Card>
       <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
-        {/* Search */}
-        <div>
-          <Input
-            placeholder="Search expenses..."
-            value={filters.search}
-            onChange={(e) => updateFilter('search', e.target.value)}
-            className="w-full"
-          />
-        </div>
-
         {/* Quick Filters */}
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
           {periods.map((period) => (
@@ -93,12 +86,26 @@ export function ExpenseFilters({ filters, onFiltersChange, categories }: Expense
             )}
           </Button>
           
-          {activeFiltersCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto">
-              <X className="w-4 h-4 mr-1" />
-              Clear
-            </Button>
-          )}
+          <div className="flex gap-2 w-full sm:w-auto">
+            {onRefresh && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onRefresh}
+                disabled={isRefreshing}
+                className="w-full sm:w-auto"
+              >
+                <RefreshCw className={`w-4 h-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+            )}
+            {activeFiltersCount > 0 && (
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto">
+                <X className="w-4 h-4 mr-1" />
+                Clear
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Advanced Filters */}

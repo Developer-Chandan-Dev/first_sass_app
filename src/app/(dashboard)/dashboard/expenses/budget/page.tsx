@@ -104,6 +104,8 @@ export default function BudgetExpensesPage() {
             filters={filters}
             onFiltersChange={setFilters}
             categories={categories}
+            onRefresh={() => setRefreshTrigger(prev => prev + 1)}
+            expenseType="budget"
           />
           <AdvancedExpensesTable filters={filters} refreshTrigger={refreshTrigger} expenseType="budget" />
         </TabsContent>

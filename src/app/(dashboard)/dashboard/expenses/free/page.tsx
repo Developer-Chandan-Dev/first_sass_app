@@ -99,6 +99,8 @@ export default function ExpensesPage() {
             filters={filters}
             onFiltersChange={setFilters}
             categories={categories}
+            onRefresh={() => setRefreshTrigger(prev => prev + 1)}
+            expenseType="free"
           />
           <AdvancedExpensesTable filters={filters} refreshTrigger={refreshTrigger} />
         </TabsContent>

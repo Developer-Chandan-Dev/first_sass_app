@@ -25,6 +25,7 @@ import {
   Trash2, 
   MoreHorizontal, 
   Search,
+  X,
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
@@ -65,6 +66,7 @@ export function AdvancedExpensesTable({ filters, refreshTrigger, expenseType = '
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeSearchTerm, setActiveSearchTerm] = useState('');
   const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [pageSize, setPageSize] = useState(10);
@@ -76,7 +78,7 @@ export function AdvancedExpensesTable({ filters, refreshTrigger, expenseType = '
         type: expenseType,
         page: currentPage.toString(),
         limit: pageSize.toString(),
-        search: searchTerm || filters.search,
+        search: activeSearchTerm || filters.search,
         period: filters.period,
         category: filters.category,
         startDate: filters.startDate,
@@ -96,11 +98,46 @@ export function AdvancedExpensesTable({ filters, refreshTrigger, expenseType = '
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, searchTerm, filters, expenseType]);
+  }, [currentPage, pageSize, activeSearchTerm, filters, expenseType]);
 
   useEffect(() => {
     fetchExpenses();
   }, [fetchExpenses, refreshTrigger]);
+
+  const handleSearch = () => {
+    setActiveSearchTerm(searchTerm);
+    setCurrentPage(1);
+    // Manually trigger fetch after state update
+    setTimeout(() => {
+      fetchExpenses();
+    }, 0);
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setActiveSearchTerm('');
+    setCurrentPage(1);
+    setTimeout(() => {
+      fetchExpenses();
+    }, 0);
+  };
+
+  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Watch for when search term becomes empty and trigger search
+  useEffect(() => {
+    if (searchTerm === '' && activeSearchTerm !== '') {
+      // User cleared the search box, update active search and fetch
+      setActiveSearchTerm('');
+      setTimeout(() => {
+        fetchExpenses();
+      }, 0);
+    }
+  }, [searchTerm, activeSearchTerm, fetchExpenses]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this expense?')) {
@@ -176,19 +213,7 @@ export function AdvancedExpensesTable({ filters, refreshTrigger, expenseType = '
     setIsEditModalOpen(true);
   };
 
-  if (loading) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="animate-pulse space-y-4">
-            {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="h-12 bg-muted rounded"></div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+
 
   return (
     <Card>
@@ -196,14 +221,35 @@ export function AdvancedExpensesTable({ filters, refreshTrigger, expenseType = '
         <div className="flex flex-col gap-4">
           <CardTitle className="text-lg sm:text-xl">Expenses ({totalCount})</CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search expenses..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 w-full"
-              />
+            <div className="relative flex-1 flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search expenses..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={handleSearchKeyPress}
+                  className="pl-8 w-full"
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSearch}
+                className="px-3"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearSearch}
+                  className="px-3"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
             {selectedRows.length > 0 && (
               <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="w-full sm:w-auto">
@@ -233,7 +279,19 @@ export function AdvancedExpensesTable({ filters, refreshTrigger, expenseType = '
                 </TableRow>
               </TableHeader>
             <TableBody>
-              {expenses.length === 0 ? (
+              {loading ? (
+                // Skeleton rows
+                [1, 2, 3, 4, 5].map(i => (
+                  <TableRow key={i}>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell className="hidden sm:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                  </TableRow>
+                ))
+              ) : expenses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     No expenses found
