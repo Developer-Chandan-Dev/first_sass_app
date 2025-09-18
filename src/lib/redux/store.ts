@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
-import statsReducer from './statsSlice';
+import overviewReducer from './expense/overviewSlice';
+import expenseReducer from './expense/expenseSlice';
+import budgetReducer from './expense/budgetSlice';
 
 export const store = configureStore({
   reducer: {
-    stats: statsReducer,
+    overview: overviewReducer,
+    expenses: expenseReducer,
+    budgets: budgetReducer,
   },
 });
 

@@ -16,9 +16,14 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
     if (type === 'budget') {
       // Budget dashboard data
-      const [budgets, budgetExpenses, expenseStats] = await Promise.all([
+      const [budgets, budgetExpenses, expenseStats, previousMonthStats] = await Promise.all([
         Budget.find({ userId }).sort({ createdAt: -1 }),
         Expense.find({ userId, type: 'budget' }).sort({ date: -1 }).limit(5),
         Expense.aggregate([
@@ -36,6 +41,21 @@ export async function GET(request: NextRequest) {
               ]
             }
           }
+        ]),
+        Expense.aggregate([
+          { 
+            $match: { 
+              userId, 
+              type: 'budget',
+              $expr: {
+                $and: [
+                  { $eq: [{ $month: '$date' }, lastMonth + 1] },
+                  { $eq: [{ $year: '$date' }, lastMonthYear] }
+                ]
+              }
+            } 
+          },
+          { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }
         ])
       ]);
 
@@ -57,20 +77,32 @@ export async function GET(request: NextRequest) {
         };
       });
 
+      const currentSpent = expenseStats[0].total[0]?.total || 0;
+      const currentExpenses = expenseStats[0].total[0]?.count || 0;
+      const previousSpent = previousMonthStats[0]?.total || 0;
+      const previousExpenses = previousMonthStats[0]?.count || 0;
+      
+      const monthlyChange = previousSpent > 0 ? ((currentSpent - previousSpent) / previousSpent) * 100 : 0;
+      const expenseChange = previousExpenses > 0 ? currentExpenses - previousExpenses : 0;
+
       return NextResponse.json({
         budgets: budgetsWithStats,
         expenses: budgetExpenses,
         categories: expenseStats[0].byCategory.map((c: { _id: string }) => c._id),
         stats: {
           totalBudget: budgets.reduce((sum, b) => sum + b.amount, 0),
-          totalSpent: expenseStats[0].total[0]?.total || 0,
-          totalExpenses: expenseStats[0].total[0]?.count || 0,
-          categoryBreakdown: expenseStats[0].byCategory
+          totalSpent: currentSpent,
+          totalExpenses: currentExpenses,
+          categoryBreakdown: expenseStats[0].byCategory,
+          previousMonthSpent: previousSpent,
+          previousMonthExpenses: previousExpenses,
+          monthlyChange: Math.round(monthlyChange * 100) / 100,
+          expenseChange
         }
       });
     } else {
       // Free expenses dashboard data
-      const [expenses, expenseStats] = await Promise.all([
+      const [expenses, expenseStats, previousMonthStats] = await Promise.all([
         Expense.find({ userId, type: 'free' }).sort({ date: -1 }).limit(7),
         Expense.aggregate([
           { $match: { userId, type: 'free' } },
@@ -94,17 +126,44 @@ export async function GET(request: NextRequest) {
               ]
             }
           }
+        ]),
+        Expense.aggregate([
+          { 
+            $match: { 
+              userId, 
+              type: 'free',
+              $expr: {
+                $and: [
+                  { $eq: [{ $month: '$date' }, lastMonth + 1] },
+                  { $eq: [{ $year: '$date' }, lastMonthYear] }
+                ]
+              }
+            } 
+          },
+          { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } }
         ])
       ]);
+
+      const currentSpent = expenseStats[0].total[0]?.total || 0;
+      const currentExpenses = expenseStats[0].total[0]?.count || 0;
+      const previousSpent = previousMonthStats[0]?.total || 0;
+      const previousExpenses = previousMonthStats[0]?.count || 0;
+      
+      const monthlyChange = previousSpent > 0 ? ((currentSpent - previousSpent) / previousSpent) * 100 : 0;
+      const expenseChange = previousExpenses > 0 ? currentExpenses - previousExpenses : 0;
 
       return NextResponse.json({
         expenses,
         categories: expenseStats[0].byCategory.map((c: { _id: string }) => c._id),
         stats: {
-          totalSpent: expenseStats[0].total[0]?.total || 0,
-          totalExpenses: expenseStats[0].total[0]?.count || 0,
+          totalSpent: currentSpent,
+          totalExpenses: currentExpenses,
           categoryBreakdown: expenseStats[0].byCategory,
-          recentTrend: expenseStats[0].recent
+          recentTrend: expenseStats[0].recent,
+          previousMonthSpent: previousSpent,
+          previousMonthExpenses: previousExpenses,
+          monthlyChange: Math.round(monthlyChange * 100) / 100,
+          expenseChange
         }
       });
     }

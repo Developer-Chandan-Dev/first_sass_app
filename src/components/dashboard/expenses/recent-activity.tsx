@@ -1,17 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-
-interface RecentExpense {
-  _id: string;
-  amount: number;
-  category: string;
-  reason: string;
-  date: string;
-  createdAt: string;
-}
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 const categoryIcons: { [key: string]: string } = {
   'Food': '🍽️',
@@ -31,26 +24,14 @@ interface RecentActivityProps {
 }
 
 export function RecentActivity({ expenseType = 'free' }: RecentActivityProps) {
-  const [expenses, setExpenses] = useState<RecentExpense[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { free, budget, loading } = useAppSelector(state => state.overview);
+  
+  const expenses = expenseType === 'free' ? free.expenses : budget.expenses;
 
   useEffect(() => {
-    const fetchRecentExpenses = async () => {
-      try {
-        const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
-        if (response.ok) {
-          const data = await response.json();
-          setExpenses(data.expenses || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch recent expenses:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRecentExpenses();
-  }, [expenseType]);
+    dispatch(refreshStats(expenseType));
+  }, [dispatch, expenseType]);
 
   const getTimeAgo = (dateString: string) => {
     const now = new Date();

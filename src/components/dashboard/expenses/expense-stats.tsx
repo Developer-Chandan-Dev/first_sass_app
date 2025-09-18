@@ -1,83 +1,53 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Calendar, BarChart3, Target } from 'lucide-react';
-
-interface ExpenseStats {
-  totalSpent: number;
-  totalExpenses: number;
-  averageExpense: number;
-  thisMonth: number;
-  monthlyChange: number;
-}
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 export function ExpenseStats() {
-  const [stats, setStats] = useState<ExpenseStats>({
-    totalSpent: 0,
-    totalExpenses: 0,
-    averageExpense: 0,
-    thisMonth: 0,
-    monthlyChange: 0
-  });
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { free, loading } = useAppSelector(state => state.overview);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await fetch('/api/expenses/dashboard?type=free');
-        if (response.ok) {
-          const data = await response.json();
-          setStats({
-            totalSpent: data.stats.totalSpent,
-            totalExpenses: data.stats.totalExpenses,
-            averageExpense: data.stats.totalExpenses > 0 ? data.stats.totalSpent / data.stats.totalExpenses : 0,
-            thisMonth: data.stats.totalSpent,
-            monthlyChange: 0
-          });
-        }
-      } catch (error) {
-        console.error('Failed to fetch expense stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    dispatch(refreshStats('free'));
+  }, [dispatch]);
 
-    fetchStats();
-  }, []);
+  const averageExpense = free.totalExpenses > 0 ? free.totalSpent / free.totalExpenses : 0;
 
   const statsData = [
     {
       title: 'Total Spent',
-      value: `₹${stats.totalSpent.toLocaleString()}`,
-      change: `${stats.monthlyChange > 0 ? '+' : ''}${stats.monthlyChange}%`,
-      trend: stats.monthlyChange >= 0 ? 'up' : 'down',
+      value: `₹${free.totalSpent.toLocaleString()}`,
+      change: `${free.monthlyChange > 0 ? '+' : ''}${free.monthlyChange}%`,
+      trend: free.monthlyChange >= 0 ? 'up' : 'down',
       icon: DollarSign,
       description: 'vs last month'
     },
     {
       title: 'Total Expenses',
-      value: stats.totalExpenses.toString(),
-      change: '+12',
-      trend: 'up',
+      value: free.totalExpenses.toString(),
+      change: `${free.expenseChange > 0 ? '+' : ''}${free.expenseChange}`,
+      trend: free.expenseChange >= 0 ? 'up' : 'down',
       icon: BarChart3,
-      description: 'this month'
+      description: 'vs last month'
     },
     {
       title: 'Average Expense',
-      value: `₹${stats.averageExpense.toLocaleString()}`,
-      change: '-5%',
-      trend: 'down',
+      value: `₹${Math.round(averageExpense).toLocaleString()}`,
+      change: free.totalExpenses > 0 ? `₹${Math.round(averageExpense)}` : '₹0',
+      trend: 'neutral',
       icon: Target,
       description: 'per transaction'
     },
     {
-      title: 'This Month',
-      value: `₹${stats.thisMonth.toLocaleString()}`,
-      change: '+18%',
-      trend: 'up',
+      title: 'Previous Month',
+      value: `₹${free.previousMonthSpent.toLocaleString()}`,
+      change: `${free.previousMonthExpenses} expenses`,
+      trend: 'neutral',
       icon: Calendar,
-      description: 'current month'
+      description: 'last month'
     }
   ];
 

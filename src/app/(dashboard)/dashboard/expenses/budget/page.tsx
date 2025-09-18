@@ -5,39 +5,24 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BudgetStats } from '@/components/dashboard/expenses/budget-stats';
-import { BudgetManager } from '@/components/dashboard/expenses/budget-manager';
+import { BudgetManager } from '@/components/dashboard/expenses/budget-manager-redux';
 import { AddBudgetExpenseModal } from '@/components/dashboard/expenses/add-budget-expense-modal';
-import { AdvancedExpensesTable } from '@/components/dashboard/expenses/advanced-expenses-table';
+import { AdvancedExpensesTable } from '@/components/dashboard/expenses/advanced-expenses-table-redux';
 import { ExpenseCategoryChart } from '@/components/dashboard/expenses/expense-category-chart';
 import { ExpenseReportChart } from '@/components/dashboard/expenses/expense-report-chart';
-import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters';
+
 import { RecentActivity } from '@/components/dashboard/expenses/recent-activity';
+import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
 import { Plus, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-interface ExpenseFiltersType {
-  period: 'all' | 'today' | 'week' | 'month';
-  category: string;
-  startDate: string;
-  endDate: string;
-  search: string;
-}
+
 
 export default function BudgetExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categories, setCategories] = useState<string[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [filters, setFilters] = useState<ExpenseFiltersType>({
-    period: 'all',
-    category: '',
-    startDate: '',
-    endDate: '',
-    search: ''
-  });
 
-  useEffect(() => {
-    setCategories(['Food', 'Travel', 'Shopping', 'Bills', 'Others']);
-  }, []);
+
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -92,7 +77,7 @@ export default function BudgetExpensesPage() {
         </TabsContent>
 
         <TabsContent value="budgets" className="space-y-6">
-          <BudgetManager refreshTrigger={refreshTrigger} />
+          <BudgetManager />
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
@@ -100,21 +85,15 @@ export default function BudgetExpensesPage() {
         </TabsContent>
 
         <TabsContent value="expenses" className="space-y-4 md:space-y-6">
-          <ExpenseFilters 
-            filters={filters}
-            onFiltersChange={setFilters}
-            categories={categories}
-            onRefresh={() => setRefreshTrigger(prev => prev + 1)}
-            expenseType="budget"
-          />
-          <AdvancedExpensesTable filters={filters} refreshTrigger={refreshTrigger} expenseType="budget" />
+          <ExpenseFilters expenseType="budget" />
+          <AdvancedExpensesTable expenseType="budget" />
         </TabsContent>
       </Tabs>
       
       <AddBudgetExpenseModal 
         open={isModalOpen} 
         onOpenChange={setIsModalOpen}
-        onExpenseAdded={() => setRefreshTrigger(prev => prev + 1)}
+        onExpenseAdded={() => {}} // Redux handles updates automatically
       />
     </div>
   );

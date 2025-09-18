@@ -1,43 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AddExpenseModal } from '@/components/dashboard/expenses/add-expense-modal';
-import { AdvancedExpensesTable } from '@/components/dashboard/expenses/advanced-expenses-table';
+import { AddExpenseModal } from '@/components/dashboard/expenses/add-expense-modal-redux';
+import { AdvancedExpensesTable } from '@/components/dashboard/expenses/advanced-expenses-table-redux';
 import { ExpenseStats } from '@/components/dashboard/expenses/expense-stats';
 import { ExpenseCategoryChart } from '@/components/dashboard/expenses/expense-category-chart';
 import { ExpenseReportChart } from '@/components/dashboard/expenses/expense-report-chart';
-import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters';
+
 import { RecentActivity } from '@/components/dashboard/expenses/recent-activity';
+import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
 import { Plus, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-interface ExpenseFiltersType {
-  period: 'all' | 'today' | 'week' | 'month';
-  category: string;
-  startDate: string;
-  endDate: string;
-  search: string;
-}
+
 
 export default function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [filters, setFilters] = useState<ExpenseFiltersType>({
-    period: 'all',
-    category: '',
-    startDate: '',
-    endDate: '',
-    search: ''
-  });
 
-  useEffect(() => {
-    // Set default categories
-    setCategories(['Food', 'Travel', 'Shopping', 'Bills', 'Others']);
-  }, []);
+
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -95,14 +78,8 @@ export default function ExpensesPage() {
         </TabsContent>
 
         <TabsContent value="expenses" className="space-y-4 md:space-y-6">
-          <ExpenseFilters 
-            filters={filters}
-            onFiltersChange={setFilters}
-            categories={categories}
-            onRefresh={() => setRefreshTrigger(prev => prev + 1)}
-            expenseType="free"
-          />
-          <AdvancedExpensesTable filters={filters} refreshTrigger={refreshTrigger} />
+          <ExpenseFilters expenseType="free" />
+          <AdvancedExpensesTable expenseType="free" />
         </TabsContent>
       </Tabs>
       
@@ -110,7 +87,6 @@ export default function ExpensesPage() {
         open={isModalOpen} 
         onOpenChange={setIsModalOpen}
         expenseType="free"
-        onExpenseAdded={() => setRefreshTrigger(prev => prev + 1)}
       />
     </div>
   );

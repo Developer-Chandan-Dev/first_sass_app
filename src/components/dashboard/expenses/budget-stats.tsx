@@ -1,83 +1,53 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Target, DollarSign, Wallet, BarChart3 } from 'lucide-react';
-
-interface BudgetStats {
-  totalBudget: number;
-  budgetSpent: number;
-  remaining: number;
-  totalBudgetExpenses: number;
-  monthlyChange: number;
-}
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 export function BudgetStats() {
-  const [stats, setStats] = useState<BudgetStats>({
-    totalBudget: 0,
-    budgetSpent: 0,
-    remaining: 0,
-    totalBudgetExpenses: 0,
-    monthlyChange: 0
-  });
-  const [loading, setLoading] = useState(true);
-
+  const dispatch = useAppDispatch();
+  const { budget, loading } = useAppSelector(state => state.overview);
+  console.log("Budget : ", budget, 12);
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await fetch('/api/expenses/dashboard?type=budget');
-        if (response.ok) {
-          const data = await response.json();
-          setStats({
-            totalBudget: data.stats.totalBudget,
-            budgetSpent: data.stats.totalSpent,
-            remaining: data.stats.totalBudget - data.stats.totalSpent,
-            totalBudgetExpenses: data.stats.totalExpenses,
-            monthlyChange: 0
-          });
-        }
-      } catch (error) {
-        console.error('Failed to fetch budget stats:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    dispatch(refreshStats('budget'));
+  }, [dispatch]);
 
-    fetchStats();
-  }, []);
+  const remaining = budget.totalBudget - budget.totalSpent;
 
   const statsData = [
     {
       title: 'Total Budget',
-      value: `₹${stats.totalBudget.toLocaleString()}`,
-      change: '+5%',
-      trend: 'up',
+      value: `₹${budget.totalBudget.toLocaleString()}`,
+      change: `₹${budget.totalSpent.toLocaleString()} spent`,
+      trend: 'neutral',
       icon: Target,
       description: 'active budgets'
     },
     {
       title: 'Budget Spent',
-      value: `₹${stats.budgetSpent.toLocaleString()}`,
-      change: `${stats.monthlyChange > 0 ? '+' : ''}${stats.monthlyChange}%`,
-      trend: stats.monthlyChange >= 0 ? 'up' : 'down',
+      value: `₹${budget.totalSpent.toLocaleString()}`,
+      change: `${budget.monthlyChange > 0 ? '+' : ''}${budget.monthlyChange}%`,
+      trend: budget.monthlyChange >= 0 ? 'up' : 'down',
       icon: DollarSign,
       description: 'vs last month'
     },
     {
       title: 'Remaining',
-      value: `₹${stats.remaining.toLocaleString()}`,
-      change: stats.remaining > 0 ? 'Available' : 'Exceeded',
-      trend: stats.remaining > 0 ? 'up' : 'down',
+      value: `₹${remaining.toLocaleString()}`,
+      change: remaining > 0 ? 'Available' : 'Exceeded',
+      trend: remaining > 0 ? 'up' : 'down',
       icon: Wallet,
       description: 'budget left'
     },
     {
       title: 'Budget Expenses',
-      value: stats.totalBudgetExpenses.toString(),
-      change: '+8',
-      trend: 'up',
+      value: budget.totalExpenses.toString(),
+      change: `${budget.expenseChange > 0 ? '+' : ''}${budget.expenseChange}`,
+      trend: budget.expenseChange >= 0 ? 'up' : 'down',
       icon: BarChart3,
-      description: 'this month'
+      description: 'vs last month'
     }
   ];
 

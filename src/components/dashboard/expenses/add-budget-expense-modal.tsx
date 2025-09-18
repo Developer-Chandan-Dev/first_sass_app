@@ -17,6 +17,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
 
 const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -46,6 +48,7 @@ interface AddBudgetExpenseModalProps {
 }
 
 export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: AddBudgetExpenseModalProps) {
+  const dispatch = useAppDispatch();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -108,6 +111,17 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
 
     try {
       setIsSubmitting(true);
+      
+      // Update budget stats optimistically BEFORE API call
+      dispatch(updateStatsOptimistic({
+        type: 'budget',
+        amount: Number(data.amount),
+        category: data.category,
+        operation: 'add',
+        isExpense: true,
+        reason: data.reason
+      }));
+      
       const loadingToast = toast.loading('Adding expense...');
 
       const requestData = {

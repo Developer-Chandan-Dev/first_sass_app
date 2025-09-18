@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/users/navbar';
 import { Footer } from '@/components/users/footer';
+import { SmartNavigationButton } from '@/components/common/smart-navigation-button';
 import { 
   TrendingUp, 
   PieChart, 
@@ -51,12 +52,16 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button size="lg" asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8 py-6">
-                <Link href="/register">
-                  Start Free Trial
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Link>
-              </Button>
+              <SmartNavigationButton 
+                size="lg" 
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8 py-6"
+                signedInText="Go to Dashboard"
+                signedOutText="Start Free Trial"
+                signedInHref="/dashboard"
+                signedOutHref="/register"
+              >
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </SmartNavigationButton>
               <Button size="lg" variant="outline" asChild className="border-gray-300 dark:border-border text-gray-700 dark:text-foreground hover:bg-gray-100 dark:hover:bg-muted text-lg px-8 py-6">
                 <Link href="/login">Watch Demo</Link>
               </Button>

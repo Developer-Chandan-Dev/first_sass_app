@@ -7,13 +7,11 @@ import Link from 'next/link';
 import { 
   Wallet, 
   Target, 
- 
   PieChart, 
-  ArrowRight,
-  DollarSign,
-  Calendar,
-  BarChart3
+  ArrowRight
 } from 'lucide-react';
+import { ExpenseOverviewStats } from '@/components/dashboard/expenses/expense-overview-stats';
+import { RecentActivityOverview } from '@/components/dashboard/expenses/recent-activity-overview';
 
 export default function ExpensesOverviewPage() {
   const expenseTypes = [
@@ -35,12 +33,7 @@ export default function ExpensesOverviewPage() {
     }
   ];
 
-  const quickStats = [
-    { label: 'Total Expenses', value: '₹45,230', icon: DollarSign, change: '+12%' },
-    { label: 'This Month', value: '₹8,450', icon: Calendar, change: '+8%' },
-    { label: 'Categories', value: '12', icon: PieChart, change: '+2' },
-    { label: 'Avg/Day', value: '₹280', icon: BarChart3, change: '-5%' }
-  ];
+
 
   return (
     <div className="space-y-6">
@@ -52,27 +45,7 @@ export default function ExpensesOverviewPage() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {quickStats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.label}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {stat.label}
-                </CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-green-600">
-                  {stat.change} from last month
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      <ExpenseOverviewStats />
 
       {/* Expense Types */}
       <div className="grid gap-6 md:grid-cols-2">
@@ -134,26 +107,7 @@ export default function ExpensesOverviewPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {[
-              { category: 'Food', amount: '₹450', time: '2 hours ago', color: 'bg-orange-500' },
-              { category: 'Transport', amount: '₹120', time: '5 hours ago', color: 'bg-blue-500' },
-              { category: 'Shopping', amount: '₹2,300', time: '1 day ago', color: 'bg-purple-500' }
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-3 h-3 rounded-full ${activity.color}`}></div>
-                  <div>
-                    <p className="font-medium">{activity.category}</p>
-                    <p className="text-sm text-muted-foreground">{activity.time}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium text-red-600">-{activity.amount}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <RecentActivityOverview />
         </CardContent>
       </Card>
     </div>

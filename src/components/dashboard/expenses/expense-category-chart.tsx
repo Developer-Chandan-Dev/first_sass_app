@@ -1,8 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 interface CategoryData {
   name: string;
@@ -21,33 +23,21 @@ interface ExpenseCategoryChartProps {
 
 export function ExpenseCategoryChart({ expenseType = 'free' }: ExpenseCategoryChartProps) {
   const { theme } = useTheme();
-  const [data, setData] = useState<CategoryData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const { free, budget, loading } = useAppSelector(state => state.overview);
   
   const isDark = theme === 'dark';
 
   useEffect(() => {
-    const fetchCategoryData = async () => {
-      try {
-        const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
-        if (response.ok) {
-          const data = await response.json();
-          const chartData = data.stats.categoryBreakdown.map((cat: { _id: string; total: number }, index: number) => ({
-            name: cat._id,
-            value: cat.total,
-            color: COLORS[index % COLORS.length]
-          }));
-          setData(chartData);
-        }
-      } catch (error) {
-        console.error('Failed to fetch category data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    dispatch(refreshStats(expenseType));
+  }, [dispatch, expenseType]);
 
-    fetchCategoryData();
-  }, [expenseType]);
+  const categoryBreakdown = expenseType === 'free' ? free.categoryBreakdown : budget.categoryBreakdown;
+  const data: CategoryData[] = categoryBreakdown.map((cat, index) => ({
+    name: cat._id,
+    value: cat.total,
+    color: COLORS[index % COLORS.length]
+  }));
 
   if (loading) {
     return <div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>;
