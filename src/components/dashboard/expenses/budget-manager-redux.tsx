@@ -55,7 +55,8 @@ export function BudgetManager() {
     try {
       await dispatch(deleteBudget(budgetId)).unwrap();
     } catch (error) {
-      toast.error('Failed to delete budget');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete budget';
+      toast.error(errorMessage);
       // Revert by refetching
       dispatch(fetchBudgets());
     }
@@ -153,16 +154,16 @@ export function BudgetManager() {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs sm:text-sm">
-                      <span>₹{budget.spent.toLocaleString()} spent</span>
-                      <span>₹{budget.amount.toLocaleString()} budget</span>
+                      <span>₹{(budget.spent || 0).toLocaleString()} spent</span>
+                      <span>₹{(budget.amount || 0).toLocaleString()} budget</span>
                     </div>
                     <Progress 
-                      value={Math.min(budget.percentage, 100)} 
+                      value={Math.min(budget.percentage || 0, 100)} 
                       className="h-2"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{budget.percentage.toFixed(1)}% used</span>
-                      <span>₹{budget.remaining.toLocaleString()} remaining</span>
+                      <span>{(budget.percentage || 0).toFixed(1)}% used</span>
+                      <span>₹{(budget.remaining || 0).toLocaleString()} remaining</span>
                     </div>
                   </div>
                 </div>

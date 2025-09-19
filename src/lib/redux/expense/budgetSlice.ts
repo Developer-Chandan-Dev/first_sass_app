@@ -78,7 +78,10 @@ export const deleteBudget = createAsyncThunk(
       method: 'DELETE',
     });
     
-    if (!response.ok) throw new Error('Failed to delete budget');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Failed to delete budget (${response.status})`);
+    }
     return id;
   }
 );

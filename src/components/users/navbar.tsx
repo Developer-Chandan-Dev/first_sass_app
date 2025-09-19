@@ -6,52 +6,63 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { UserButton, useUser } from '@clerk/nextjs';
 import { Menu, X, Zap } from 'lucide-react';
+import { AdminNavButton } from '../common/admin-nav-button';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isSignedIn } = useUser();
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="container mx-auto px-4">
+    <nav className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm">
+      <div className="container mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2 group">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
               <Zap className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               TrackWise
             </span>
           </Link>
 
-          {/* Desktop Menu */}
+          {/* Desktop Center Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/services" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/services" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group">
               Services
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group">
               Pricing
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group">
               About
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group">
               Contact
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></span>
             </Link>
+          </div>
+
+          {/* Desktop Right Actions */}
+          <div className="hidden md:flex items-center space-x-3">
             <ThemeToggle />
             {isSignedIn ? (
               <>
-                <Button variant="ghost" asChild>
+                <Button variant="ghost" size="sm" asChild>
                   <Link href="/dashboard">Dashboard</Link>
                 </Button>
+                <AdminNavButton />
                 <UserButton afterSignOutUrl="/" />
               </>
             ) : (
               <>
-                <Button variant="ghost" asChild>
+                <Button variant="ghost" size="sm" asChild>
                   <Link href="/login">Login</Link>
                 </Button>
-                <Button asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
+                <Button size="sm" asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
                   <Link href="/register">Get Started</Link>
                 </Button>
               </>
@@ -62,49 +73,70 @@ export function Navbar() {
           <div className="md:hidden flex items-center space-x-2">
             <ThemeToggle />
             <button
-              className="text-foreground"
+              className="text-foreground p-2 hover:bg-muted rounded-md transition-colors"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden py-4 space-y-4">
-            <Link href="/services" className="block text-muted-foreground hover:text-foreground">
-              Services
-            </Link>
-            <Link href="/pricing" className="block text-muted-foreground hover:text-foreground">
-              Pricing
-            </Link>
-            <Link href="/about" className="block text-muted-foreground hover:text-foreground">
-              About
-            </Link>
-            <Link href="/contact" className="block text-muted-foreground hover:text-foreground">
-              Contact
-            </Link>
-            <div className="flex flex-col space-y-2 pt-4">
-              {isSignedIn ? (
-                <>
-                  <Button variant="ghost" asChild>
-                    <Link href="/dashboard">Dashboard</Link>
-                  </Button>
-                  <div className="pt-2">
-                    <UserButton afterSignOutUrl="/" />
+          <div className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-sm">
+            <div className="py-4 space-y-3">
+              <Link 
+                href="/services" 
+                className="block px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/50 dark:hover:to-purple-950/50 rounded-lg transition-all duration-200 border-l-2 border-transparent hover:border-blue-500"
+                onClick={() => setIsOpen(false)}
+              >
+                Services
+              </Link>
+              <Link 
+                href="/pricing" 
+                className="block px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/50 dark:hover:to-purple-950/50 rounded-lg transition-all duration-200 border-l-2 border-transparent hover:border-blue-500"
+                onClick={() => setIsOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link 
+                href="/about" 
+                className="block px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/50 dark:hover:to-purple-950/50 rounded-lg transition-all duration-200 border-l-2 border-transparent hover:border-blue-500"
+                onClick={() => setIsOpen(false)}
+              >
+                About
+              </Link>
+              <Link 
+                href="/contact" 
+                className="block px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/50 dark:hover:to-purple-950/50 rounded-lg transition-all duration-200 border-l-2 border-transparent hover:border-blue-500"
+                onClick={() => setIsOpen(false)}
+              >
+                Contact
+              </Link>
+              
+              <div className="border-t border-border/50 pt-4 px-4 space-y-3">
+                {isSignedIn ? (
+                  <>
+                    <Button variant="ghost" asChild className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/50 dark:hover:to-purple-950/50">
+                      <Link href="/dashboard" onClick={() => setIsOpen(false)}>Dashboard</Link>
+                    </Button>
+                    <AdminNavButton />
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="text-sm text-muted-foreground">Account</span>
+                      <UserButton afterSignOutUrl="/" />
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <Button variant="ghost" asChild className="w-full hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/50 dark:hover:to-purple-950/50">
+                      <Link href="/login" onClick={() => setIsOpen(false)}>Login</Link>
+                    </Button>
+                    <Button asChild className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-md hover:shadow-lg transition-all duration-200">
+                      <Link href="/register" onClick={() => setIsOpen(false)}>Get Started</Link>
+                    </Button>
                   </div>
-                </>
-              ) : (
-                <>
-                  <Button variant="ghost" asChild>
-                    <Link href="/login">Login</Link>
-                  </Button>
-                  <Button asChild className="bg-gradient-to-r from-blue-500 to-purple-600">
-                    <Link href="/register">Get Started</Link>
-                  </Button>
-                </>
-              )}
+                )}
+              </div>
             </div>
           </div>
         )}

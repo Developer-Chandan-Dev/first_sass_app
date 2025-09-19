@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { ReduxProvider } from '@/components/common/providers';
 import { ThemeProvider } from '@/components/common/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { seoConfig } from '@/lib/seo';
 import './globals.css';
 
 const geistSans = Geist({
@@ -16,9 +17,8 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-import { seoConfig } from '@/lib/seo';
-
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   title: `${seoConfig.siteName} - Smart Expense Management & Budget Tracking`,
   description: `${seoConfig.siteDescription}. Track expenses, manage budgets, and gain insights with our powerful expense management platform.`,
   keywords: 'expense tracker, budget management, personal finance, expense management, financial planning, money tracker, budget planner, expense app',

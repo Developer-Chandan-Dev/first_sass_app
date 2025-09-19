@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Expense from '@/models/Expense';
+import User from '@/models/User';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,13 +13,26 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
     const body = await request.json();
-    console.log('Received body:', body);
     
     const { amount, category, reason, date, type = 'free', budgetId } = body;
-    console.log('Extracted data:', { amount, category, reason, type, budgetId });
 
     if (!amount || !category || !reason) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Get user and check limits in parallel
+    const [user, expenseCount] = await Promise.all([
+      User.findOne({ clerkId: userId }),
+      Expense.countDocuments({ userId })
+    ]);
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    if (expenseCount >= user.limits.maxExpenses) {
+      return NextResponse.json({ 
+        error: `Expense limit reached. Upgrade to add more than ${user.limits.maxExpenses} expenses.` 
+      }, { status: 403 });
     }
     
     const expenseData = {

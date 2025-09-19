@@ -3,20 +3,30 @@
 import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/dashboard/layout/sidebar';
 import { ThemeToggle } from '@/components/common/theme-toggle';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AdminNavButton } from '@/components/common/admin-nav-button';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { isSignedIn, user } = useUser();
   const [mounted, setMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Create user in database on first visit
+  useEffect(() => {
+    if (isSignedIn && user) {
+      fetch('/api/users', { method: 'POST' })
+        .catch(console.error);
+    }
+  }, [isSignedIn, user]);
 
   useEffect(() => {
     setMounted(true);
@@ -100,6 +110,7 @@ export default function DashboardLayout({
             <h1 className="text-lg sm:text-xl md:text-2xl font-semibold truncate">Dashboard</h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+            <AdminNavButton />
             <ThemeToggle />
             <UserButton />
           </div>
