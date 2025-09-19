@@ -38,12 +38,10 @@ import {
   fetchExpenses, 
   deleteExpense, 
   deleteExpenseOptimistic,
-  setFilters,
   setCurrentPage,
   setPageSize,
   setExpenseType,
   type ExpenseItem,
-  type ExpenseFilters
 } from '@/lib/redux/expense/expenseSlice';
 import { updateStatsOptimistic, refreshStats } from '@/lib/redux/expense/overviewSlice';
 import { updateBudgetSpent } from '@/lib/redux/expense/budgetSlice';
@@ -142,7 +140,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       await dispatch(deleteExpense(id)).unwrap();
       // Silent stats refresh
       dispatch(refreshStats(expenseType));
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete expense');
       // Revert optimistic updates by refetching
       dispatch(fetchExpenses({ 
@@ -177,7 +175,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       if (!response.ok) {
         throw new Error('Failed to delete expenses');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete expenses');
       // Revert optimistic update by refetching
       dispatch(fetchExpenses({ 

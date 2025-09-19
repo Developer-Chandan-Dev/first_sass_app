@@ -139,7 +139,7 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
       toast.dismiss(loadingToast);
 
       if (response.ok) {
-        const savedExpense = await response.json();
+        await response.json();
         toast.success('Budget expense added successfully!');
         reset();
         onOpenChange(false);

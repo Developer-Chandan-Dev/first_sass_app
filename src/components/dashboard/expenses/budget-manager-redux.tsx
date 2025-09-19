@@ -37,7 +37,7 @@ export function BudgetManager() {
     // API call in background
     try {
       await dispatch(updateBudget({ id: budgetId, updates: { isActive } })).unwrap();
-    } catch (error) {
+    } catch {
       toast.error('Failed to update budget');
       // Revert optimistic update
       dispatch(updateBudgetOptimistic({ id: budgetId, updates: { isActive: !isActive } }));

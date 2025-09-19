@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { 
   Wallet, 
   Target, 
-  PieChart, 
   ArrowRight
 } from 'lucide-react';
 import { ExpenseOverviewStats } from '@/components/dashboard/expenses/expense-overview-stats';

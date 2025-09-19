@@ -246,7 +246,7 @@ const expenseSlice = createSlice({
           }
         }
       })
-      .addCase(addExpense.rejected, (state, action) => {
+      .addCase(addExpense.rejected, (state) => {
         // Revert optimistic update on failure
         state.expenses = state.expenses.filter(expense => expense._id && !expense._id.startsWith('temp_'));
         state.freeExpenses = state.freeExpenses.filter(expense => expense._id && !expense._id.startsWith('temp_'));

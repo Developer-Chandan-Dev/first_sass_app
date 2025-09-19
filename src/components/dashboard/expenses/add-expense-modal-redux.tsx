@@ -20,8 +20,6 @@ import { useAppDispatch } from '@/lib/redux/hooks';
 import {
   addExpense,
   addExpenseOptimistic,
-  refreshStats,
-  type ExpenseItem,
 } from '@/lib/redux/expense/expenseSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
 

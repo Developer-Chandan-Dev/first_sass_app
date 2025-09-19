@@ -25,7 +25,7 @@ interface ExpenseFiltersProps {
   isRefreshing?: boolean;
 }
 
-export function ExpenseFilters({ filters, onFiltersChange, categories, onRefresh, expenseType = 'free', isRefreshing = false }: ExpenseFiltersProps) {
+export function ExpenseFilters({ filters, onFiltersChange, categories, onRefresh, isRefreshing = false }: ExpenseFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const periods = [

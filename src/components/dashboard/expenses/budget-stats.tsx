@@ -9,7 +9,7 @@ import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 export function BudgetStats() {
   const dispatch = useAppDispatch();
   const { budget, loading } = useAppSelector(state => state.overview);
-  console.log("Budget : ", budget, 12);
+
   useEffect(() => {
     dispatch(refreshStats('budget'));
   }, [dispatch]);

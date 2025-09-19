@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,8 +20,6 @@ import Link from 'next/link';
 
 export default function BudgetExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
-
 
 
   return (
@@ -53,7 +51,7 @@ export default function BudgetExpensesPage() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
-          <BudgetStats key={refreshTrigger} />
+          <BudgetStats />
           
           <div className="grid gap-4 md:gap-6 lg:grid-cols-2 w-full max-w-full">
             <Card className="min-w-0 overflow-hidden">
