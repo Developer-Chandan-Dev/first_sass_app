@@ -16,9 +16,20 @@ export default function AdminLayout({
   const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  console.log("User: ", user, 18);
-  
+  // Handle mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Ensure component is mounted before rendering 
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -43,30 +54,38 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex">
       {/* Mobile Overlay */}
-      {sidebarOpen && (
+      {isMobile && sidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={() => setSidebarOpen(false)}
         />
       )}
       
       {/* Sidebar */}
-      <AdminSidebar 
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        isCollapsed={sidebarCollapsed}
-      />
+      <div className={cn(
+        isMobile 
+          ? 'fixed inset-y-0 left-0 z-50 transform transition-transform duration-300'
+          : 'relative',
+        isMobile && !sidebarOpen && '-translate-x-full'
+      )}>
+        <AdminSidebar 
+          isCollapsed={sidebarCollapsed}
+          onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+          isMobile={isMobile}
+          onMobileClose={() => setSidebarOpen(false)}
+        />
+      </div>
       
       {/* Main Content */}
-      <div className={cn('transition-all duration-300', sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64')}>
+      <div className="flex-1 flex flex-col">
         <AdminHeader 
           onMenuClick={() => setSidebarOpen(true)}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
           isCollapsed={sidebarCollapsed}
         />
-        <main className="p-2 sm:p-4 lg:p-6 min-h-[calc(100vh-4rem)]">
+        <main className="flex-1 p-2 sm:p-4 lg:p-6">
           {children}
         </main>
       </div>

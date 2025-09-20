@@ -10,14 +10,16 @@ import {
   BarChart3, 
   Receipt, 
   Settings,
-  X
+  ChevronLeft,
+  Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface AdminSidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-  isCollapsed?: boolean;
+  isCollapsed: boolean;
+  onToggle: () => void;
+  isMobile?: boolean;
+  onMobileClose?: () => void;
 }
 
 const navigation = [
@@ -29,88 +31,67 @@ const navigation = [
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
-export function AdminSidebar({ isOpen, onClose, isCollapsed = false }: AdminSidebarProps) {
+export function AdminSidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
+  const handleLinkClick = () => {
+    if (isMobile && onMobileClose) {
+      onMobileClose();
+    }
+  };
+
   return (
-    <>
-      {/* Mobile Sidebar */}
-      <div className={cn(
-        'fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border transform transition-transform duration-300 lg:hidden',
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      )}>
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-lg font-semibold text-foreground">Admin Panel</h2>
+    <div className={cn(
+      'bg-card border-r border-border h-screen transition-all duration-300 flex flex-col',
+      isCollapsed ? 'w-16' : 'w-64',
+      isMobile && 'w-64'
+    )}>
+      <div className="p-3 sm:p-4 flex items-center justify-between flex-shrink-0">
+        {!isCollapsed && (
+          <div className="flex items-center space-x-2 min-w-0">
+            <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 flex-shrink-0" />
+            <h2 className="text-base sm:text-lg font-bold truncate">Admin Panel</h2>
+          </div>
+        )}
+        {!isMobile && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
+            onClick={onToggle}
+            className={cn('h-7 w-7 sm:h-8 sm:w-8 p-0 flex-shrink-0', isCollapsed && 'mx-auto')}
           >
-            <X className="h-5 w-5" />
+            <ChevronLeft className={cn(
+              'h-3 w-3 sm:h-4 sm:w-4 transition-transform',
+              isCollapsed && 'rotate-180'
+            )} />
           </Button>
-        </div>
-        <nav className="mt-4 px-2">
-          {navigation.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  'flex items-center px-3 py-2 mb-1 text-sm font-medium rounded-md transition-colors',
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                )}
-              >
-                <Icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{item.name}</span>
+        )}
+      </div>
+      
+      <nav className="px-2 space-y-1 flex-1 overflow-y-auto">
+        {navigation.map((item) => {
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
+          
+          return (
+            <Button
+              key={item.href}
+              variant={isActive ? 'secondary' : 'ghost'}
+              className={cn(
+                'w-full transition-all h-9 sm:h-10',
+                isCollapsed ? 'justify-center px-2' : 'justify-start px-3',
+                isActive && 'bg-primary/10 text-primary'
+              )}
+              asChild
+            >
+              <Link href={item.href} onClick={handleLinkClick}>
+                <Icon className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')} />
+                {!isCollapsed && <span className="text-sm truncate">{item.name}</span>}
               </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Desktop Sidebar */}
-      <div className={cn(
-        'hidden lg:fixed lg:inset-y-0 lg:flex lg:flex-col transition-all duration-300',
-        isCollapsed ? 'lg:w-16' : 'lg:w-64'
-      )}>
-        <div className="flex flex-col flex-grow bg-card border-r border-border overflow-y-auto">
-          <div className="flex items-center flex-shrink-0 px-4 py-4 border-b border-border">
-            {!isCollapsed && <h2 className="text-lg font-semibold text-foreground">Admin Panel</h2>}
-            {isCollapsed && <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">A</span>
-            </div>}
-          </div>
-          <nav className="mt-4 flex-1 px-2 space-y-1">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={cn(
-                    'group flex items-center text-sm font-medium rounded-md transition-colors',
-                    isCollapsed ? 'px-3 py-3 justify-center' : 'px-3 py-2',
-                    isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  )}
-                  title={isCollapsed ? item.name : undefined}
-                >
-                  <Icon className={cn('h-5 w-5 flex-shrink-0', !isCollapsed && 'mr-3')} />
-                  {!isCollapsed && item.name}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-      </div>
-    </>
+            </Button>
+          );
+        })}
+      </nav>
+    </div>
   );
 }
