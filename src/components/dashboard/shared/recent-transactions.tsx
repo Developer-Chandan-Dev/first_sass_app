@@ -1,50 +1,60 @@
+'use client';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
+const getCategoryIcon = (category: string) => {
+  const icons: Record<string, string> = {
+    'Food & Dining': '🍽️',
+    Transportation: '🚗',
+    Entertainment: '🎬',
+    Groceries: '🛒',
+    Shopping: '🛍️',
+    Healthcare: '🏥',
+    Utilities: '⚡',
+    Education: '📚',
+    Travel: '✈️',
+    Other: '💳',
+  };
+  return icons[category] || '💳';
+};
+
+const formatTimeAgo = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInMs = now.getTime() - date.getTime();
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInHours < 1) return 'Just now';
+  if (diffInHours < 24) return `${diffInHours} hours ago`;
+  if (diffInDays === 1) return '1 day ago';
+  return `${diffInDays} days ago`;
+};
+
 export function RecentTransactions() {
-  const transactions = [
-    {
-      id: 1,
-      merchant: 'Starbucks',
-      category: 'Food & Dining',
-      amount: -4.95,
-      date: '2 hours ago',
-      icon: '☕'
-    },
-    {
-      id: 2,
-      merchant: 'Uber',
-      category: 'Transportation',
-      amount: -12.50,
-      date: '5 hours ago',
-      icon: '🚗'
-    },
-    {
-      id: 3,
-      merchant: 'Netflix',
-      category: 'Entertainment',
-      amount: -15.99,
-      date: '1 day ago',
-      icon: '🎬'
-    },
-    {
-      id: 4,
-      merchant: 'Grocery Store',
-      category: 'Groceries',
-      amount: -89.32,
-      date: '2 days ago',
-      icon: '🛒'
-    },
-    {
-      id: 5,
-      merchant: 'Salary Deposit',
-      category: 'Income',
-      amount: 3500.00,
-      date: '3 days ago',
-      icon: '💰'
-    }
-  ];
+  const { free, budget } = useSelector((state: RootState) => state.overview);
+
+  // Combine and sort recent expenses from both free and budget
+  const allExpenses = [...free.expenses, ...budget.expenses]
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    .slice(0, 5);
+
+  const transactions = allExpenses.map((expense) => ({
+    id: expense._id,
+    merchant: expense.reason || 'Expense',
+    category: expense.category,
+    amount: -expense.amount, // Negative for expenses
+    date: formatTimeAgo(expense.createdAt),
+    icon: getCategoryIcon(expense.category),
+    type: expense.type,
+  }));
 
   return (
     <Card>
@@ -52,29 +62,48 @@ export function RecentTransactions() {
         <CardTitle>Recent Transactions</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {transactions.map((transaction) => (
-          <div key={transaction.id} className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Avatar className="h-9 w-9">
-                <AvatarFallback>{transaction.icon}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-medium">{transaction.merchant}</p>
-                <p className="text-xs text-muted-foreground">{transaction.date}</p>
+        {transactions.length > 0 ? (
+          transactions.map((transaction) => (
+            <div
+              key={transaction.id}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-9 w-9">
+                  <AvatarFallback>{transaction.icon}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">{transaction.merchant}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {transaction.date}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-red-600">
+                  -₹{Math.abs(transaction.amount).toFixed(2)}
+                </p>
+                <div className="flex items-center gap-1">
+                  <Badge variant="secondary" className="text-xs">
+                    {transaction.category}
+                  </Badge>
+                  <Badge
+                    variant={
+                      transaction.type === 'free' ? 'outline' : 'default'
+                    }
+                    className="text-xs"
+                  >
+                    {transaction.type}
+                  </Badge>
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <p className={`text-sm font-medium ${
-                transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {transaction.amount > 0 ? '+' : ''}₹{Math.abs(transaction.amount).toFixed(2)}
-              </p>
-              <Badge variant="secondary" className="text-xs">
-                {transaction.category}
-              </Badge>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            No recent transactions
+          </p>
+        )}
       </CardContent>
     </Card>
   );

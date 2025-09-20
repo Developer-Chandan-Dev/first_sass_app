@@ -22,7 +22,7 @@ async function seed() {
     await connectDB();
 
     // Create default categories
-    const categories = ['Food', 'Travel', 'Shopping', 'Bills', 'Others'];
+    const categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'];
 
     for (const categoryName of categories) {
       await Category.findOneAndUpdate(

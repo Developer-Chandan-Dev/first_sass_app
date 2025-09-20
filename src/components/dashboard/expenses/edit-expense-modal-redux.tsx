@@ -89,7 +89,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
     }
   };
 
-  const categories = ['Food', 'Travel', 'Shopping', 'Bills', 'Others'];
+  const categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

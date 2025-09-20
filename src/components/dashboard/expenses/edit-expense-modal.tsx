@@ -38,7 +38,7 @@ interface EditExpenseModalProps {
 }
 
 export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
-  const [categories, setCategories] = useState<string[]>(['Food', 'Travel', 'Shopping', 'Bills', 'Others']);
+  const [categories, setCategories] = useState<string[]>(['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others']);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
 

@@ -11,7 +11,7 @@ export const categorySchema = z.object({
 
 export const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
-  category: z.enum(['Food', 'Travel', 'Shopping', 'Bills', 'Others']),
+  category: z.enum(['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others']),
   reason: z.string().min(1, 'Reason is required'),
   date: z.string().optional(),
 });

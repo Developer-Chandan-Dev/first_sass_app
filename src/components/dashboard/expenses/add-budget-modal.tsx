@@ -157,7 +157,7 @@ export function AddBudgetModal({ open, onOpenChange, budget, onBudgetSaved }: Ad
             <Input
               id="name"
               {...register('name')}
-              placeholder="e.g., Monthly Food Budget"
+              placeholder="e.g., Monthly Food & Dining Budget"
               className="mt-1"
             />
             {errors.name && (
@@ -185,7 +185,7 @@ export function AddBudgetModal({ open, onOpenChange, budget, onBudgetSaved }: Ad
             <Input
               id="category"
               {...register('category')}
-              placeholder="e.g., Food, Transport"
+              placeholder="e.g., Food & Dining, Transportation"
               className="mt-1"
             />
           </div>

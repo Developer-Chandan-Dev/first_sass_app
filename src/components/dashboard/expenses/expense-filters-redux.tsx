@@ -15,7 +15,7 @@ interface ExpenseFiltersProps {
   expenseType?: 'free' | 'budget';
 }
 
-export function ExpenseFilters({ categories = ['Food', 'Travel', 'Shopping', 'Bills', 'Others'], expenseType = 'free' }: ExpenseFiltersProps) {
+export function ExpenseFilters({ categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'], expenseType = 'free' }: ExpenseFiltersProps) {
   const dispatch = useAppDispatch();
   const { filters, currentPage, pageSize, loading } = useAppSelector(state => state.expenses);
   const [showAdvanced, setShowAdvanced] = useState(false);

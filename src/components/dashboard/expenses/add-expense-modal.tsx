@@ -29,7 +29,7 @@ interface AddExpenseModalProps {
 }
 
 export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onExpenseAdded }: AddExpenseModalProps) {
-  const [categories, setCategories] = useState<string[]>(['Food', 'Travel', 'Shopping', 'Bills', 'Others']);
+  const [categories, setCategories] = useState<string[]>(['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others']);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
 
@@ -52,7 +52,7 @@ export function AddExpenseModal({ open, onOpenChange, expenseType = 'free', onEx
         const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
         if (response.ok) {
           const data = await response.json();
-          const defaultCategories = ['Food', 'Travel', 'Shopping', 'Bills', 'Others'];
+          const defaultCategories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'];
           const allCategories = [...new Set([...defaultCategories, ...data.categories])];
           setCategories(allCategories);
         } else {

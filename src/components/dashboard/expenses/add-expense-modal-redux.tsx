@@ -47,10 +47,15 @@ export function AddExpenseModal({
 }: AddExpenseModalProps) {
   const dispatch = useAppDispatch();
   const [categories, setCategories] = useState<string[]>([
-    'Food',
-    'Travel',
+    'Food & Dining',
+    'Transportation',
+    'Entertainment',
+    'Groceries',
     'Shopping',
-    'Bills',
+    'Healthcare',
+    'Utilities',
+    'Education',
+    'Travel',
     'Others',
   ]);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
@@ -78,11 +83,7 @@ export function AddExpenseModal({
         if (response.ok) {
           const data = await response.json();
           const defaultCategories = [
-            'Food',
-            'Travel',
-            'Shopping',
-            'Bills',
-            'Others',
+            'Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'
           ];
           const allCategories = [
             ...new Set([...defaultCategories, ...data.categories]),

@@ -89,7 +89,7 @@ src/
 - Loading states
 
 ### **✅ Custom Categories**
-- Default categories: Food, Travel, Shopping, Bills, Others
+- Default categories: Food & Dining, Travel, Shopping, Bills, Others
 - Add custom categories via modal
 - Dynamic category loading
 - Category-based filtering

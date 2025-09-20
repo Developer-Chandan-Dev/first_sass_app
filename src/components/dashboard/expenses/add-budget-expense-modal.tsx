@@ -52,7 +52,7 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories] = useState<string[]>(['Food', 'Transport', 'Shopping', 'Bills', 'Others']);
+  const [categories] = useState<string[]>(['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others']);
 
   const {
     register,

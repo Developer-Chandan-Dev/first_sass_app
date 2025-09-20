@@ -1,39 +1,49 @@
+'use client';
+
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Target, Calendar } from 'lucide-react';
 
 export function StatsCards() {
+  const { free, budget } = useSelector((state: RootState) => state.overview);
+  
+  const totalExpenses = free.totalSpent + budget.totalSpent;
+  const totalTransactions = free.totalExpenses + budget.totalExpenses;
+  const budgetUsagePercent = budget.totalBudget > 0 ? ((budget.totalSpent / budget.totalBudget) * 100) : 0;
+  
   const stats = [
     {
       title: 'Total Expenses',
-      value: '₹12,426',
-      change: '+12.5%',
-      trend: 'up',
+      value: `₹${totalExpenses.toLocaleString()}`,
+      change: free.monthlyChange > 0 ? `+${free.monthlyChange.toFixed(1)}%` : `${free.monthlyChange.toFixed(1)}%`,
+      trend: free.monthlyChange >= 0 ? 'up' : 'down',
       icon: DollarSign,
       description: 'vs last month'
     },
     {
-      title: 'Monthly Budget',
-      value: '₹15,000',
-      change: '82.8%',
-      trend: 'neutral',
+      title: 'Budget Usage',
+      value: `₹${budget.totalBudget.toLocaleString()}`,
+      change: `${budgetUsagePercent.toFixed(1)}%`,
+      trend: budgetUsagePercent > 80 ? 'down' : 'up',
       icon: Target,
       description: 'used this month'
     },
     {
-      title: 'Active Cards',
-      value: '4',
-      change: '+1',
+      title: 'Categories',
+      value: (free.categoryBreakdown.length + budget.categoryBreakdown.length).toString(),
+      change: `${free.categoryBreakdown.length} free`,
       trend: 'up',
       icon: CreditCard,
-      description: 'new card added'
+      description: `${budget.categoryBreakdown.length} budget`
     },
     {
-      title: 'This Month',
-      value: '156',
-      change: '+23',
-      trend: 'up',
+      title: 'Transactions',
+      value: totalTransactions.toString(),
+      change: budget.expenseChange > 0 ? `+${budget.expenseChange}` : budget.expenseChange.toString(),
+      trend: budget.expenseChange >= 0 ? 'up' : 'down',
       icon: Calendar,
-      description: 'transactions'
+      description: 'this month'
     }
   ];
 
@@ -41,7 +51,7 @@ export function StatsCards() {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => {
         const Icon = stat.icon;
-        const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
+        const TrendIcon = stat.trend === 'up' ? TrendingUp : stat.trend === 'down' ? TrendingDown : TrendingUp;
         
         return (
           <Card key={stat.title}>
@@ -55,9 +65,9 @@ export function StatsCards() {
               <div className="text-2xl font-bold">{stat.value}</div>
               <div className="flex items-center text-xs text-muted-foreground">
                 <TrendIcon className={`mr-1 h-3 w-3 ${
-                  stat.trend === 'up' ? 'text-green-500' : 'text-red-500'
+                  stat.trend === 'up' ? 'text-green-500' : stat.trend === 'down' ? 'text-red-500' : 'text-blue-500'
                 }`} />
-                <span className={stat.trend === 'up' ? 'text-green-500' : 'text-red-500'}>
+                <span className={stat.trend === 'up' ? 'text-green-500' : stat.trend === 'down' ? 'text-red-500' : 'text-blue-500'}>
                   {stat.change}
                 </span>
                 <span className="ml-1">{stat.description}</span>
