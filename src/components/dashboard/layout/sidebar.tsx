@@ -14,12 +14,14 @@ import {
   Target,
   Bell,
   ChevronLeft,
-  Zap
+  Zap,
+  DollarSign
 } from 'lucide-react';
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
   { icon: Receipt, label: 'Expenses', href: '/dashboard/expenses' },
+  { icon: DollarSign, label: 'Income', href: '/dashboard/income' },
   { icon: TrendingUp, label: 'Analytics', href: '/dashboard/analytics' },
   { icon: PieChart, label: 'Categories', href: '/dashboard/categories' },
   { icon: Target, label: 'Budgets', href: '/dashboard/budgets' },
