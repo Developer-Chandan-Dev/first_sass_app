@@ -118,7 +118,7 @@ export function IncomeTable() {
 
   const handleExportPDF = async () => {
     try {
-      const { jsPDF } = await import('jspdf');
+      const jsPDF = (await import('jspdf')).default;
       const doc = new jsPDF();
       
       // Header
