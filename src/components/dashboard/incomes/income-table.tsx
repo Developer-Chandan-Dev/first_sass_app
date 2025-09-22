@@ -14,9 +14,10 @@ import { Input } from '@/components/ui/input';
 import { Edit, Trash2, ChevronLeft, ChevronRight, MoreHorizontal, ArrowUpDown, ArrowUp, ArrowDown, Download, Copy, Search, X } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { EditIncomeModal } from './edit-income-modal';
+import { PDFExportModal, PDFExportOptions } from './pdf-export-modal';
 import { toast } from 'sonner';
 
-type SortField = 'source' | 'category' | 'amount' | 'date';
+type SortField = 'source' | 'category' | 'amount' | 'date' | 'description' | 'isRecurring' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
 
 export function IncomeTable() {
@@ -31,6 +32,7 @@ export function IncomeTable() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSearchTerm, setActiveSearchTerm] = useState('');
+  const [showPDFModal, setShowPDFModal] = useState(false);
 
   // Fetch incomes when filters or pagination changes
   useEffect(() => {
@@ -103,7 +105,8 @@ export function IncomeTable() {
       Date: formatDate(income.date),
       Description: income.description || '',
       Recurring: income.isRecurring ? 'Yes' : 'No',
-      Frequency: income.frequency || 'N/A'
+      Frequency: income.frequency || 'N/A',
+      Created: formatDate(income.createdAt)
     }));
     
     const csv = [Object.keys(csvData[0]).join(','), ...csvData.map(row => Object.values(row).map(val => `"${val}"`).join(','))].join('\n');
@@ -116,43 +119,132 @@ export function IncomeTable() {
     toast.success('Incomes exported to CSV');
   };
 
-  const handleExportPDF = async () => {
+  const handleExportPDF = async (options: PDFExportOptions) => {
     try {
       const jsPDF = (await import('jspdf')).default;
-      const doc = new jsPDF();
-      
-      // Header
-      doc.setFontSize(20);
-      doc.text('Income Report', 20, 20);
-      doc.setFontSize(12);
-      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 30);
-      doc.text(`Total Incomes: ${sortedIncomes.length}`, 20, 40);
-      doc.text(`Total Amount: ₹${sortedIncomes.reduce((sum, income) => sum + income.amount, 0).toLocaleString()}`, 20, 50);
-      
-      // Table headers
-      let yPos = 70;
-      doc.setFontSize(10);
-      doc.text('Source', 20, yPos);
-      doc.text('Category', 70, yPos);
-      doc.text('Amount', 120, yPos);
-      doc.text('Date', 160, yPos);
-      
-      // Table data
-      sortedIncomes.forEach((income) => {
-        yPos += 10;
-        if (yPos > 280) {
-          doc.addPage();
-          yPos = 20;
-        }
-        
-        doc.text(income.source.substring(0, 20), 20, yPos);
-        doc.text(income.category, 70, yPos);
-        doc.text(`₹${income.amount.toLocaleString()}`, 120, yPos);
-        doc.text(formatDate(income.date), 160, yPos);
+      const doc = new jsPDF({
+        orientation: options.orientation,
+        unit: 'mm',
+        format: 'a4'
       });
       
-      doc.save(`incomes-${new Date().toISOString().split('T')[0]}.pdf`);
-      toast.success('Incomes exported to PDF');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 15;
+      
+      // Font sizes
+      const fontSizes = {
+        small: { title: 16, subtitle: 10, header: 8, body: 7 },
+        medium: { title: 18, subtitle: 11, header: 9, body: 8 },
+        large: { title: 20, subtitle: 12, header: 10, body: 9 }
+      };
+      const sizes = fontSizes[options.fontSize];
+      
+      let yPos = margin;
+      
+      // Title
+      doc.setFontSize(sizes.title);
+      doc.setFont('helvetica', 'bold');
+      doc.text(options.title, margin, yPos);
+      yPos += 10;
+      
+      // Subtitle
+      if (options.subtitle) {
+        doc.setFontSize(sizes.subtitle);
+        doc.setFont('helvetica', 'normal');
+        const subtitleLines = doc.splitTextToSize(options.subtitle, pageWidth - 2 * margin);
+        doc.text(subtitleLines, margin, yPos);
+        yPos += subtitleLines.length * 5 + 5;
+      }
+      
+      // Summary
+      doc.setFontSize(sizes.subtitle);
+      doc.text(`Total Entries: ${sortedIncomes.length}`, margin, yPos);
+      doc.text(`Total Amount: ₹${sortedIncomes.reduce((sum, income) => sum + income.amount, 0).toLocaleString()}`, margin + 60, yPos);
+      yPos += 15;
+      
+      // Table setup
+      const colWidths = options.orientation === 'landscape' 
+        ? [40, 25, 25, 30, ...(options.includeDescription ? [35] : []), ...(options.includeRecurring ? [25] : []), ...(options.includeCreatedDate ? [25] : [])]
+        : [35, 20, 20, 25, ...(options.includeDescription ? [30] : []), ...(options.includeRecurring ? [20] : []), ...(options.includeCreatedDate ? [20] : [])];
+      
+      let xPos = margin;
+      
+      // Table headers
+      doc.setFontSize(sizes.header);
+      doc.setFont('helvetica', 'bold');
+      doc.setFillColor(240, 240, 240);
+      doc.rect(margin, yPos - 5, pageWidth - 2 * margin, 8, 'F');
+      
+      const headers = ['Source', 'Category', 'Amount', 'Date'];
+      if (options.includeDescription) headers.push('Description');
+      if (options.includeRecurring) headers.push('Recurring');
+      if (options.includeCreatedDate) headers.push('Created');
+      
+      headers.forEach((header, i) => {
+        doc.text(header, xPos, yPos);
+        xPos += colWidths[i];
+      });
+      yPos += 10;
+      
+      // Table data
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(sizes.body);
+      
+      sortedIncomes.forEach((income, index) => {
+        if (yPos > pageHeight - 20) {
+          doc.addPage();
+          yPos = margin;
+        }
+        
+        xPos = margin;
+        const rowData = [
+          income.source.substring(0, 15),
+          income.category,
+          `₹${income.amount.toLocaleString()}`,
+          options.dateFormat === 'long' 
+            ? new Date(income.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+            : formatDate(income.date)
+        ];
+        
+        if (options.includeDescription) {
+          rowData.push((income.description || '-').substring(0, 20));
+        }
+        if (options.includeRecurring) {
+          rowData.push(income.isRecurring ? `Yes${income.frequency ? ` (${income.frequency})` : ''}` : 'No');
+        }
+        if (options.includeCreatedDate) {
+          rowData.push(formatDate(income.createdAt));
+        }
+        
+        // Alternate row background
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(margin, yPos - 3, pageWidth - 2 * margin, 6, 'F');
+        }
+        
+        rowData.forEach((data, i) => {
+          if (i === 2) { // Amount column - right align
+            doc.text(data, xPos + colWidths[i] - 5, yPos, { align: 'right' });
+          } else {
+            doc.text(data, xPos, yPos);
+          }
+          xPos += colWidths[i];
+        });
+        yPos += 6;
+      });
+      
+      // Footer - Add page numbers
+      const totalPages = doc.internal.pages.length - 1;
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+      }
+      
+      doc.save(`${options.title.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success('PDF exported successfully');
     } catch {
       toast.error('Failed to export PDF');
     }
@@ -204,15 +296,18 @@ export function IncomeTable() {
 
   const sortedIncomes = useMemo(() => {
     return [...incomes].sort((a, b) => {
-      let aVal: string | number | Date = a[sortField];
-      let bVal: string | number | Date = b[sortField];
+      let aVal: string | number | Date | boolean = a[sortField] ?? '';
+      let bVal: string | number | Date | boolean = b[sortField] ?? '';
       
       if (sortField === 'amount') {
         aVal = Number(aVal);
         bVal = Number(bVal);
-      } else if (sortField === 'date') {
-        aVal = new Date(aVal);
-        bVal = new Date(bVal);
+      } else if (sortField === 'date' || sortField === 'createdAt') {
+        aVal = new Date(aVal as string);
+        bVal = new Date(bVal as string);
+      } else if (sortField === 'isRecurring') {
+        aVal = aVal ? 1 : 0;
+        bVal = bVal ? 1 : 0;
       } else {
         aVal = String(aVal).toLowerCase();
         bVal = String(bVal).toLowerCase();
@@ -231,81 +326,86 @@ export function IncomeTable() {
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <div className="flex flex-col gap-4">
-          <CardTitle className="text-lg sm:text-xl">Incomes ({totalCount})</CardTitle>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1 flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search incomes..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={handleSearchKeyPress}
-                  className="pl-8 w-full"
-                />
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSearch}
-                className="px-3"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
-              {searchTerm && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClearSearch}
-                  className="px-3"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
+      <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6">
+        <div className="flex flex-col gap-2 sm:gap-4">
+          <CardTitle className="text-base sm:text-lg lg:text-xl">Incomes ({totalCount})</CardTitle>
+          
+          {/* Search Row */}
+          <div className="flex gap-1 sm:gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyPress={handleSearchKeyPress}
+                className="pl-7 sm:pl-8 h-8 sm:h-9 text-xs sm:text-sm"
+              />
             </div>
-            {selectedIncomes.size > 0 && (
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={handleCopySelected} className="text-xs">
-                  <Copy className="h-3 w-3 mr-1" />
-                  Copy ({selectedIncomes.size})
-                </Button>
-                <Button size="sm" variant="destructive" onClick={handleBulkDelete} className="text-xs">
-                  <Trash2 className="h-3 w-3 mr-1" />
-                  Delete ({selectedIncomes.size})
-                </Button>
-              </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSearch}
+              className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 p-0 sm:p-2"
+            >
+              <Search className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline ml-1">Search</span>
+            </Button>
+            {searchTerm && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearSearch}
+                className="h-8 w-8 sm:h-9 sm:w-auto sm:px-3 p-0 sm:p-2"
+              >
+                <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline ml-1">Clear</span>
+              </Button>
             )}
           </div>
-          <div className="flex justify-between items-center">
-            <div className="flex gap-2">
+
+          {/* Action Buttons Row */}
+          <div className="flex flex-col xs:flex-row gap-2 justify-between">
+            <div className="flex gap-1 sm:gap-2">
+              {selectedIncomes.size > 0 && (
+                <>
+                  <Button size="sm" variant="outline" onClick={handleCopySelected} className="h-7 px-2 text-xs flex-1 xs:flex-none">
+                    <Copy className="h-3 w-3 mr-1" />
+                    Copy ({selectedIncomes.size})
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={handleBulkDelete} className="h-7 px-2 text-xs flex-1 xs:flex-none">
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Delete ({selectedIncomes.size})
+                  </Button>
+                </>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="sm" variant="outline" className="text-xs">
+                  <Button size="sm" variant="outline" className="h-7 px-2 text-xs">
                     <Download className="h-3 w-3 mr-1" />
-                    Export
+                    <span className="hidden xs:inline">Export</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={handleExportCSV} className="text-xs">
                     Export CSV
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleExportPDF} className="text-xs">
+                  <DropdownMenuItem onClick={() => setShowPDFModal(true)} className="text-xs">
                     Export PDF
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            
             <Select value={pageSize.toString()} onValueChange={(value) => dispatch(setPageSize(Number(value)))}>
-              <SelectTrigger className="h-8 w-24 text-xs">
+              <SelectTrigger className="h-7 w-full xs:w-20 sm:w-24 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="5">5 per page</SelectItem>
-                <SelectItem value="10">10 per page</SelectItem>
-                <SelectItem value="25">25 per page</SelectItem>
-                <SelectItem value="50">50 per page</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -315,8 +415,8 @@ export function IncomeTable() {
 
       {/* Table */}
       <div className="rounded-md border overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400" style={{ scrollbarWidth: 'thin' }}>
+          <Table className="min-w-[900px]">
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="w-8 px-2">
@@ -331,19 +431,34 @@ export function IncomeTable() {
                     Source {getSortIcon('source')}
                   </Button>
                 </TableHead>
-                <TableHead className="hidden xs:table-cell min-w-[80px] px-2">
+                <TableHead className="min-w-[100px] px-2">
                   <Button variant="ghost" size="sm" onClick={() => handleSort('category')} className="h-6 px-1 text-xs font-medium">
                     Category {getSortIcon('category')}
                   </Button>
                 </TableHead>
-                <TableHead className="text-right min-w-[80px] px-2">
+                <TableHead className="text-right min-w-[90px] px-2">
                   <Button variant="ghost" size="sm" onClick={() => handleSort('amount')} className="h-6 px-1 text-xs font-medium">
                     Amount {getSortIcon('amount')}
                   </Button>
                 </TableHead>
-                <TableHead className="hidden sm:table-cell min-w-[80px] px-2">
+                <TableHead className="min-w-[120px] px-2">
+                  <Button variant="ghost" size="sm" onClick={() => handleSort('description')} className="h-6 px-1 text-xs font-medium">
+                    Description {getSortIcon('description')}
+                  </Button>
+                </TableHead>
+                <TableHead className="min-w-[80px] px-2">
+                  <Button variant="ghost" size="sm" onClick={() => handleSort('isRecurring')} className="h-6 px-1 text-xs font-medium">
+                    Recurring {getSortIcon('isRecurring')}
+                  </Button>
+                </TableHead>
+                <TableHead className="min-w-[90px] px-2">
                   <Button variant="ghost" size="sm" onClick={() => handleSort('date')} className="h-6 px-1 text-xs font-medium">
                     Date {getSortIcon('date')}
+                  </Button>
+                </TableHead>
+                <TableHead className="min-w-[90px] px-2">
+                  <Button variant="ghost" size="sm" onClick={() => handleSort('createdAt')} className="h-6 px-1 text-xs font-medium">
+                    Created {getSortIcon('createdAt')}
                   </Button>
                 </TableHead>
                 <TableHead className="w-8 px-1"></TableHead>
@@ -356,15 +471,18 @@ export function IncomeTable() {
                   <TableRow key={i}>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    <TableCell className="hidden xs:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    <TableCell className="hidden sm:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                   </TableRow>
                 ))
               ) : sortedIncomes.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground text-sm">
                     No incomes found
                   </TableCell>
                 </TableRow>
@@ -379,45 +497,38 @@ export function IncomeTable() {
                       />
                     </TableCell>
                     <TableCell className="px-2">
-                      <div className="min-w-0">
-                        <p className="truncate text-xs sm:text-sm font-medium">{income.source}</p>
-                        {income.description && (
-                          <p className="text-xs text-muted-foreground truncate mt-0.5">
-                            {income.description}
-                          </p>
-                        )}
-                        <div className="xs:hidden mt-1 flex flex-wrap gap-1">
-                          <Badge className={`text-xs h-4 px-1 ${getCategoryColor(income.category)}`}>
-                            {income.category}
-                          </Badge>
-                          {income.isRecurring && (
-                            <Badge variant="outline" className="text-xs h-4 px-1">
-                              {income.frequency}
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="sm:hidden mt-1 text-xs text-muted-foreground">
-                          {formatDate(income.date)}
-                        </div>
-                      </div>
+                      <p className="truncate text-xs sm:text-sm font-medium">{income.source}</p>
                     </TableCell>
-                    <TableCell className="hidden xs:table-cell px-2">
-                      <div className="flex flex-wrap gap-1">
-                        <Badge className={`text-xs h-4 px-1 ${getCategoryColor(income.category)}`}>
-                          {income.category}
+                    <TableCell className="px-2">
+                      <Badge className={`text-xs h-4 px-1 ${getCategoryColor(income.category)}`}>
+                        {income.category}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right font-medium text-green-600 px-2">
+                      <span className="text-xs sm:text-sm">+₹{income.amount.toLocaleString()}</span>
+                    </TableCell>
+                    <TableCell className="px-2">
+                      <p className="text-xs text-muted-foreground truncate max-w-[120px]">
+                        {income.description || '-'}
+                      </p>
+                    </TableCell>
+                    <TableCell className="px-2">
+                      <div className="flex items-center gap-1">
+                        <Badge variant={income.isRecurring ? 'default' : 'secondary'} className="text-xs h-4 px-1">
+                          {income.isRecurring ? 'Yes' : 'No'}
                         </Badge>
-                        {income.isRecurring && (
+                        {income.isRecurring && income.frequency && (
                           <Badge variant="outline" className="text-xs h-4 px-1">
                             {income.frequency}
                           </Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right font-medium text-green-600 px-2">
-                      <span className="text-xs sm:text-sm">+₹{income.amount.toLocaleString()}</span>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell text-muted-foreground px-2">
+                    <TableCell className="text-muted-foreground px-2">
                       <span className="text-xs">{formatDate(income.date)}</span>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground px-2">
+                      <span className="text-xs">{formatDate(income.createdAt)}</span>
                     </TableCell>
                     <TableCell className="px-1">
                       <DropdownMenu>
@@ -487,6 +598,13 @@ export function IncomeTable() {
           onClose={() => setEditingIncome(null)}
         />
       )}
+      
+      <PDFExportModal
+        isOpen={showPDFModal}
+        onClose={() => setShowPDFModal(false)}
+        incomes={sortedIncomes}
+        onExport={handleExportPDF}
+      />
       </CardContent>
     </Card>
   );

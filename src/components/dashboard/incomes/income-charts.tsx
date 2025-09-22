@@ -161,30 +161,32 @@ export function IncomeCharts() {
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4">
         {/* Income Trend Chart */}
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Income by {period.charAt(0).toUpperCase() + period.slice(1)}
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-1 sm:gap-2">
+              <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="truncate">Income by {period.charAt(0).toUpperCase() + period.slice(1)}</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[250px] w-full">
+          <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
+            <div className="h-[180px] sm:h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="period" 
-                    fontSize={12}
-                    tick={{ fontSize: 10 }}
+                    fontSize={10}
+                    tick={{ fontSize: 8 }}
                     interval="preserveStartEnd"
+                    height={40}
                   />
                   <YAxis 
-                    fontSize={12}
-                    tick={{ fontSize: 10 }}
+                    fontSize={10}
+                    tick={{ fontSize: 8 }}
                     tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                    width={40}
                   />
                   <Tooltip 
                     formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Income']}
@@ -200,14 +202,14 @@ export function IncomeCharts() {
 
         {/* Category Distribution */}
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <PieChartIcon className="h-4 w-4" />
-              Income by Category
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-1 sm:gap-2">
+              <PieChartIcon className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="truncate">Income by Category</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[250px] w-full">
+          <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
+            <div className="h-[180px] sm:h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -230,15 +232,15 @@ export function IncomeCharts() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              {categoryData.slice(0, 6).map((item, index) => (
-                <div key={item.category} className="flex items-center gap-2 text-xs">
+            <div className="grid grid-cols-1 xs:grid-cols-2 gap-1 sm:gap-2 mt-2 sm:mt-4">
+              {categoryData.slice(0, 4).map((item, index) => (
+                <div key={item.category} className="flex items-center gap-1 sm:gap-2 text-xs">
                   <div 
-                    className="w-3 h-3 rounded-full" 
+                    className="w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0" 
                     style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   />
-                  <span className="truncate">{item.category}</span>
-                  <span className="font-medium">₹{(item.amount / 1000).toFixed(0)}k</span>
+                  <span className="truncate text-xs">{item.category}</span>
+                  <span className="font-medium text-xs whitespace-nowrap">₹{(item.amount / 1000).toFixed(0)}k</span>
                 </div>
               ))}
             </div>
@@ -247,26 +249,28 @@ export function IncomeCharts() {
 
         {/* Income Trend Line */}
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              6-Month Trend
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-1 sm:gap-2">
+              <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="truncate">6-Month Trend</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-[250px] w-full">
+          <CardContent className="px-2 sm:px-6 pb-3 sm:pb-6">
+            <div className="h-[180px] sm:h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={trendData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="month" 
-                    fontSize={12}
-                    tick={{ fontSize: 10 }}
+                    fontSize={10}
+                    tick={{ fontSize: 8 }}
+                    height={40}
                   />
                   <YAxis 
-                    fontSize={12}
-                    tick={{ fontSize: 10 }}
+                    fontSize={10}
+                    tick={{ fontSize: 8 }}
                     tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                    width={40}
                   />
                   <Tooltip 
                     formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Income']}
@@ -287,41 +291,41 @@ export function IncomeCharts() {
 
         {/* Summary Stats */}
         <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Activity className="h-4 w-4" />
-              Income Summary
+          <CardHeader className="pb-1 sm:pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+            <CardTitle className="text-sm sm:text-base flex items-center gap-1 sm:gap-2">
+              <Activity className="h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="truncate">Income Summary</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
+          <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                <div className="text-center p-2 sm:p-3 bg-green-50 rounded-lg">
+                  <div className="text-lg sm:text-2xl font-bold text-green-600">
                     ₹{(totalIncome / 1000).toFixed(0)}k
                   </div>
                   <div className="text-xs text-muted-foreground">Total Income</div>
                 </div>
-                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">
+                <div className="text-center p-2 sm:p-3 bg-blue-50 rounded-lg">
+                  <div className="text-lg sm:text-2xl font-bold text-blue-600">
                     ₹{(avgIncome / 1000).toFixed(0)}k
                   </div>
                   <div className="text-xs text-muted-foreground">Avg per Entry</div>
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <div className="text-sm font-medium">Top Categories</div>
+              <div className="space-y-1 sm:space-y-2">
+                <div className="text-xs sm:text-sm font-medium">Top Categories</div>
                 {categoryData.slice(0, 3).map((item, index) => (
                   <div key={item.category} className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-1 sm:gap-2 min-w-0">
                       <div 
-                        className="w-2 h-2 rounded-full" 
+                        className="w-2 h-2 rounded-full flex-shrink-0" 
                         style={{ backgroundColor: COLORS[index] }}
                       />
-                      {item.category}
+                      <span className="truncate">{item.category}</span>
                     </span>
-                    <span className="font-medium">
+                    <span className="font-medium whitespace-nowrap ml-2">
                       {((item.amount / totalIncome) * 100).toFixed(1)}%
                     </span>
                   </div>
