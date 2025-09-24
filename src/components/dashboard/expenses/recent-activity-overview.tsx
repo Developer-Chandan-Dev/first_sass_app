@@ -145,9 +145,9 @@ export function RecentActivityOverview() {
 
   return (
     <div className="space-y-3 w-full max-w-full overflow-hidden">
-      {allExpenses.map((expense) => (
+      {allExpenses.map((expense, index) => (
         <div
-          key={expense._id}
+          key={`${expense._id}-${index}-${expense.createdAt}`}
           className="flex items-center gap-2 w-full min-w-0"
         >
           <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
