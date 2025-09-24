@@ -29,9 +29,15 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
+  Download,
+  FileText,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { EditExpenseModal } from './edit-expense-modal-redux';
+import { ExpensePDFExportModal } from './expense-pdf-export-modal';
 import { toast } from 'sonner';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { 
@@ -41,6 +47,7 @@ import {
   setCurrentPage,
   setPageSize,
   setExpenseType,
+  setFilters,
   type ExpenseItem,
 } from '@/lib/redux/expense/expenseSlice';
 import { updateStatsOptimistic, refreshStats } from '@/lib/redux/expense/overviewSlice';
@@ -67,6 +74,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
   const [activeSearchTerm, setActiveSearchTerm] = useState('');
   const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPDFExportOpen, setIsPDFExportOpen] = useState(false);
 
   // Set expense type when component mounts or type changes
   useEffect(() => {
@@ -208,6 +216,46 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
     setIsEditModalOpen(true);
   };
 
+  const handleSort = (column: string) => {
+    const newSortOrder = filters.sortBy === column && filters.sortOrder === 'asc' ? 'desc' : 'asc';
+    dispatch(setFilters({ sortBy: column, sortOrder: newSortOrder }));
+  };
+
+  const getSortIcon = (column: string) => {
+    if (filters.sortBy !== column) return <ArrowUpDown className="h-3 w-3" />;
+    return filters.sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />;
+  };
+
+  const handleCSVExport = () => {
+    const headers = ['Date', 'Description', 'Category', ...(expenseType === 'budget' ? ['Budget Name'] : []), 'Amount', 'Recurring', 'Frequency', 'Created Date'];
+    const csvData = expenses.map(expense => [
+      new Date(expense.date).toLocaleDateString(),
+      expense.reason,
+      expense.category,
+      ...(expenseType === 'budget' ? [expense.budgetName || ''] : []),
+      expense.amount,
+      expense.isRecurring ? 'Yes' : 'No',
+      expense.frequency || '',
+      new Date(expense.createdAt).toLocaleDateString()
+    ]);
+    
+    const csvContent = [headers, ...csvData]
+      .map(row => row.map(field => `"${field}"`).join(','))
+      .join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `expenses-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success('CSV exported successfully!');
+  };
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -244,11 +292,31 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                 </Button>
               )}
             </div>
-            {selectedRows.length > 0 && (
-              <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="w-full sm:w-auto">
-                Delete ({selectedRows.length})
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {selectedRows.length > 0 && (
+                <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="w-full sm:w-auto">
+                  Delete ({selectedRows.length})
+                </Button>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                    <Download className="h-4 w-4 mr-2" />
+                    Export
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleCSVExport}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Export CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setIsPDFExportOpen(true)}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Export PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -264,10 +332,38 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                       onCheckedChange={toggleAllRows}
                     />
                   </TableHead>
-                  <TableHead className="min-w-[80px]">Date</TableHead>
-                  <TableHead className="min-w-[120px]">Description</TableHead>
-                  <TableHead className="hidden sm:table-cell min-w-[100px]">Category</TableHead>
-                  <TableHead className="text-right min-w-[80px]">Amount</TableHead>
+                  <TableHead className="min-w-[80px]">
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('date')} className="h-auto p-0 font-medium">
+                      Date {getSortIcon('date')}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="min-w-[120px]">
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('reason')} className="h-auto p-0 font-medium">
+                      Description {getSortIcon('reason')}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="hidden sm:table-cell min-w-[100px]">
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('category')} className="h-auto p-0 font-medium">
+                      Category {getSortIcon('category')}
+                    </Button>
+                  </TableHead>
+                  {expenseType === 'budget' && (
+                    <TableHead className="hidden lg:table-cell min-w-[100px]">
+                      <Button variant="ghost" size="sm" onClick={() => handleSort('budgetName')} className="h-auto p-0 font-medium">
+                        Budget {getSortIcon('budgetName')}
+                      </Button>
+                    </TableHead>
+                  )}
+                  <TableHead className="hidden md:table-cell min-w-[80px]">
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('isRecurring')} className="h-auto p-0 font-medium">
+                      Recurring {getSortIcon('isRecurring')}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="text-right min-w-[80px]">
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('amount')} className="h-auto p-0 font-medium">
+                      Amount {getSortIcon('amount')}
+                    </Button>
+                  </TableHead>
                   <TableHead className="w-8 sm:w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -280,13 +376,17 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell className="hidden sm:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    {expenseType === 'budget' && (
+                      <TableCell className="hidden lg:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
+                    )}
+                    <TableCell className="hidden md:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                   </TableRow>
                 ))
               ) : expenses.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={expenseType === 'budget' ? 8 : 7} className="text-center py-8 text-muted-foreground">
                     No expenses found
                   </TableCell>
                 </TableRow>
@@ -315,6 +415,22 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     </TableCell>
                     <TableCell className="hidden sm:table-cell py-2">
                       <Badge variant="secondary" className="text-xs">{expense.category}</Badge>
+                    </TableCell>
+                    {expenseType === 'budget' && (
+                      <TableCell className="hidden lg:table-cell py-2">
+                        <Badge variant="outline" className="text-xs">
+                          {expense.budgetName || 'Unknown'}
+                        </Badge>
+                      </TableCell>
+                    )}
+                    <TableCell className="hidden md:table-cell py-2">
+                      {expense.isRecurring ? (
+                        <Badge variant="outline" className="text-xs">
+                          {expense.frequency || 'Recurring'}
+                        </Badge>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">One-time</span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right font-medium py-2 text-sm">
                       ₹{expense.amount.toLocaleString()}
@@ -423,6 +539,12 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         expense={editingExpense}
+      />
+      
+      <ExpensePDFExportModal
+        isOpen={isPDFExportOpen}
+        onClose={() => setIsPDFExportOpen(false)}
+        expenses={expenses}
       />
     </Card>
   );

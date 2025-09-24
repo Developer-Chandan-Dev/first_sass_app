@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAppSelector } from '@/lib/redux/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,6 +21,7 @@ import Link from 'next/link';
 
 export default function BudgetExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { budgets } = useAppSelector(state => state.budgets);
 
 
   return (
@@ -83,7 +85,7 @@ export default function BudgetExpensesPage() {
         </TabsContent>
 
         <TabsContent value="expenses" className="space-y-4 md:space-y-6">
-          <ExpenseFilters expenseType="budget" />
+          <ExpenseFilters expenseType="budget" budgets={budgets} />
           <AdvancedExpensesTable expenseType="budget" />
         </TabsContent>
       </Tabs>

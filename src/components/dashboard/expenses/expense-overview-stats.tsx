@@ -1,20 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, Calendar, PieChart, BarChart3 } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useAppSelector } from '@/lib/redux/hooks';
 
 export function ExpenseOverviewStats() {
-  const dispatch = useAppDispatch();
-  const { free, budget } = useAppSelector(state => state.overview);
-
-  useEffect(() => {
-    // Fetch stats for both expense types
-    dispatch(refreshStats('free'));
-    dispatch(refreshStats('budget'));
-  }, [dispatch]);
+  const { free, budget, loading } = useAppSelector(state => state.overview);
 
   // Calculate combined stats from Redux state
   const totalAmount = free.totalSpent + budget.totalSpent;
@@ -56,6 +47,25 @@ export function ExpenseOverviewStats() {
       description: 'last 30 days'
     }
   ];
+
+  if (loading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+              <div className="h-4 w-4 bg-muted rounded animate-pulse" />
+            </CardHeader>
+            <CardContent>
+              <div className="h-8 w-24 bg-muted rounded animate-pulse mb-2" />
+              <div className="h-3 w-32 bg-muted rounded animate-pulse" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

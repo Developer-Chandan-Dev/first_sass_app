@@ -10,6 +10,8 @@ export interface IExpense {
   budgetId?: string;
   incomeId?: string;
   date: Date;
+  isRecurring: boolean;
+  frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -31,6 +33,11 @@ const ExpenseSchema = new mongoose.Schema({
   budgetId: { type: String, index: true }, // Reference to budget for budget expenses
   incomeId: { type: String, index: true }, // Reference to income source
   date: { type: Date, default: Date.now },
+  isRecurring: { type: Boolean, default: false },
+  frequency: {
+    type: String,
+    enum: ['daily', 'weekly', 'monthly', 'yearly'],
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

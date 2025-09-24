@@ -4,6 +4,7 @@ import connectDB from '@/lib/mongoose';
 import Expense from '@/models/Expense';
 import User from '@/models/User';
 
+
 export async function POST(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
     await connectDB();
     const body = await request.json();
     
-    const { amount, category, reason, date, type = 'free', budgetId } = body;
+    const { amount, category, reason, date, type = 'free', budgetId, isRecurring = false, frequency } = body;
 
     if (!amount || !category || !reason) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -42,6 +43,8 @@ export async function POST(request: NextRequest) {
       reason,
       type,
       date: date ? new Date(date) : new Date(),
+      isRecurring,
+      ...(frequency && { frequency }),
       ...(budgetId && { budgetId })
     };
     
@@ -81,6 +84,10 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
     const from = searchParams.get('from');
     const to = searchParams.get('to');
+    const budgetId = searchParams.get('budgetId');
+    const isRecurring = searchParams.get('isRecurring');
+    const sortBy = searchParams.get('sortBy') || 'date';
+    const sortOrder = searchParams.get('sortOrder') || 'desc';
 
     await connectDB();
 
@@ -98,6 +105,16 @@ export async function GET(request: NextRequest) {
     // Category filter
     if (category) {
       query.category = category;
+    }
+
+    // Budget filter
+    if (budgetId) {
+      query.budgetId = budgetId;
+    }
+
+    // Recurring filter
+    if (isRecurring !== null && isRecurring !== '') {
+      query.isRecurring = isRecurring === 'true';
     }
 
     // Date filters
@@ -133,10 +150,51 @@ export async function GET(request: NextRequest) {
     }
 
     const skip = (page - 1) * limit;
-    const expenses = await Expense.find(query)
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(limit);
+    
+    // Build sort object
+    const sortObj: Record<string, 1 | -1> = {};
+    sortObj[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    
+    let expenses;
+    if (type === 'budget') {
+      // For budget expenses, populate budget name
+      expenses = await Expense.aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            budgetObjectId: {
+              $cond: {
+                if: { $ne: ['$budgetId', null] },
+                then: { $toObjectId: '$budgetId' },
+                else: null
+              }
+            }
+          }
+        },
+        {
+          $lookup: {
+            from: 'budgets',
+            localField: 'budgetObjectId',
+            foreignField: '_id',
+            as: 'budget'
+          }
+        },
+        {
+          $addFields: {
+            budgetName: { $arrayElemAt: ['$budget.name', 0] }
+          }
+        },
+        { $unset: 'budgetObjectId' },
+        { $sort: sortObj },
+        { $skip: skip },
+        { $limit: limit }
+      ]);
+    } else {
+      expenses = await Expense.find(query)
+        .sort(sortObj)
+        .skip(skip)
+        .limit(limit);
+    }
 
     const totalCount = await Expense.countDocuments(query);
     const totalPages = Math.ceil(totalCount / limit);

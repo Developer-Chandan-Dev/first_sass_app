@@ -7,15 +7,17 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Filter, X, RefreshCw } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { setFilters, fetchExpenses } from '@/lib/redux/expense/expenseSlice';
 
 interface ExpenseFiltersProps {
   categories?: string[];
   expenseType?: 'free' | 'budget';
+  budgets?: Array<{_id: string; name: string}>;
 }
 
-export function ExpenseFilters({ categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'], expenseType = 'free' }: ExpenseFiltersProps) {
+export function ExpenseFilters({ categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'], expenseType = 'free', budgets = [] }: ExpenseFiltersProps) {
   const dispatch = useAppDispatch();
   const { filters, currentPage, pageSize, loading } = useAppSelector(state => state.expenses);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -37,7 +39,11 @@ export function ExpenseFilters({ categories = ['Food & Dining', 'Transportation'
       category: '',
       startDate: '',
       endDate: '',
-      search: ''
+      search: '',
+      budgetId: '',
+      isRecurring: '',
+      sortBy: 'date',
+      sortOrder: 'desc'
     }));
   };
 
@@ -134,6 +140,61 @@ export function ExpenseFilters({ categories = ['Food & Dining', 'Transportation'
                   </Button>
                 ))}
               </div>
+            </div>
+
+            {/* Additional Filters */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div>
+                <Label className="text-sm font-medium">Recurring</Label>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    variant={filters.isRecurring === '' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => updateFilter('isRecurring', '')}
+                    className="text-xs sm:text-sm"
+                  >
+                    All
+                  </Button>
+                  <Button
+                    variant={filters.isRecurring === 'true' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => updateFilter('isRecurring', 'true')}
+                    className="text-xs sm:text-sm"
+                  >
+                    Recurring
+                  </Button>
+                  <Button
+                    variant={filters.isRecurring === 'false' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => updateFilter('isRecurring', 'false')}
+                    className="text-xs sm:text-sm"
+                  >
+                    One-time
+                  </Button>
+                </div>
+              </div>
+              
+              {expenseType === 'budget' && budgets.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium">Budget</Label>
+                  <Select
+                    value={filters.budgetId || 'all'}
+                    onValueChange={(value) => updateFilter('budgetId', value === 'all' ? '' : value)}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="All Budgets" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Budgets</SelectItem>
+                      {budgets.map((budget) => (
+                        <SelectItem key={budget._id} value={budget._id}>
+                          {budget.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
 
             {/* Date Range */}

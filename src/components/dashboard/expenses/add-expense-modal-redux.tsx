@@ -15,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import {
@@ -28,6 +30,8 @@ const expenseSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   reason: z.string().min(1, 'Reason is required'),
   date: z.string(),
+  isRecurring: z.boolean().default(false),
+  frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
 });
 
 type ExpenseFormData = z.infer<typeof expenseSchema>;
@@ -66,13 +70,17 @@ export function AddExpenseModal({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
-  } = useForm<ExpenseFormData>({
+  } = useForm({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
+      isRecurring: false,
     },
   });
+
+  const isRecurring = watch('isRecurring');
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -277,6 +285,36 @@ export function AddExpenseModal({
               <p className="text-xs sm:text-sm text-red-500 mt-1">
                 {errors.date.message}
               </p>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="isRecurring"
+                checked={isRecurring}
+                onCheckedChange={(checked) => setValue('isRecurring', checked)}
+              />
+              <Label htmlFor="isRecurring" className="text-sm">
+                Recurring Expense
+              </Label>
+            </div>
+            
+            {isRecurring && (
+              <div>
+                <Label className="text-sm">Frequency</Label>
+                <Select onValueChange={(value) => setValue('frequency', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="yearly">Yearly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             )}
           </div>
 

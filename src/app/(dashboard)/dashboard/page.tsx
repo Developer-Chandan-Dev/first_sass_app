@@ -1,11 +1,23 @@
+"use client";
+
+import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StatsCards } from '@/components/dashboard/shared/stats-cards';
 import { ExpenseChart } from '@/components/dashboard/expenses/expense-chart';
 import { RecentTransactions } from '@/components/dashboard/shared/recent-transactions';
 import { Clock, TrendingUp, Target, PieChart, Calendar, Bell } from 'lucide-react';
+import { useAppDispatch } from '@/lib/redux/hooks';
+import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 export default function Dashboard() {
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+      dispatch(refreshStats('free'));
+      dispatch(refreshStats('budget'));
+    }, [dispatch]);
+
   const comingSoonFeatures = [
     { title: 'Budget Goals', icon: Target, description: 'Set and track monthly budget targets' },
     { title: 'Expense Analytics', icon: PieChart, description: 'Advanced spending pattern analysis' },

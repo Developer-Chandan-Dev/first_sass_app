@@ -9,6 +9,9 @@ export interface ExpenseItem {
   createdAt: string;
   type: 'free' | 'budget';
   budgetId?: string;
+  budgetName?: string;
+  isRecurring: boolean;
+  frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
 }
 
 export interface ExpenseFilters {
@@ -17,6 +20,10 @@ export interface ExpenseFilters {
   startDate: string;
   endDate: string;
   search: string;
+  budgetId: string;
+  isRecurring: string;
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
 }
 
 interface ExpenseState {
@@ -43,7 +50,11 @@ const initialState: ExpenseState = {
     category: '',
     startDate: '',
     endDate: '',
-    search: ''
+    search: '',
+    budgetId: '',
+    isRecurring: '',
+    sortBy: 'date',
+    sortOrder: 'desc'
   },
   currentPage: 1,
   totalPages: 1,
@@ -67,7 +78,11 @@ export const fetchExpenses = createAsyncThunk(
       period: filters.period,
       category: filters.category,
       startDate: filters.startDate,
-      endDate: filters.endDate
+      endDate: filters.endDate,
+      budgetId: filters.budgetId,
+      isRecurring: filters.isRecurring,
+      sortBy: filters.sortBy,
+      sortOrder: filters.sortOrder
     });
 
     const response = await fetch(`/api/expenses?${searchParams}`);
