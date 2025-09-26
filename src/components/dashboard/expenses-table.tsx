@@ -54,9 +54,9 @@ export function ExpensesTable() {
           <p className="text-muted-foreground">No expenses found. Add your first expense!</p>
         ) : (
           <div className="space-y-4">
-            {expenses.map((expense) => (
+            {expenses.map((expense, index) => (
               <div
-                key={expense._id}
+                key={expense._id?.toString() || `expense-${index}`}
                 className="flex items-center justify-between p-4 border rounded-lg"
               >
                 <div className="flex-1">

@@ -17,6 +17,8 @@ interface PDFExportModalProps {
   onClose: () => void;
   incomes: IncomeItem[];
   onExport: (options: PDFExportOptions) => void;
+  isSelectedExport?: boolean;
+  selectedCount?: number;
 }
 
 export interface PDFExportOptions {
@@ -28,11 +30,12 @@ export interface PDFExportOptions {
   dateFormat: 'short' | 'long';
   orientation: 'portrait' | 'landscape';
   fontSize: 'small' | 'medium' | 'large';
+  selectedOnly?: boolean;
 }
 
-export function PDFExportModal({ isOpen, onClose, incomes, onExport }: PDFExportModalProps) {
+export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedExport = false, selectedCount = 0 }: PDFExportModalProps) {
   const [options, setOptions] = useState<PDFExportOptions>({
-    title: 'Income Report',
+    title: isSelectedExport ? `Selected Income Report (${selectedCount} items)` : 'Income Report',
     subtitle: `Generated on ${new Date().toLocaleDateString()}`,
     includeDescription: true,
     includeRecurring: true,
@@ -58,7 +61,9 @@ export function PDFExportModal({ isOpen, onClose, incomes, onExport }: PDFExport
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Export PDF Report</DialogTitle>
+          <DialogTitle>
+            {isSelectedExport ? `Export Selected Items (${selectedCount})` : 'Export PDF Report'}
+          </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">

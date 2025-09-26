@@ -109,11 +109,13 @@ export function ExpenseFilters({
         </div>
 
         {/* Controls */}
-        <div className="flex flex-col sm:flex-row justify-between gap-2">
+        <div className="flex sm:flex-row sm:justify-between gap-2 max-sm:flex-wrap">
           <Button variant="ghost" size="sm" onClick={() => setShowAdvanced(!showAdvanced)}>
-            <Filter className="w-4 h-4 mr-2" />
-            Advanced Filters
-            {activeFiltersCount > 0 && <Badge variant="secondary" className="ml-2">{activeFiltersCount}</Badge>}
+            <Filter className="w-4 h-4 sm:mr-2" />
+              <span className="max-sm:hidden">
+                Advanced Filters
+              </span>
+            {activeFiltersCount > 0 && <Badge variant="secondary" className="ml-1 sm:ml-2">{activeFiltersCount}</Badge>}
           </Button>
           
           <div className="flex gap-2">

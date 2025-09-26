@@ -7,7 +7,7 @@ import { fetchIncomes } from '@/lib/redux/income/incomeSlice';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Plus, BarChart3, Table, TrendingUp } from 'lucide-react';
-import { IncomeTable } from '@/components/dashboard/incomes/income-table';
+import { AdvancedIncomeTable } from '@/components/dashboard/incomes/advanced-income-table';
 import { AddIncomeModal } from '@/components/dashboard/incomes/add-income-modal';
 import { IncomeStats } from '@/components/dashboard/incomes/income-stats';
 import { IncomeCharts } from '@/components/dashboard/incomes/income-charts';
@@ -69,7 +69,7 @@ export default function IncomePage() {
 
         <TabsContent value="table" className="space-y-4">
           <IncomeFilters />
-          <IncomeTable />
+          <AdvancedIncomeTable />
         </TabsContent>
 
         <TabsContent value="charts" className="space-y-4">
@@ -78,8 +78,11 @@ export default function IncomePage() {
       </Tabs>
 
       <AddIncomeModal 
-        isOpen={showAddModal} 
-        onClose={() => setShowAddModal(false)} 
+        open={showAddModal} 
+        onOpenChange={setShowAddModal}
+        onIncomeAdded={() => {
+          dispatch(fetchIncomes({ filters, page: currentPage, pageSize }));
+        }}
       />
     </div>
   );

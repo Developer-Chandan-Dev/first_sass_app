@@ -10,6 +10,7 @@ export interface IncomeItem {
   date: string;
   isRecurring: boolean;
   frequency?: 'monthly' | 'weekly' | 'yearly';
+  isConnected?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -20,6 +21,9 @@ export interface IncomeFilters {
   startDate: string;
   endDate: string;
   search: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  isRecurring?: boolean;
 }
 
 interface IncomeState {

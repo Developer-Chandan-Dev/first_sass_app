@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongoose';
 import Expense from '@/models/Expense';
+import { sanitizeString, sanitizeNumber, isValidObjectId } from '@/lib/input-sanitizer';
 
 export async function PUT(
   request: NextRequest,
@@ -14,26 +15,66 @@ export async function PUT(
     }
 
     const { id } = await params;
+    
+    // Validate ObjectId format to prevent path traversal
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      return NextResponse.json({ error: 'Invalid expense ID' }, { status: 400 });
+    }
+    
     const body = await request.json();
-    const { amount, category, reason, date, type } = body;
+    const { amount, category, reason, date, affectsBalance, incomeId, isRecurring, frequency } = body;
+    
+    // Sanitize inputs
+    const sanitizedAmount = sanitizeNumber(amount);
+    const sanitizedCategory = sanitizeString(category);
+    const sanitizedReason = sanitizeString(reason);
+    
+    // Validate ObjectId if provided
+    if (incomeId && !isValidObjectId(incomeId)) {
+      return NextResponse.json({ error: 'Invalid income ID' }, { status: 400 });
+    }
 
     await connectDB();
 
+    // Get the original expense to handle income adjustments
+    const originalExpense = await Expense.findOne({ _id: id, userId });
+    if (!originalExpense) {
+      return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+    }
+
+    const Income = (await import('@/models/Income')).default;
+
+    // Restore original income amount if it was affected
+    if (originalExpense.affectsBalance && originalExpense.incomeId) {
+      await Income.findByIdAndUpdate(
+        originalExpense.incomeId,
+        { $inc: { amount: originalExpense.amount } }
+      );
+    }
+
+    // Update the expense
     const expense = await Expense.findOneAndUpdate(
       { _id: id, userId },
       {
-        amount: parseFloat(amount),
-        category,
-        reason,
-        type,
+        amount: sanitizedAmount,
+        category: sanitizedCategory,
+        reason: sanitizedReason,
         date: date ? new Date(date) : undefined,
+        affectsBalance: Boolean(affectsBalance),
+        incomeId: (affectsBalance && incomeId) ? incomeId : null,
+        isRecurring: Boolean(isRecurring),
+        frequency: isRecurring ? frequency : undefined,
         updatedAt: new Date()
       },
       { new: true }
     );
 
-    if (!expense) {
-      return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+    // Apply new income reduction if needed
+    if (affectsBalance && incomeId) {
+      await Income.findByIdAndUpdate(
+        incomeId,
+        { $inc: { amount: -sanitizedAmount } }
+      );
     }
 
     return NextResponse.json(expense);
@@ -54,6 +95,12 @@ export async function DELETE(
     }
 
     const { id } = await params;
+    
+    // Validate ObjectId format to prevent path traversal
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      return NextResponse.json({ error: 'Invalid expense ID' }, { status: 400 });
+    }
+    
     await connectDB();
 
     const expense = await Expense.findOneAndDelete({
@@ -63,6 +110,16 @@ export async function DELETE(
 
     if (!expense) {
       return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
+    }
+
+    // Restore income amount if expense was affecting balance
+    if (expense.affectsBalance && expense.incomeId) {
+      const Income = (await import('@/models/Income')).default;
+      await Income.findByIdAndUpdate(
+        expense.incomeId,
+        { $inc: { amount: expense.amount } }
+      );
+
     }
 
     return NextResponse.json({ message: 'Expense deleted successfully' });

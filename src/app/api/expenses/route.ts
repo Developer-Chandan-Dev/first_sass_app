@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Expense from '@/models/Expense';
 import User from '@/models/User';
+import { sanitizeString, sanitizeNumber, isValidObjectId } from '@/lib/input-sanitizer';
 
 
 export async function POST(request: NextRequest) {
@@ -14,12 +15,28 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
     const body = await request.json();
-    
-    const { amount, category, reason, date, type = 'free', budgetId, isRecurring = false, frequency } = body;
 
-    if (!amount || !category || !reason) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    const { amount, category, reason, date, type = 'free', budgetId, incomeId, isRecurring = false, frequency, affectsBalance = false } = body;
+    
+    // Sanitize inputs
+    const sanitizedCategory = sanitizeString(category);
+    const sanitizedReason = sanitizeString(reason);
+    const sanitizedAmount = sanitizeNumber(amount);
+    
+    // Validate required fields
+    if (!sanitizedAmount || !sanitizedCategory || !sanitizedReason) {
+      return NextResponse.json({ error: 'Invalid input data' }, { status: 400 });
     }
+    
+    // Validate ObjectIds if provided
+    if (budgetId && !isValidObjectId(budgetId)) {
+      return NextResponse.json({ error: 'Invalid budget ID' }, { status: 400 });
+    }
+    if (incomeId && !isValidObjectId(incomeId)) {
+      return NextResponse.json({ error: 'Invalid income ID' }, { status: 400 });
+    }
+
+
 
     // Get user and check limits in parallel
     const [user, expenseCount] = await Promise.all([
@@ -38,22 +55,35 @@ export async function POST(request: NextRequest) {
     
     const expenseData = {
       userId,
-      amount: parseFloat(amount),
-      category,
-      reason,
+      amount: sanitizedAmount,
+      category: sanitizedCategory,
+      reason: sanitizedReason,
       type,
       date: date ? new Date(date) : new Date(),
       isRecurring,
+      affectsBalance,
       ...(frequency && { frequency }),
-      ...(budgetId && { budgetId })
+      ...(budgetId && { budgetId }),
+      ...(affectsBalance && incomeId && { incomeId })
     };
     
-    console.log('Creating expense with data:', expenseData);
+
     const expense = new Expense(expenseData);
     
     await expense.save();
+    
+    // If expense affects balance and has incomeId, reduce the income amount
+    if (affectsBalance && incomeId) {
+      const Income = (await import('@/models/Income')).default;
+      await Income.findByIdAndUpdate(
+        incomeId,
+        { $inc: { amount: -sanitizedAmount } },
+        { new: true }
+      );
+  
+    }
+    
     const savedExpense = await Expense.findById(expense._id).lean();
-    console.log('Saved expense:', savedExpense);
     
     // If this is a budget expense, log for debugging
     if (type === 'budget' && budgetId) {

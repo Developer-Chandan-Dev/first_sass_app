@@ -12,6 +12,8 @@ export interface ExpenseItem {
   budgetName?: string;
   isRecurring: boolean;
   frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  affectsBalance?: boolean;
+  incomeId?: string;
 }
 
 export interface ExpenseFilters {

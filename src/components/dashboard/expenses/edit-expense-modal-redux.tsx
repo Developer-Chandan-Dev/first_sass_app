@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,8 @@ const expenseSchema = z.object({
   date: z.string(),
   isRecurring: z.boolean().default(false),
   frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
+  affectsBalance: z.boolean().default(false),
+  incomeId: z.string().optional(),
 });
 
 type ExpenseFormData = z.infer<typeof expenseSchema>;
@@ -35,6 +37,7 @@ interface EditExpenseModalProps {
 
 export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
   const dispatch = useAppDispatch();
+  const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
 
   const {
     register,
@@ -48,14 +51,33 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
   });
 
   const isRecurring = watch('isRecurring');
+  const affectsBalance = watch('affectsBalance');
 
   useEffect(() => {
+    const fetchConnectedIncomes = async () => {
+      try {
+        const response = await fetch('/api/incomes/connected');
+        if (response.ok) {
+          const incomes = await response.json();
+          setConnectedIncomes(incomes);
+        }
+      } catch (error) {
+        console.error('Failed to fetch connected incomes:', error);
+      }
+    };
+
+    if (open) {
+      fetchConnectedIncomes();
+    }
+
     if (expense && open) {
       setValue('amount', expense.amount);
       setValue('category', expense.category);
       setValue('reason', expense.reason);
       setValue('date', expense.date.split('T')[0]);
       setValue('isRecurring', expense.isRecurring || false);
+      setValue('affectsBalance', expense.affectsBalance ?? false);
+      setValue('incomeId', expense.incomeId || '');
       if (expense.frequency) {
         setValue('frequency', expense.frequency);
       }
@@ -72,6 +94,8 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
         reason: data.reason,
         date: data.date,
         isRecurring: data.isRecurring,
+        affectsBalance: data.affectsBalance,
+        incomeId: data.affectsBalance ? data.incomeId : undefined,
         ...(data.frequency && { frequency: data.frequency }),
       };
 
@@ -172,15 +196,54 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="affectsBalance" className="text-sm font-medium">
+                  Reduce from Balance
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Deduct from connected income
+                </p>
+              </div>
+              <Switch
+                id="affectsBalance"
+                checked={affectsBalance}
+                onCheckedChange={(checked) => setValue('affectsBalance', checked)}
+              />
+            </div>
+            
+            {affectsBalance && (
+              <div>
+                <Label className="text-sm">Select Income Source</Label>
+                <Select value={watch('incomeId')} onValueChange={(value) => setValue('incomeId', value)}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Choose income to reduce from" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {connectedIncomes.map((income) => (
+                      <SelectItem key={income._id} value={income._id}>
+                        {income.source} - ₹{income.amount.toLocaleString()}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="isRecurring" className="text-sm font-medium">
+                  Recurring Expense
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Regular expense
+                </p>
+              </div>
               <Switch
                 id="isRecurring"
                 checked={isRecurring}
                 onCheckedChange={(checked) => setValue('isRecurring', checked)}
               />
-              <Label htmlFor="isRecurring" className="text-sm">
-                Recurring Expense
-              </Label>
             </div>
             
             {isRecurring && (

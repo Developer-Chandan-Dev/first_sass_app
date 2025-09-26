@@ -32,6 +32,8 @@ const expenseSchema = z.object({
   date: z.string(),
   isRecurring: z.boolean().default(false),
   frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
+  affectsBalance: z.boolean().default(false),
+  incomeId: z.string().optional(),
 });
 
 type ExpenseFormData = z.infer<typeof expenseSchema>;
@@ -62,6 +64,7 @@ export function AddExpenseModal({
     'Travel',
     'Others',
   ]);
+  const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
 
@@ -77,19 +80,24 @@ export function AddExpenseModal({
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
       isRecurring: false,
+      affectsBalance: false,
+      incomeId: '',
     },
   });
 
   const isRecurring = watch('isRecurring');
+  const affectsBalance = watch('affectsBalance');
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(
-          `/api/expenses/dashboard?type=${expenseType}`
-        );
-        if (response.ok) {
-          const data = await response.json();
+        const [categoriesRes, incomesRes] = await Promise.all([
+          fetch(`/api/expenses/dashboard?type=${expenseType}`),
+          fetch('/api/incomes/connected')
+        ]);
+        
+        if (categoriesRes.ok) {
+          const data = await categoriesRes.json();
           const defaultCategories = [
             'Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'
           ];
@@ -97,16 +105,19 @@ export function AddExpenseModal({
             ...new Set([...defaultCategories, ...data.categories]),
           ];
           setCategories(allCategories);
-        } else {
-          console.error('API response not ok:', response.status);
+        }
+        
+        if (incomesRes.ok) {
+          const incomes = await incomesRes.json();
+          setConnectedIncomes(incomes);
         }
       } catch (error) {
-        console.error('Failed to fetch categories:', error);
+        console.error('Failed to fetch data:', error);
       }
     };
 
     if (open) {
-      fetchCategories();
+      fetchData();
     }
   }, [open, expenseType]);
 
@@ -117,6 +128,7 @@ export function AddExpenseModal({
         ...data,
         amount: Number(data.amount),
         type: expenseType,
+        incomeId: data.affectsBalance ? data.incomeId : undefined,
       };
 
       try {
@@ -141,6 +153,7 @@ export function AddExpenseModal({
         reset();
         setShowCustomCategory(false);
         setCustomCategory('');
+        setValue('incomeId', '');
         onOpenChange(false);
       } catch (error) {
         toast.error('Failed to add expense');
@@ -289,15 +302,54 @@ export function AddExpenseModal({
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="affectsBalance" className="text-sm font-medium">
+                  Reduce from Balance
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Deduct from connected income
+                </p>
+              </div>
+              <Switch
+                id="affectsBalance"
+                checked={affectsBalance}
+                onCheckedChange={(checked) => setValue('affectsBalance', checked)}
+              />
+            </div>
+            
+            {affectsBalance && (
+              <div>
+                <Label className="text-sm">Select Income Source</Label>
+                <Select onValueChange={(value) => setValue('incomeId', value)}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Choose income to reduce from" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {connectedIncomes.map((income) => (
+                      <SelectItem key={income._id} value={income._id}>
+                        {income.source} - ₹{income.amount.toLocaleString()}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="isRecurring" className="text-sm font-medium">
+                  Recurring Expense
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Regular expense
+                </p>
+              </div>
               <Switch
                 id="isRecurring"
                 checked={isRecurring}
                 onCheckedChange={(checked) => setValue('isRecurring', checked)}
               />
-              <Label htmlFor="isRecurring" className="text-sm">
-                Recurring Expense
-              </Label>
             </div>
             
             {isRecurring && (

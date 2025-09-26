@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongoose';
 import Income from '@/models/Income';
+import { sanitizeString, sanitizeNumber } from '@/lib/input-sanitizer';
 
 export async function GET(request: NextRequest) {
   try {
@@ -117,26 +118,37 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
-    const { amount, source, category, description, date, isRecurring, frequency } = body;
 
-    if (!amount || !source || !category) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    const { amount, source, category, description, date, isRecurring, frequency, isConnected } = body;
+    
+    // Sanitize inputs
+    const sanitizedAmount = sanitizeNumber(amount);
+    const sanitizedSource = sanitizeString(source);
+    const sanitizedCategory = sanitizeString(category);
+    const sanitizedDescription = sanitizeString(description);
+    
+    if (!sanitizedAmount || !sanitizedSource || !sanitizedCategory || !sanitizedDescription) {
+      return NextResponse.json({ error: 'Invalid input data' }, { status: 400 });
     }
+    
 
-    const income = new Income({
+
+    const incomeData = {
       userId,
-      amount: parseFloat(amount),
-      source,
-      category,
-      description,
+      amount: sanitizedAmount,
+      source: sanitizedSource,
+      category: sanitizedCategory,
+      description: sanitizedDescription,
       date: date ? new Date(date) : new Date(),
       isRecurring: Boolean(isRecurring),
-      frequency: isRecurring ? frequency : undefined
-    });
+      frequency: isRecurring ? frequency : undefined,
+      isConnected: Boolean(isConnected)
+    };
+    
+    const income = new Income(incomeData);
+    const savedIncome = await income.save();
 
-    await income.save();
-
-    return NextResponse.json(income, { status: 201 });
+    return NextResponse.json(savedIncome, { status: 201 });
   } catch (error) {
     console.error('Error creating income:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

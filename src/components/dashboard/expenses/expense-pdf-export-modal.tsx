@@ -16,6 +16,8 @@ interface ExpensePDFExportModalProps {
   isOpen: boolean;
   onClose: () => void;
   expenses: ExpenseItem[];
+  isSelectedExport?: boolean;
+  selectedCount?: number;
 }
 
 export interface ExpensePDFExportOptions {
@@ -29,9 +31,9 @@ export interface ExpensePDFExportOptions {
   fontSize: 'small' | 'medium' | 'large';
 }
 
-export function ExpensePDFExportModal({ isOpen, onClose, expenses }: ExpensePDFExportModalProps) {
+export function ExpensePDFExportModal({ isOpen, onClose, expenses, isSelectedExport = false, selectedCount = 0 }: ExpensePDFExportModalProps) {
   const [options, setOptions] = useState<ExpensePDFExportOptions>({
-    title: 'Expense Report',
+    title: isSelectedExport ? `Selected Expense Report (${selectedCount} items)` : 'Expense Report',
     subtitle: `Generated on ${new Date().toLocaleDateString()}`,
     includeCategory: true,
     includeRecurring: true,
@@ -171,7 +173,7 @@ export function ExpensePDFExportModal({ isOpen, onClose, expenses }: ExpensePDFE
       doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
     }
 
-    doc.save(`expense-report-${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`expense-report-${isSelectedExport ? 'selected-' : ''}${new Date().toISOString().split('T')[0]}.pdf`);
     toast.success('PDF exported successfully!');
   };
 
@@ -181,7 +183,9 @@ export function ExpensePDFExportModal({ isOpen, onClose, expenses }: ExpensePDFE
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Export PDF Report</DialogTitle>
+          <DialogTitle>
+            {isSelectedExport ? `Export Selected Items (${selectedCount})` : 'Export PDF Report'}
+          </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">

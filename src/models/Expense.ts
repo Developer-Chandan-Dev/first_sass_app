@@ -1,7 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-export interface IExpense {
-  _id?: string;
+export interface IExpense extends Document {
   userId: string;
   amount: number;
   category: string;
@@ -9,14 +8,15 @@ export interface IExpense {
   type: 'free' | 'budget';
   budgetId?: string;
   incomeId?: string;
+  affectsBalance: boolean;
   date: Date;
   isRecurring: boolean;
   frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt: Date;
 }
 
-const ExpenseSchema = new mongoose.Schema({
+const ExpenseSchema = new mongoose.Schema<IExpense>({
   userId: { type: String, required: true, index: true },
   amount: { type: Number, required: true },
   category: {
@@ -32,6 +32,7 @@ const ExpenseSchema = new mongoose.Schema({
   },
   budgetId: { type: String, index: true }, // Reference to budget for budget expenses
   incomeId: { type: String, index: true }, // Reference to income source
+  affectsBalance: { type: Boolean, default: false }, // whether it reduces from connected income
   date: { type: Date, default: Date.now },
   isRecurring: { type: Boolean, default: false },
   frequency: {
@@ -47,4 +48,4 @@ if (mongoose.models.Expense) {
   delete mongoose.models.Expense;
 }
 
-export default mongoose.model('Expense', ExpenseSchema);
+export default mongoose.model<IExpense>('Expense', ExpenseSchema);

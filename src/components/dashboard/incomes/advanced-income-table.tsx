@@ -36,63 +36,62 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
-import { EditExpenseModal } from './edit-expense-modal-redux';
-import { ExpensePDFExportModal } from './expense-pdf-export-modal';
+import { EditIncomeModal } from './edit-income-modal';
+import { PDFExportModal } from './pdf-export-modal';
 import { toast } from 'sonner';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/lib/redux/store';
 import { 
-  fetchExpenses, 
-  deleteExpense, 
-  deleteExpenseOptimistic,
+  fetchIncomes, 
+  deleteIncome, 
+  deleteIncomeOptimistic,
   setCurrentPage,
   setPageSize,
-  setExpenseType,
   setFilters,
-  type ExpenseItem,
-} from '@/lib/redux/expense/expenseSlice';
-import { updateStatsOptimistic, refreshStats } from '@/lib/redux/expense/overviewSlice';
-import { updateBudgetSpent } from '@/lib/redux/expense/budgetSlice';
-import { getExpenseAmountColor, getExpenseTooltip } from '@/lib/financial-styles';
+} from '@/lib/redux/income/incomeSlice';
+import { getIncomeAmountColor, getIncomeTooltip } from '@/lib/financial-styles';
 
-interface AdvancedExpensesTableProps {
-  expenseType?: 'free' | 'budget';
+interface IncomeItem {
+  _id: string;
+  source: string;
+  category: string;
+  amount: number;
+  date: string;
+  description?: string;
+  isRecurring: boolean;
+  frequency?: string;
+  createdAt: string;
+  isConnected?: boolean;
 }
 
-export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpensesTableProps) {
-  const dispatch = useAppDispatch();
+export function AdvancedIncomeTable() {
+  const dispatch = useDispatch<AppDispatch>();
   const { 
-    expenses, 
+    incomes, 
     loading, 
     filters, 
     currentPage, 
     totalPages, 
     totalCount, 
     pageSize 
-  } = useAppSelector(state => state.expenses);
+  } = useSelector((state: RootState) => state.incomes);
   
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSearchTerm, setActiveSearchTerm] = useState('');
-  const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingIncome, setEditingIncome] = useState<IncomeItem | null>(null);
   const [isPDFExportOpen, setIsPDFExportOpen] = useState(false);
   const [isSelectedExport, setIsSelectedExport] = useState(false);
 
-  // Set expense type when component mounts or type changes
-  useEffect(() => {
-    dispatch(setExpenseType(expenseType));
-  }, [dispatch, expenseType]);
-
-  // Fetch expenses when component mounts or when filters/pagination changes
+  // Fetch incomes when component mounts or when filters/pagination changes
   useEffect(() => {
     const filtersWithSearch = { ...filters, search: activeSearchTerm };
-    dispatch(fetchExpenses({ 
-      expenseType, 
+    dispatch(fetchIncomes({ 
       filters: filtersWithSearch, 
       page: currentPage, 
       pageSize 
     }));
-  }, [dispatch, expenseType, filters, activeSearchTerm, currentPage, pageSize]);
+  }, [dispatch, filters, activeSearchTerm, currentPage, pageSize]);
 
   // Watch for when search term becomes empty and trigger search
   useEffect(() => {
@@ -119,42 +118,21 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this expense?')) {
+    if (!confirm('Are you sure you want to delete this income?')) {
       return;
     }
     
-    const expense = expenses.find(e => e._id === id);
-    if (!expense) return;
-    
-    // Optimistic updates - immediate UI changes
-    dispatch(deleteExpenseOptimistic(id));
-    dispatch(updateStatsOptimistic({ 
-      type: expenseType, 
-      amount: expense.amount, 
-      category: expense.category, 
-      operation: 'subtract' 
-    }));
-    
-    if (expenseType === 'budget' && expense.budgetId) {
-      dispatch(updateBudgetSpent({ 
-        budgetId: expense.budgetId, 
-        amount: expense.amount, 
-        operation: 'subtract' 
-      }));
-    }
-    
-    toast.success('Expense deleted successfully!');
+    // Optimistic update
+    dispatch(deleteIncomeOptimistic(id));
+    toast.success('Income deleted successfully!');
     
     // API call in background
     try {
-      await dispatch(deleteExpense(id)).unwrap();
-      // Silent stats refresh
-      dispatch(refreshStats(expenseType));
+      await dispatch(deleteIncome(id)).unwrap();
     } catch {
-      toast.error('Failed to delete expense');
-      // Revert optimistic updates by refetching
-      dispatch(fetchExpenses({ 
-        expenseType, 
+      toast.error('Failed to delete income');
+      // Revert by refetching
+      dispatch(fetchIncomes({ 
         filters: { ...filters, search: activeSearchTerm }, 
         page: currentPage, 
         pageSize 
@@ -163,33 +141,32 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
   };
 
   const handleBulkDelete = async () => {
-    if (!confirm(`Are you sure you want to delete ${selectedRows.length} expenses?`)) {
+    if (!confirm(`Are you sure you want to delete ${selectedRows.length} incomes?`)) {
       return;
     }
     
-    // Optimistic update - remove all selected from UI immediately
+    // Optimistic updates
     selectedRows.forEach(id => {
-      dispatch(deleteExpenseOptimistic(id));
+      dispatch(deleteIncomeOptimistic(id));
     });
-    toast.success(`${selectedRows.length} expenses deleted successfully!`);
+    toast.success(`${selectedRows.length} incomes deleted successfully!`);
     setSelectedRows([]);
     
     // API call in background
     try {
-      const response = await fetch('/api/expenses/bulk', {
+      const response = await fetch('/api/incomes/bulk', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: selectedRows }),
       });
       
       if (!response.ok) {
-        throw new Error('Failed to delete expenses');
+        throw new Error('Failed to delete incomes');
       }
     } catch {
-      toast.error('Failed to delete expenses');
-      // Revert optimistic update by refetching
-      dispatch(fetchExpenses({ 
-        expenseType, 
+      toast.error('Failed to delete incomes');
+      // Revert by refetching
+      dispatch(fetchIncomes({ 
         filters: { ...filters, search: activeSearchTerm }, 
         page: currentPage, 
         pageSize 
@@ -207,15 +184,14 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
 
   const toggleAllRows = () => {
     setSelectedRows(
-      selectedRows.length === expenses.length 
+      selectedRows.length === incomes.length 
         ? [] 
-        : expenses.map(expense => expense._id)
+        : incomes.map(income => income._id)
     );
   };
 
-  const handleEdit = (expense: ExpenseItem) => {
-    setEditingExpense(expense);
-    setIsEditModalOpen(true);
+  const handleEdit = (income: IncomeItem) => {
+    setEditingIncome(income);
   };
 
   const handleSort = (column: string) => {
@@ -230,24 +206,24 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
 
   const handleCSVExport = (selectedOnly = false) => {
     const dataToExport = selectedOnly 
-      ? expenses.filter(expense => selectedRows.includes(expense._id))
-      : expenses;
+      ? incomes.filter(income => selectedRows.includes(income._id))
+      : incomes;
     
     if (dataToExport.length === 0) {
       toast.error('No data to export');
       return;
     }
     
-    const headers = ['Date', 'Description', 'Category', ...(expenseType === 'budget' ? ['Budget Name'] : []), 'Amount', 'Recurring', 'Frequency', 'Created Date'];
-    const csvData = dataToExport.map(expense => [
-      new Date(expense.date).toLocaleDateString(),
-      expense.reason,
-      expense.category,
-      ...(expenseType === 'budget' ? [expense.budgetName || ''] : []),
-      expense.amount,
-      expense.isRecurring ? 'Yes' : 'No',
-      expense.frequency || '',
-      new Date(expense.createdAt).toLocaleDateString()
+    const headers = ['Date', 'Source', 'Category', 'Amount', 'Description', 'Recurring', 'Frequency', 'Created Date'];
+    const csvData = dataToExport.map(income => [
+      new Date(income.date).toLocaleDateString(),
+      income.source,
+      income.category,
+      income.amount,
+      income.description || '',
+      income.isRecurring ? 'Yes' : 'No',
+      income.frequency || '',
+      new Date(income.createdAt).toLocaleDateString()
     ]);
     
     const csvContent = [headers, ...csvData]
@@ -258,26 +234,173 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `expenses-${selectedOnly ? 'selected-' : ''}${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `incomes-${selectedOnly ? 'selected-' : ''}${new Date().toISOString().split('T')[0]}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    toast.success(`${dataToExport.length} expenses exported to CSV!`);
+    toast.success(`${dataToExport.length} incomes exported to CSV!`);
+  };
+
+  interface PDFExportOptions {
+    orientation: 'portrait' | 'landscape';
+    fontSize: 'small' | 'medium' | 'large';
+    title: string;
+    subtitle?: string;
+    includeDescription: boolean;
+    includeRecurring: boolean;
+    includeCreatedDate: boolean;
+    dateFormat: 'short' | 'long';
+    selectedOnly?: boolean;
+  }
+
+  const handlePDFExport = async (options: PDFExportOptions) => {
+    try {
+      const jsPDF = (await import('jspdf')).default;
+      const doc = new jsPDF({
+        orientation: options.orientation,
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 15;
+      
+      // Font sizes
+      const fontSizes = {
+        small: { title: 16, subtitle: 10, header: 8, body: 7 },
+        medium: { title: 18, subtitle: 11, header: 9, body: 8 },
+        large: { title: 20, subtitle: 12, header: 10, body: 9 }
+      };
+      const sizes = fontSizes[options.fontSize as keyof typeof fontSizes] || fontSizes.medium;
+      
+      let yPos = margin;
+      
+      // Title
+      doc.setFontSize(sizes.title);
+      doc.setFont('helvetica', 'bold');
+      doc.text(options.title, margin, yPos);
+      yPos += 10;
+      
+      // Subtitle
+      if (options.subtitle) {
+        doc.setFontSize(sizes.subtitle);
+        doc.setFont('helvetica', 'normal');
+        const subtitleLines = doc.splitTextToSize(options.subtitle, pageWidth - 2 * margin);
+        doc.text(subtitleLines, margin, yPos);
+        yPos += subtitleLines.length * 5 + 5;
+      }
+      
+      // Summary
+      const dataToExport = isSelectedExport 
+        ? incomes.filter(income => selectedRows.includes(income._id))
+        : incomes;
+      
+      doc.setFontSize(sizes.subtitle);
+      doc.text(`Total Entries: ${dataToExport.length}`, margin, yPos);
+      doc.text(`Total Amount: ₹${dataToExport.reduce((sum, income) => sum + income.amount, 0).toLocaleString()}`, margin + 60, yPos);
+      yPos += 15;
+      
+      // Table setup
+      const colWidths = options.orientation === 'landscape' 
+        ? [40, 25, 25, 30, ...(options.includeDescription ? [35] : []), ...(options.includeRecurring ? [25] : []), ...(options.includeCreatedDate ? [25] : [])]
+        : [35, 20, 20, 25, ...(options.includeDescription ? [30] : []), ...(options.includeRecurring ? [20] : []), ...(options.includeCreatedDate ? [20] : [])];
+      
+      let xPos = margin;
+      
+      // Table headers
+      doc.setFontSize(sizes.header);
+      doc.setFont('helvetica', 'bold');
+      doc.setFillColor(240, 240, 240);
+      doc.rect(margin, yPos - 5, pageWidth - 2 * margin, 8, 'F');
+      
+      const headers = ['Source', 'Category', 'Amount', 'Date'];
+      if (options.includeDescription) headers.push('Description');
+      if (options.includeRecurring) headers.push('Recurring');
+      if (options.includeCreatedDate) headers.push('Created');
+      
+      headers.forEach((header, i) => {
+        doc.text(header, xPos, yPos);
+        xPos += colWidths[i];
+      });
+      yPos += 10;
+      
+      // Table data
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(sizes.body);
+      
+      dataToExport.forEach((income, index) => {
+        if (yPos > pageHeight - 20) {
+          doc.addPage();
+          yPos = margin;
+        }
+        
+        xPos = margin;
+        const rowData = [
+          income.source.substring(0, 15),
+          income.category,
+          `₹${income.amount.toLocaleString()}`,
+          options.dateFormat === 'long' 
+            ? new Date(income.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+            : new Date(income.date).toLocaleDateString()
+        ];
+        
+        if (options.includeDescription) {
+          rowData.push((income.description || '-').substring(0, 20));
+        }
+        if (options.includeRecurring) {
+          rowData.push(income.isRecurring ? `Yes${income.frequency ? ` (${income.frequency})` : ''}` : 'No');
+        }
+        if (options.includeCreatedDate) {
+          rowData.push(new Date(income.createdAt).toLocaleDateString());
+        }
+        
+        // Alternate row background
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(margin, yPos - 3, pageWidth - 2 * margin, 6, 'F');
+        }
+        
+        rowData.forEach((data, i) => {
+          if (i === 2) { // Amount column - right align
+            doc.text(data, xPos + colWidths[i] - 5, yPos, { align: 'right' });
+          } else {
+            doc.text(data, xPos, yPos);
+          }
+          xPos += colWidths[i];
+        });
+        yPos += 6;
+      });
+      
+      // Footer - Add page numbers
+      const totalPages = doc.internal.pages.length - 1;
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+      }
+      
+      doc.save(`${options.title.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success('PDF exported successfully');
+    } catch {
+      toast.error('Failed to export PDF');
+    }
   };
 
   return (
     <Card>
       <CardHeader className="pb-3">
         <div className="flex flex-col gap-4">
-          <CardTitle className="text-lg sm:text-xl">Expenses ({totalCount})</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Incomes ({totalCount})</CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search expenses..."
+                  placeholder="Search incomes..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyPress={handleSearchKeyPress}
@@ -365,7 +488,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                 <TableRow>
                   <TableHead className="w-8 sm:w-12">
                     <Checkbox
-                      checked={selectedRows.length === expenses.length && expenses.length > 0}
+                      checked={selectedRows.length === incomes.length && incomes.length > 0}
                       onCheckedChange={toggleAllRows}
                     />
                   </TableHead>
@@ -375,8 +498,8 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     </Button>
                   </TableHead>
                   <TableHead className="min-w-[120px]">
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('reason')} className="h-auto p-0 font-medium">
-                      Description {getSortIcon('reason')}
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('source')} className="h-auto p-0 font-medium">
+                      Source {getSortIcon('source')}
                     </Button>
                   </TableHead>
                   <TableHead className="hidden sm:table-cell min-w-[100px]">
@@ -384,13 +507,11 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                       Category {getSortIcon('category')}
                     </Button>
                   </TableHead>
-                  {expenseType === 'budget' && (
-                    <TableHead className="hidden lg:table-cell min-w-[100px]">
-                      <Button variant="ghost" size="sm" onClick={() => handleSort('budgetName')} className="h-auto p-0 font-medium">
-                        Budget {getSortIcon('budgetName')}
-                      </Button>
-                    </TableHead>
-                  )}
+                  <TableHead className="hidden md:table-cell min-w-[120px]">
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('description')} className="h-auto p-0 font-medium">
+                      Description {getSortIcon('description')}
+                    </Button>
+                  </TableHead>
                   <TableHead className="hidden md:table-cell min-w-[80px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('isRecurring')} className="h-auto p-0 font-medium">
                       Recurring {getSortIcon('isRecurring')}
@@ -406,64 +527,59 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
               </TableHeader>
             <TableBody>
               {loading ? (
-                // Skeleton rows
                 [1, 2, 3, 4, 5].map(i => (
                   <TableRow key={i}>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell className="hidden sm:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    {expenseType === 'budget' && (
-                      <TableCell className="hidden lg:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    )}
+                    <TableCell className="hidden md:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell className="hidden md:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                     <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
                   </TableRow>
                 ))
-              ) : expenses.length === 0 ? (
+              ) : incomes.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={expenseType === 'budget' ? 8 : 7} className="text-center py-8 text-muted-foreground">
-                    No expenses found
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                    No incomes found
                   </TableCell>
                 </TableRow>
               ) : (
-                expenses.map((expense) => (
-                  <TableRow key={expense._id}>
+                incomes.map((income) => (
+                  <TableRow key={income._id}>
                     <TableCell className="py-2">
                       <Checkbox
-                        checked={selectedRows.includes(expense._id)}
-                        onCheckedChange={() => toggleRowSelection(expense._id)}
+                        checked={selectedRows.includes(income._id)}
+                        onCheckedChange={() => toggleRowSelection(income._id)}
                       />
                     </TableCell>
                     <TableCell className="py-2 text-xs sm:text-sm">
-                      {new Date(expense.date).toLocaleDateString('en-US', { 
+                      {new Date(income.date).toLocaleDateString('en-US', { 
                         month: 'short', 
                         day: 'numeric' 
                       })}
                     </TableCell>
                     <TableCell className="py-2">
                       <div className="font-medium text-sm truncate max-w-[120px] sm:max-w-none">
-                        {expense.reason}
+                        {income.source}
                       </div>
                       <div className="sm:hidden">
-                        <Badge variant="secondary" className="text-xs mt-1">{expense.category}</Badge>
+                        <Badge variant="secondary" className="text-xs mt-1">{income.category}</Badge>
                       </div>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell py-2">
-                      <Badge variant="secondary" className="text-xs">{expense.category}</Badge>
+                      <Badge variant="secondary" className="text-xs">{income.category}</Badge>
                     </TableCell>
-                    {expenseType === 'budget' && (
-                      <TableCell className="hidden lg:table-cell py-2">
-                        <Badge variant="outline" className="text-xs">
-                          {expense.budgetName || 'Unknown'}
-                        </Badge>
-                      </TableCell>
-                    )}
                     <TableCell className="hidden md:table-cell py-2">
-                      {expense.isRecurring ? (
+                      <div className="text-xs text-muted-foreground truncate max-w-[120px]">
+                        {income.description || '-'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell py-2">
+                      {income.isRecurring ? (
                         <Badge variant="outline" className="text-xs">
-                          {expense.frequency || 'Recurring'}
+                          {income.frequency || 'Recurring'}
                         </Badge>
                       ) : (
                         <span className="text-xs text-muted-foreground">One-time</span>
@@ -471,11 +587,11 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     </TableCell>
                     <TableCell className="text-right font-medium py-2 text-sm">
                       <div className="flex items-center justify-end gap-1">
-                        <span className={getExpenseAmountColor(expense.affectsBalance || false)}>
-                          -₹{expense.amount.toLocaleString()}
+                        <span className={getIncomeAmountColor(income.isConnected || false)}>
+                          +₹{income.amount.toLocaleString()}
                         </span>
-                        {expense.affectsBalance && (
-                          <div className="w-2 h-2 bg-red-500 rounded-full" title={getExpenseTooltip(expense.affectsBalance)} />
+                        {income.isConnected && (
+                          <div className="w-2 h-2 bg-blue-500 rounded-full" title={getIncomeTooltip(income.isConnected)} />
                         )}
                       </div>
                     </TableCell>
@@ -487,13 +603,13 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEdit(expense)}>
+                          <DropdownMenuItem onClick={() => handleEdit(income)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="text-destructive"
-                            onClick={() => handleDelete(expense._id)}
+                            onClick={() => handleDelete(income._id)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
@@ -579,19 +695,21 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
         </div>
       </CardContent>
       
-      <EditExpenseModal
-        open={isEditModalOpen}
-        onOpenChange={setIsEditModalOpen}
-        expense={editingExpense}
-      />
+      {editingIncome && (
+        <EditIncomeModal
+          incomeId={editingIncome._id}
+          onClose={() => setEditingIncome(null)}
+        />
+      )}
       
-      <ExpensePDFExportModal
+      <PDFExportModal
         isOpen={isPDFExportOpen}
         onClose={() => {
           setIsPDFExportOpen(false);
           setIsSelectedExport(false);
         }}
-        expenses={isSelectedExport ? expenses.filter(expense => selectedRows.includes(expense._id)) : expenses}
+        incomes={isSelectedExport ? incomes.filter(income => selectedRows.includes(income._id)) : incomes}
+        onExport={(options: PDFExportOptions) => handlePDFExport({...options, selectedOnly: isSelectedExport})}
         isSelectedExport={isSelectedExport}
         selectedCount={selectedRows.length}
       />

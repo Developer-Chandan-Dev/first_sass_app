@@ -18,14 +18,7 @@ interface EditIncomeModalProps {
   onClose: () => void;
 }
 
-const incomeCategories = [
-  'Salary',
-  'Freelance', 
-  'Business',
-  'Investment',
-  'Rental',
-  'Other'
-];
+
 
 const frequencies = [
   { value: 'monthly', label: 'Monthly' },
@@ -47,7 +40,8 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
     description: '',
     date: '',
     isRecurring: false,
-    frequency: 'monthly'
+    frequency: 'monthly',
+    isConnected: false
   });
 
   useEffect(() => {
@@ -55,11 +49,12 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
       setFormData({
         amount: income.amount.toString(),
         source: income.source,
-        category: income.category,
+        category: income.category || '',
         description: income.description || '',
         date: income.date.split('T')[0],
         isRecurring: income.isRecurring,
-        frequency: income.frequency || 'monthly'
+        frequency: income.frequency || 'monthly',
+        isConnected: income.isConnected ?? false
       });
     }
   }, [income]);
@@ -71,7 +66,7 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.amount || !formData.source || !formData.category) {
+    if (!formData.amount || !formData.source || !formData.category || !formData.description) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -86,7 +81,8 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
         description: formData.description,
         date: formData.date,
         isRecurring: formData.isRecurring,
-        frequency: formData.isRecurring ? formData.frequency as 'monthly' | 'weekly' | 'yearly' : undefined
+        frequency: formData.isRecurring ? formData.frequency as 'monthly' | 'weekly' | 'yearly' : undefined,
+        isConnected: formData.isConnected
       };
 
       // Optimistic update
@@ -112,17 +108,28 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="amount">Amount *</Label>
+            <Input
+              id="amount"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              value={formData.amount}
+              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+              required
+            />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount *</Label>
+              <Label htmlFor="source">Source *</Label>
               <Input
-                id="amount"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder="0.00"
-                value={formData.amount}
-                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                id="source"
+                placeholder="e.g., Company Name, Client Name"
+                value={formData.source}
+                onChange={(e) => setFormData({ ...formData, source: e.target.value })}
                 required
               />
             </div>
@@ -138,35 +145,28 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {incomeCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
+                  <SelectItem value="Salary">Salary</SelectItem>
+                  <SelectItem value="Freelancing">Freelancing</SelectItem>
+                  <SelectItem value="Business">Business</SelectItem>
+                  <SelectItem value="Investment">Investment</SelectItem>
+                  <SelectItem value="Rental">Rental</SelectItem>
+                  <SelectItem value="Commission">Commission</SelectItem>
+                  <SelectItem value="Bonus">Bonus</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="source">Source *</Label>
-            <Input
-              id="source"
-              placeholder="e.g., Company Name, Client Name"
-              value={formData.source}
-              onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Description *</Label>
             <Textarea
               id="description"
-              placeholder="Optional description"
+              placeholder="Brief description of income source"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={2}
+              rows={3}
+              required
             />
           </div>
 
@@ -180,13 +180,38 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
             />
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="recurring"
-              checked={formData.isRecurring}
-              onCheckedChange={(checked) => setFormData({ ...formData, isRecurring: checked })}
-            />
-            <Label htmlFor="recurring">Recurring Income</Label>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="isConnected" className="text-sm font-medium">
+                  Connect to Balance
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Expenses will reduce from this income
+                </p>
+              </div>
+              <Switch
+                id="isConnected"
+                checked={formData.isConnected}
+                onCheckedChange={(checked) => setFormData({ ...formData, isConnected: checked })}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="recurring" className="text-sm font-medium">
+                  Recurring Income
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Regular income source
+                </p>
+              </div>
+              <Switch
+                id="recurring"
+                checked={formData.isRecurring}
+                onCheckedChange={(checked) => setFormData({ ...formData, isRecurring: checked })}
+              />
+            </div>
           </div>
 
           {formData.isRecurring && (

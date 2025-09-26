@@ -1,60 +1,44 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IIncome {
-  _id: string;
+export interface IIncome extends Document {
   userId: string;
   amount: number;
-  source: string;
+  source: string; // salary, freelancing, business, etc.
   category: string;
-  description?: string;
-  date: Date;
+  description: string;
+  isConnected: boolean; // whether it affects balance calculation
   isRecurring: boolean;
-  frequency?: 'monthly' | 'weekly' | 'yearly';
+  frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  date: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const incomeSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
-    index: true,
+const IncomeSchema = new Schema<IIncome>({
+  userId: { type: String, required: true, index: true },
+  amount: { type: Number, required: true, min: 0 },
+  source: { type: String, required: true, trim: true },
+  category: { type: String, required: true, trim: true },
+  description: { type: String, required: true, trim: true },
+  isConnected: { type: Boolean, default: false },
+  isRecurring: { type: Boolean, default: false },
+  frequency: { 
+    type: String, 
+    enum: ['daily', 'weekly', 'monthly', 'yearly'],
+    required: function(this: IIncome) { return this.isRecurring; }
   },
-  amount: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  source: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  category: {
-    type: String,
-    required: true,
-    enum: ['Salary', 'Freelance', 'Business', 'Investment', 'Rental', 'Other'],
-    default: 'Other',
-  },
-  description: {
-    type: String,
-    trim: true,
-  },
-  date: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
-  isRecurring: {
-    type: Boolean,
-    default: false,
-  },
-  frequency: {
-    type: String,
-    enum: ['monthly', 'weekly', 'yearly'],
-  },
+  date: { type: Date, required: true },
 }, {
   timestamps: true,
 });
 
-export default mongoose.models.Income || mongoose.model('Income', incomeSchema);
+// Indexes for performance
+IncomeSchema.index({ userId: 1, date: -1 });
+IncomeSchema.index({ userId: 1, isConnected: 1 });
+
+// Clear existing model to ensure schema updates
+if (mongoose.models.Income) {
+  delete mongoose.models.Income;
+}
+
+export default mongoose.model<IIncome>('Income', IncomeSchema);

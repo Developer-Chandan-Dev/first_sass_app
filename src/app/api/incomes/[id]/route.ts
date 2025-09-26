@@ -17,8 +17,9 @@ export async function PUT(
     await connectDB();
 
     const body = await request.json();
-    const { amount, source, category, description, date, isRecurring, frequency } = body;
 
+    const { amount, source, category, description, date, isRecurring, isConnected, frequency } = body;
+    console.log("Updation data: ", body, 22);
     const income = await Income.findOneAndUpdate(
       { _id: id, userId },
       {
@@ -28,11 +29,13 @@ export async function PUT(
         ...(description !== undefined && { description }),
         ...(date && { date: new Date(date) }),
         ...(isRecurring !== undefined && { isRecurring: Boolean(isRecurring) }),
+        ...(isConnected !== undefined && { isConnected: Boolean(isConnected) }),
         ...(frequency !== undefined && { frequency: isRecurring ? frequency : undefined }),
         updatedAt: new Date()
       },
       { new: true }
     );
+    console.log("Updated Income: ", income, 38);
 
     if (!income) {
       return NextResponse.json({ error: 'Income not found' }, { status: 404 });
