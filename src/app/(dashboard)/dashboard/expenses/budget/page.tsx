@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useAppSelector } from '@/lib/redux/hooks';
+import { useState, useEffect } from 'react';
+import { useAppSelector, useAppDispatch  } from '@/lib/redux/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,13 +17,18 @@ import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-
 import { Plus, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
+import { fetchBudgets } from '@/lib/redux/expense/budgetSlice';
 
 
 export default function BudgetExpensesPage() {
+    const dispatch = useAppDispatch();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { budgets } = useAppSelector(state => state.budgets);
 
-
+    useEffect(() => {
+    dispatch(fetchBudgets());
+  }, [dispatch]);
   return (
     <div className="space-y-4 md:space-y-6">
       <Button variant="ghost" size="sm" asChild className="w-fit">

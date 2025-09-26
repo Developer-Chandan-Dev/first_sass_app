@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,10 +24,6 @@ export function BudgetManager() {
   const { budgets, loading } = useAppSelector(state => state.budgets);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
-
-  useEffect(() => {
-    dispatch(fetchBudgets());
-  }, [dispatch]);
 
   const handleToggleActive = async (budgetId: string, isActive: boolean) => {
     // Optimistic update

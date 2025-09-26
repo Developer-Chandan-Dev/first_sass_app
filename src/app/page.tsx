@@ -63,7 +63,7 @@ export default function Home() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </SmartNavigationButton>
               <Button size="lg" variant="outline" asChild className="border-gray-300 dark:border-border text-gray-700 dark:text-foreground hover:bg-gray-100 dark:hover:bg-muted text-lg px-8 py-6">
-                <Link href="/login">Watch Demo</Link>
+                <Link href="/guide">Read Guide</Link>
               </Button>
             </div>
             
