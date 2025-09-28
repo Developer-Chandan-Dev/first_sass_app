@@ -73,7 +73,21 @@ export function ExpenseChart() {
   }, [user]);
 
   if (loading) {
-    return <div className="h-48 md:h-64 flex items-center justify-center text-sm">Loading chart...</div>;
+    return (
+      <div className="h-48 md:h-64 flex flex-col justify-end space-y-2 p-4">
+        <div className="flex items-end justify-between h-full space-x-2">
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+            <div key={i} className="flex flex-col items-center space-y-2 flex-1">
+              <div 
+                className="bg-muted animate-pulse rounded-t w-full"
+                style={{ height: `${Math.random() * 80 + 20}%` }}
+              />
+              <div className="h-3 w-8 bg-muted rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

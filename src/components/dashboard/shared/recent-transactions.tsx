@@ -36,7 +36,7 @@ const formatTimeAgo = (dateString: string) => {
 };
 
 export function RecentTransactions() {
-  const { free, budget } = useSelector((state: RootState) => state.overview);
+  const { free, budget, loading } = useSelector((state: RootState) => state.overview);
 
   // Combine and sort recent expenses from both free and budget
   const allExpenses = [...free.expenses, ...budget.expenses]
@@ -55,6 +55,36 @@ export function RecentTransactions() {
     icon: getCategoryIcon(expense.category),
     type: expense.type,
   }));
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Transactions</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="h-9 w-9 bg-muted rounded-full animate-pulse" />
+                <div className="space-y-1">
+                  <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+                  <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="text-right space-y-1">
+                <div className="h-4 w-16 bg-muted rounded animate-pulse" />
+                <div className="flex gap-1">
+                  <div className="h-5 w-12 bg-muted rounded animate-pulse" />
+                  <div className="h-5 w-10 bg-muted rounded animate-pulse" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

@@ -41,10 +41,10 @@ export function ExpenseSummary() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>This Month</CardTitle>
+          <div className="h-5 w-32 bg-muted rounded animate-pulse" />
         </CardHeader>
         <CardContent>
-          <p className="text-2xl font-bold">Loading...</p>
+          <div className="h-8 w-24 bg-muted rounded animate-pulse" />
         </CardContent>
       </Card>
     );

@@ -40,7 +40,16 @@ export function ExpenseCategoryChart({ expenseType = 'free' }: ExpenseCategoryCh
   }));
 
   if (loading) {
-    return <div className="h-48 sm:h-64 flex items-center justify-center text-sm">Loading chart...</div>;
+    return (
+      <div className="h-48 sm:h-64 flex items-center justify-center">
+        <div className="relative">
+          <div className="w-32 h-32 border-4 border-muted rounded-full animate-pulse" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 bg-muted rounded-full animate-pulse" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (data.length === 0) {
