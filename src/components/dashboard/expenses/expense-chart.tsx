@@ -27,13 +27,20 @@ export function ExpenseChart() {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 6);
 
-        const response = await fetch(
-          `/api/expenses?from=${startDate.toISOString()}&to=${endDate.toISOString()}`
-        );
+        // Fetch both free and budget expenses
+        const [freeResponse, budgetResponse] = await Promise.all([
+          fetch(`/api/expenses?type=free&from=${startDate.toISOString()}&to=${endDate.toISOString()}`),
+          fetch(`/api/expenses?type=budget&from=${startDate.toISOString()}&to=${endDate.toISOString()}`)
+        ]);
         
-        if (response.ok) {
-          const result = await response.json();
-          const expenses = result.expenses || result; // Handle both formats
+        if (freeResponse.ok && budgetResponse.ok) {
+          const [freeData, budgetData] = await Promise.all([
+            freeResponse.json(),
+            budgetResponse.json()
+          ]);
+          
+          // Combine both types of expenses
+          const expenses = [...freeData.expenses, ...budgetData.expenses];
           
           // Group expenses by date
           const dailyTotals: { [key: string]: number } = {};

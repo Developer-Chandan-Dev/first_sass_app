@@ -131,10 +131,10 @@ export function AddBudgetModal({
             addBudget({ ...data, isActive: true })
           ).unwrap();
 
-          // Optimistic update
+          // Update UI after successful API response
           dispatch(addBudgetOptimistic(res));
-          // Update overview stats for budget creation (not expense)
-
+          
+          // Update overview stats after successful API response
           dispatch(
             updateStatsOptimistic({
               type: 'budget',
@@ -144,6 +144,7 @@ export function AddBudgetModal({
               isExpense: false,
             })
           );
+          
           toast.success('Budget created successfully!');
         } catch (error) {
           toast.error('Failed to create budget');

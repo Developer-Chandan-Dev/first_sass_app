@@ -16,10 +16,24 @@ export function ExpensesTable() {
 
     const fetchExpenses = async () => {
       try {
-        const response = await fetch('/api/expenses?limit=20');
-        if (response.ok) {
-          const data = await response.json();
-          setExpenses(data);
+        // Fetch both free and budget expenses
+        const [freeResponse, budgetResponse] = await Promise.all([
+          fetch('/api/expenses?type=free&limit=10'),
+          fetch('/api/expenses?type=budget&limit=10')
+        ]);
+        
+        if (freeResponse.ok && budgetResponse.ok) {
+          const [freeData, budgetData] = await Promise.all([
+            freeResponse.json(),
+            budgetResponse.json()
+          ]);
+          
+          // Combine and sort by date (most recent first)
+          const allExpenses = [...freeData.expenses, ...budgetData.expenses]
+            .sort((a, b) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime())
+            .slice(0, 20);
+            
+          setExpenses(allExpenses);
         }
       } catch (error) {
         console.error('Failed to fetch expenses:', error);

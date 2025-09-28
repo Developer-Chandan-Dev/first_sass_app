@@ -18,14 +18,22 @@ export function ExpenseSummary() {
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-        const response = await fetch(
-          `/api/expenses?from=${startOfMonth.toISOString()}&to=${endOfMonth.toISOString()}`
-        );
+        // Fetch both free and budget expenses
+        const [freeResponse, budgetResponse] = await Promise.all([
+          fetch(`/api/expenses?type=free&from=${startOfMonth.toISOString()}&to=${endOfMonth.toISOString()}`),
+          fetch(`/api/expenses?type=budget&from=${startOfMonth.toISOString()}&to=${endOfMonth.toISOString()}`)
+        ]);
         
-        if (response.ok) {
-          const expenses = await response.json();
-          const total = expenses.reduce((sum: number, expense: { amount: number }) => sum + expense.amount, 0);
-          setMonthlyTotal(total);
+        if (freeResponse.ok && budgetResponse.ok) {
+          const [freeData, budgetData] = await Promise.all([
+            freeResponse.json(),
+            budgetResponse.json()
+          ]);
+          
+          const freeTotal = freeData.expenses.reduce((sum: number, expense: { amount: number }) => sum + expense.amount, 0);
+          const budgetTotal = budgetData.expenses.reduce((sum: number, expense: { amount: number }) => sum + expense.amount, 0);
+          
+          setMonthlyTotal(freeTotal + budgetTotal);
         }
       } catch (error) {
         console.error('Failed to fetch monthly total:', error);

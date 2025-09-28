@@ -20,6 +20,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
+import { updateBudgetSpent } from '@/lib/redux/expense/budgetSlice';
 
 const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -138,16 +139,6 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
     try {
       setIsSubmitting(true);
       
-      // Update budget stats optimistically BEFORE API call
-      dispatch(updateStatsOptimistic({
-        type: 'budget',
-        amount: Number(data.amount),
-        category: data.category,
-        operation: 'add',
-        isExpense: true,
-        reason: data.reason
-      }));
-      
       const loadingToast = toast.loading('Adding expense...');
 
       const requestData = {
@@ -170,6 +161,24 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
 
       if (response.ok) {
         await response.json();
+        
+        // Update stats after successful API response
+        dispatch(updateStatsOptimistic({
+          type: 'budget',
+          amount: Number(data.amount),
+          category: data.category,
+          operation: 'add',
+          isExpense: true,
+          reason: data.reason
+        }));
+        
+        // Update budget spent amount after successful API response
+        dispatch(updateBudgetSpent({
+          budgetId: data.budgetId,
+          amount: Number(data.amount),
+          operation: 'add'
+        }));
+        
         toast.success('Budget expense added successfully!');
         reset();
         onOpenChange(false);

@@ -134,9 +134,10 @@ export function AddExpenseModal({
       try {
         const res = await dispatch(addExpense(requestData)).unwrap();
 
-        // Optimistic update - add to UI immediately
+        // Update UI after successful API response
         dispatch(addExpenseOptimistic(res));
-        // Trigger stats refresh for overview components
+        
+        // Update stats after successful API response
         dispatch(
           updateStatsOptimistic({
             type: expenseType,

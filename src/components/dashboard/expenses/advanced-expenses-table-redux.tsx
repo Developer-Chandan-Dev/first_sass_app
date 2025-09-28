@@ -126,39 +126,32 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
     const expense = expenses.find(e => e._id === id);
     if (!expense) return;
     
-    // Optimistic updates - immediate UI changes
-    dispatch(deleteExpenseOptimistic(id));
-    dispatch(updateStatsOptimistic({ 
-      type: expenseType, 
-      amount: expense.amount, 
-      category: expense.category, 
-      operation: 'subtract' 
-    }));
-    
-    if (expenseType === 'budget' && expense.budgetId) {
-      dispatch(updateBudgetSpent({ 
-        budgetId: expense.budgetId, 
-        amount: expense.amount, 
-        operation: 'subtract' 
-      }));
-    }
-    
-    toast.success('Expense deleted successfully!');
-    
-    // API call in background
+    // API call first
     try {
       await dispatch(deleteExpense(id)).unwrap();
+      
+      // Update UI after successful API response
+      dispatch(deleteExpenseOptimistic(id));
+      dispatch(updateStatsOptimistic({ 
+        type: expenseType, 
+        amount: expense.amount, 
+        category: expense.category, 
+        operation: 'subtract' 
+      }));
+      
+      if (expenseType === 'budget' && expense.budgetId) {
+        dispatch(updateBudgetSpent({ 
+          budgetId: expense.budgetId, 
+          amount: expense.amount, 
+          operation: 'subtract' 
+        }));
+      }
+      
+      toast.success('Expense deleted successfully!');
       // Silent stats refresh
       dispatch(refreshStats(expenseType));
     } catch {
       toast.error('Failed to delete expense');
-      // Revert optimistic updates by refetching
-      dispatch(fetchExpenses({ 
-        expenseType, 
-        filters: { ...filters, search: activeSearchTerm }, 
-        page: currentPage, 
-        pageSize 
-      }));
     }
   };
 
@@ -167,14 +160,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       return;
     }
     
-    // Optimistic update - remove all selected from UI immediately
-    selectedRows.forEach(id => {
-      dispatch(deleteExpenseOptimistic(id));
-    });
-    toast.success(`${selectedRows.length} expenses deleted successfully!`);
-    setSelectedRows([]);
-    
-    // API call in background
+    // API call first
     try {
       const response = await fetch('/api/expenses/bulk', {
         method: 'DELETE',
@@ -185,15 +171,16 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       if (!response.ok) {
         throw new Error('Failed to delete expenses');
       }
+      
+      // Update UI after successful API response
+      selectedRows.forEach(id => {
+        dispatch(deleteExpenseOptimistic(id));
+      });
+      
+      toast.success(`${selectedRows.length} expenses deleted successfully!`);
+      setSelectedRows([]);
     } catch {
       toast.error('Failed to delete expenses');
-      // Revert optimistic update by refetching
-      dispatch(fetchExpenses({ 
-        expenseType, 
-        filters: { ...filters, search: activeSearchTerm }, 
-        page: currentPage, 
-        pageSize 
-      }));
     }
   };
 
