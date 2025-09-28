@@ -165,7 +165,7 @@ export function AddBudgetModal({
     }
   };
 
-  const categories = ['Food & Dining', 'Transportation', ,'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'];
+  const categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education', 'Travel', 'Others'];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

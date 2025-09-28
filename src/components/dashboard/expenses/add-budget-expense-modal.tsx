@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
@@ -26,6 +27,10 @@ const expenseSchema = z.object({
   category: z.string().min(1, 'Category is required'),
   reason: z.string().min(1, 'Reason is required'),
   date: z.string().min(1, 'Date is required'),
+  incomeId: z.string().optional(),
+  affectsBalance: z.boolean().default(false),
+  isRecurring: z.boolean().default(false),
+  frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
 });
 
 type ExpenseFormData = z.infer<typeof expenseSchema>;
@@ -41,6 +46,13 @@ interface Budget {
   isActive: boolean;
 }
 
+interface ConnectedIncome {
+  _id: string;
+  source: string;
+  description: string;
+  amount: number;
+}
+
 interface AddBudgetExpenseModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -50,6 +62,7 @@ interface AddBudgetExpenseModalProps {
 export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: AddBudgetExpenseModalProps) {
   const dispatch = useAppDispatch();
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [connectedIncomes, setConnectedIncomes] = useState<ConnectedIncome[]>([]);
   const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories] = useState<string[]>(['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others']);
@@ -61,31 +74,44 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
     setValue,
     watch,
     formState: { errors },
-  } = useForm<ExpenseFormData>({
+  } = useForm({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       date: new Date().toISOString().split('T')[0],
+      affectsBalance: false,
+      isRecurring: false,
     },
   });
 
   const watchedBudgetId = watch('budgetId');
   const watchedAmount = watch('amount');
+  const watchedAffectsBalance = watch('affectsBalance');
+  const watchedIsRecurring = watch('isRecurring');
 
   useEffect(() => {
-    const fetchBudgets = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/expenses/budget?active=true');
-        if (response.ok) {
-          const data = await response.json();
-          setBudgets(data);
+        const [budgetsRes, incomesRes] = await Promise.all([
+          fetch('/api/expenses/budget?active=true'),
+          fetch('/api/incomes/connected')
+        ]);
+        
+        if (budgetsRes.ok) {
+          const budgetsData = await budgetsRes.json();
+          setBudgets(budgetsData);
+        }
+        
+        if (incomesRes.ok) {
+          const incomesData = await incomesRes.json();
+          setConnectedIncomes(incomesData);
         }
       } catch (error) {
-        console.error('Failed to fetch budgets:', error);
+        console.error('Failed to fetch data:', error);
       }
     };
 
     if (open) {
-      fetchBudgets();
+      fetchData();
     }
   }, [open]);
 
@@ -128,6 +154,10 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
         ...data,
         type: 'budget',
         amount: Number(data.amount),
+        incomeId: data.affectsBalance ? data.incomeId : undefined,
+        affectsBalance: data.affectsBalance,
+        isRecurring: data.isRecurring,
+        frequency: data.isRecurring ? data.frequency : undefined,
       };
 
       const response = await fetch('/api/expenses', {
@@ -183,12 +213,13 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] max-w-md mx-auto">
-        <DialogHeader className="pb-3">
+      <DialogContent className="w-[95vw] max-w-md mx-auto max-h-[90vh] flex flex-col">
+        <DialogHeader className="pb-3 flex-shrink-0">
           <DialogTitle className="text-lg">Add Budget Expense</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="flex-1 overflow-y-auto pr-2">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="budgetId" className="text-sm">Select Budget</Label>
             <select
@@ -289,20 +320,74 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 pt-4">
-            <Button type="submit" disabled={isSubmitting || !selectedBudget} className="w-full sm:w-auto">
-              {isSubmitting ? 'Adding...' : 'Add Expense'}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="w-full sm:w-auto"
-            >
-              Cancel
-            </Button>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="affectsBalance" className="text-sm">Affects income balance</Label>
+            <Switch
+              id="affectsBalance"
+              checked={watchedAffectsBalance}
+              onCheckedChange={(checked) => setValue('affectsBalance', checked)}
+            />
           </div>
-        </form>
+
+          {watchedAffectsBalance && (
+            <div>
+              <Label htmlFor="incomeId" className="text-sm">Select Income Source</Label>
+              <select
+                id="incomeId"
+                {...register('incomeId')}
+                className="w-full mt-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
+              >
+                <option value="">Choose income source</option>
+                {connectedIncomes.map((income) => (
+                  <option key={income._id} value={income._id}>
+                    {income.source} - {income.description} (₹{income.amount.toLocaleString()})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            <Label htmlFor="isRecurring" className="text-sm">Recurring expense</Label>
+            <Switch
+              id="isRecurring"
+              checked={watchedIsRecurring}
+              onCheckedChange={(checked) => setValue('isRecurring', checked)}
+            />
+          </div>
+
+          {watchedIsRecurring && (
+            <div>
+              <Label htmlFor="frequency" className="text-sm">Frequency</Label>
+              <select
+                id="frequency"
+                {...register('frequency')}
+                className="w-full mt-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
+              >
+                <option value="">Select frequency</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+          )}
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-4">
+              <Button type="submit" disabled={isSubmitting || !selectedBudget} className="w-full sm:w-auto">
+                {isSubmitting ? 'Adding...' : 'Add Expense'}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="w-full sm:w-auto"
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

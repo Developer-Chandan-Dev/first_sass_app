@@ -34,10 +34,12 @@ import {
   FileText,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Eye
 } from 'lucide-react';
 import { EditIncomeModal } from './edit-income-modal';
 import { PDFExportModal } from './pdf-export-modal';
+import { IncomeExpensesModal } from './income-expenses-modal';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/lib/redux/store';
@@ -82,6 +84,7 @@ export function AdvancedIncomeTable() {
   const [editingIncome, setEditingIncome] = useState<IncomeItem | null>(null);
   const [isPDFExportOpen, setIsPDFExportOpen] = useState(false);
   const [isSelectedExport, setIsSelectedExport] = useState(false);
+  const [viewingExpenses, setViewingExpenses] = useState<IncomeItem | null>(null);
 
   // Fetch incomes when component mounts or when filters/pagination changes
   useEffect(() => {
@@ -603,6 +606,12 @@ export function AdvancedIncomeTable() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          {income.isConnected && (
+                            <DropdownMenuItem onClick={() => setViewingExpenses(income)}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View Expenses
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem onClick={() => handleEdit(income)}>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
@@ -713,6 +722,16 @@ export function AdvancedIncomeTable() {
         isSelectedExport={isSelectedExport}
         selectedCount={selectedRows.length}
       />
+      
+      {viewingExpenses && (
+        <IncomeExpensesModal
+          open={!!viewingExpenses}
+          onOpenChange={() => setViewingExpenses(null)}
+          incomeId={viewingExpenses._id}
+          incomeSource={viewingExpenses.source}
+          incomeAmount={viewingExpenses.amount}
+        />
+      )}
     </Card>
   );
 }
