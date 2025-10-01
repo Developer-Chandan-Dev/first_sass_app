@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { useTranslations } from 'next-intl';
 import { Navbar } from '@/components/users/navbar';
 import { Footer } from '@/components/users/footer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default function PricingPage() {
+  const t = useTranslations('pages.pricing');
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -28,14 +30,14 @@ export default function PricingPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
-              Pricing Plans
+              {t('badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Simple,
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Transparent Pricing</span>
+              {t('title')}
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> {t('titleHighlight')}</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choose the perfect plan for your needs. All plans include our core features with no hidden fees.
+              {t('subtitle')}
             </p>
           </div>
 
@@ -143,20 +145,20 @@ export default function PricingPage() {
           </div>
 
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold mb-6">{t('faq.title')}</h2>
             <div className="max-w-3xl mx-auto space-y-6">
               {[
                 {
-                  question: "Can I change plans anytime?",
-                  answer: "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately."
+                  question: t('faq.changePlans.question'),
+                  answer: t('faq.changePlans.answer')
                 },
                 {
-                  question: "Is there a free trial?",
-                  answer: "All paid plans come with a 14-day free trial. No credit card required to start."
+                  question: t('faq.freeTrial.question'),
+                  answer: t('faq.freeTrial.answer')
                 },
                 {
-                  question: "What payment methods do you accept?",
-                  answer: "We accept all major credit cards, PayPal, and bank transfers for enterprise plans."
+                  question: t('faq.payment.question'),
+                  answer: t('faq.payment.answer')
                 }
               ].map((faq, index) => (
                 <Card key={index} className="bg-card border-border text-left">

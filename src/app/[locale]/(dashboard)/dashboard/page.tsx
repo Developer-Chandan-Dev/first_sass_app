@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StatsCards } from '@/components/dashboard/shared/stats-cards';
@@ -11,6 +12,7 @@ import { useAppDispatch } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 export default function Dashboard() {
+    const t = useTranslations();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -28,8 +30,8 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard Overview</h2>
-        <p className="text-muted-foreground">Track your financial progress and manage expenses efficiently.</p>
+        <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h2>
+        <p className="text-muted-foreground">{t('dashboard.subtitle')}</p>
       </div>
       
       <StatsCards />

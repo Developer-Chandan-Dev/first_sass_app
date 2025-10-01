@@ -1,7 +1,44 @@
+"use client";
 import Link from 'next/link';
-import { Zap, Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Zap, Github, Twitter, Linkedin, Mail, Globe } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export function Footer() {
+  const t = useTranslations('footer');
+  const tCommon = useTranslations('common');
+  const pathname = usePathname();
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'hi', name: 'हिंदी', flag: '🇮🇳' },
+    { code: 'mr', name: 'मराठी', flag: '🇮🇳' },
+    { code: 'pa', name: 'ਪੰਜਾਬੀ', flag: '🇮🇳' }
+  ];
+  
+  const currentLocale = pathname.split('/')[1] || 'en';
+  const pathWithoutLocale = pathname.replace(`/${currentLocale}`, '') || '/';
+  
+  const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
+  
+  const switchLanguage = (locale: string) => {
+    const newPath = `/${locale}${pathWithoutLocale}`;
+    router.push(newPath);
+  };
   return (
     <footer className="bg-background border-t border-border">
       <div className="container mx-auto px-4 py-12">
@@ -17,52 +54,52 @@ export function Footer() {
               </span>
             </div>
             <p className="text-muted-foreground text-sm">
-              The future of expense management. Track, analyze, and optimize your finances with AI-powered insights.
+              {t('description')}
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <h3 className="text-foreground font-semibold mb-4">Product</h3>
+            <h3 className="text-foreground font-semibold mb-4">{t('product.title')}</h3>
             <div className="space-y-2">
               <Link href="#features" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                Features
+                {t('product.features')}
               </Link>
               <Link href="#pricing" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                Pricing
+                {t('product.pricing')}
               </Link>
               <Link href="/dashboard" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                Dashboard
+                {tCommon('dashboard')}
               </Link>
               <Link href="#" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                API
+                {t('product.api')}
               </Link>
             </div>
           </div>
 
           {/* Company */}
           <div>
-            <h3 className="text-foreground font-semibold mb-4">Company</h3>
+            <h3 className="text-foreground font-semibold mb-4">{t('company.title')}</h3>
             <div className="space-y-2">
-              <Link href="#about" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                About
+              <Link href="/about" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
+                {t('company.about')}
               </Link>
               <Link href="#" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                Blog
+                {t('company.blog')}
               </Link>
               <Link href="#" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                Careers
+                {t('company.careers')}
               </Link>
-              <Link href="#" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
-                Contact
+              <Link href="/contact" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">
+                {t('company.contact')}
               </Link>
             </div>
           </div>
 
-          {/* Connect */}
+          {/* Connect & Language */}
           <div>
-            <h3 className="text-foreground font-semibold mb-4">Connect</h3>
-            <div className="flex space-x-4">
+            <h3 className="text-foreground font-semibold mb-4">{t('connect.title')}</h3>
+            <div className="flex space-x-4 mb-4">
               <a href="https://github.com/Developer-Chandan-Dev/" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Github className="w-5 h-5" />
               </a>
@@ -76,7 +113,39 @@ export function Footer() {
                 <Mail className="w-5 h-5" />
               </a>
             </div>
-            <div className="mt-4">
+            
+            {/* Language Switcher */}
+            <div className="mb-4">
+              {mounted ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full justify-start">
+                      <Globe className="w-4 h-4 mr-2" />
+                      {currentLanguage.flag} {currentLanguage.name}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {languages.map((language) => (
+                      <DropdownMenuItem
+                        key={language.code}
+                        onClick={() => switchLanguage(language.code)}
+                        className="cursor-pointer"
+                      >
+                        <span className="mr-2">{language.flag}</span>
+                        {language.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="outline" size="sm" className="w-full justify-start" disabled>
+                  <Globe className="w-4 h-4 mr-2" />
+                  Loading...
+                </Button>
+              )}
+            </div>
+            
+            <div>
               <p className="text-muted-foreground text-sm">support@trackwise.vercel.app</p>
             </div>
           </div>
@@ -84,14 +153,14 @@ export function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © 2025 TrackWise. All rights reserved.
+            {t('copyright')}
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
-              Privacy Policy
+              {t('privacy')}
             </Link>
             <Link href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
-              Terms of Service
+              {t('terms')}
             </Link>
           </div>
         </div>

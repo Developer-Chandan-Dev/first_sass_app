@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { 
@@ -19,15 +20,15 @@ import {
 } from 'lucide-react';
 
 const sidebarItems = [
-  { icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
-  { icon: Receipt, label: 'Expenses', href: '/dashboard/expenses' },
-  { icon: DollarSign, label: 'Income', href: '/dashboard/income' },
-  { icon: TrendingUp, label: 'Analytics', href: '/dashboard/analytics' },
-  { icon: PieChart, label: 'Categories', href: '/dashboard/categories' },
-  { icon: Target, label: 'Budgets', href: '/dashboard/budgets' },
-  { icon: CreditCard, label: 'Cards', href: '/dashboard/cards' },
-  { icon: Bell, label: 'Notifications', href: '/dashboard/notifications' },
-  { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
+  { icon: LayoutDashboard, labelKey: 'dashboard.title', href: '/dashboard' },
+  { icon: Receipt, labelKey: 'dashboard.expenses', href: '/dashboard/expenses' },
+  { icon: DollarSign, labelKey: 'dashboard.income', href: '/dashboard/income' },
+  { icon: TrendingUp, labelKey: 'dashboard.analytics', href: '/dashboard/analytics' },
+  { icon: PieChart, labelKey: 'dashboard.categories', href: '/dashboard/categories' },
+  { icon: Target, labelKey: 'dashboard.budgets', href: '/dashboard/budgets' },
+  { icon: CreditCard, labelKey: 'common.cards', href: '/dashboard/cards' },
+  { icon: Bell, labelKey: 'dashboard.notifications', href: '/dashboard/notifications' },
+  { icon: Settings, labelKey: 'dashboard.settings', href: '/dashboard/settings' },
 ];
 
 interface SidebarProps {
@@ -39,6 +40,9 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
+  const params = useParams();
+  const t = useTranslations();
+  const locale = params.locale as string;
 
   const handleLinkClick = () => {
     if (isMobile && onMobileClose) {
@@ -90,9 +94,9 @@ export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: Side
               )}
               asChild
             >
-              <Link href={item.href} onClick={handleLinkClick}>
+              <Link href={`/${locale}${item.href}`} onClick={handleLinkClick}>
                 <Icon className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')} />
-                {!isCollapsed && <span className="text-sm truncate">{item.label}</span>}
+                {!isCollapsed && <span className="text-sm truncate">{t(item.labelKey)}</span>}
               </Link>
             </Button>
           );

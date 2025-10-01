@@ -1,0 +1,260 @@
+{
+  "common": {
+    "dashboard": "Dashboard",
+    "expenses": "Expenses",
+    "budgets": "Budgets",
+    "income": "Income",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "categories": "Categories",
+    "notifications": "Notifications",
+    "cards": "Cards",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "noData": "No data available",
+    "total": "Total",
+    "amount": "Amount",
+    "date": "Date",
+    "category": "Category",
+    "description": "Description",
+    "actions": "Actions",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "close": "Close",
+    "submit": "Submit",
+    "reset": "Reset"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "services": "Services",
+    "pricing": "Pricing",
+    "guide": "Guide"
+  },
+  "landing": {
+    "title": "TrackWise",
+    "subtitle": "The Future of Expense Tracking",
+    "description": "Take control of your finances with intelligent expense tracking and budget management. Get insights, set budgets, and achieve your financial goals with TrackWise.",
+    "aiPowered": "AI-Powered Financial Intelligence",
+    "startTrial": "Start Free Trial",
+    "goToDashboard": "Go to Dashboard",
+    "readGuide": "Read Guide",
+    "features": "Features",
+    "pricing": "Pricing",
+    "testimonials": "Testimonials",
+    "noCreditCard": "No credit card required",
+    "freeTrial": "14-day free trial",
+    "cancelAnytime": "Cancel anytime",
+    "intelligentFinancial": "Intelligent Financial",
+    "management": "Management",
+    "nextGeneration": "Experience the next generation of expense tracking with AI-driven insights and automation",
+    "chooseYour": "Choose Your",
+    "plan": "Plan",
+    "flexiblePricing": "Flexible pricing for individuals and teams",
+    "lovedBy": "Loved by",
+    "thousands": "Thousands",
+    "readyToTransform": "Ready to Transform Your",
+    "finances": "Finances?",
+    "joinMillions": "Join millions of users who have revolutionized their financial management with AI-powered insights.",
+    "mostPopular": "Most Popular",
+    "forever": "forever",
+    "perMonth": "per month"
+  },
+  "features": {
+    "aiInsights": {
+      "title": "AI-Powered Insights",
+      "description": "Machine learning algorithms analyze your spending patterns and provide personalized recommendations"
+    },
+    "predictiveAnalytics": {
+      "title": "Predictive Analytics", 
+      "description": "Forecast future expenses and identify potential savings opportunities before they happen"
+    },
+    "smartCategorization": {
+      "title": "Smart Categorization",
+      "description": "Automatic expense categorization with 99% accuracy using advanced pattern recognition"
+    },
+    "bankSecurity": {
+      "title": "Bank-Level Security",
+      "description": "Enterprise-grade encryption and security protocols protect your financial data"
+    },
+    "mobileFirst": {
+      "title": "Mobile-First Design",
+      "description": "Seamless experience across all devices with real-time synchronization"
+    },
+    "globalCurrency": {
+      "title": "Global Currency Support",
+      "description": "Track expenses in 150+ currencies with real-time exchange rates"
+    }
+  },
+  "stats": {
+    "activeUsers": "Active Users",
+    "trackedExpenses": "Tracked Expenses", 
+    "uptime": "Uptime",
+    "countries": "Countries"
+  },
+  "pricing": {
+    "plans": {
+      "free": {
+        "name": "Free",
+        "features": ["Basic expense tracking", "5 categories", "Mobile app", "Email support"]
+      },
+      "pro": {
+        "name": "Pro", 
+        "features": ["Unlimited tracking", "AI insights", "Advanced analytics", "Priority support"]
+      },
+      "premium": {
+        "name": "Premium",
+        "features": ["Team collaboration", "Custom categories", "API access", "White-label options"]
+      },
+      "ultra": {
+        "name": "Ultra",
+        "features": ["Enterprise features", "Dedicated support", "Custom integrations", "SLA guarantee"]
+      }
+    }
+  },
+  "testimonials": {
+    "sarah": {
+      "name": "Sarah Chen",
+      "role": "Startup Founder",
+      "content": "TrackWise's AI insights helped me reduce business expenses by 30%. The predictive analytics are game-changing."
+    },
+    "marcus": {
+      "name": "Marcus Johnson", 
+      "role": "Freelancer",
+      "content": "Finally, an expense tracker that understands my workflow. The automation saves me hours every week."
+    },
+    "emily": {
+      "name": "Emily Rodriguez",
+      "role": "Finance Manager", 
+      "content": "The team collaboration features are incredible. We've streamlined our entire expense approval process."
+    }
+  },
+  "dashboard": {
+    "overview": "Dashboard Overview",
+    "description": "Track your financial progress and manage expenses efficiently.",
+    "recentTransactions": "Recent Transactions",
+    "monthlySpending": "Monthly Spending",
+    "budgetStatus": "Budget Status",
+    "addExpense": "Add Expense",
+    "addBudget": "Add Budget", 
+    "addIncome": "Add Income",
+    "spendingTrends": "Spending Trends",
+    "comingSoon": "Coming Soon"
+  },
+  "admin": {
+    "users": "Users",
+    "plans": "Plans",
+    "revenue": "Revenue",
+    "userManagement": "User Management",
+    "platformSettings": "Platform Settings"
+  },
+  "pages": {
+    "about": {
+      "badge": "About Us",
+      "title": "About",
+      "subtitle": "We're on a mission to make financial management accessible, intelligent, and effortless for everyone.",
+      "stats": {
+        "users": { "title": "1M+ Users", "desc": "Trust our platform" },
+        "ai": { "title": "AI-Powered", "desc": "Smart insights" },
+        "award": { "title": "Award Winning", "desc": "Industry recognition" },
+        "global": { "title": "Global Reach", "desc": "150+ countries" }
+      },
+      "story": {
+        "title": "Our Story",
+        "paragraph1": "Founded with a vision to democratize financial management, TrackWise emerged from the need for simple yet powerful expense tracking tools. We recognized that managing personal and business finances shouldn't require complex software or financial expertise.",
+        "paragraph2": "Today, TrackWise serves users worldwide with intelligent expense tracking and budget management features. Our platform helps users gain control over their finances through smart categorization, budget alerts, and insightful analytics.",
+        "paragraph3": "We believe that everyone deserves access to sophisticated financial management tools. That's why we've built TrackWise to be both powerful and intuitive, helping you make better financial decisions every day."
+      }
+    },
+    "contact": {
+      "badge": "Contact Us",
+      "title": "Get in",
+      "titleHighlight": "Touch",
+      "subtitle": "Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
+      "info": {
+        "title": "Contact Information",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "addressValue": "123 Tech Street, San Francisco, CA 94105",
+        "hours": "Hours",
+        "hoursValue": "Mon-Fri 9AM-6PM PST"
+      },
+      "form": {
+        "title": "Send us a Message",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Your message...",
+        "send": "Send Message"
+      }
+    },
+    "services": {
+      "badge": "Our Services",
+      "title": "Comprehensive",
+      "titleHighlight": "Financial Solutions",
+      "subtitle": "From AI-powered insights to enterprise integrations, we provide everything you need to master your finances.",
+      "cta": {
+        "title": "Ready to Get Started?",
+        "subtitle": "Choose the plan that's right for you and start transforming your financial management today.",
+        "startTrial": "Start Free Trial",
+        "viewPricing": "View Pricing"
+      }
+    },
+    "pricing": {
+      "badge": "Pricing Plans",
+      "title": "Simple,",
+      "titleHighlight": "Transparent Pricing",
+      "subtitle": "Choose the perfect plan for your needs. All plans include our core features with no hidden fees.",
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "changePlans": {
+          "question": "Can I change plans anytime?",
+          "answer": "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately."
+        },
+        "freeTrial": {
+          "question": "Is there a free trial?",
+          "answer": "All paid plans come with a 14-day free trial. No credit card required to start."
+        },
+        "payment": {
+          "question": "What payment methods do you accept?",
+          "answer": "We accept all major credit cards, PayPal, and bank transfers for enterprise plans."
+        }
+      }
+    }
+  },
+  "footer": {
+    "description": "The future of expense management. Track, analyze, and optimize your finances with AI-powered insights.",
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "api": "API"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact"
+    },
+    "connect": {
+      "title": "Connect"
+    },
+    "copyright": "© 2025 TrackWise. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}

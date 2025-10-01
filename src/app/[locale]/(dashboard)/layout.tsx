@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AdminNavButton } from '@/components/common/admin-nav-button';
+import { LanguageSwitcher } from '@/components/common/language-switcher';
 
 export default function DashboardLayout({
   children,
@@ -110,6 +111,7 @@ export default function DashboardLayout({
             <h1 className="text-lg sm:text-xl md:text-2xl font-semibold truncate">Dashboard</h1>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+            <LanguageSwitcher />
             <AdminNavButton />
             <ThemeToggle />
             <UserButton />

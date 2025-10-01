@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { Navbar } from '@/components/users/navbar';
 import { Footer } from '@/components/users/footer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,6 +8,7 @@ import { Brain, TrendingUp, Shield, Smartphone, PieChart, Zap } from 'lucide-rea
 import Link from 'next/link';
 
 export default function ServicesPage() {
+  const t = useTranslations('pages.services');
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -15,14 +17,14 @@ export default function ServicesPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <Badge className="mb-4 bg-green-500/10 text-green-400 border-green-500/20">
-              Our Services
+              {t('badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Comprehensive
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> Financial Solutions</span>
+              {t('title')}
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> {t('titleHighlight')}</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              From AI-powered insights to enterprise integrations, we provide everything you need to master your finances.
+              {t('subtitle')}
             </p>
           </div>
 
@@ -84,16 +86,16 @@ export default function ServicesPage() {
           </div>
 
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
+            <h2 className="text-3xl font-bold mb-6">{t('cta.title')}</h2>
             <p className="text-xl text-muted-foreground mb-8">
-              Choose the plan that&apos;s right for you and start transforming your financial management today.
+              {t('cta.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-                <Link href="/register">Start Free Trial</Link>
+                <Link href="/register">{t('cta.startTrial')}</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link href="/pricing">View Pricing</Link>
+                <Link href="/pricing">{t('cta.viewPricing')}</Link>
               </Button>
             </div>
           </div>
