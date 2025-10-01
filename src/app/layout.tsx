@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+
 import { ReduxProvider } from '@/components/common/providers';
 import { ThemeProvider } from '@/components/common/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
@@ -73,42 +72,24 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }>) {
-  const { locale } = await params;
-  
-  // Validate locale and provide fallback
-  const validLocales = ['en', 'hi', 'pa', 'mr'];
-  const validatedLocale = validLocales.includes(locale) ? locale : 'en';
-  
-  let messages;
-  try {
-    messages = await getMessages();
-  } catch (error) {
-    console.error('Failed to load messages:', error);
-    messages = {};
-  }
-
   return (
     <ClerkProvider>
-      <html lang={validatedLocale} suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <NextIntlClientProvider messages={messages}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <ReduxProvider>{children}</ReduxProvider>
-              <Toaster />
-            </ThemeProvider>
-          </NextIntlClientProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ReduxProvider>{children}</ReduxProvider>
+            <Toaster />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

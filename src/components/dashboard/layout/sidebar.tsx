@@ -5,6 +5,8 @@ import { usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+
+type TranslationKey = 'dashboard.title' | 'dashboard.expenses' | 'dashboard.income' | 'dashboard.analytics' | 'dashboard.categories' | 'dashboard.budgets' | 'common.cards' | 'dashboard.notifications' | 'dashboard.settings';
 import { 
   LayoutDashboard, 
   Receipt, 
@@ -16,10 +18,11 @@ import {
   Bell,
   ChevronLeft,
   Zap,
-  DollarSign
+  DollarSign,
+  type LucideIcon
 } from 'lucide-react';
 
-const sidebarItems = [
+const sidebarItems: Array<{ icon: LucideIcon; labelKey: TranslationKey; href: string }> = [
   { icon: LayoutDashboard, labelKey: 'dashboard.title', href: '/dashboard' },
   { icon: Receipt, labelKey: 'dashboard.expenses', href: '/dashboard/expenses' },
   { icon: DollarSign, labelKey: 'dashboard.income', href: '/dashboard/income' },

@@ -38,7 +38,7 @@ export function TranslatedNav({ items, className }: TranslatedNavProps) {
             )}
           >
             {Icon && <Icon className="h-4 w-4" />}
-            <span>{t(item.key as any)}</span>
+            <span>{t(item.key)}</span>
           </Link>
         );
       })}

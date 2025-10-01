@@ -18,7 +18,33 @@ import {
   Star
 } from 'lucide-react';
 
-const FEATURES = [
+interface Feature {
+  icon: React.ReactNode;
+  titleKey: string;
+  descriptionKey: string;
+}
+
+interface Stat {
+  number: string;
+  labelKey: string;
+}
+
+interface PricingPlan {
+  nameKey: string;
+  price: string;
+  periodKey: string;
+  features: string[];
+  popular: boolean;
+}
+
+interface Testimonial {
+  nameKey: string;
+  roleKey: string;
+  contentKey: string;
+  rating: number;
+}
+
+const FEATURES: Feature[] = [
   {
     icon: <Brain className="w-8 h-8" />,
     titleKey: 'aiInsights.title',
@@ -51,14 +77,14 @@ const FEATURES = [
   }
 ];
 
-const STATS = [
+const STATS: Stat[] = [
   { number: "1M+", labelKey: 'activeUsers' },
   { number: "$50B+", labelKey: 'trackedExpenses' },
   { number: "99.9%", labelKey: 'uptime' },
   { number: "150+", labelKey: 'countries' }
 ];
 
-const PRICING_PLANS = [
+const PRICING_PLANS: PricingPlan[] = [
   {
     nameKey: 'plans.free.name',
     price: "$0",
@@ -89,7 +115,7 @@ const PRICING_PLANS = [
   }
 ];
 
-const TESTIMONIALS = [
+const TESTIMONIALS: Testimonial[] = [
   {
     nameKey: 'sarah.name',
     roleKey: 'sarah.role',
@@ -265,7 +291,7 @@ export default function Home() {
                     <span className="text-muted-foreground">/{t(plan.periodKey)}</span>
                   </div>
                   <ul className="space-y-3 mb-6">
-                    {(plan.features || []).map((feature, featureIndex) => (
+                    {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-center text-sm text-muted-foreground">
                         <CheckCircle className="w-4 h-4 text-green-400 mr-2 flex-shrink-0" />
                         {feature}
