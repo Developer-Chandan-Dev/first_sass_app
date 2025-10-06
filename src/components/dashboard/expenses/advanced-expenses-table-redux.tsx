@@ -40,6 +40,7 @@ import { EditExpenseModal } from './edit-expense-modal-redux';
 import { ExpensePDFExportModal } from './expense-pdf-export-modal';
 import { toast } from 'sonner';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { useAppTranslations } from '@/hooks/useTranslation';
 import { 
   fetchExpenses, 
   deleteExpense, 
@@ -60,6 +61,7 @@ interface AdvancedExpensesTableProps {
 
 export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpensesTableProps) {
   const dispatch = useAppDispatch();
+  const { expenses: expensesData, common, table } = useAppTranslations();
   const { 
     expenses, 
     loading, 
@@ -119,7 +121,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this expense?')) {
+    if (!confirm(expensesData.areYouSureDeleteExpense)) {
       return;
     }
     
@@ -147,7 +149,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
         }));
       }
       
-      toast.success('Expense deleted successfully!');
+      toast.success(expensesData.deleteSuccess);
       // Silent stats refresh
       dispatch(refreshStats(expenseType));
     } catch {
@@ -258,13 +260,13 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
     <Card>
       <CardHeader className="pb-3">
         <div className="flex flex-col gap-4">
-          <CardTitle className="text-lg sm:text-xl">Expenses ({totalCount})</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">{expensesData.title} ({totalCount})</CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search expenses..."
+                  placeholder={expensesData.searchExpenses}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyPress={handleSearchKeyPress}
@@ -297,20 +299,20 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="w-auto">
                         <Download className="h-4 w-4 mr-2" />
-                        Export ({selectedRows.length})
+                        {expensesData.exportAll} ({selectedRows.length})
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem onClick={() => handleCSVExport(true)}>
                         <FileText className="mr-2 h-4 w-4" />
-                        Export Selected CSV
+                        {expensesData.exportSelectedCSV}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
                         setIsSelectedExport(true);
                         setIsPDFExportOpen(true);
                       }}>
                         <FileText className="mr-2 h-4 w-4" />
-                        Export Selected PDF
+                        {expensesData.exportSelectedPDF}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -323,20 +325,20 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="w-auto">
                     <Download className="h-4 w-4 mr-2" />
-                    Export All
+                    {expensesData.exportAll}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => handleCSVExport(false)}>
                     <FileText className="mr-2 h-4 w-4" />
-                    Export All CSV
+                    {expensesData.exportAllCSV}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => {
                     setIsSelectedExport(false);
                     setIsPDFExportOpen(true);
                   }}>
                     <FileText className="mr-2 h-4 w-4" />
-                    Export All PDF
+                    {expensesData.exportAllPDF}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -358,34 +360,34 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                   </TableHead>
                   <TableHead className="min-w-[80px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('date')} className="h-auto p-0 font-medium">
-                      Date {getSortIcon('date')}
+                      {common.date} {getSortIcon('date')}
                     </Button>
                   </TableHead>
                   <TableHead className="min-w-[120px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('reason')} className="h-auto p-0 font-medium">
-                      Description {getSortIcon('reason')}
+                      {common.description} {getSortIcon('reason')}
                     </Button>
                   </TableHead>
                   <TableHead className="hidden sm:table-cell min-w-[100px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('category')} className="h-auto p-0 font-medium">
-                      Category {getSortIcon('category')}
+                      {common.category} {getSortIcon('category')}
                     </Button>
                   </TableHead>
                   {expenseType === 'budget' && (
                     <TableHead className="hidden lg:table-cell min-w-[100px]">
                       <Button variant="ghost" size="sm" onClick={() => handleSort('budgetName')} className="h-auto p-0 font-medium">
-                        Budget {getSortIcon('budgetName')}
+                        {expensesData.budget} {getSortIcon('budgetName')}
                       </Button>
                     </TableHead>
                   )}
                   <TableHead className="hidden md:table-cell min-w-[80px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('isRecurring')} className="h-auto p-0 font-medium">
-                      Recurring {getSortIcon('isRecurring')}
+                      {expensesData.recurring} {getSortIcon('isRecurring')}
                     </Button>
                   </TableHead>
                   <TableHead className="text-right min-w-[80px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('amount')} className="h-auto p-0 font-medium">
-                      Amount {getSortIcon('amount')}
+                      {common.amount} {getSortIcon('amount')}
                     </Button>
                   </TableHead>
                   <TableHead className="w-8 sm:w-12"></TableHead>
@@ -411,7 +413,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
               ) : expenses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={expenseType === 'budget' ? 8 : 7} className="text-center py-8 text-muted-foreground">
-                    No expenses found
+                    {expensesData.noExpensesFound}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -453,7 +455,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                           {expense.frequency || 'Recurring'}
                         </Badge>
                       ) : (
-                        <span className="text-xs text-muted-foreground">One-time</span>
+                        <span className="text-xs text-muted-foreground">{expensesData.oneTime}</span>
                       )}
                     </TableCell>
                     <TableCell className="text-right font-medium py-2 text-sm">
@@ -476,14 +478,14 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(expense)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            Edit
+                            {common.edit}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="text-destructive"
                             onClick={() => handleDelete(expense._id)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            {common.delete}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -500,12 +502,12 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
           <div className="flex flex-col sm:flex-row items-center gap-2">
             <div className="text-xs sm:text-sm text-muted-foreground">
-              Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} entries
+              {expensesData.showing} {((currentPage - 1) * pageSize) + 1} {expensesData.to} {Math.min(currentPage * pageSize, totalCount)} {table.of} {totalCount} {expensesData.entries}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8">
-                  {pageSize} per page
+                  {pageSize} {expensesData.perPage}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -516,7 +518,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                       dispatch(setPageSize(size));
                     }}
                   >
-                    {size} per page
+                    {size} {expensesData.perPage}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>

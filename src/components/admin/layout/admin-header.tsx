@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { UserButton } from '@clerk/nextjs';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { DashboardNavButton } from '@/components/common/dashboard-nav-button';
+import { useAppTranslations } from '@/hooks/useTranslation';
 
 interface AdminHeaderProps {
   onMenuClick: () => void;
@@ -13,6 +14,8 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ onMenuClick, onToggleCollapse, isCollapsed }: AdminHeaderProps) {
+  const { admin } = useAppTranslations();
+  
   return (
     <header className="bg-card border-b border-border h-16">
       <div className="flex items-center justify-between px-2 sm:px-4 lg:px-6 h-full">
@@ -40,7 +43,7 @@ export function AdminHeader({ onMenuClick, onToggleCollapse, isCollapsed }: Admi
             </Button>
           )}
           <h1 className="text-sm sm:text-lg lg:text-xl font-semibold text-foreground truncate">
-            Admin Dashboard
+            {admin.dashboard}
           </h1>
         </div>
         

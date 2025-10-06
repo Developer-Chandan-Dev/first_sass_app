@@ -4,8 +4,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Target, Calendar } from 'lucide-react';
+import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useLocale } from 'next-intl';
 
 export function StatsCards() {
+  const { dashboard, common } = useAppTranslations();
+  const locale = useLocale();
   const { free, budget, loading } = useSelector((state: RootState) => state.overview);
   
   const totalExpenses = free.totalSpent + budget.totalSpent;
@@ -14,36 +18,36 @@ export function StatsCards() {
   
   const stats = [
     {
-      title: 'Total Expenses',
-      value: `₹${totalExpenses.toLocaleString()}`,
+      title: dashboard.totalExpenses,
+      value: formatCurrency(totalExpenses, 'INR', locale),
       change: free.monthlyChange > 0 ? `+${free.monthlyChange.toFixed(1)}%` : `${free.monthlyChange.toFixed(1)}%`,
       trend: free.monthlyChange >= 0 ? 'up' : 'down',
       icon: DollarSign,
-      description: 'vs last month'
+      description: dashboard.lastMonth
     },
     {
-      title: 'Budget Usage',
-      value: `₹${budget.totalBudget.toLocaleString()}`,
+      title: dashboard.budgetUsage,
+      value: formatCurrency(budget.totalBudget, 'INR', locale),
       change: `${budgetUsagePercent.toFixed(1)}%`,
       trend: budgetUsagePercent > 80 ? 'down' : 'up',
       icon: Target,
-      description: 'used this month'
+      description: dashboard.thisMonth
     },
     {
-      title: 'Categories',
+      title: dashboard.categories,
       value: (free.categoryBreakdown.length + budget.categoryBreakdown.length).toString(),
-      change: `${free.categoryBreakdown.length} free`,
+      change: `${free.categoryBreakdown.length} ${common.total}`,
       trend: 'up',
       icon: CreditCard,
-      description: `${budget.categoryBreakdown.length} budget`
+      description: `${budget.categoryBreakdown.length} ${dashboard.budgetUsage}`
     },
     {
-      title: 'Transactions',
+      title: dashboard.transactions,
       value: totalTransactions.toString(),
       change: budget.expenseChange > 0 ? `+${budget.expenseChange}` : budget.expenseChange.toString(),
       trend: budget.expenseChange >= 0 ? 'up' : 'down',
       icon: Calendar,
-      description: 'this month'
+      description: dashboard.thisMonth
     }
   ];
 

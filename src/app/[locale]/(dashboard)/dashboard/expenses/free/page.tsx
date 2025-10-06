@@ -14,11 +14,13 @@ import { RecentActivity } from '@/components/dashboard/expenses/recent-activity'
 import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
 import { Plus, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useAppTranslations } from '@/hooks/useTranslation';
 
 
 
 export default function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { expenses } = useAppTranslations();
 
 
 
@@ -27,26 +29,26 @@ export default function ExpensesPage() {
       <Button variant="ghost" size="sm" asChild className="w-fit">
         <Link href="/dashboard/expenses">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Expenses
+          {expenses.backToExpenses}
         </Link>
       </Button>
       
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div className="text-center sm:text-left">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Free Expenses</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">Track and manage your daily expenses</p>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{expenses.freeExpenses}</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">{expenses.trackAndManageDailyExpenses}</p>
         </div>
         <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
-          <span className="sm:inline">Add Expense</span>
+          <span className="sm:inline">{expenses.addExpense}</span>
         </Button>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
         <TabsList className="grid w-full grid-cols-3 h-auto p-1">
-          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">Overview</TabsTrigger>
-          <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">Analytics</TabsTrigger>
-          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">Expenses</TabsTrigger>
+          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">{expenses.overview}</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">{expenses.analytics}</TabsTrigger>
+          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">{expenses.title}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
@@ -55,7 +57,7 @@ export default function ExpensesPage() {
           <div className="grid gap-4 md:gap-6 lg:grid-cols-2 w-full max-w-full">
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Expenses by Category</CardTitle>
+                <CardTitle className="text-lg">{expenses.expensesByCategory}</CardTitle>
               </CardHeader>
               <CardContent className="pt-0 overflow-hidden">
                 <ExpenseCategoryChart />
@@ -64,7 +66,7 @@ export default function ExpensesPage() {
             
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Recent Activity</CardTitle>
+                <CardTitle className="text-lg">{expenses.recentActivity}</CardTitle>
               </CardHeader>
               <CardContent className="pt-0 overflow-hidden">
                 <RecentActivity />

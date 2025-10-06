@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useAppTranslations } from '@/hooks/useTranslation';
 
 const incomeSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -34,6 +35,7 @@ interface AddIncomeModalProps {
 
 export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { income } = useAppTranslations();
 
   const {
     register,
@@ -65,7 +67,7 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
       });
 
       if (response.ok) {
-        toast.success('Income added successfully!');
+        toast.success(income.addSuccess);
         reset();
         onOpenChange(false);
         onIncomeAdded?.();
@@ -82,21 +84,21 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
   };
 
   const incomeSources = [
-    'Salary',
+    income.sources.salary,
     'Freelancing',
-    'Business',
-    'Investment',
-    'Rental',
+    income.sources.business,
+    income.sources.investment,
+    income.sources.rental,
     'Commission',
     'Bonus',
-    'Other'
+    income.sources.other
   ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle>Add Income Source</DialogTitle>
+          <DialogTitle>{income.addIncomeSource}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

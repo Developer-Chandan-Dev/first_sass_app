@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useAppTranslations } from '@/hooks/useTranslation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StatsCards } from '@/components/dashboard/shared/stats-cards';
@@ -12,7 +12,7 @@ import { useAppDispatch } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 export default function Dashboard() {
-    const t = useTranslations();
+    const { dashboard, sidebar } = useAppTranslations();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -21,17 +21,33 @@ export default function Dashboard() {
     }, [dispatch]);
 
   const comingSoonFeatures = [
-    { title: 'Budget Goals', icon: Target, description: 'Set and track monthly budget targets' },
-    { title: 'Expense Analytics', icon: PieChart, description: 'Advanced spending pattern analysis' },
-    { title: 'Bill Reminders', icon: Bell, description: 'Never miss a payment deadline' },
-    { title: 'Financial Calendar', icon: Calendar, description: 'Plan your expenses ahead' },
+    { 
+      title: sidebar.budgets, 
+      icon: Target, 
+      description: dashboard.setBudgetTargets 
+    },
+    { 
+      title: sidebar.analytics, 
+      icon: PieChart, 
+      description: dashboard.advancedSpendingAnalysis 
+    },
+    { 
+      title: sidebar.notifications, 
+      icon: Bell, 
+      description: dashboard.neverMissPayment 
+    },
+    { 
+      title: dashboard.financialCalendar, 
+      icon: Calendar, 
+      description: dashboard.planExpensesAhead 
+    },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">{t('dashboard.title')}</h2>
-        <p className="text-muted-foreground">{t('dashboard.subtitle')}</p>
+        <h2 className="text-3xl font-bold tracking-tight">{dashboard.overview}</h2>
+        <p className="text-muted-foreground">{dashboard.description}</p>
       </div>
       
       <StatsCards />
@@ -41,7 +57,7 @@ export default function Dashboard() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
               <TrendingUp className="h-5 w-5" />
-              Spending Trends
+              {dashboard.spendingTrends}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-3 md:p-6">
@@ -57,7 +73,7 @@ export default function Dashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Coming Soon
+            {dashboard.comingSoon}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -70,7 +86,7 @@ export default function Dashboard() {
                   <h3 className="font-medium mb-1">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground mb-2">{feature.description}</p>
                   <Badge variant="secondary" className="text-xs">
-                    Coming Soon
+                    {dashboard.comingSoon}
                   </Badge>
                 </div>
               );

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, DollarSign, CreditCard, TrendingUp } from 'lucide-react';
+import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useLocale } from 'next-intl';
 
 interface StatsData {
   totalUsers: number;
@@ -19,6 +21,8 @@ export function OverviewStats() {
     growthRate: 0,
   });
   const [loading, setLoading] = useState(true);
+  const { admin, dashboard } = useAppTranslations();
+  const locale = useLocale();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -40,21 +44,21 @@ export function OverviewStats() {
 
   const statsCards = [
     {
-      title: 'Total Users',
+      title: admin.users,
       value: stats.totalUsers.toLocaleString(),
       icon: Users,
       change: '+12%',
       changeType: 'positive' as const,
     },
     {
-      title: 'Revenue',
-      value: `$${stats.totalRevenue.toLocaleString()}`,
+      title: admin.revenue,
+      value: formatCurrency(stats.totalRevenue, 'USD', locale),
       icon: DollarSign,
       change: '+8%',
       changeType: 'positive' as const,
     },
     {
-      title: 'Active Plans',
+      title: admin.plans,
       value: stats.activeSubscriptions.toLocaleString(),
       icon: CreditCard,
       change: '+15%',
@@ -104,7 +108,7 @@ export function OverviewStats() {
                 {stat.value}
               </div>
               <p className="text-xs text-green-600">
-                {stat.change} from last month
+                {stat.change} {dashboard.lastMonth}
               </p>
             </CardContent>
           </Card>

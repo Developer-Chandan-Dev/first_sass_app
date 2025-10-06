@@ -2,9 +2,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, Calendar, PieChart, BarChart3 } from 'lucide-react';
+import { useAppTranslations } from '@/hooks/useTranslation';
 import { useAppSelector } from '@/lib/redux/hooks';
 
 export function ExpenseOverviewStats() {
+  const { expenses } = useAppTranslations();
   const { free, budget, loading } = useAppSelector(state => state.overview);
 
   // Calculate combined stats from Redux state
@@ -15,36 +17,36 @@ export function ExpenseOverviewStats() {
 
   const statsData = [
     {
-      title: 'Total Expenses',
+      title: expenses?.expenseCards?.[0]?.totalExpenses || 'Total Expenses',
       value: `₹${totalAmount.toLocaleString()}`,
       change: '+12%',
       trend: 'up',
       icon: DollarSign,
-      description: 'vs last month'
+      description: expenses?.expenseCards?.[0]?.vsLastMonth || 'vs last month'
     },
     {
-      title: 'This Month',
+      title: expenses?.expenseCards?.[1]?.thisMonth || 'This Month',
       value: `₹${thisMonthTotal.toLocaleString()}`,
       change: '+8%',
       trend: 'up',
       icon: Calendar,
-      description: 'current month'
+      description: expenses?.expenseCards?.[1]?.currentMonth || 'Current Month'
     },
     {
-      title: 'Categories',
+      title: expenses?.expenseCards?.[2]?.categories || 'Categories',
       value: categoriesCount.toString(),
       change: '+2',
       trend: 'up',
       icon: PieChart,
-      description: 'active categories'
+      description: expenses?.expenseCards?.[2]?.activeCategories || 'active categories'
     },
     {
-      title: 'Avg/Day',
+      title: expenses?.expenseCards?.[3]?.aveDay || 'Avg/Day',
       value: `₹${avgPerDay.toLocaleString()}`,
       change: '-5%',
       trend: 'down',
       icon: BarChart3,
-      description: 'last 30 days'
+      description: expenses?.expenseCards?.[3]?.last30days || 'last 30 days'
     }
   ];
 

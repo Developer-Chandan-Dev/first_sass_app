@@ -1,12 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
+import { useAppTranslations } from '@/hooks/useTranslation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-
-type TranslationKey = 'dashboard.title' | 'dashboard.expenses' | 'dashboard.income' | 'dashboard.analytics' | 'dashboard.categories' | 'dashboard.budgets' | 'common.cards' | 'dashboard.notifications' | 'dashboard.settings';
+import { useLocale } from '@/contexts/locale-context';
 import { 
   LayoutDashboard, 
   Receipt, 
@@ -22,16 +21,22 @@ import {
   type LucideIcon
 } from 'lucide-react';
 
-const sidebarItems: Array<{ icon: LucideIcon; labelKey: TranslationKey; href: string }> = [
-  { icon: LayoutDashboard, labelKey: 'dashboard.title', href: '/dashboard' },
-  { icon: Receipt, labelKey: 'dashboard.expenses', href: '/dashboard/expenses' },
-  { icon: DollarSign, labelKey: 'dashboard.income', href: '/dashboard/income' },
-  { icon: TrendingUp, labelKey: 'dashboard.analytics', href: '/dashboard/analytics' },
-  { icon: PieChart, labelKey: 'dashboard.categories', href: '/dashboard/categories' },
-  { icon: Target, labelKey: 'dashboard.budgets', href: '/dashboard/budgets' },
-  { icon: CreditCard, labelKey: 'common.cards', href: '/dashboard/cards' },
-  { icon: Bell, labelKey: 'dashboard.notifications', href: '/dashboard/notifications' },
-  { icon: Settings, labelKey: 'dashboard.settings', href: '/dashboard/settings' },
+interface SidebarItem {
+  icon: LucideIcon;
+  labelKey: keyof ReturnType<typeof useAppTranslations>['sidebar'];
+  href: string;
+}
+
+const sidebarItems: SidebarItem[] = [
+  { icon: LayoutDashboard, labelKey: 'overview', href: '/dashboard' },
+  { icon: Receipt, labelKey: 'expenses', href: '/dashboard/expenses' },
+  { icon: DollarSign, labelKey: 'income', href: '/dashboard/income' },
+  { icon: TrendingUp, labelKey: 'analytics', href: '/dashboard/analytics' },
+  { icon: PieChart, labelKey: 'categories', href: '/dashboard/categories' },
+  { icon: Target, labelKey: 'budgets', href: '/dashboard/budgets' },
+  { icon: CreditCard, labelKey: 'cards', href: '/dashboard/cards' },
+  { icon: Bell, labelKey: 'notifications', href: '/dashboard/notifications' },
+  { icon: Settings, labelKey: 'settings', href: '/dashboard/settings' },
 ];
 
 interface SidebarProps {
@@ -43,9 +48,8 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
-  const params = useParams();
-  const t = useTranslations();
-  const locale = params.locale as string;
+  const { sidebar, landing } = useAppTranslations();
+  const { getLocalizedPath } = useLocale();
 
   const handleLinkClick = () => {
     if (isMobile && onMobileClose) {
@@ -63,7 +67,7 @@ export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: Side
         {!isCollapsed && (
           <div className="flex items-center space-x-2 min-w-0">
             <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 flex-shrink-0" />
-            <h2 className="text-base sm:text-lg font-bold truncate">TrackWise</h2>
+            <h2 className="text-base sm:text-lg font-bold truncate">{landing.title}</h2>
           </div>
         )}
         {!isMobile && (
@@ -97,9 +101,9 @@ export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: Side
               )}
               asChild
             >
-              <Link href={`/${locale}${item.href}`} onClick={handleLinkClick}>
+              <Link href={getLocalizedPath(item.href)} onClick={handleLinkClick}>
                 <Icon className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')} />
-                {!isCollapsed && <span className="text-sm truncate">{t(item.labelKey)}</span>}
+                {!isCollapsed && <span className="text-sm truncate">{sidebar[item.labelKey]}</span>}
               </Link>
             </Button>
           );

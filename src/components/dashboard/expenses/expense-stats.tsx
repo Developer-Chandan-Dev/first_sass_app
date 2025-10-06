@@ -5,10 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Calendar, BarChart3, Target } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useLocale } from 'next-intl';
 
 export function ExpenseStats() {
   const dispatch = useAppDispatch();
   const { free, loading } = useAppSelector(state => state.overview);
+  const { dashboard, expenses } = useAppTranslations();
+  const locale = useLocale();
 
   useEffect(() => {
     dispatch(refreshStats('free'));
@@ -18,36 +22,36 @@ export function ExpenseStats() {
 
   const statsData = [
     {
-      title: 'Total Spent',
-      value: `₹${free.totalSpent.toLocaleString()}`,
+      title: dashboard.totalSpent,
+      value: formatCurrency(free.totalSpent, 'INR', locale),
       change: `${free.monthlyChange > 0 ? '+' : ''}${free.monthlyChange}%`,
       trend: free.monthlyChange >= 0 ? 'up' : 'down',
       icon: DollarSign,
-      description: 'vs last month'
+      description: dashboard.vsLastMonth
     },
     {
-      title: 'Total Expenses',
+      title: expenses.totalExpenses,
       value: free.totalExpenses.toString(),
       change: `${free.expenseChange > 0 ? '+' : ''}${free.expenseChange}`,
       trend: free.expenseChange >= 0 ? 'up' : 'down',
       icon: BarChart3,
-      description: 'vs last month'
+      description: dashboard.vsLastMonth
     },
     {
-      title: 'Average Expense',
-      value: `₹${Math.round(averageExpense).toLocaleString()}`,
-      change: free.totalExpenses > 0 ? `₹${Math.round(averageExpense)}` : '₹0',
+      title: expenses?.averageExpense,
+      value: formatCurrency(Math.round(averageExpense), 'INR', locale),
+      change: free.totalExpenses > 0 ? formatCurrency(Math.round(averageExpense), 'INR', locale) : formatCurrency(0, 'INR', locale),
       trend: 'neutral',
       icon: Target,
-      description: 'per transaction'
+      description: dashboard.perTransaction
     },
     {
-      title: 'Previous Month',
-      value: `₹${free.previousMonthSpent.toLocaleString()}`,
-      change: `${free.previousMonthExpenses} expenses`,
+      title: dashboard?.previousMonth,
+      value: formatCurrency(free.previousMonthSpent, 'INR', locale),
+      change: `${free.previousMonthExpenses} ${expenses.title.toLowerCase()}`,
       trend: 'neutral',
       icon: Calendar,
-      description: 'last month'
+      description: expenses?.lastMonth || dashboard.lastMonth
     }
   ];
 

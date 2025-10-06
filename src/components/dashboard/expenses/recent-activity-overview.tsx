@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { fetchExpenses } from '@/lib/redux/expense/expenseSlice';
 
+
 const categoryIcons: { [key: string]: string } = {
   'Food & Dining': '🍽️',
   Transportation: '🚗',

@@ -8,12 +8,14 @@ import {
   Users, 
   CreditCard, 
   BarChart3, 
-  Receipt, 
   Settings,
   ChevronLeft,
-  Shield
+  Shield,
+  type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAppTranslations } from '@/hooks/useTranslation';
+import { useLocale } from '@/contexts/locale-context';
 
 interface AdminSidebarProps {
   isCollapsed: boolean;
@@ -22,17 +24,24 @@ interface AdminSidebarProps {
   onMobileClose?: () => void;
 }
 
-const navigation = [
-  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-  { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Plans', href: '/admin/plans', icon: CreditCard },
-  { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-  { name: 'Expenses', href: '/admin/expenses', icon: Receipt },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+interface NavigationItem {
+  labelKey: keyof ReturnType<typeof useAppTranslations>['admin'];
+  href: string;
+  icon: LucideIcon;
+}
+
+const navigation: NavigationItem[] = [
+  { labelKey: 'dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+  { labelKey: 'users', href: '/admin/users', icon: Users },
+  { labelKey: 'plans', href: '/admin/plans', icon: CreditCard },
+  { labelKey: 'analytics', href: '/admin/analytics', icon: BarChart3 },
+  { labelKey: 'settings', href: '/admin/settings', icon: Settings },
 ];
 
 export function AdminSidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { admin } = useAppTranslations();
+  const { getLocalizedPath } = useLocale();
 
   const handleLinkClick = () => {
     if (isMobile && onMobileClose) {
@@ -50,7 +59,7 @@ export function AdminSidebar({ isCollapsed, onToggle, isMobile, onMobileClose }:
         {!isCollapsed && (
           <div className="flex items-center space-x-2 min-w-0">
             <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 flex-shrink-0" />
-            <h2 className="text-base sm:text-lg font-bold truncate">Admin Panel</h2>
+            <h2 className="text-base sm:text-lg font-bold truncate">{admin.dashboard}</h2>
           </div>
         )}
         {!isMobile && (
@@ -84,13 +93,14 @@ export function AdminSidebar({ isCollapsed, onToggle, isMobile, onMobileClose }:
               )}
               asChild
             >
-              <Link href={item.href} onClick={handleLinkClick}>
+              <Link href={getLocalizedPath(item.href)} onClick={handleLinkClick}>
                 <Icon className={cn('h-4 w-4 flex-shrink-0', !isCollapsed && 'mr-3')} />
-                {!isCollapsed && <span className="text-sm truncate">{item.name}</span>}
+                {!isCollapsed && <span className="text-sm truncate">{admin[item.labelKey]}</span>}
               </Link>
             </Button>
           );
-        })}
+        })
+      }
       </nav>
     </div>
   );

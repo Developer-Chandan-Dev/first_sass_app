@@ -5,6 +5,7 @@ import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useAppTranslations } from '@/hooks/useTranslation';
 
 const getCategoryIcon = (category: string) => {
   const icons: Record<string, string> = {
@@ -22,21 +23,24 @@ const getCategoryIcon = (category: string) => {
   return icons[category] || '💳';
 };
 
-const formatTimeAgo = (dateString: string) => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - date.getTime();
-  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.floor(diffInHours / 24);
 
-  if (diffInHours < 1) return 'Just now';
-  if (diffInHours < 24) return `${diffInHours} hours ago`;
-  if (diffInDays === 1) return '1 day ago';
-  return `${diffInDays} days ago`;
-};
 
 export function RecentTransactions() {
   const { free, budget, loading } = useSelector((state: RootState) => state.overview);
+  const { expenses } = useAppTranslations();
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInHours < 1) return expenses.justNow;
+    if (diffInHours < 24) return `${diffInHours} ${expenses.hoursAgo}`;
+    if (diffInDays === 1) return expenses.dayAgo;
+    return `${diffInDays} ${expenses.daysAgo}`;
+  };
 
   // Combine and sort recent expenses from both free and budget
   const allExpenses = [...free.expenses, ...budget.expenses]
@@ -60,7 +64,7 @@ export function RecentTransactions() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
+          <CardTitle>{expenses.recentTransactions}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
@@ -89,7 +93,7 @@ export function RecentTransactions() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Transactions</CardTitle>
+        <CardTitle>{expenses.recentTransactions}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {transactions.length > 0 ? (
@@ -131,7 +135,7 @@ export function RecentTransactions() {
           ))
         ) : (
           <p className="text-sm text-muted-foreground text-center py-4">
-            No recent transactions
+            {expenses.noRecentTransactions}
           </p>
         )}
       </CardContent>

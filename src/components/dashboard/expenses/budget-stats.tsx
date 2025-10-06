@@ -5,10 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Target, DollarSign, Wallet, BarChart3 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useLocale } from 'next-intl';
 
 export function BudgetStats() {
   const dispatch = useAppDispatch();
   const { budget, loading } = useAppSelector(state => state.overview);
+  const { expenses, dashboard } = useAppTranslations();
+  const locale = useLocale();
 
   useEffect(() => {
     dispatch(refreshStats('budget'));
@@ -18,36 +22,36 @@ export function BudgetStats() {
 
   const statsData = [
     {
-      title: 'Total Budget',
-      value: `₹${budget.totalBudget.toLocaleString()}`,
-      change: `₹${budget.totalSpent.toLocaleString()} spent`,
+      title: expenses.totalBudget,
+      value: formatCurrency(budget.totalBudget, 'INR', locale),
+      change: `${formatCurrency(budget.totalSpent, 'INR', locale)} ${expenses.spent}`,
       trend: 'neutral',
       icon: Target,
-      description: 'active budgets'
+      description: expenses.activeBudgets
     },
     {
-      title: 'Budget Spent',
-      value: `₹${budget.totalSpent.toLocaleString()}`,
+      title: expenses.budgetSpent,
+      value: formatCurrency(budget.totalSpent, 'INR', locale),
       change: `${budget.monthlyChange > 0 ? '+' : ''}${budget.monthlyChange}%`,
       trend: budget.monthlyChange >= 0 ? 'up' : 'down',
       icon: DollarSign,
-      description: 'vs last month'
+      description: dashboard.vsLastMonth
     },
     {
-      title: 'Remaining',
-      value: `₹${remaining.toLocaleString()}`,
-      change: remaining > 0 ? 'Available' : 'Exceeded',
+      title: expenses.remaining,
+      value: formatCurrency(remaining, 'INR', locale),
+      change: remaining > 0 ? expenses.available : expenses.exceeded,
       trend: remaining > 0 ? 'up' : 'down',
       icon: Wallet,
-      description: 'budget left'
+      description: expenses.budgetLeft
     },
     {
-      title: 'Budget Expenses',
+      title: expenses.budgetExpensesCount,
       value: budget.totalExpenses.toString(),
       change: `${budget.expenseChange > 0 ? '+' : ''}${budget.expenseChange}`,
       trend: budget.expenseChange >= 0 ? 'up' : 'down',
       icon: BarChart3,
-      description: 'vs last month'
+      description: dashboard.vsLastMonth
     }
   ];
 

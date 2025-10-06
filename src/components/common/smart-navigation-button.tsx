@@ -4,6 +4,7 @@ import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import { useLocale } from '@/contexts/locale-context';
 
 interface SmartNavigationButtonProps {
   signedInText: string;
@@ -27,6 +28,7 @@ export function SmartNavigationButton({
   variant = 'default'
 }: SmartNavigationButtonProps) {
   const { isSignedIn, isLoaded } = useUser();
+  const { getLocalizedPath } = useLocale();
 
   if (!isLoaded) {
     return (
@@ -38,7 +40,7 @@ export function SmartNavigationButton({
 
   return (
     <Button size={size} variant={variant} className={className} asChild>
-      <Link href={isSignedIn ? signedInHref : signedOutHref}>
+      <Link href={isSignedIn ? getLocalizedPath(signedInHref) : getLocalizedPath(signedOutHref)}>
         {isSignedIn ? signedInText : signedOutText}
         {children}
       </Link>

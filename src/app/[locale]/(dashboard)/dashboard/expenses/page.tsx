@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
 import Link from 'next/link';
 import { 
   Wallet, 
@@ -11,35 +10,57 @@ import {
 } from 'lucide-react';
 import { ExpenseOverviewStats } from '@/components/dashboard/expenses/expense-overview-stats';
 import { RecentActivityOverview } from '@/components/dashboard/expenses/recent-activity-overview';
+import { useAppTranslations } from '@/hooks/useTranslation';
+import { LucideIcon } from 'lucide-react';
+
+interface ExpenseType {
+  title: string;
+  description: string;
+  features: string[];
+  icon: LucideIcon;
+  href: string;
+  color: string;
+}
 
 export default function ExpensesOverviewPage() {
-  const expenseTypes = [
+  const { expenses } = useAppTranslations();
+
+  // Safe access with fallbacks
+  const expenseTypes: ExpenseType[] = [
     {
-      title: 'Free Expenses',
-      description: 'Track your daily expenses without budget constraints',
+      title: expenses?.expenseType?.[0]?.title || 'Free Expenses',
+      description: expenses?.expenseType?.[0]?.description || 'Track your daily expenses without budget constraints',
+      features: expenses?.expenseType?.[0]?.features || [
+        'Unlimited tracking',
+        'Category management',
+        'Analytics & reports',
+        'Export data'
+      ],
       icon: Wallet,
       href: '/dashboard/expenses/free',
-      color: 'bg-blue-500',
-      features: ['Unlimited tracking', 'Category management', 'Analytics & reports', 'Export data']
+      color: 'bg-blue-500'
     },
     {
-      title: 'Budget Expenses',
-      description: 'Manage expenses within predefined budget limits',
+      title: expenses?.expenseType?.[1]?.title || 'Budget Expenses',
+      description: expenses?.expenseType?.[1]?.description || 'Manage expenses within predefined budget limits',
+      features: expenses?.expenseType?.[1]?.features || [
+        'Budget limits',
+        'Spending alerts',
+        'Goal tracking',
+        'Budget analysis'
+      ],
       icon: Target,
       href: '/dashboard/expenses/budget',
-      color: 'bg-green-500',
-      features: ['Budget limits', 'Spending alerts', 'Goal tracking', 'Budget analysis']
+      color: 'bg-green-500'
     }
   ];
-
-
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Expense Management</h2>
-          <p className="text-muted-foreground">Choose how you want to track your expenses</p>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{expenses?.title || 'Expense Management'}</h2>
+          <p className="text-muted-foreground">{expenses?.subTitle || 'Choose how you want to track your expenses'}</p>
         </div>
       </div>
 
@@ -60,7 +81,6 @@ export default function ExpensesOverviewPage() {
                   <div className="flex-1">
                     <CardTitle className="flex items-center gap-2">
                       {type.title}
-
                     </CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">
                       {type.description}
@@ -83,7 +103,7 @@ export default function ExpensesOverviewPage() {
                   variant="default"
                 >
                   <Link href={type.href}>
-                    Get Started
+                    {expenses?.getStarted || 'Get Started'}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -97,10 +117,10 @@ export default function ExpensesOverviewPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>{expenses?.recentExpenses || 'Recent Activity'}</CardTitle>
             <Button variant="outline" size="sm" asChild>
               <Link href="/dashboard/expenses/free">
-                View All <ArrowRight className="ml-2 h-4 w-4" />
+                {expenses?.viewAll || 'View All'} <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>

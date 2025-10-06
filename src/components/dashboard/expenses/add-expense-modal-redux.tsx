@@ -24,6 +24,7 @@ import {
   addExpenseOptimistic,
 } from '@/lib/redux/expense/expenseSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
+import { useAppTranslations } from '@/hooks/useTranslation';
 
 const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -52,16 +53,17 @@ export function AddExpenseModal({
   onExpenseAdded,
 }: AddExpenseModalProps) {
   const dispatch = useAppDispatch();
+  const { expenses, common } = useAppTranslations();
   const [categories, setCategories] = useState<string[]>([
-    'Food & Dining',
-    'Transportation',
-    'Entertainment',
+    expenses.categories.food,
+    expenses.categories.transport,
+    expenses.categories.entertainment,
     'Groceries',
-    'Shopping',
-    'Healthcare',
+    expenses.categories.shopping,
+    expenses.categories.healthcare,
     'Utilities',
-    'Education',
-    'Travel',
+    expenses.categories.education,
+    expenses.categories.travel,
     'Others',
   ]);
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
@@ -148,7 +150,7 @@ export function AddExpenseModal({
           })
         );
 
-        toast.success('Expense added successfully!');
+        toast.success(expenses.addSuccess);
 
         // Close modal and reset form
         reset();
@@ -174,7 +176,7 @@ export function AddExpenseModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
-          <DialogTitle className="text-lg">Add New Expense</DialogTitle>
+          <DialogTitle className="text-lg">{expenses.addNewExpense}</DialogTitle>
         </DialogHeader>
 
         <form
@@ -183,7 +185,7 @@ export function AddExpenseModal({
         >
           <div>
             <Label htmlFor="amount" className="text-sm">
-              Amount
+              {common.amount}
             </Label>
             <Input
               id="amount"
@@ -202,14 +204,14 @@ export function AddExpenseModal({
 
           <div>
             <Label htmlFor="category" className="text-sm">
-              Category
+              {common.category}
             </Label>
             {showCustomCategory ? (
               <div className="flex flex-col sm:flex-row gap-2 mt-1">
                 <Input
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
-                  placeholder="Enter custom category"
+                  placeholder={expenses.enterCustomCategory}
                   className="flex-1"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -232,7 +234,7 @@ export function AddExpenseModal({
                   onClick={() => setShowCustomCategory(false)}
                   className="w-full sm:w-auto"
                 >
-                  Cancel
+                  {common.cancel}
                 </Button>
               </div>
             ) : (
@@ -242,7 +244,7 @@ export function AddExpenseModal({
                   {...register('category')}
                   className="flex-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
                 >
-                  <option value="">Select category</option>
+                  <option value="">{expenses.selectCategory}</option>
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
@@ -269,12 +271,12 @@ export function AddExpenseModal({
 
           <div>
             <Label htmlFor="reason" className="text-sm">
-              Reason
+              {expenses.reason}
             </Label>
             <Textarea
               id="reason"
               {...register('reason')}
-              placeholder="What was this expense for?"
+              placeholder={expenses.reasonPlaceholder}
               className="mt-1 text-sm"
               rows={3}
             />
@@ -287,7 +289,7 @@ export function AddExpenseModal({
 
           <div>
             <Label htmlFor="date" className="text-sm">
-              Date
+              {common.date}
             </Label>
             <Input
               id="date"
@@ -306,10 +308,10 @@ export function AddExpenseModal({
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="affectsBalance" className="text-sm font-medium">
-                  Reduce from Balance
+                  {expenses.reduceFromBalance}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Deduct from connected income
+                  {expenses.deductFromConnectedIncome}
                 </p>
               </div>
               <Switch
@@ -321,10 +323,10 @@ export function AddExpenseModal({
             
             {affectsBalance && (
               <div>
-                <Label className="text-sm">Select Income Source</Label>
+                <Label className="text-sm">{expenses.selectIncomeSource}</Label>
                 <Select onValueChange={(value) => setValue('incomeId', value)}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Choose income to reduce from" />
+                    <SelectValue placeholder={expenses.chooseIncomeToReduceFrom} />
                   </SelectTrigger>
                   <SelectContent>
                     {connectedIncomes.map((income) => (
@@ -340,10 +342,10 @@ export function AddExpenseModal({
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="isRecurring" className="text-sm font-medium">
-                  Recurring Expense
+                  {expenses.recurringExpense}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Regular expense
+                  {expenses.regularExpense}
                 </p>
               </div>
               <Switch
@@ -355,16 +357,16 @@ export function AddExpenseModal({
             
             {isRecurring && (
               <div>
-                <Label className="text-sm">Frequency</Label>
+                <Label className="text-sm">{expenses.frequency}</Label>
                 <Select onValueChange={(value) => setValue('frequency', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select frequency" />
+                    <SelectValue placeholder={expenses.selectFrequency} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
+                    <SelectItem value="daily">{expenses.frequencies.daily}</SelectItem>
+                    <SelectItem value="weekly">{expenses.frequencies.weekly}</SelectItem>
+                    <SelectItem value="monthly">{expenses.frequencies.monthly}</SelectItem>
+                    <SelectItem value="yearly">{expenses.frequencies.yearly}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -377,7 +379,7 @@ export function AddExpenseModal({
               disabled={isSubmitting}
               className="w-full sm:w-auto"
             >
-              {isSubmitting ? 'Adding...' : 'Add Expense'}
+              {isSubmitting ? expenses.adding : expenses.addExpense}
             </Button>
             <Button
               type="button"
@@ -385,7 +387,7 @@ export function AddExpenseModal({
               onClick={() => onOpenChange(false)}
               className="w-full sm:w-auto"
             >
-              Cancel
+              {common.cancel}
             </Button>
           </div>
         </form>

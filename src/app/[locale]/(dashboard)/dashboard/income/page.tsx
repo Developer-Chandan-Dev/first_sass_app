@@ -12,11 +12,13 @@ import { AddIncomeModal } from '@/components/dashboard/incomes/add-income-modal'
 import { IncomeStats } from '@/components/dashboard/incomes/income-stats';
 import { IncomeCharts } from '@/components/dashboard/incomes/income-charts';
 import { IncomeFilters } from '@/components/dashboard/incomes/income-filters';
+import { useAppTranslations } from '@/hooks/useTranslation';
 
 
 
 export default function IncomePage() {
   const dispatch = useDispatch<AppDispatch>();
+  const { income } = useAppTranslations();
   const { filters, currentPage, pageSize } = useSelector(
     (state: RootState) => state.incomes
   );
@@ -36,14 +38,14 @@ export default function IncomePage() {
     <div className="space-y-4 p-2 sm:p-4 lg:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Income Management</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{income.incomeManagement}</h1>
           <p className="text-muted-foreground text-sm sm:text-base">
-            Track and manage your income sources
+            {income.trackAndManageIncome}
           </p>
         </div>
         <Button onClick={() => setShowAddModal(true)} className="w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
-          Add Income
+          {income.addIncome}
         </Button>
       </div>
 
@@ -51,15 +53,15 @@ export default function IncomePage() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview" className="text-xs sm:text-sm">
             <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Overview</span>
+            <span className="hidden xs:inline">{income.incomeOverview}</span>
           </TabsTrigger>
           <TabsTrigger value="table" className="text-xs sm:text-sm">
             <Table className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Table</span>
+            <span className="hidden xs:inline">{income.incomeTable}</span>
           </TabsTrigger>
           <TabsTrigger value="charts" className="text-xs sm:text-sm">
             <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">Charts</span>
+            <span className="hidden xs:inline">{income.incomeCharts}</span>
           </TabsTrigger>
         </TabsList>
 

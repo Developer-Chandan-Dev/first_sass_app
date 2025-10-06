@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { LocaleProvider } from '@/contexts/locale-context';
 
 type Props = {
   children: ReactNode;
@@ -26,7 +27,9 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider messages={messages}>
-      {children}
+      <LocaleProvider>
+        {children}
+      </LocaleProvider>
     </NextIntlClientProvider>
   );
 }

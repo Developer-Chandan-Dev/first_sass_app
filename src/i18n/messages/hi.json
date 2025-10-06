@@ -1,31 +1,48 @@
 {
   "common": {
+    "dashboard": "डैशबोर्ड",
+    "expenses": "खर्च",
+    "budgets": "बजट",
+    "income": "आय",
+    "analytics": "विश्लेषण",
+    "settings": "सेटिंग्स",
+    "categories": "श्रेणियां",
+    "notifications": "सूचनाएं",
+    "cards": "कार्ड",
+    "logout": "लॉगआउट",
+    "login": "लॉगिन",
+    "register": "पंजीकरण",
     "save": "सहेजें",
     "cancel": "रद्द करें",
     "delete": "हटाएं",
     "edit": "संपादित करें",
-    "loading": "लोड हो रहा है...",
-    "export": "निर्यात",
-    "filter": "फिल्टर",
-    "clear": "साफ़ करें",
-    "search": "खोजें",
     "add": "जोड़ें",
     "create": "बनाएं",
     "update": "अपडेट करें",
     "view": "देखें",
-    "close": "बंद करें",
-    "next": "अगला",
-    "previous": "पिछला",
-    "submit": "जमा करें",
-    "reset": "रीसेट करें",
-    "login": "लॉगिन",
-    "register": "पंजीकरण",
-    "dashboard": "डैशबोर्ड",
+    "search": "खोजें",
+    "filter": "फिल्टर",
+    "loading": "लोड हो रहा है...",
+    "noData": "कोई डेटा उपलब्ध नहीं",
+    "total": "कुल",
+    "amount": "राशि",
+    "date": "दिनांक",
+    "category": "श्रेणी",
     "description": "विवरण",
     "actions": "कार्य",
     "getStarted": "शुरू करें",
     "learnMore": "और जानें",
-    "viewAll": "सभी देखें"
+    "viewAll": "सभी देखें",
+    "close": "बंद करें",
+    "submit": "जमा करें",
+    "reset": "रीसेट करें",
+    "confirm": "पुष्टि करें",
+    "yes": "हां",
+    "no": "नहीं",
+    "success": "सफलता",
+    "error": "त्रुटि",
+    "warning": "चेतावनी",
+    "info": "जानकारी"
   },
   "navigation": {
     "home": "होम",
@@ -99,16 +116,40 @@
   "pricing": {
     "plans": {
       "free": {
-        "name": "मुफ्त"
+        "name": "मुफ्त",
+        "features": [
+          "बुनियादी खर्च ट्रैकिंग",
+          "5 श्रेणियां",
+          "मोबाइल ऐप",
+          "ईमेल समर्थन"
+        ]
       },
       "pro": {
-        "name": "प्रो"
+        "name": "प्रो",
+        "features": [
+          "असीमित ट्रैकिंग",
+          "AI अंतर्दृष्टि",
+          "उन्नत विश्लेषण",
+          "प्राथमिकता समर्थन"
+        ]
       },
       "premium": {
-        "name": "प्रीमियम"
+        "name": "प्रीमियम",
+        "features": [
+          "टीम सहयोग",
+          "कस्टम श्रेणियां",
+          "API पहुंच",
+          "वाइट-लेबल विकल्प"
+        ]
       },
       "ultra": {
-        "name": "अल्ट्रा"
+        "name": "अल्ट्रा",
+        "features": [
+          "एंटरप्राइज़ विशेषताएं",
+          "समर्पित समर्थन",
+          "कस्टम एकीकरण",
+          "SLA गारंटी"
+        ]
       }
     }
   },
@@ -129,59 +170,85 @@
       "content": "टीम सहयोग की सुविधाएं अविश्वसनीय हैं। हमने अपनी पूरी खर्च अनुमोदन प्रक्रिया को सुव्यवस्थित कर दिया है।"
     }
   },
-  "dashboard": {
-    "title": "डैशबोर्ड अवलोकन",
-    "subtitle": "अपनी वित्तीय प्रगति को ट्रैक करें और खर्चों को कुशलता से प्रबंधित करें।",
-    "addExpense": "खर्च जोड़ें",
+  "sidebar": {
+    "overview": "डैशबोर्ड",
     "expenses": "खर्च",
     "income": "आय",
     "analytics": "विश्लेषण",
-    "settings": "सेटिंग्स",
-    "budgets": "बजट",
     "categories": "श्रेणियां",
-    "notifications": "सूचनाएं"
+    "budgets": "बजट",
+    "cards": "कार्ड",
+    "notifications": "सूचनाएं",
+    "settings": "सेटिंग्स"
   },
-  "expenses": {
-    "title": "खर्च प्रबंधन",
-    "freeExpenses": "मुफ्त खर्च",
-    "budgetExpenses": "बजट खर्च",
-    "description": "विवरण",
-    "category": "श्रेणी",
-    "amount": "राशि",
-    "date": "दिनांक",
-    "search": "खर्च खोजें...",
-    "noExpenses": "कोई खर्च नहीं मिला",
-    "deleteConfirm": "क्या आप वाकई इस खर्च को हटाना चाहते हैं?",
-    "deleteSuccess": "खर्च सफलतापूर्वक हटा दिया गया!",
-    "addSuccess": "खर्च सफलतापूर्वक जोड़ा गया!",
-    "recurring": "आवर्ती",
-    "frequency": "आवृत्ति",
-    "budget": "बजट",
-    "overview": "अवलोकन",
-    "table": "तालिका",
-    "charts": "चार्ट"
-  },
-  "income": {
-    "title": "आय प्रबंधन",
+  "dashboard": {
+    "overview": "डैशबोर्ड अवलोकन",
+    "description": "अपनी वित्तीय प्रगति को ट्रैक करें और खर्चों को कुशलता से प्रबंधित करें।",
+    "totalExpenses": "कुल खर्च",
+    "budgetUsage": "बजट उपयोग",
+    "categories": "श्रेणियां",
+    "transactions": "लेन-देन",
+    "recentTransactions": "हाल के लेन-देन",
+    "monthlySpending": "मासिक खर्च",
+    "budgetStatus": "बजट स्थिति",
+    "addExpense": "खर्च जोड़ें",
+    "addBudget": "बजट जोड़ें",
     "addIncome": "आय जोड़ें",
-    "source": "स्रोत",
-    "totalIncome": "कुल आय",
-    "monthlyIncome": "मासिक आय",
-    "connected": "जुड़ा हुआ",
-    "balance": "शेष राशि"
+    "spendingTrends": "खर्च के रुझान",
+    "comingSoon": "जल्द आ रहा है",
+    "quickActions": "त्वरित कार्य",
+    "financialSummary": "वित्तीय सारांश",
+    "thisMonth": "इस महीने",
+    "lastMonth": "पिछले महीने",
+    "thisYear": "इस साल",
+    "change": "परिवर्तन",
+    "increase": "वृद्धि",
+    "decrease": "कमी",
+    "noChange": "कोई परिवर्तन नहीं",
+    "totalSpent": "कुल खर्च",
+    "averageExpense": "औसत खर्च",
+    "previousMonth": "पिछला महीना",
+    "perTransaction": "प्रति लेन-देन",
+    "vsLastMonth": "पिछले महीने की तुलना में",
+    "financialCalendar": "वित्तीय कैलेंडर",
+    "setBudgetTargets": "मासिक बजट लक्ष्य सेट करें और ट्रैक करें",
+    "advancedSpendingAnalysis": "उन्नत खर्च पैटर्न विश्लेषण",
+    "neverMissPayment": "भुगतान की समय सीमा कभी न चूकें",
+    "planExpensesAhead": "अपने खर्चों की अग्रिम योजना बनाएं",
+    "expectedRelease": "अपेक्षित रिलीज: अगला अपडेट",
+    "workingOnFeatures": "हम उन्नत सुविधाओं पर काम कर रहे हैं",
+    "nextUpdate": "अगला अपडेट"
   },
   "admin": {
-    "title": "एडमिन पैनल",
     "users": "उपयोगकर्ता",
     "plans": "योजनाएं",
-    "overview": "अवलोकन"
+    "revenue": "राजस्व",
+    "userManagement": "उपयोगकर्ता प्रबंधन",
+    "platformSettings": "प्लेटफॉर्म सेटिंग्स",
+    "dashboard": "एडमिन डैशबोर्ड",
+    "analytics": "विश्लेषण",
+    "reports": "रिपोर्ट",
+    "settings": "सेटिंग्स",
+    "totalUsers": "कुल उपयोगकर्ता",
+    "activeUsers": "सक्रिय उपयोगकर्ता",
+    "growthRate": "वृद्धि दर",
+    "activePlans": "सक्रिय योजनाएं",
+    "fromLastMonth": "पिछले महीने से"
   },
-  "auth": {
-    "login": "लॉगिन",
-    "register": "पंजीकरण",
-    "logout": "लॉगआउट",
-    "signIn": "साइन इन",
-    "signUp": "साइन अप"
+  "currency": {
+    "usd": "USD",
+    "eur": "EUR",
+    "gbp": "GBP",
+    "inr": "INR",
+    "jpy": "JPY",
+    "cad": "CAD",
+    "aud": "AUD"
+  },
+  "dateFormat": {
+    "short": "dd/MM/yyyy",
+    "long": "d MMMM, yyyy",
+    "time": "h:mm a",
+    "dateTime": "dd/MM/yyyy h:mm a"
   },
   "pages": {
     "about": {
@@ -189,7 +256,10 @@
       "title": "के बारे में",
       "subtitle": "हम वित्तीय प्रबंधन को सभी के लिए सुलभ, बुद्धिमान और सहज बनाने के मिशन पर हैं।",
       "stats": {
-        "users": { "title": "1M+ उपयोगकर्ता", "desc": "हमारे प्लेटफॉर्म पर भरोसा करते हैं" },
+        "users": {
+          "title": "1M+ उपयोगकर्ता",
+          "desc": "हमारे प्लेटफॉर्म पर भरोसा करते हैं"
+        },
         "ai": { "title": "AI-संचालित", "desc": "स्मार्ट अंतर्दृष्टि" },
         "award": { "title": "पुरस्कार विजेता", "desc": "उद्योग मान्यता" },
         "global": { "title": "वैश्विक पहुंच", "desc": "150+ देश" }
@@ -222,7 +292,19 @@
         "email": "ईमेल",
         "subject": "विषय",
         "message": "आपका संदेश...",
-        "send": "संदेश भेजें"
+        "send": "संदेश भेजें",
+        "sending": "भेजा जा रहा है...",
+        "sent": "संदेश सफलतापूर्वक भेजा गया!",
+        "error": "संदेश भेजने में विफल। कृपया पुनः प्रयास करें।",
+        "validation": {
+          "firstNameRequired": "पहला नाम आवश्यक है",
+          "lastNameRequired": "अंतिम नाम आवश्यक है",
+          "emailRequired": "ईमेल आवश्यक है",
+          "emailInvalid": "कृपया एक वैध ईमेल दर्ज करें",
+          "subjectRequired": "विषय आवश्यक है",
+          "messageRequired": "संदेश आवश्यक है",
+          "messageTooShort": "संदेश कम से कम 10 अक्षर का होना चाहिए"
+        }
       }
     },
     "services": {
@@ -230,6 +312,24 @@
       "title": "व्यापक",
       "titleHighlight": "वित्तीय समाधान",
       "subtitle": "AI-संचालित अंतर्दृष्टि से लेकर एंटरप्राइज़ एकीकरण तक, हम आपके वित्त में महारत हासिल करने के लिए आवश्यक सब कुछ प्रदान करते हैं।",
+      "services": {
+        "expenseTracking": {
+          "title": "स्मार्ट खर्च ट्रैकिंग",
+          "description": "AI-संचालित अंतर्दृष्टि के साथ अपने खर्चों को स्वचालित रूप से वर्गीकृत और ट्रैक करें।"
+        },
+        "budgetManagement": {
+          "title": "बजट प्रबंधन",
+          "description": "बजट सेट करें, खर्च ट्रैक करें, और जब आप सीमा के करीब पहुंच रहे हों तो अलर्ट प्राप्त करें।"
+        },
+        "analytics": {
+          "title": "उन्नत विश्लेषण",
+          "description": "अपने खर्च के पैटर्न और वित्तीय रुझानों में विस्तृत अंतर्दृष्टि प्राप्त करें।"
+        },
+        "reporting": {
+          "title": "कस्टम रिपोर्टिंग",
+          "description": "व्यक्तिगत या व्यावसायिक वित्तीय विश्लेषण के लिए विस्तृत रिपोर्ट तैयार करें।"
+        }
+      },
       "cta": {
         "title": "शुरू करने के लिए तैयार हैं?",
         "subtitle": "अपने लिए सही योजना चुनें और आज ही अपने वित्तीय प्रबंधन को बदलना शुरू करें।",
@@ -242,6 +342,14 @@
       "title": "सरल,",
       "titleHighlight": "पारदर्शी मूल्य निर्धारण",
       "subtitle": "अपनी आवश्यकताओं के लिए सही योजना चुनें। सभी योजनाओं में हमारी मुख्य सुविधाएं शामिल हैं बिना किसी छुपी फीस के।",
+      "monthly": "मासिक",
+      "yearly": "वार्षिक",
+      "save": "बचत",
+      "mostPopular": "सबसे लोकप्रिय",
+      "getStarted": "शुरू करें",
+      "currentPlan": "वर्तमान योजना",
+      "upgrade": "अपग्रेड",
+      "downgrade": "डाउनग्रेड",
       "faq": {
         "title": "अक्सर पूछे जाने वाले प्रश्न",
         "changePlans": {
@@ -255,8 +363,395 @@
         "payment": {
           "question": "आप कौन से भुगतान तरीके स्वीकार करते हैं?",
           "answer": "हम सभी प्रमुख क्रेडिट कार्ड, PayPal, और एंटरप्राइज़ योजनाओं के लिए बैंक ट्रांसफर स्वीकार करते हैं।"
+        },
+        "dataPrivacy": {
+          "question": "मेरा डेटा कैसे सुरक्षित है?",
+          "answer": "हम बैंक-स्तरीय एन्क्रिप्शन का उपयोग करते हैं और कभी भी आपका व्यक्तिगत वित्तीय डेटा तीसरे पक्ष के साथ साझा नहीं करते।"
+        },
+        "support": {
+          "question": "आप कौन सा समर्थन प्रदान करते हैं?",
+          "answer": "हम सभी योजनाओं के लिए 24/7 ईमेल समर्थन प्रदान करते हैं, प्रो और उससे ऊपर की योजनाओं के लिए प्राथमिकता समर्थन के साथ।"
         }
       }
+    },
+    "analytics": {
+      "title": "विश्लेषण",
+      "description": "आपके खर्चों के लिए विस्तृत अंतर्दृष्टि और रिपोर्ट",
+      "comingSoon": "विश्लेषण जल्द ही आ रहा है",
+      "workingOnFeatures": "हम उन्नत विश्लेषण सुविधाओं पर काम कर रहे हैं जिनमें खर्च के रुझान, श्रेणी अंतर्दृष्टि और विस्तृत रिपोर्ट शामिल हैं।"
+    },
+    "budgets": {
+      "title": "बजट",
+      "description": "आपके खर्चों के लिए विस्तृत अंतर्दृष्टि और रिपोर्ट",
+      "comingSoon": "बजट जल्द ही आ रहा है",
+      "workingOnFeatures": "हम उन्नत बजट सुविधाओं पर काम कर रहे हैं जिनमें खर्च के रुझान, श्रेणी अंतर्दृष्टि और विस्तृत रिपोर्ट शामिल हैं।"
+    },
+    "settings": {
+      "title": "सेटिंग्स",
+      "description": "आपके खर्चों के लिए विस्तृत अंतर्दृष्टि और रिपोर्ट",
+      "comingSoon": "सेटिंग्स जल्द ही आ रही हैं",
+      "workingOnFeatures": "हम उन्नत सेटिंग्स सुविधाओं पर काम कर रहे हैं जिनमें खर्च के रुझान, श्रेणी अंतर्दृष्टि और विस्तृत रिपोर्ट शामिल हैं।"
+    },
+    "categories": {
+      "title": "श्रेणियां",
+      "description": "अपनी खर्च श्रेणियों को प्रबंधित करें",
+      "comingSoon": "श्रेणियां जल्द ही आ रही हैं"
+    },
+    "cards": {
+      "title": "कार्ड",
+      "description": "अपने भुगतान कार्ड प्रबंधित करें",
+      "comingSoon": "कार्ड जल्द ही आ रहे हैं"
+    },
+    "notifications": {
+      "title": "सूचनाएं",
+      "description": "अपनी सूचनाएं प्रबंधित करें",
+      "comingSoon": "सूचनाएं जल्द ही आ रही हैं"
+    }
+  },
+  "expenses": {
+    "title": "खर्च प्रबंधन",
+    "subTitle": "चुनें कि आप अपने खर्चों को कैसे ट्रैक करना चाहते हैं",
+    "expenseCards": [
+      {
+        "totalExpenses": "कुल खर्च",
+        "vsLastMonth": "पिछले महीने की तुलना में"
+      },
+      {
+        "thisMonth": "इस महीने",
+        "currentMonth": "वर्तमान महीना"
+      },
+      {
+        "categories": "श्रेणियां",
+        "activeCategories": "सक्रिय श्रेणियां"
+      },
+      {
+        "aveDay": "औसत/दिन",
+        "last30days": "पिछले 30 दिन"
+      }
+    ],
+    "expenseType": [
+      {
+        "title": "मुफ्त खर्च",
+        "description": "बजट की बाधाओं के बिना अपने दैनिक खर्चों को ट्रैक करें",
+        "features": [
+          "असीमित ट्रैकिंग",
+          "श्रेणी प्रबंधन",
+          "विश्लेषण और रिपोर्ट",
+          "डेटा निर्यात करें"
+        ]
+      },
+      {
+        "title": "बजट खर्च",
+        "description": "पूर्वनिर्धारित बजट सीमाओं के भीतर खर्चों का प्रबंधन करें।",
+        "features": [
+          "बजट सीमाएं",
+          "खर्च अलर्ट",
+          "लक्ष्य ट्रैकिंग",
+          "बजट विश्लेषण"
+        ]
+      }
+    ],
+    "addExpense": "खर्च जोड़ें",
+    "editExpense": "खर्च संपादित करें",
+    "deleteExpense": "खर्च हटाएं",
+    "expenseDetails": "खर्च विवरण",
+    "noExpenses": "कोई खर्च नहीं मिला",
+    "searchPlaceholder": "खर्च खोजें...",
+    "filterByCategory": "श्रेणी के अनुसार फिल्टर करें",
+    "filterByDate": "दिनांक के अनुसार फिल्टर करें",
+    "allCategories": "सभी श्रेणियां",
+    "today": "आज",
+    "thisWeek": "इस सप्ताह",
+    "thisMonth": "इस महीने",
+    "allTime": "सभी समय",
+    "customRange": "कस्टम रेंज",
+    "viewAll": "सभी देखें",
+    "from": "से",
+    "getStarted": "शुरू करें",
+    "to": "तक",
+    "apply": "लागू करें",
+    "clear": "साफ करें",
+    "deleteConfirm": "क्या आप वाकई इस खर्च को हटाना चाहते हैं?",
+    "deleteSuccess": "खर्च सफलतापूर्वक हटा दिया गया!",
+    "addSuccess": "खर्च सफलतापूर्वक जोड़ा गया!",
+    "updateSuccess": "खर्च सफलतापूर्वक अपडेट किया गया!",
+    "recurring": "आवर्ती",
+    "frequency": "आवृत्ति",
+    "budget": "बजट",
+    "overview": "अवलोकन",
+    "table": "तालिका",
+    "charts": "चार्ट",
+    "totalExpenses": "कुल खर्च",
+    "averageExpense": "औसत खर्च",
+    "highestExpense": "सबसे अधिक खर्च",
+    "categoryBreakdown": "श्रेणी विभाजन",
+    "monthlyTrend": "मासिक रुझान",
+    "recentExpenses": "हाल के खर्च",
+    "bulkActions": "बल्क एक्शन",
+    "selectAll": "सभी चुनें",
+    "deselectAll": "सभी अचयनित करें",
+    "deleteSelected": "चयनित हटाएं",
+    "exportData": "डेटा निर्यात करें",
+    "importData": "डेटा आयात करें",
+    "categories": {
+      "food": "भोजन और डाइनिंग",
+      "transport": "परिवहन",
+      "shopping": "खरीदारी",
+      "entertainment": "मनोरंजन",
+      "bills": "बिल और उपयोगिताएं",
+      "healthcare": "स्वास्थ्य सेवा",
+      "education": "शिक्षा",
+      "travel": "यात्रा",
+      "other": "अन्य"
+    },
+    "addNewExpense": "नया खर्च जोड़ें",
+    "reason": "कारण",
+    "reasonPlaceholder": "यह खर्च किस लिए था?",
+    "selectCategory": "श्रेणी चुनें",
+    "enterCustomCategory": "कस्टम श्रेणी दर्ज करें",
+    "recurringExpense": "आवर्ती खर्च",
+    "regularExpense": "नियमित खर्च",
+    "reduceFromBalance": "शेष राशि से कम करें",
+    "deductFromConnectedIncome": "जुड़ी आय से काटें",
+    "selectIncomeSource": "आय स्रोत चुनें",
+    "chooseIncomeToReduceFrom": "कम करने के लिए आय चुनें",
+    "selectFrequency": "आवृत्ति चुनें",
+    "adding": "जोड़ा जा रहा है...",
+    "advancedFilters": "उन्नत फिल्टर",
+    "refresh": "रीफ्रेश करें",
+    "allTypes": "सभी प्रकार",
+    "oneTime": "एक बार",
+    "allBudgets": "सभी बजट",
+    "startDate": "प्रारंभ दिनांक",
+    "endDate": "समाप्ति दिनांक",
+    "last7Days": "पिछले 7 दिन",
+    "last30Days": "पिछले 30 दिन",
+    "recentTransactions": "हाल के लेन-देन",
+    "noRecentTransactions": "कोई हाल के लेन-देन नहीं",
+    "justNow": "अभी",
+    "hoursAgo": "घंटे पहले",
+    "dayAgo": "1 दिन पहले",
+    "daysAgo": "दिन पहले",
+    "frequencies": {
+      "daily": "दैनिक",
+      "weekly": "साप्ताहिक",
+      "monthly": "मासिक",
+      "yearly": "वार्षिक"
+    },
+    "freeExpenses": "मुफ्त खर्च",
+    "budgetExpenses": "बजट खर्च",
+    "trackAndManageDailyExpenses": "अपने दैनिक खर्चों को ट्रैक और प्रबंधित करें",
+    "manageExpensesWithinBudgetLimits": "पूर्वनिर्धारित बजट सीमाओं के भीतर खर्चों का प्रबंधन करें",
+    "backToExpenses": "खर्च पर वापस जाएं",
+    "addBudgetExpense": "बजट खर्च जोड़ें",
+    "expensesByCategory": "श्रेणी के अनुसार खर्च",
+    "recentActivity": "हाल की गतिविधि",
+    "budgets": "बजट",
+    "analytics": "विश्लेषण",
+    "searchExpenses": "खर्च खोजें...",
+    "noExpensesFound": "कोई खर्च नहीं मिला",
+    "exportSelected": "निर्यात करें ({count})",
+    "exportSelectedCSV": "चयनित CSV निर्यात करें",
+    "exportSelectedPDF": "चयनित PDF निर्यात करें",
+    "exportAll": "सभी निर्यात करें",
+    "exportAllCSV": "सभी CSV निर्यात करें",
+    "exportAllPDF": "सभी PDF निर्यात करें",
+    "deleteSelected": "हटाएं ({count})",
+    "date": "दिनांक",
+    "description": "विवरण",
+    "budget": "बजट",
+    "recurring": "आवर्ती",
+    "amount": "राशि",
+    "oneTime": "एक बार",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "showing": "दिखा रहा है",
+    "to": "से",
+    "of": "का",
+    "entries": "प्रविष्टियां",
+    "perPage": "प्रति पृष्ठ",
+    "noDataToExport": "निर्यात करने के लिए कोई डेटा नहीं",
+    "expensesExportedToCSV": "{count} खर्च CSV में निर्यात किए गए!",
+    "areYouSureDeleteExpense": "क्या आप वाकई इस खर्च को हटाना चाहते हैं?",
+    "areYouSureDeleteExpenses": "क्या आप वाकई {count} खर्च हटाना चाहते हैं?",
+    "expensesDeletedSuccessfully": "{count} खर्च सफलतापूर्वक हटाए गए!",
+    "failedToDeleteExpenses": "खर्च हटाने में विफल",
+    "totalBudget": "कुल बजट",
+    "budgetSpent": "बजट खर्च",
+    "remaining": "शेष",
+    "budgetExpensesCount": "बजट खर्च",
+    "spent": "खर्च किया गया",
+    "activeBudgets": "सक्रिय बजट",
+    "available": "उपलब्ध",
+    "exceeded": "अधिक",
+    "budgetLeft": "बजट बचा",
+    "form": {
+      "title": "शीर्षक",
+      "titlePlaceholder": "खर्च शीर्षक दर्ज करें",
+      "amount": "राशि",
+      "amountPlaceholder": "0.00",
+      "category": "श्रेणी",
+      "selectCategory": "एक श्रेणी चुनें",
+      "date": "दिनांक",
+      "description": "विवरण",
+      "descriptionPlaceholder": "खर्च विवरण दर्ज करें (वैकल्पिक)",
+      "receipt": "रसीद",
+      "uploadReceipt": "रसीद अपलोड करें",
+      "removeReceipt": "रसीद हटाएं",
+      "validation": {
+        "titleRequired": "शीर्षक आवश्यक है",
+        "amountRequired": "राशि आवश्यक है",
+        "amountPositive": "राशि सकारात्मक होनी चाहिए",
+        "categoryRequired": "श्रेणी आवश्यक है",
+        "dateRequired": "दिनांक आवश्यक है",
+        "descriptionTooLong": "विवरण बहुत लंबा है",
+        "reasonRequired": "कारण आवश्यक है",
+        "amountGreaterThanZero": "राशि 0 से अधिक होनी चाहिए"
+      }
+    }
+  },
+  "income": {
+    "title": "आय प्रबंधन",
+    "addIncome": "आय जोड़ें",
+    "editIncome": "आय संपादित करें",
+    "deleteIncome": "आय हटाएं",
+    "source": "स्रोत",
+    "totalIncome": "कुल आय",
+    "monthlyIncome": "मासिक आय",
+    "connected": "जुड़ा हुआ",
+    "balance": "शेष राशि",
+    "noIncome": "कोई आय रिकॉर्ड नहीं मिला",
+    "searchPlaceholder": "आय खोजें...",
+    "deleteConfirm": "क्या आप वाकई इस आय रिकॉर्ड को हटाना चाहते हैं?",
+    "deleteSuccess": "आय सफलतापूर्वक हटा दी गई!",
+    "addSuccess": "आय सफलतापूर्वक जोड़ी गई!",
+    "updateSuccess": "आय सफलतापूर्वक अपडेट की गई!",
+    "addIncomeSource": "आय स्रोत जोड़ें",
+    "connectToBalance": "शेष राशि से कनेक्ट करें",
+    "expensesWillReduceFromThisIncome": "खर्च इस आय से कम होंगे",
+    "recurringIncome": "आवर्ती आय",
+    "regularIncomeSource": "नियमित आय स्रोत",
+    "selectIncomeCategory": "आय श्रेणी चुनें",
+    "briefDescriptionOfIncomeSource": "आय स्रोत का संक्षिप्त विवरण",
+    "addingIncome": "जोड़ा जा रहा है...",
+    "addIncome": "आय जोड़ें",
+    "incomeManagement": "आय प्रबंधन",
+    "trackAndManageIncome": "अपने आय स्रोतों को ट्रैक और प्रबंधित करें",
+    "overview": "अवलोकन",
+    "table": "तालिका",
+    "charts": "चार्ट",
+    "sources": {
+      "salary": "वेतन",
+      "freelancing": "फ्रीलांसिंग",
+      "freelance": "फ्रीलांस",
+      "business": "व्यवसाय",
+      "investment": "निवेश",
+      "rental": "किराया",
+      "commission": "कमीशन",
+      "bonus": "बोनस",
+      "other": "अन्य"
+    },
+    "form": {
+      "title": "शीर्षक",
+      "titlePlaceholder": "आय शीर्षक दर्ज करें",
+      "amount": "राशि",
+      "amountPlaceholder": "0.00",
+      "source": "स्रोत",
+      "selectSource": "आय स्रोत चुनें",
+      "date": "दिनांक",
+      "description": "विवरण",
+      "descriptionPlaceholder": "आय विवरण दर्ज करें (वैकल्पिक)",
+      "validation": {
+        "titleRequired": "शीर्षक आवश्यक है",
+        "amountRequired": "राशि आवश्यक है",
+        "amountPositive": "राशि सकारात्मक होनी चाहिए",
+        "sourceRequired": "स्रोत आवश्यक है",
+        "dateRequired": "दिनांक आवश्यक है"
+      }
+    }
+  },
+  "auth": {
+    "login": "लॉगिन",
+    "register": "पंजीकरण",
+    "logout": "लॉगआउट",
+    "signIn": "साइन इन",
+    "signUp": "साइन अप",
+    "welcome": "स्वागत है",
+    "welcomeBack": "वापस स्वागत है",
+    "createAccount": "अपना खाता बनाएं",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "rememberMe": "मुझे याद रखें",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "dontHaveAccount": "खाता नहीं है?",
+    "signInWith": "के साथ साइन इन करें",
+    "signUpWith": "के साथ साइन अप करें",
+    "orContinueWith": "या जारी रखें",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "firstName": "पहला नाम",
+    "lastName": "अंतिम नाम",
+    "agreeToTerms": "मैं सेवा की शर्तों और गोपनीयता नीति से सहमत हूं",
+    "validation": {
+      "emailRequired": "ईमेल आवश्यक है",
+      "emailInvalid": "कृपया एक वैध ईमेल दर्ज करें",
+      "passwordRequired": "पासवर्ड आवश्यक है",
+      "passwordTooShort": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
+      "passwordsNotMatch": "पासवर्ड मेल नहीं खाते",
+      "firstNameRequired": "पहला नाम आवश्यक है",
+      "lastNameRequired": "अंतिम नाम आवश्यक है",
+      "termsRequired": "आपको शर्तों से सहमत होना चाहिए"
+    }
+  },
+  "errors": {
+    "generic": "कुछ गलत हुआ। कृपया पुनः प्रयास करें।",
+    "network": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।",
+    "unauthorized": "आप इस कार्य को करने के लिए अधिकृत नहीं हैं।",
+    "forbidden": "पहुंच अस्वीकृत।",
+    "notFound": "अनुरोधित संसाधन नहीं मिला।",
+    "validation": "कृपया अपना इनपुट जांचें और पुनः प्रयास करें।",
+    "server": "सर्वर त्रुटि। कृपया बाद में पुनः प्रयास करें।",
+    "timeout": "अनुरोध समय समाप्त। कृपया पुनः प्रयास करें।"
+  },
+  "success": {
+    "saved": "सफलतापूर्वक सहेजा गया!",
+    "updated": "सफलतापूर्वक अपडेट किया गया!",
+    "deleted": "सफलतापूर्वक हटाया गया!",
+    "created": "सफलतापूर्वक बनाया गया!",
+    "uploaded": "सफलतापूर्वक अपलोड किया गया!",
+    "sent": "सफलतापूर्वक भेजा गया!"
+  },
+  "table": {
+    "noResults": "कोई परिणाम नहीं मिला",
+    "loading": "लोड हो रहा है...",
+    "error": "डेटा लोड करने में त्रुटि",
+    "retry": "पुनः प्रयास करें",
+    "rowsPerPage": "प्रति पृष्ठ पंक्तियां",
+    "page": "पृष्ठ",
+    "of": "का",
+    "previous": "पिछला",
+    "next": "अगला",
+    "first": "पहला",
+    "last": "अंतिम",
+    "showing": "दिखा रहा है",
+    "entries": "प्रविष्टियां"
+  },
+  "expenseCards": {
+    "totalExpenses": {
+      "title": "कुल खर्च",
+      "description": "पिछले महीने की तुलना में"
+    },
+    "thisMonth": {
+      "title": "इस महीने",
+      "description": "वर्तमान महीना"
+    },
+    "categories": {
+      "title": "श्रेणियां",
+      "description": "सक्रिय श्रेणियां"
+    },
+    "avgPerDay": {
+      "title": "औसत/दिन",
+      "description": "पिछले 30 दिन"
     }
   },
   "footer": {
