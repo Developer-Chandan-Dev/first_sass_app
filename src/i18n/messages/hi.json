@@ -114,6 +114,14 @@
     "countries": "देश"
   },
   "pricing": {
+    "monthly": "मासिक",
+    "yearly": "वार्षिक",
+    "save": "बचत",
+    "mostPopular": "सबसे लोकप्रिय",
+    "getStarted": "शुरू करें",
+    "currentPlan": "वर्तमान योजना",
+    "upgrade": "अपग्रेड",
+    "downgrade": "डाउनग्रेड",
     "plans": {
       "free": {
         "name": "मुफ्त",
@@ -150,6 +158,29 @@
           "कस्टम एकीकरण",
           "SLA गारंटी"
         ]
+      }
+    },
+    "faq": {
+      "title": "अक्सर पूछे जाने वाले प्रश्न",
+      "changePlans": {
+        "question": "क्या मैं कभी भी योजना बदल सकता हूं?",
+        "answer": "हां, आप किसी भी समय अपनी योजना को अपग्रेड या डाउनग्रेड कर सकते हैं। परिवर्तन तुरंत प्रभावी हो जाते हैं।"
+      },
+      "freeTrial": {
+        "question": "क्या कोई मुफ्त ट्रायल है?",
+        "answer": "सभी पेड योजनाओं के साथ 14-दिन का मुफ्त ट्रायल आता है। शुरू करने के लिए कोई क्रेडिट कार्ड आवश्यक नहीं।"
+      },
+      "payment": {
+        "question": "आप कौन से भुगतान तरीके स्वीकार करते हैं?",
+        "answer": "हम सभी प्रमुख क्रेडिट कार्ड, PayPal, और एंटरप्राइज़ योजनाओं के लिए बैंक ट्रांसफर स्वीकार करते हैं।"
+      },
+      "dataPrivacy": {
+        "question": "मेरा डेटा कैसे सुरक्षित है?",
+        "answer": "हम बैंक-स्तरीय एन्क्रिप्शन का उपयोग करते हैं और कभी भी आपका व्यक्तिगत वित्तीय डेटा तीसरे पक्ष के साथ साझा नहीं करते।"
+      },
+      "support": {
+        "question": "आप कौन सा समर्थन प्रदान करते हैं?",
+        "answer": "हम सभी योजनाओं के लिए 24/7 ईमेल समर्थन प्रदान करते हैं, प्रो और उससे ऊपर की योजनाओं के लिए प्राथमिकता समर्थन के साथ।"
       }
     }
   },
@@ -550,13 +581,13 @@
     "analytics": "विश्लेषण",
     "searchExpenses": "खर्च खोजें...",
     "noExpensesFound": "कोई खर्च नहीं मिला",
-    "exportSelected": "निर्यात करें ({count})",
+    "exportSelected": "निर्यात करें",
     "exportSelectedCSV": "चयनित CSV निर्यात करें",
     "exportSelectedPDF": "चयनित PDF निर्यात करें",
     "exportAll": "सभी निर्यात करें",
     "exportAllCSV": "सभी CSV निर्यात करें",
     "exportAllPDF": "सभी PDF निर्यात करें",
-    "deleteSelected": "हटाएं ({count})",
+    "deleteSelected": "हटाएं",
     "date": "दिनांक",
     "description": "विवरण",
     "budget": "बजट",
@@ -571,10 +602,10 @@
     "entries": "प्रविष्टियां",
     "perPage": "प्रति पृष्ठ",
     "noDataToExport": "निर्यात करने के लिए कोई डेटा नहीं",
-    "expensesExportedToCSV": "{count} खर्च CSV में निर्यात किए गए!",
+    "expensesExportedToCSV": "खर्च CSV में निर्यात किए गए!",
     "areYouSureDeleteExpense": "क्या आप वाकई इस खर्च को हटाना चाहते हैं?",
-    "areYouSureDeleteExpenses": "क्या आप वाकई {count} खर्च हटाना चाहते हैं?",
-    "expensesDeletedSuccessfully": "{count} खर्च सफलतापूर्वक हटाए गए!",
+    "areYouSureDeleteExpenses": "क्या आप वाकई खर्च हटाना चाहते हैं?",
+    "expensesDeletedSuccessfully": "खर्च सफलतापूर्वक हटाए गए!",
     "failedToDeleteExpenses": "खर्च हटाने में विफल",
     "totalBudget": "कुल बजट",
     "budgetSpent": "बजट खर्च",
@@ -585,6 +616,7 @@
     "available": "उपलब्ध",
     "exceeded": "अधिक",
     "budgetLeft": "बजट बचा",
+    "lastMonth": "पिछले महीने",
     "form": {
       "title": "शीर्षक",
       "titlePlaceholder": "खर्च शीर्षक दर्ज करें",

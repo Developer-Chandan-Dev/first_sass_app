@@ -33,13 +33,12 @@ function createSafeTranslator(t: (key: string) => string) {
       const result = t(key);
       // If the result is the same as the key, it means the translation is missing
       if (result === key && fallback) {
-        console.warn(`Translation key not found: ${key}, using fallback: ${fallback}`);
         return fallback;
       }
       return result;
     } catch (error: unknown) {
-      console.warn(`Translation error for key: ${key}, using fallback: ${fallback}`, error);
-      return fallback;
+      // Return fallback silently to prevent console spam
+      return fallback || key;
     }
   };
 }

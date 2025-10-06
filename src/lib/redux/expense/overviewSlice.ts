@@ -38,6 +38,7 @@ interface StatsState {
   free: FreeStats;
   budget: BudgetStats;
   loading: boolean;
+  error: string | null;
 }
 
 const initialState: StatsState = {
@@ -64,15 +65,24 @@ const initialState: StatsState = {
     expenses: [],
   },
   loading: false,
+  error: null,
 };
 
 export const refreshStats = createAsyncThunk(
   'stats/refreshStats',
-  async (expenseType: 'free' | 'budget') => {
-    const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
-    if (!response.ok) throw new Error('Failed to fetch stats');
-    const data = await response.json();
-    return { type: expenseType, stats: data.stats, expenses: data.expenses };
+  async (expenseType: 'free' | 'budget', { rejectWithValue }) => {
+    try {
+      const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch stats`);
+      }
+      const data = await response.json();
+      return { type: expenseType, stats: data.stats || {}, expenses: data.expenses || [] };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch stats';
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -80,6 +90,9 @@ const statsSlice = createSlice({
   name: 'stats',
   initialState,
   reducers: {
+    clearError: (state) => {
+      state.error = null;
+    },
     updateStatsOptimistic: (state, action: PayloadAction<{ type: 'free' | 'budget'; amount: number; category: string; operation: 'add' | 'subtract'; isExpense?: boolean; reason?: string }>) => {
       const { type, amount, category, operation, isExpense = true, reason = '' } = action.payload;
       
@@ -173,12 +186,22 @@ const statsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(refreshStats.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(refreshStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
         const { type, stats, expenses } = action.payload;
         state[type] = { ...state[type], ...stats, expenses };
+      })
+      .addCase(refreshStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || 'Failed to refresh stats';
       });
   },
 });
 
-export const { updateStatsOptimistic } = statsSlice.actions;
+export const { updateStatsOptimistic, clearError } = statsSlice.actions;
 export default statsSlice.reducer;

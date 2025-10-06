@@ -54,18 +54,7 @@ export function AddExpenseModal({
 }: AddExpenseModalProps) {
   const dispatch = useAppDispatch();
   const { expenses, common } = useAppTranslations();
-  const [categories, setCategories] = useState<string[]>([
-    expenses.categories.food,
-    expenses.categories.transport,
-    expenses.categories.entertainment,
-    'Groceries',
-    expenses.categories.shopping,
-    expenses.categories.healthcare,
-    'Utilities',
-    expenses.categories.education,
-    expenses.categories.travel,
-    'Others',
-  ]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
@@ -98,23 +87,36 @@ export function AddExpenseModal({
           fetch('/api/incomes/connected')
         ]);
         
+        const defaultCategories = [
+          'Food & Dining', 'Transportation', 'Entertainment', 'Groceries',
+          'Shopping', 'Healthcare', 'Utilities', 'Education', 'Travel', 'Other'
+        ];
+        
         if (categoriesRes.ok) {
           const data = await categoriesRes.json();
-          const defaultCategories = [
-            'Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'
-          ];
           const allCategories = [
-            ...new Set([...defaultCategories, ...data.categories]),
+            ...new Set([...defaultCategories, ...(data?.categories || [])]),
           ];
           setCategories(allCategories);
+        } else {
+          console.warn('Categories API failed, using fallback');
+          setCategories(defaultCategories);
         }
         
         if (incomesRes.ok) {
           const incomes = await incomesRes.json();
-          setConnectedIncomes(incomes);
+          setConnectedIncomes(Array.isArray(incomes) ? incomes : []);
+        } else {
+          console.warn('Incomes API failed');
+          setConnectedIncomes([]);
         }
       } catch (error) {
         console.error('Failed to fetch data:', error);
+        setCategories([
+          'Food & Dining', 'Transportation', 'Entertainment', 'Groceries',
+          'Shopping', 'Healthcare', 'Utilities', 'Education', 'Travel', 'Other'
+        ]);
+        toast.error('Failed to load categories. Using defaults.');
       }
     };
 
@@ -125,6 +127,22 @@ export function AddExpenseModal({
 
   const onSubmit = async (data: ExpenseFormData) => {
     try {
+      // Validate required fields
+      if (!data.amount || data.amount <= 0) {
+        toast.error('Please enter a valid amount');
+        return;
+      }
+      
+      if (!data.category?.trim()) {
+        toast.error('Please select a category');
+        return;
+      }
+      
+      if (!data.reason?.trim()) {
+        toast.error('Please enter a description');
+        return;
+      }
+      
       // API call in background
       const requestData = {
         ...data,
@@ -133,42 +151,38 @@ export function AddExpenseModal({
         incomeId: data.affectsBalance ? data.incomeId : undefined,
       };
 
-      try {
-        const res = await dispatch(addExpense(requestData)).unwrap();
+      const res = await dispatch(addExpense(requestData)).unwrap();
 
-        // Update UI after successful API response
-        dispatch(addExpenseOptimistic(res));
-        
-        // Update stats after successful API response
-        dispatch(
-          updateStatsOptimistic({
-            type: expenseType,
-            amount: res.amount,
-            category: res.category || 'Other',
-            operation: 'add',
-            reason: res.reason,
-          })
-        );
+      // Update UI after successful API response
+      dispatch(addExpenseOptimistic(res));
+      
+      // Update stats after successful API response
+      dispatch(
+        updateStatsOptimistic({
+          type: expenseType,
+          amount: res.amount,
+          category: res.category || 'Other',
+          operation: 'add',
+          reason: res.reason,
+        })
+      );
 
-        toast.success(expenses.addSuccess);
+      toast.success(expenses?.addSuccess || 'Expense added successfully');
 
-        // Close modal and reset form
-        reset();
-        setShowCustomCategory(false);
-        setCustomCategory('');
-        setValue('incomeId', '');
-        onOpenChange(false);
-      } catch (error) {
-        toast.error('Failed to add expense');
-        console.error('Failed to add expense:', error);
-      }
-
+      // Close modal and reset form
+      reset();
+      setShowCustomCategory(false);
+      setCustomCategory('');
+      setValue('incomeId', '');
+      onOpenChange(false);
+      
       if (onExpenseAdded) {
         onExpenseAdded();
       }
     } catch (error) {
-      toast.error('Failed to add expense');
       console.error('Failed to add expense:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add expense';
+      toast.error(errorMessage);
     }
   };
 
@@ -176,7 +190,7 @@ export function AddExpenseModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
-          <DialogTitle className="text-lg">{expenses.addNewExpense}</DialogTitle>
+          <DialogTitle className="text-lg">{expenses?.addNewExpense || 'Add New Expense'}</DialogTitle>
         </DialogHeader>
 
         <form
@@ -185,7 +199,7 @@ export function AddExpenseModal({
         >
           <div>
             <Label htmlFor="amount" className="text-sm">
-              {common.amount}
+              {common?.amount || 'Amount'}
             </Label>
             <Input
               id="amount"
@@ -204,14 +218,14 @@ export function AddExpenseModal({
 
           <div>
             <Label htmlFor="category" className="text-sm">
-              {common.category}
+              {common?.category || 'Category'}
             </Label>
             {showCustomCategory ? (
               <div className="flex flex-col sm:flex-row gap-2 mt-1">
                 <Input
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
-                  placeholder={expenses.enterCustomCategory}
+                  placeholder={expenses?.enterCustomCategory || 'Enter custom category'}
                   className="flex-1"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -234,7 +248,7 @@ export function AddExpenseModal({
                   onClick={() => setShowCustomCategory(false)}
                   className="w-full sm:w-auto"
                 >
-                  {common.cancel}
+                  {common?.cancel || 'Cancel'}
                 </Button>
               </div>
             ) : (
@@ -244,7 +258,7 @@ export function AddExpenseModal({
                   {...register('category')}
                   className="flex-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
                 >
-                  <option value="">{expenses.selectCategory}</option>
+                  <option value="">{expenses?.selectCategory || 'Select category'}</option>
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
@@ -271,12 +285,12 @@ export function AddExpenseModal({
 
           <div>
             <Label htmlFor="reason" className="text-sm">
-              {expenses.reason}
+              {expenses?.reason || 'Description'}
             </Label>
             <Textarea
               id="reason"
               {...register('reason')}
-              placeholder={expenses.reasonPlaceholder}
+              placeholder={expenses?.reasonPlaceholder || 'Enter expense description'}
               className="mt-1 text-sm"
               rows={3}
             />
@@ -289,7 +303,7 @@ export function AddExpenseModal({
 
           <div>
             <Label htmlFor="date" className="text-sm">
-              {common.date}
+              {common?.date || 'Date'}
             </Label>
             <Input
               id="date"
@@ -308,10 +322,10 @@ export function AddExpenseModal({
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="affectsBalance" className="text-sm font-medium">
-                  {expenses.reduceFromBalance}
+                  {expenses?.reduceFromBalance || 'Reduce from Balance'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  {expenses.deductFromConnectedIncome}
+                  {expenses?.deductFromConnectedIncome || 'Deduct from connected income'}
                 </p>
               </div>
               <Switch
@@ -323,10 +337,10 @@ export function AddExpenseModal({
             
             {affectsBalance && (
               <div>
-                <Label className="text-sm">{expenses.selectIncomeSource}</Label>
+                <Label className="text-sm">{expenses?.selectIncomeSource || 'Select Income Source'}</Label>
                 <Select onValueChange={(value) => setValue('incomeId', value)}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={expenses.chooseIncomeToReduceFrom} />
+                    <SelectValue placeholder={expenses?.chooseIncomeToReduceFrom || 'Choose income to reduce from'} />
                   </SelectTrigger>
                   <SelectContent>
                     {connectedIncomes.map((income) => (
@@ -342,10 +356,10 @@ export function AddExpenseModal({
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="isRecurring" className="text-sm font-medium">
-                  {expenses.recurringExpense}
+                  {expenses?.recurringExpense || 'Recurring Expense'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  {expenses.regularExpense}
+                  {expenses?.regularExpense || 'This is a regular expense'}
                 </p>
               </div>
               <Switch
@@ -357,16 +371,16 @@ export function AddExpenseModal({
             
             {isRecurring && (
               <div>
-                <Label className="text-sm">{expenses.frequency}</Label>
+                <Label className="text-sm">{expenses?.frequency || 'Frequency'}</Label>
                 <Select onValueChange={(value) => setValue('frequency', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={expenses.selectFrequency} />
+                    <SelectValue placeholder={expenses?.selectFrequency || 'Select frequency'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="daily">{expenses.frequencies.daily}</SelectItem>
-                    <SelectItem value="weekly">{expenses.frequencies.weekly}</SelectItem>
-                    <SelectItem value="monthly">{expenses.frequencies.monthly}</SelectItem>
-                    <SelectItem value="yearly">{expenses.frequencies.yearly}</SelectItem>
+                    <SelectItem value="daily">{expenses?.frequencies?.daily || 'Daily'}</SelectItem>
+                    <SelectItem value="weekly">{expenses?.frequencies?.weekly || 'Weekly'}</SelectItem>
+                    <SelectItem value="monthly">{expenses?.frequencies?.monthly || 'Monthly'}</SelectItem>
+                    <SelectItem value="yearly">{expenses?.frequencies?.yearly || 'Yearly'}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -379,7 +393,7 @@ export function AddExpenseModal({
               disabled={isSubmitting}
               className="w-full sm:w-auto"
             >
-              {isSubmitting ? expenses.adding : expenses.addExpense}
+              {isSubmitting ? (expenses?.adding || 'Adding...') : (expenses?.addExpense || 'Add Expense')}
             </Button>
             <Button
               type="button"
@@ -387,7 +401,7 @@ export function AddExpenseModal({
               onClick={() => onOpenChange(false)}
               className="w-full sm:w-auto"
             >
-              {common.cancel}
+              {common?.cancel || 'Cancel'}
             </Button>
           </div>
         </form>

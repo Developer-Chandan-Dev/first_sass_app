@@ -121,12 +121,15 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(expensesData.areYouSureDeleteExpense)) {
+    if (!confirm(expensesData?.areYouSureDeleteExpense || 'Are you sure you want to delete this expense?')) {
       return;
     }
     
     const expense = expenses.find(e => e._id === id);
-    if (!expense) return;
+    if (!expense) {
+      toast.error('Expense not found');
+      return;
+    }
     
     // API call first
     try {
@@ -149,15 +152,21 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
         }));
       }
       
-      toast.success(expensesData.deleteSuccess);
+      toast.success(expensesData?.deleteSuccess || 'Expense deleted successfully');
       // Silent stats refresh
       dispatch(refreshStats(expenseType));
-    } catch {
-      toast.error('Failed to delete expense');
+    } catch (error) {
+      console.error('Delete expense error:', error);
+      toast.error('Failed to delete expense. Please try again.');
     }
   };
 
   const handleBulkDelete = async () => {
+    if (selectedRows.length === 0) {
+      toast.error('No expenses selected');
+      return;
+    }
+    
     if (!confirm(`Are you sure you want to delete ${selectedRows.length} expenses?`)) {
       return;
     }
@@ -171,7 +180,8 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       });
       
       if (!response.ok) {
-        throw new Error('Failed to delete expenses');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to delete expenses');
       }
       
       // Update UI after successful API response
@@ -181,8 +191,15 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       
       toast.success(`${selectedRows.length} expenses deleted successfully!`);
       setSelectedRows([]);
-    } catch {
-      toast.error('Failed to delete expenses');
+      
+      // Refresh stats
+      dispatch(refreshStats(expenseType));
+    } catch (error) {
+      console.error('Bulk delete error:', error);
+      const errorMessage = error instanceof Error && error.message.length < 100 
+        ? error.message 
+        : 'Failed to delete expenses. Please try again.';
+      toast.error(errorMessage);
     }
   };
 
@@ -222,38 +239,50 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       ? expenses.filter(expense => selectedRows.includes(expense._id))
       : expenses;
     
-    if (dataToExport.length === 0) {
+    if (!dataToExport || dataToExport.length === 0) {
       toast.error('No data to export');
       return;
     }
     
-    const headers = ['Date', 'Description', 'Category', ...(expenseType === 'budget' ? ['Budget Name'] : []), 'Amount', 'Recurring', 'Frequency', 'Created Date'];
-    const csvData = dataToExport.map(expense => [
-      new Date(expense.date).toLocaleDateString(),
-      expense.reason,
-      expense.category,
-      ...(expenseType === 'budget' ? [expense.budgetName || ''] : []),
-      expense.amount,
-      expense.isRecurring ? 'Yes' : 'No',
-      expense.frequency || '',
-      new Date(expense.createdAt).toLocaleDateString()
-    ]);
-    
-    const csvContent = [headers, ...csvData]
-      .map(row => row.map(field => `"${field}"`).join(','))
-      .join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `expenses-${selectedOnly ? 'selected-' : ''}${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast.success(`${dataToExport.length} expenses exported to CSV!`);
+    try {
+      const headers = ['Date', 'Description', 'Category', ...(expenseType === 'budget' ? ['Budget Name'] : []), 'Amount', 'Recurring', 'Frequency', 'Created Date'];
+      const csvData = dataToExport.map(expense => [
+        new Date(expense.date).toLocaleDateString(),
+        (expense.reason || '').replace(/["\r\n]/g, ' '),
+        (expense.category || '').replace(/["\r\n]/g, ' '),
+        ...(expenseType === 'budget' ? [(expense.budgetName || '').replace(/["\r\n]/g, ' ')] : []),
+        expense.amount,
+        expense.isRecurring ? 'Yes' : 'No',
+        (expense.frequency || '').replace(/["\r\n]/g, ' '),
+        new Date(expense.createdAt).toLocaleDateString()
+      ]);
+      
+      const csvContent = [headers, ...csvData]
+        .map(row => row.map(field => {
+          const sanitized = String(field || '').replace(/"/g, '""').replace(/[\r\n]/g, ' ');
+          return `"${sanitized}"`;
+        }).join(','))
+        .join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `expenses-${selectedOnly ? 'selected-' : ''}${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success(`${dataToExport.length} expenses exported to CSV!`);
+    } catch (error) {
+      console.error('CSV export error:', error);
+      const errorMessage = error instanceof Error && error.message.includes('memory') 
+        ? 'File too large to export. Try exporting fewer records.' 
+        : 'Failed to export CSV. Please try again.';
+      toast.error(errorMessage);
+    }
   };
 
   return (

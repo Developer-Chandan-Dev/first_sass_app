@@ -1,10 +1,13 @@
 'use client';
 
 import { useSelector } from 'react-redux';
+import { useMemo, useCallback } from 'react';
 import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { AlertTriangle } from 'lucide-react';
 import { useAppTranslations } from '@/hooks/useTranslation';
 
 const getCategoryIcon = (category: string) => {
@@ -26,61 +29,83 @@ const getCategoryIcon = (category: string) => {
 
 
 export function RecentTransactions() {
-  const { free, budget, loading } = useSelector((state: RootState) => state.overview);
+  const { free, budget, loading, error } = useSelector((state: RootState) => state.overview);
   const { expenses } = useAppTranslations();
 
-  const formatTimeAgo = (dateString: string) => {
+  const formatTimeAgo = useCallback((dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
     const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
     const diffInDays = Math.floor(diffInHours / 24);
 
-    if (diffInHours < 1) return expenses.justNow;
-    if (diffInHours < 24) return `${diffInHours} ${expenses.hoursAgo}`;
-    if (diffInDays === 1) return expenses.dayAgo;
-    return `${diffInDays} ${expenses.daysAgo}`;
-  };
+    if (diffInHours < 1) return expenses?.justNow || 'Just now';
+    if (diffInHours < 24) return `${diffInHours} ${expenses?.hoursAgo || 'hours ago'}`;
+    if (diffInDays === 1) return expenses?.dayAgo || '1 day ago';
+    return `${diffInDays} ${expenses?.daysAgo || 'days ago'}`;
+  }, [expenses?.justNow, expenses?.hoursAgo, expenses?.dayAgo, expenses?.daysAgo]);
 
-  // Combine and sort recent expenses from both free and budget
-  const allExpenses = [...free.expenses, ...budget.expenses]
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-    .slice(0, 5);
+  // Memoized expense processing
+  const allExpenses = useMemo(() => {
+    return [...(free?.expenses || []), ...(budget?.expenses || [])]
+      .filter(expense => expense && expense.createdAt)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 5);
+  }, [free?.expenses, budget?.expenses]);
 
-  const transactions = allExpenses.map((expense) => ({
-    id: expense._id,
-    merchant: expense.reason || 'Expense',
-    category: expense.category,
-    amount: -expense.amount, // Negative for expenses
-    date: formatTimeAgo(expense.createdAt),
-    icon: getCategoryIcon(expense.category),
-    type: expense.type,
-  }));
+  const transactions = useMemo(() => 
+    allExpenses.map((expense) => ({
+      id: expense._id,
+      merchant: expense.reason || 'Expense',
+      category: expense.category || 'Other',
+      amount: -Math.abs(expense.amount || 0),
+      date: formatTimeAgo(expense.createdAt),
+      icon: getCategoryIcon(expense.category || 'Other'),
+      type: expense.type || 'free',
+    })), [allExpenses, formatTimeAgo]
+  );
 
+  // Error state
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>
+              Failed to load recent transactions.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Loading state
   if (loading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{expenses.recentTransactions}</CardTitle>
+          <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="flex items-center justify-between">
+            <div key={i} className="flex items-center justify-between animate-pulse">
               <div className="flex items-center space-x-3">
-                <div className="h-9 w-9 bg-muted rounded-full animate-pulse" />
+                <div className="h-9 w-9 bg-muted rounded-full" />
                 <div className="space-y-1">
-                  <div className="h-4 w-24 bg-muted rounded animate-pulse" />
-                  <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+                  <div className="h-4 w-24 bg-muted rounded" />
+                  <div className="h-3 w-16 bg-muted rounded" />
                 </div>
               </div>
               <div className="text-right space-y-1">
-                <div className="h-4 w-16 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-16 bg-muted rounded" />
                 <div className="flex gap-1">
-                  <div className="h-5 w-12 bg-muted rounded animate-pulse" />
-                  <div className="h-5 w-10 bg-muted rounded animate-pulse" />
+                  <div className="h-5 w-12 bg-muted rounded" />
+                  <div className="h-5 w-10 bg-muted rounded" />
                 </div>
               </div>
             </div>
@@ -93,7 +118,7 @@ export function RecentTransactions() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{expenses.recentTransactions}</CardTitle>
+        <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {transactions.length > 0 ? (
@@ -135,7 +160,7 @@ export function RecentTransactions() {
           ))
         ) : (
           <p className="text-sm text-muted-foreground text-center py-4">
-            {expenses.noRecentTransactions}
+            {expenses?.noRecentTransactions || 'No recent transactions'}
           </p>
         )}
       </CardContent>

@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { StatsCards } from '@/components/dashboard/shared/stats-cards';
 import { ExpenseChart } from '@/components/dashboard/expenses/expense-chart';
 import { RecentTransactions } from '@/components/dashboard/shared/recent-transactions';
+import ErrorBoundary from '@/components/dashboard/shared/error-boundary';
+import { safeGet } from '@/lib/safe-access';
 import { Clock, TrendingUp, Target, PieChart, Calendar, Bell } from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
@@ -46,26 +48,32 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">{dashboard.overview}</h2>
-        <p className="text-muted-foreground">{dashboard.description}</p>
+        <h2 className="text-3xl font-bold tracking-tight">{safeGet(dashboard, 'overview', 'Dashboard Overview')}</h2>
+        <p className="text-muted-foreground">{safeGet(dashboard, 'description', 'Track your financial progress and manage expenses efficiently.')}</p>
       </div>
       
-      <StatsCards />
+      <ErrorBoundary>
+        <StatsCards />
+      </ErrorBoundary>
       
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
-        <Card className="overflow-hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-              <TrendingUp className="h-5 w-5" />
-              {dashboard.spendingTrends}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-3 md:p-6">
-            <ExpenseChart />
-          </CardContent>
-        </Card>
+        <ErrorBoundary>
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                <TrendingUp className="h-5 w-5" />
+                {dashboard?.spendingTrends || 'Spending Trends'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-3 md:p-6">
+              <ExpenseChart />
+            </CardContent>
+          </Card>
+        </ErrorBoundary>
         
-        <RecentTransactions />
+        <ErrorBoundary>
+          <RecentTransactions />
+        </ErrorBoundary>
       </div>
 
       {/* Coming Soon Section */}
@@ -73,7 +81,7 @@ export default function Dashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            {dashboard.comingSoon}
+            {dashboard?.comingSoon || 'Coming Soon'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -86,7 +94,7 @@ export default function Dashboard() {
                   <h3 className="font-medium mb-1">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground mb-2">{feature.description}</p>
                   <Badge variant="secondary" className="text-xs">
-                    {dashboard.comingSoon}
+                    {dashboard?.comingSoon || 'Coming Soon'}
                   </Badge>
                 </div>
               );

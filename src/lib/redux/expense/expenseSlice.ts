@@ -66,10 +66,20 @@ const initialState: ExpenseState = {
   lastUpdated: 0
 };
 
+interface FetchExpensesResponse {
+  expenses: ExpenseItem[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+}
+
 // Async thunk for fetching expenses (only when needed)
-export const fetchExpenses = createAsyncThunk(
+export const fetchExpenses = createAsyncThunk<
+  FetchExpensesResponse,
+  { expenseType: 'free' | 'budget'; filters: ExpenseFilters; page: number; pageSize: number }
+>(
   'expenses/fetchExpenses',
-  async (params: { expenseType: 'free' | 'budget'; filters: ExpenseFilters; page: number; pageSize: number }) => {
+  async (params) => {
     const { expenseType, filters, page, pageSize } = params;
     
     const searchParams = new URLSearchParams({
@@ -90,14 +100,17 @@ export const fetchExpenses = createAsyncThunk(
     const response = await fetch(`/api/expenses?${searchParams}`);
     if (!response.ok) throw new Error('Failed to fetch expenses');
     
-    return await response.json();
+    return await response.json() as FetchExpensesResponse;
   }
 );
 
 // Async thunk for adding expense (optimistic update)
-export const addExpense = createAsyncThunk(
+export const addExpense = createAsyncThunk<
+  ExpenseItem,
+  Omit<ExpenseItem, '_id' | 'createdAt'>
+>(
   'expenses/addExpense',
-  async (expenseData: Omit<ExpenseItem, '_id' | 'createdAt'>) => {
+  async (expenseData) => {
     const response = await fetch('/api/expenses', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -105,14 +118,17 @@ export const addExpense = createAsyncThunk(
     });
     
     if (!response.ok) throw new Error('Failed to add expense');
-    return await response.json();
+    return await response.json() as ExpenseItem;
   }
 );
 
 // Async thunk for updating expense (optimistic update)
-export const updateExpense = createAsyncThunk(
+export const updateExpense = createAsyncThunk<
+  ExpenseItem,
+  { id: string; updates: Partial<ExpenseItem> }
+>(
   'expenses/updateExpense',
-  async ({ id, updates }: { id: string; updates: Partial<ExpenseItem> }) => {
+  async ({ id, updates }) => {
     const response = await fetch(`/api/expenses/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -120,12 +136,12 @@ export const updateExpense = createAsyncThunk(
     });
     
     if (!response.ok) throw new Error('Failed to update expense');
-    return await response.json();
+    return await response.json() as ExpenseItem;
   }
 );
 
 // Async thunk for deleting expense (optimistic update)
-export const deleteExpense = createAsyncThunk(
+export const deleteExpense = createAsyncThunk<string, string>(
   'expenses/deleteExpense',
   async (id: string) => {
     const response = await fetch(`/api/expenses/${id}`, {
