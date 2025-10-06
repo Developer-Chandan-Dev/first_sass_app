@@ -35,11 +35,11 @@ const userSchema = new mongoose.Schema({
   limits: {
     maxExpenses: {
       type: Number,
-      default: 50, // Free plan limit
+      default: 500, // Free plan limit
     },
     maxBudgets: {
       type: Number,
-      default: 3, // Free plan limit
+      default: 5, // Free plan limit
     },
   },
 }, {
