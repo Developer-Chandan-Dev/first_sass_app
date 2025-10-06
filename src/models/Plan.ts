@@ -16,8 +16,8 @@ const planSchema = new mongoose.Schema({
     default: 'monthly',
   },
   features: {
-    maxExpenses: { type: Number, default: 50 },
-    maxBudgets: { type: Number, default: 3 },
+    maxExpenses: { type: Number, default: 500 },
+    maxBudgets: { type: Number, default: 5 },
     analytics: { type: Boolean, default: false },
     export: { type: Boolean, default: false },
     priority: { type: Boolean, default: false },
