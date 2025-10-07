@@ -42,3 +42,6 @@ Thumbs.db
 
 # JSON comparison utility
 compare-json.js
+
+# Migration scripts
+update-user-limits.js

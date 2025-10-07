@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Budget from '@/models/Budget';
 import Expense from '@/models/Expense';
+import User from '@/models/User';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +19,22 @@ export async function POST(request: NextRequest) {
 
     if (!name || !amount || !duration || !startDate || !endDate) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Check user limits
+    const [user, budgetCount] = await Promise.all([
+      User.findOne({ clerkId: userId }),
+      Budget.countDocuments({ userId, isActive: true })
+    ]);
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    
+    if (budgetCount >= user.limits.maxBudgets) {
+      return NextResponse.json({ 
+        error: `Budget limit reached. Upgrade to create more than ${user.limits.maxBudgets} budgets.` 
+      }, { status: 403 });
     }
     
     const budgetData = {
