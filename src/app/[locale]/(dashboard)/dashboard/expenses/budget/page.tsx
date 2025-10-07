@@ -56,7 +56,7 @@ export default function BudgetExpensesPage() {
           <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">{expenses.overview}</TabsTrigger>
           <TabsTrigger value="budgets" className="text-xs sm:text-sm px-2 py-2">{expenses.budgets}</TabsTrigger>
           <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">{expenses.analytics}</TabsTrigger>
-          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">{expenses.title}</TabsTrigger>
+          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">{expenses?.title?.split(" ")[0]}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">

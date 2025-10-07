@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -23,17 +23,20 @@ import {
   type Budget,
 } from '@/lib/redux/expense/budgetSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
+import { useAppTranslations } from '@/hooks/useTranslation';
+import { CategorySelect } from '@/components/ui/category-select';
+import { getBackendCategoryKey } from '@/lib/categories';
 
-const budgetSchema = z.object({
-  name: z.string().min(1, 'Budget name is required'),
-  amount: z.number().min(0.01, 'Amount must be greater than 0'),
+const createBudgetSchema = (t: ReturnType<typeof useAppTranslations>) => z.object({
+  name: z.string().min(1, t.expenses.form.validation.titleRequired),
+  amount: z.number().min(0.01, t.expenses.form.validation.amountGreaterThanZero),
   category: z.string().optional(),
   duration: z.enum(['monthly', 'weekly', 'custom']),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
+  startDate: z.string().min(1, t.expenses.form.validation.dateRequired),
+  endDate: z.string().min(1, t.expenses.form.validation.dateRequired),
 });
 
-type BudgetFormData = z.infer<typeof budgetSchema>;
+type BudgetFormData = z.infer<ReturnType<typeof createBudgetSchema>>;
 
 interface AddBudgetModalProps {
   open: boolean;
@@ -49,7 +52,10 @@ export function AddBudgetModal({
   onBudgetSaved,
 }: AddBudgetModalProps) {
   const dispatch = useAppDispatch();
+  const t = useAppTranslations();
   const isEditing = !!budget;
+
+  const budgetSchema = useMemo(() => createBudgetSchema(t), [t]);
 
   const {
     register,
@@ -107,7 +113,7 @@ export function AddBudgetModal({
         const updates = {
           name: data.name,
           amount: Number(data.amount),
-          category: data.category,
+          category: data.category ? getBackendCategoryKey(data.category) : undefined,
           duration: data.duration,
           startDate: data.startDate,
           endDate: data.endDate,
@@ -115,21 +121,24 @@ export function AddBudgetModal({
 
         // Optimistic update
         dispatch(updateBudgetOptimistic({ id: budget._id, updates }));
-        toast.success('Budget updated successfully!');
+        toast.success(t.success.updated);
 
         // API call in background
         try {
           await dispatch(updateBudget({ id: budget._id, updates })).unwrap();
         } catch (error) {
-          toast.error('Failed to update budget');
+          toast.error(t.errors.generic);
           console.error('Failed to update budget:', error);
         }
       } else {
         // API call in background
         try {
-          const res = await dispatch(
-            addBudget({ ...data, isActive: true })
-          ).unwrap();
+          const budgetData = {
+            ...data,
+            category: data.category ? getBackendCategoryKey(data.category) : undefined,
+            isActive: true
+          };
+          const res = await dispatch(addBudget(budgetData)).unwrap();
 
           // Update UI after successful API response
           dispatch(addBudgetOptimistic(res));
@@ -145,9 +154,9 @@ export function AddBudgetModal({
             })
           );
           
-          toast.success('Budget created successfully!');
+          toast.success(t.success.created);
         } catch (error) {
-          toast.error('Failed to create budget');
+          toast.error(t.errors.generic);
           console.error('Failed to create budget:', error);
         }
       }
@@ -159,33 +168,29 @@ export function AddBudgetModal({
         onBudgetSaved();
       }
     } catch (error) {
-      toast.error(
-        isEditing ? 'Failed to update budget' : 'Failed to create budget'
-      );
+      toast.error(t.errors.generic);
       console.error('Failed to save budget:', error);
     }
   };
-
-  const categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education', 'Travel', 'Others'];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
           <DialogTitle className="text-lg">
-            {isEditing ? 'Edit Budget' : 'Create New Budget'}
+            {isEditing ? t.expenses.editExpense.replace('Expense', 'Budget') : t.dashboard.addBudget}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="name" className="text-sm">
-              Budget Name
+              {t.expenses.form.title}
             </Label>
             <Input
               id="name"
               {...register('name')}
-              placeholder="e.g., Monthly Groceries"
+              placeholder={t.expenses.form.titlePlaceholder}
               className="mt-1"
             />
             {errors.name && (
@@ -195,14 +200,14 @@ export function AddBudgetModal({
 
           <div>
             <Label htmlFor="amount" className="text-sm">
-              Budget Amount
+              {t.expenses.form.amount}
             </Label>
             <Input
               id="amount"
               type="number"
               step="0.01"
               {...register('amount', { valueAsNumber: true })}
-              placeholder="0.00"
+              placeholder={t.expenses.form.amountPlaceholder}
               className="mt-1"
             />
             {errors.amount && (
@@ -214,41 +219,36 @@ export function AddBudgetModal({
 
           <div>
             <Label htmlFor="category" className="text-sm">
-              Category (Optional)
+              {t.expenses.form.category} (Optional)
             </Label>
-            <select
+            <CategorySelect
               id="category"
-              {...register('category')}
-              className="w-full mt-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
-            >
-              <option value="">Select category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+              value={watch('category') || ''}
+              onChange={(value) => setValue('category', value)}
+              placeholder={t.expenses.selectCategory}
+              className="mt-1"
+            />
           </div>
 
           <div>
             <Label htmlFor="duration" className="text-sm">
-              Duration
+              {t.expenses.frequency}
             </Label>
             <select
               id="duration"
               {...register('duration')}
               className="w-full mt-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
             >
-              <option value="monthly">Monthly</option>
-              <option value="weekly">Weekly</option>
-              <option value="custom">Custom</option>
+              <option value="monthly">{t.expenses.frequencies.monthly}</option>
+              <option value="weekly">{t.expenses.frequencies.weekly}</option>
+              <option value="custom">{t.expenses.customRange}</option>
             </select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="startDate" className="text-sm">
-                Start Date
+                {t.expenses.startDate}
               </Label>
               <Input
                 id="startDate"
@@ -265,7 +265,7 @@ export function AddBudgetModal({
             </div>
             <div>
               <Label htmlFor="endDate" className="text-sm">
-                End Date
+                {t.expenses.endDate}
               </Label>
               <Input
                 id="endDate"
@@ -291,10 +291,10 @@ export function AddBudgetModal({
               {isSubmitting
                 ? isEditing
                   ? 'Updating...'
-                  : 'Creating...'
+                  : t.expenses.adding
                 : isEditing
-                  ? 'Update Budget'
-                  : 'Create Budget'}
+                  ? t.common.update
+                  : t.common.create}
             </Button>
             <Button
               type="button"
@@ -302,7 +302,7 @@ export function AddBudgetModal({
               onClick={() => onOpenChange(false)}
               className="w-full sm:w-auto"
             >
-              Cancel
+              {t.common.cancel}
             </Button>
           </div>
         </form>

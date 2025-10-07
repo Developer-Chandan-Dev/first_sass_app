@@ -55,6 +55,25 @@ import { updateStatsOptimistic, refreshStats } from '@/lib/redux/expense/overvie
 import { updateBudgetSpent } from '@/lib/redux/expense/budgetSlice';
 import { getExpenseAmountColor, getExpenseTooltip } from '@/lib/financial-styles';
 
+// Table skeleton component
+function ExpenseTableSkeleton({ expenseType }: { expenseType: 'free' | 'budget' }) {
+  const columnCount = expenseType === 'budget' ? 8 : 7;
+  
+  return (
+    <>
+      {[1, 2, 3, 4, 5].map(i => (
+        <TableRow key={i}>
+          {Array.from({ length: columnCount }).map((_, j) => (
+            <TableCell key={j} className={j === 0 ? '' : j >= 3 && j <= 4 && expenseType === 'free' ? 'hidden sm:table-cell' : j === 4 && expenseType === 'budget' ? 'hidden lg:table-cell' : j === 5 ? 'hidden md:table-cell' : ''}>
+              <div className="h-4 bg-muted rounded animate-pulse" />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </>
+  );
+}
+
 interface AdvancedExpensesTableProps {
   expenseType?: 'free' | 'budget';
 }
@@ -121,7 +140,8 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(expensesData?.areYouSureDeleteExpense || 'Are you sure you want to delete this expense?')) {
+    const confirmMessage = 'Are you sure you want to delete this expense?';
+    if (!confirm(confirmMessage)) {
       return;
     }
     
@@ -167,7 +187,8 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
       return;
     }
     
-    if (!confirm(`Are you sure you want to delete ${selectedRows.length} expenses?`)) {
+    const confirmMessage = `Are you sure you want to delete ${selectedRows.length} expenses?`;
+    if (!confirm(confirmMessage.replace('{count}', selectedRows.length.toString()))) {
       return;
     }
     
@@ -424,21 +445,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
               </TableHeader>
             <TableBody>
               {loading ? (
-                // Skeleton rows
-                [1, 2, 3, 4, 5].map(i => (
-                  <TableRow key={i}>
-                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    <TableCell className="hidden sm:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    {expenseType === 'budget' && (
-                      <TableCell className="hidden lg:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    )}
-                    <TableCell className="hidden md:table-cell"><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                    <TableCell><div className="h-4 bg-muted rounded animate-pulse"></div></TableCell>
-                  </TableRow>
-                ))
+                <ExpenseTableSkeleton expenseType={expenseType} />
               ) : expenses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={expenseType === 'budget' ? 8 : 7} className="text-center py-8 text-muted-foreground">

@@ -14,6 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { updateExpense, updateExpenseOptimistic, type ExpenseItem } from '@/lib/redux/expense/expenseSlice';
+import { useAppTranslations } from '@/hooks/useTranslation';
+import { CategorySelect } from '@/components/ui/category-select';
+import { getBackendCategoryKey, getFrontendCategoryKey } from '@/lib/categories';
 
 const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -37,6 +40,7 @@ interface EditExpenseModalProps {
 
 export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
   const dispatch = useAppDispatch();
+  const { expenses, common } = useAppTranslations();
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
 
   const {
@@ -72,7 +76,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
     if (expense && open) {
       setValue('amount', expense.amount);
-      setValue('category', expense.category);
+      setValue('category', getFrontendCategoryKey(expense.category));
       setValue('reason', expense.reason);
       setValue('date', expense.date.split('T')[0]);
       setValue('isRecurring', expense.isRecurring || false);
@@ -90,7 +94,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
     try {
       const updates = {
         amount: Number(data.amount),
-        category: data.category,
+        category: getBackendCategoryKey(data.category),
         reason: data.reason,
         date: data.date,
         isRecurring: data.isRecurring,
@@ -101,7 +105,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
       // Optimistic update - update UI immediately
       dispatch(updateExpenseOptimistic({ id: expense._id, updates }));
-      toast.success('Expense updated successfully!');
+      toast.success(expenses?.updateSuccess || 'Expense updated successfully!');
       
       // Close modal
       onOpenChange(false);
@@ -126,18 +130,18 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
     }
   };
 
-  const categories = ['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others'];
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
-          <DialogTitle className="text-lg">Edit Expense</DialogTitle>
+          <DialogTitle className="text-lg">{expenses?.editExpense || 'Edit Expense'}</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
           <div>
-            <Label htmlFor="amount" className="text-sm">Amount</Label>
+            <Label htmlFor="amount" className="text-sm">{common?.amount || 'Amount'}</Label>
             <Input
               id="amount"
               type="number"
@@ -152,28 +156,25 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
           </div>
 
           <div>
-            <Label htmlFor="category" className="text-sm">Category</Label>
-            <select
+            <Label htmlFor="category" className="text-sm">{common?.category || 'Category'}</Label>
+            <CategorySelect
               id="category"
-              {...register('category')}
-              className="w-full mt-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
-            >
-              <option value="">Select category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+              value={watch('category') || ''}
+              onChange={(value) => setValue('category', value)}
+              placeholder={expenses?.selectCategory || 'Select category'}
+              className="mt-1"
+            />
             {errors.category && (
               <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.category.message}</p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="reason" className="text-sm">Reason</Label>
+            <Label htmlFor="reason" className="text-sm">{expenses?.reason || 'Description'}</Label>
             <Textarea
               id="reason"
               {...register('reason')}
-              placeholder="What was this expense for?"
+              placeholder={expenses?.reasonPlaceholder || 'What was this expense for?'}
               className="mt-1 text-sm"
               rows={3}
             />
@@ -183,7 +184,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
           </div>
 
           <div>
-            <Label htmlFor="date" className="text-sm">Date</Label>
+            <Label htmlFor="date" className="text-sm">{common?.date || 'Date'}</Label>
             <Input
               id="date"
               type="date"
@@ -199,10 +200,10 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="affectsBalance" className="text-sm font-medium">
-                  Reduce from Balance
+                  {expenses?.reduceFromBalance || 'Reduce from Balance'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Deduct from connected income
+                  {expenses?.deductFromConnectedIncome || 'Deduct from connected income'}
                 </p>
               </div>
               <Switch
@@ -214,10 +215,10 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
             
             {affectsBalance && (
               <div>
-                <Label className="text-sm">Select Income Source</Label>
+                <Label className="text-sm">{expenses?.selectIncomeSource || 'Select Income Source'}</Label>
                 <Select value={watch('incomeId')} onValueChange={(value) => setValue('incomeId', value)}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Choose income to reduce from" />
+                    <SelectValue placeholder={expenses?.chooseIncomeToReduceFrom || 'Choose income to reduce from'} />
                   </SelectTrigger>
                   <SelectContent>
                     {connectedIncomes.map((income) => (
@@ -233,10 +234,10 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="isRecurring" className="text-sm font-medium">
-                  Recurring Expense
+                  {expenses?.recurringExpense || 'Recurring Expense'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Regular expense
+                  {expenses?.regularExpense || 'Regular expense'}
                 </p>
               </div>
               <Switch
@@ -248,16 +249,16 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
             
             {isRecurring && (
               <div>
-                <Label className="text-sm">Frequency</Label>
+                <Label className="text-sm">{expenses?.frequency || 'Frequency'}</Label>
                 <Select onValueChange={(value) => setValue('frequency', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select frequency" />
+                    <SelectValue placeholder={expenses?.selectFrequency || 'Select frequency'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
+                    <SelectItem value="daily">{expenses?.frequencies?.daily || 'Daily'}</SelectItem>
+                    <SelectItem value="weekly">{expenses?.frequencies?.weekly || 'Weekly'}</SelectItem>
+                    <SelectItem value="monthly">{expenses?.frequencies?.monthly || 'Monthly'}</SelectItem>
+                    <SelectItem value="yearly">{expenses?.frequencies?.yearly || 'Yearly'}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -274,7 +275,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               onClick={() => onOpenChange(false)}
               className="w-full sm:w-auto"
             >
-              Cancel
+              {common?.cancel || 'Cancel'}
             </Button>
           </div>
         </form>

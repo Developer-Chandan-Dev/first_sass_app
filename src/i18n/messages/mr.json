@@ -42,7 +42,12 @@
     "success": "यश",
     "error": "त्रुटी",
     "warning": "चेतावणी",
-    "info": "माहिती"
+    "info": "माहिती",
+    "optional": "पर्यायी",
+    "confirmDelete": "तुम्हाला खरोखर हा आयटम हटवायचा आहे का?",
+    "confirmBulkDelete": "तुम्हाला खरोखर {count} आयटम हटवायचे आहेत का?",
+    "loadingData": "डेटा लोड होत आहे...",
+    "noDataAvailable": "कोणताही डेटा उपलब्ध नाही"
   },
   "navigation": {
     "home": "मुख्यपृष्ठ",
@@ -114,6 +119,14 @@
     "countries": "देश"
   },
   "pricing": {
+    "monthly": "मासिक",
+    "yearly": "वार्षिक",
+    "save": "बचत",
+    "mostPopular": "सर्वात लोकप्रिय",
+    "getStarted": "सुरुवात करा",
+    "currentPlan": "सध्याची योजना",
+    "upgrade": "अपग्रेड",
+    "downgrade": "डाउनग्रेड",
     "plans": {
       "free": {
         "name": "विनामूल्य",
@@ -452,6 +465,9 @@
     "deleteSuccess": "खर्च यशस्वीरित्या हटवला गेला!",
     "addSuccess": "खर्च यशस्वीरित्या जोडला गेला!",
     "updateSuccess": "खर्च यशस्वीरित्या अपडेट केला गेला!",
+    "updateError": "खर्च अपडेट करण्यात अयशस्वी",
+    "updating": "अपडेट करत आहे...",
+    "updateExpense": "खर्च अपडेट करा",
     "recurring": "आवर्ती",
     "frequency": "वारंवारता",
     "budget": "बजेट",
@@ -551,6 +567,7 @@
     "expensesExportedToCSV": "खर्च CSV मध्ये निर्यात केले गेले!",
     "areYouSureDeleteExpense": "तुम्हाला खरोखर हा खर्च हटवायचा आहे का?",
     "areYouSureDeleteExpenses": "तुम्हाला खरोखर खर्च हटवायचे आहेत का?",
+    "confirmBulkDelete": "तुम्हाला खरोखर {count} खर्च हटवायचे आहेत का?",
     "expensesDeletedSuccessfully": "खर्च यशस्वीरित्या हटवले गेले!",
     "failedToDeleteExpenses": "खर्च हटवण्यात अयशस्वी",
     "totalBudget": "एकूण बजेट",
@@ -584,7 +601,10 @@
         "dateRequired": "तारीख आवश्यक आहे",
         "descriptionTooLong": "वर्णन खूप लांब आहे",
         "reasonRequired": "कारण आवश्यक आहे",
-        "amountGreaterThanZero": "रक्कम 0 पेक्षा जास्त असावी"
+        "amountGreaterThanZero": "रक्कम 0 पेक्षा जास्त असावी",
+        "pleaseEnterValidAmount": "कृपया वैध रक्कम प्रविष्ट करा",
+        "pleaseSelectCategory": "कृपया श्रेणी निवडा",
+        "pleaseEnterDescription": "कृपया वर्णन प्रविष्ट करा"
       }
     }
   },
@@ -628,6 +648,16 @@
       "commission": "कमिशन",
       "bonus": "बोनस",
       "other": "इतर"
+    },
+    "addError": "उत्पन्न जोडण्यात अयशस्वी",
+    "sourcePlaceholder": "उदा., कंपनीचे नाव, क्लायंटचे नाव",
+    "selectFrequency": "वारंवारता निवडा",
+    "frequency": "वारंवारता",
+    "frequencies": {
+      "daily": "दैनिक",
+      "weekly": "साप्ताहिक",
+      "monthly": "मासिक",
+      "yearly": "वार्षिक"
     },
     "form": {
       "title": "शीर्षक",

@@ -36,9 +36,15 @@ function createSafeTranslator(t: (key: string) => string) {
         return fallback;
       }
       return result;
-    } catch (error: unknown) {
+    } catch {
       // Return fallback silently to prevent console spam
-      return fallback || key;
+      if (fallback) {
+        return fallback;
+      }
+      // Extract the last part of the key as a readable fallback
+      const keyParts = key.split('.');
+      const lastPart = keyParts[keyParts.length - 1];
+      return lastPart.charAt(0).toUpperCase() + lastPart.slice(1);
     }
   };
 }

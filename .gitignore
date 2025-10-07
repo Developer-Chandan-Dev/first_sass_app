@@ -39,3 +39,6 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+
+# JSON comparison utility
+compare-json.js

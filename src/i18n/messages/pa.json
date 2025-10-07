@@ -42,7 +42,12 @@
     "success": "ਸਫਲਤਾ",
     "error": "ਗਲਤੀ",
     "warning": "ਚੇਤਾਵਨੀ",
-    "info": "ਜਾਣਕਾਰੀ"
+    "info": "ਜਾਣਕਾਰੀ",
+    "optional": "ਵਿਕਲਪਿਕ",
+    "confirmDelete": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਆਇਟਮ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    "confirmBulkDelete": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ {count} ਆਇਟਮ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    "loadingData": "ਡੇਟਾ ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...",
+    "noDataAvailable": "ਕੋਈ ਡੇਟਾ ਉਪਲਬਧ ਨਹੀਂ"
   },
   "navigation": {
     "home": "ਘਰ",
@@ -114,6 +119,14 @@
     "countries": "ਦੇਸ਼"
   },
   "pricing": {
+    "monthly": "ਮਾਸਿਕ",
+    "yearly": "ਸਾਲਾਨਾ",
+    "save": "ਬਚਤ",
+    "mostPopular": "ਸਭ ਤੋਂ ਪ੍ਰਸਿੱਧ",
+    "getStarted": "ਸ਼ੁਰੂ ਕਰੋ",
+    "currentPlan": "ਮੌਜੂਦਾ ਯੋਜਨਾ",
+    "upgrade": "ਅਪਗ੍ਰੇਡ",
+    "downgrade": "ਡਾਊਨਗ੍ਰੇਡ",
     "plans": {
       "free": {
         "name": "ਮੁਫਤ",
@@ -452,6 +465,9 @@
     "deleteSuccess": "ਖਰਚ ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾ ਦਿੱਤਾ ਗਿਆ!",
     "addSuccess": "ਖਰਚ ਸਫਲਤਾਪੂਰਵਕ ਜੋੜਿਆ ਗਿਆ!",
     "updateSuccess": "ਖਰਚ ਸਫਲਤਾਪੂਰਵਕ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ!",
+    "updateError": "ਖਰਚ ਅਪਡੇਟ ਕਰਨ ਵਿੱਚ ਅਸਫਲ",
+    "updating": "ਅਪਡੇਟ ਹੋ ਰਿਹਾ ਹੈ...",
+    "updateExpense": "ਖਰਚ ਅਪਡੇਟ ਕਰੋ",
     "recurring": "ਦੋਹਰਾਉਣ ਵਾਲਾ",
     "frequency": "ਆਵਿਰਤੀ",
     "budget": "ਬਜਟ",
@@ -551,6 +567,7 @@
     "expensesExportedToCSV": "ਖਰਚ CSV ਵਿੱਚ ਨਿਰਯਾਤ ਕੀਤੇ ਗਏ!",
     "areYouSureDeleteExpense": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਇਸ ਖਰਚ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
     "areYouSureDeleteExpenses": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ ਖਰਚ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+    "confirmBulkDelete": "ਕੀ ਤੁਸੀਂ ਯਕੀਨਨ {count} ਖਰਚ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
     "expensesDeletedSuccessfully": "ਖਰਚ ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾ ਦਿੱਤੇ ਗਏ!",
     "failedToDeleteExpenses": "ਖਰਚ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ",
     "totalBudget": "ਕੁੱਲ ਬਜਟ",
@@ -584,7 +601,10 @@
         "dateRequired": "ਤਾਰੀਖ ਲੋੜੀਂਦੀ ਹੈ",
         "descriptionTooLong": "ਵਰਣਨ ਬਹੁਤ ਲੰਬਾ ਹੈ",
         "reasonRequired": "ਕਾਰਨ ਲੋੜੀਂਦਾ ਹੈ",
-        "amountGreaterThanZero": "ਰਕਮ 0 ਤੋਂ ਵੱਧ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ"
+        "amountGreaterThanZero": "ਰਕਮ 0 ਤੋਂ ਵੱਧ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ",
+        "pleaseEnterValidAmount": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਰਕਮ ਦਰਜ ਕਰੋ",
+        "pleaseSelectCategory": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਸ਼ਰੇਣੀ ਚੁਣੋ",
+        "pleaseEnterDescription": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵਰਣਨ ਦਰਜ ਕਰੋ"
       }
     }
   },
@@ -628,6 +648,16 @@
       "commission": "ਕਮਿਸ਼ਨ",
       "bonus": "ਬੋਨਸ",
       "other": "ਹੋਰ"
+    },
+    "addError": "ਆਮਦਨ ਜੋੜਨ ਵਿੱਚ ਅਸਫਲ",
+    "sourcePlaceholder": "ਜੈਸੇ, ਕੰਪਨੀ ਦਾ ਨਾਮ, ਕਲਾਇੰਟ ਦਾ ਨਾਮ",
+    "selectFrequency": "ਆਵਿਰਤੀ ਚੁਣੋ",
+    "frequency": "ਆਵਿਰਤੀ",
+    "frequencies": {
+      "daily": "ਦੈਨਿਕ",
+      "weekly": "ਸਾਪਤਾਹਿਕ",
+      "monthly": "ਮਾਸਿਕ",
+      "yearly": "ਵਾਰਸਿਕ"
     },
     "form": {
       "title": "ਸਿਰਲੇਖ",

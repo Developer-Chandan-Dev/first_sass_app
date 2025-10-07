@@ -10,6 +10,32 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AlertTriangle } from 'lucide-react';
 import { useAppTranslations } from '@/hooks/useTranslation';
 
+// Transactions skeleton component
+function TransactionsSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="flex items-center justify-between animate-pulse">
+          <div className="flex items-center space-x-3">
+            <div className="h-9 w-9 bg-muted rounded-full" />
+            <div className="space-y-1">
+              <div className="h-4 w-24 bg-muted rounded" />
+              <div className="h-3 w-16 bg-muted rounded" />
+            </div>
+          </div>
+          <div className="text-right space-y-1">
+            <div className="h-4 w-16 bg-muted rounded" />
+            <div className="flex gap-1">
+              <div className="h-5 w-12 bg-muted rounded" />
+              <div className="h-5 w-10 bg-muted rounded" />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const getCategoryIcon = (category: string) => {
   const icons: Record<string, string> = {
     'Food & Dining': '🍽️',
@@ -91,25 +117,8 @@ export function RecentTransactions() {
         <CardHeader>
           <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="flex items-center justify-between animate-pulse">
-              <div className="flex items-center space-x-3">
-                <div className="h-9 w-9 bg-muted rounded-full" />
-                <div className="space-y-1">
-                  <div className="h-4 w-24 bg-muted rounded" />
-                  <div className="h-3 w-16 bg-muted rounded" />
-                </div>
-              </div>
-              <div className="text-right space-y-1">
-                <div className="h-4 w-16 bg-muted rounded" />
-                <div className="flex gap-1">
-                  <div className="h-5 w-12 bg-muted rounded" />
-                  <div className="h-5 w-10 bg-muted rounded" />
-                </div>
-              </div>
-            </div>
-          ))}
+        <CardContent>
+          <TransactionsSkeleton />
         </CardContent>
       </Card>
     );

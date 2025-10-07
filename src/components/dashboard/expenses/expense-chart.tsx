@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recha
 import { useUser } from '@clerk/nextjs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle, TrendingUp } from 'lucide-react';
+import { ChartSkeleton } from '@/components/dashboard/shared/loading-wrapper';
 
 interface ChartData {
   date: string;
@@ -101,23 +102,8 @@ export function ExpenseChart() {
   }
 
   // Loading state
-  const skeletonHeights = [45, 65, 35, 80, 55, 40, 70];
   if (loading) {
-    return (
-      <div className="h-48 md:h-64 flex flex-col justify-end space-y-2 p-4">
-        <div className="flex items-end justify-between h-full space-x-2">
-          {skeletonHeights.map((height, i) => (
-            <div key={i} className="flex flex-col items-center space-y-2 flex-1">
-              <div 
-                className="bg-muted animate-pulse rounded-t w-full"
-                style={{ height: `${height}%` }}
-              />
-              <div className="h-3 w-8 bg-muted rounded animate-pulse" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    return <ChartSkeleton />;
   }
 
   // Empty state

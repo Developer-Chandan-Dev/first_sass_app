@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus } from 'lucide-react';
+
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -25,6 +25,8 @@ import {
 } from '@/lib/redux/expense/expenseSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
 import { useAppTranslations } from '@/hooks/useTranslation';
+import { CategorySelect } from '@/components/ui/category-select';
+import { getBackendCategoryKey } from '@/lib/categories';
 
 const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -54,10 +56,7 @@ export function AddExpenseModal({
 }: AddExpenseModalProps) {
   const dispatch = useAppDispatch();
   const { expenses, common } = useAppTranslations();
-  const [categories, setCategories] = useState<string[]>([]);
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
-  const [showCustomCategory, setShowCustomCategory] = useState(false);
-  const [customCategory, setCustomCategory] = useState('');
 
   const {
     register,
@@ -82,26 +81,7 @@ export function AddExpenseModal({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesRes, incomesRes] = await Promise.all([
-          fetch(`/api/expenses/dashboard?type=${expenseType}`),
-          fetch('/api/incomes/connected')
-        ]);
-        
-        const defaultCategories = [
-          'Food & Dining', 'Transportation', 'Entertainment', 'Groceries',
-          'Shopping', 'Healthcare', 'Utilities', 'Education', 'Travel', 'Other'
-        ];
-        
-        if (categoriesRes.ok) {
-          const data = await categoriesRes.json();
-          const allCategories = [
-            ...new Set([...defaultCategories, ...(data?.categories || [])]),
-          ];
-          setCategories(allCategories);
-        } else {
-          console.warn('Categories API failed, using fallback');
-          setCategories(defaultCategories);
-        }
+        const incomesRes = await fetch('/api/incomes/connected');
         
         if (incomesRes.ok) {
           const incomes = await incomesRes.json();
@@ -112,11 +92,6 @@ export function AddExpenseModal({
         }
       } catch (error) {
         console.error('Failed to fetch data:', error);
-        setCategories([
-          'Food & Dining', 'Transportation', 'Entertainment', 'Groceries',
-          'Shopping', 'Healthcare', 'Utilities', 'Education', 'Travel', 'Other'
-        ]);
-        toast.error('Failed to load categories. Using defaults.');
       }
     };
 
@@ -147,6 +122,7 @@ export function AddExpenseModal({
       const requestData = {
         ...data,
         amount: Number(data.amount),
+        category: getBackendCategoryKey(data.category),
         type: expenseType,
         incomeId: data.affectsBalance ? data.incomeId : undefined,
       };
@@ -171,8 +147,6 @@ export function AddExpenseModal({
 
       // Close modal and reset form
       reset();
-      setShowCustomCategory(false);
-      setCustomCategory('');
       setValue('incomeId', '');
       onOpenChange(false);
       
@@ -220,62 +194,13 @@ export function AddExpenseModal({
             <Label htmlFor="category" className="text-sm">
               {common?.category || 'Category'}
             </Label>
-            {showCustomCategory ? (
-              <div className="flex flex-col sm:flex-row gap-2 mt-1">
-                <Input
-                  value={customCategory}
-                  onChange={(e) => setCustomCategory(e.target.value)}
-                  placeholder={expenses?.enterCustomCategory || 'Enter custom category'}
-                  className="flex-1"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      if (customCategory.trim()) {
-                        setValue('category', customCategory.trim());
-                        setCategories((prev) => [
-                          ...prev,
-                          customCategory.trim(),
-                        ]);
-                        setShowCustomCategory(false);
-                        setCustomCategory('');
-                      }
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowCustomCategory(false)}
-                  className="w-full sm:w-auto"
-                >
-                  {common?.cancel || 'Cancel'}
-                </Button>
-              </div>
-            ) : (
-              <div className="flex gap-2 mt-1">
-                <select
-                  id="category"
-                  {...register('category')}
-                  className="flex-1 p-2 text-sm border rounded-md bg-background text-foreground border-input"
-                >
-                  <option value="">{expenses?.selectCategory || 'Select category'}</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCustomCategory(true)}
-                  className="px-2"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
+            <CategorySelect
+              id="category"
+              value={watch('category') || ''}
+              onChange={(value) => setValue('category', value)}
+              placeholder={expenses?.selectCategory || 'Select category'}
+              className="mt-1"
+            />
             {errors.category && (
               <p className="text-xs sm:text-sm text-red-500 mt-1">
                 {errors.category.message}

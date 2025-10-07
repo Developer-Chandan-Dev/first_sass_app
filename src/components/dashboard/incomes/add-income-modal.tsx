@@ -35,7 +35,7 @@ interface AddIncomeModalProps {
 
 export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { income } = useAppTranslations();
+  const { income, common } = useAppTranslations();
 
   const {
     register,
@@ -67,7 +67,7 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
       });
 
       if (response.ok) {
-        toast.success(income.addSuccess);
+        toast.success(income?.addSuccess || 'Income added successfully!');
         reset();
         onOpenChange(false);
         onIncomeAdded?.();
@@ -84,26 +84,26 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
   };
 
   const incomeSources = [
-    income.sources.salary,
-    'Freelancing',
-    income.sources.business,
-    income.sources.investment,
-    income.sources.rental,
-    'Commission',
-    'Bonus',
-    income.sources.other
+    income?.sources?.salary || 'Salary',
+    income?.sources?.freelancing || 'Freelancing',
+    income?.sources?.business || 'Business',
+    income?.sources?.investment || 'Investment',
+    income?.sources?.rental || 'Rental',
+    income?.sources?.commission || 'Commission',
+    income?.sources?.bonus || 'Bonus',
+    income?.sources?.other || 'Other'
   ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle>{income.addIncomeSource}</DialogTitle>
+          <DialogTitle>{income?.addIncomeSource || 'Add Income Source'}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <Label htmlFor="amount">Amount *</Label>
+            <Label htmlFor="amount">{common?.amount || 'Amount'} *</Label>
             <Input
               id="amount"
               type="number"
@@ -117,7 +117,7 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
           </div>
 
           <div>
-            <Label htmlFor="source">Source *</Label>
+            <Label htmlFor="source">{income?.source || 'Source'} *</Label>
             <Input
               id="source"
               {...register('source')}
@@ -129,10 +129,10 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
           </div>
 
           <div>
-            <Label htmlFor="category">Category *</Label>
+            <Label htmlFor="category">{common?.category || 'Category'} *</Label>
             <Select onValueChange={(value) => setValue('category', value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Select income category" />
+                <SelectValue placeholder={income?.selectIncomeCategory || 'Select income category'} />
               </SelectTrigger>
               <SelectContent>
                 {incomeSources.map((category) => (
@@ -148,11 +148,11 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
           </div>
 
           <div>
-            <Label htmlFor="description">Description *</Label>
+            <Label htmlFor="description">{common?.description || 'Description'} *</Label>
             <Textarea
               id="description"
               {...register('description')}
-              placeholder="Brief description of income source"
+              placeholder={income?.briefDescriptionOfIncomeSource || 'Brief description of income source'}
               rows={3}
             />
             {errors.description && (
@@ -161,7 +161,7 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
           </div>
 
           <div>
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">{common?.date || 'Date'}</Label>
             <Input
               id="date"
               type="date"
@@ -173,10 +173,10 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="isConnected" className="text-sm font-medium">
-                  Connect to Balance
+                  {income?.connectToBalance || 'Connect to Balance'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Expenses will reduce from this income
+                  {income?.expensesWillReduceFromThisIncome || 'Expenses will reduce from this income'}
                 </p>
               </div>
               <Switch
@@ -192,10 +192,10 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="isRecurring" className="text-sm font-medium">
-                  Recurring Income
+                  {income?.recurringIncome || 'Recurring Income'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Regular income source
+                  {income?.regularIncomeSource || 'Regular income source'}
                 </p>
               </div>
               <Switch
@@ -229,7 +229,7 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
               disabled={isSubmitting}
               className="flex-1"
             >
-              {isSubmitting ? 'Adding...' : 'Add Income'}
+              {isSubmitting ? (income?.addingIncome || 'Adding...') : (income?.addIncome || 'Add Income')}
             </Button>
             <Button
               type="button"
@@ -237,7 +237,7 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
               onClick={() => onOpenChange(false)}
               className="flex-1"
             >
-              Cancel
+              {common?.cancel || 'Cancel'}
             </Button>
           </div>
         </form>

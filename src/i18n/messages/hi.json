@@ -42,7 +42,12 @@
     "success": "सफलता",
     "error": "त्रुटि",
     "warning": "चेतावनी",
-    "info": "जानकारी"
+    "info": "जानकारी",
+    "optional": "वैकल्पिक",
+    "confirmDelete": "क्या आप वाकई इस आइटम को हटाना चाहते हैं?",
+    "confirmBulkDelete": "क्या आप वाकई {count} आइटम हटाना चाहते हैं?",
+    "loadingData": "डेटा लोड हो रहा है...",
+    "noDataAvailable": "कोई डेटा उपलब्ध नहीं"
   },
   "navigation": {
     "home": "होम",
@@ -506,6 +511,9 @@
     "deleteSuccess": "खर्च सफलतापूर्वक हटा दिया गया!",
     "addSuccess": "खर्च सफलतापूर्वक जोड़ा गया!",
     "updateSuccess": "खर्च सफलतापूर्वक अपडेट किया गया!",
+    "updateError": "खर्च अपडेट करने में विफल",
+    "updating": "अपडेट हो रहा है...",
+    "updateExpense": "खर्च अपडेट करें",
     "recurring": "आवर्ती",
     "frequency": "आवृत्ति",
     "budget": "बजट",
@@ -604,6 +612,7 @@
     "noDataToExport": "निर्यात करने के लिए कोई डेटा नहीं",
     "expensesExportedToCSV": "खर्च CSV में निर्यात किए गए!",
     "areYouSureDeleteExpense": "क्या आप वाकई इस खर्च को हटाना चाहते हैं?",
+    "confirmBulkDelete": "क्या आप वाकई {count} खर्च हटाना चाहते हैं?",
     "areYouSureDeleteExpenses": "क्या आप वाकई खर्च हटाना चाहते हैं?",
     "expensesDeletedSuccessfully": "खर्च सफलतापूर्वक हटाए गए!",
     "failedToDeleteExpenses": "खर्च हटाने में विफल",
@@ -638,7 +647,10 @@
         "dateRequired": "दिनांक आवश्यक है",
         "descriptionTooLong": "विवरण बहुत लंबा है",
         "reasonRequired": "कारण आवश्यक है",
-        "amountGreaterThanZero": "राशि 0 से अधिक होनी चाहिए"
+        "amountGreaterThanZero": "राशि 0 से अधिक होनी चाहिए",
+        "pleaseEnterValidAmount": "कृपया एक वैध राशि दर्ज करें",
+        "pleaseSelectCategory": "कृपया एक श्रेणी चुनें",
+        "pleaseEnterDescription": "कृपया एक विवरण दर्ज करें"
       }
     }
   },
@@ -682,6 +694,16 @@
       "commission": "कमीशन",
       "bonus": "बोनस",
       "other": "अन्य"
+    },
+    "addError": "आय जोड़ने में विफल",
+    "sourcePlaceholder": "जैसे, कंपनी का नाम, क्लाइंट का नाम",
+    "selectFrequency": "आवृत्ति चुनें",
+    "frequency": "आवृत्ति",
+    "frequencies": {
+      "daily": "दैनिक",
+      "weekly": "साप्ताहिक",
+      "monthly": "मासिक",
+      "yearly": "वार्षिक"
     },
     "form": {
       "title": "शीर्षक",

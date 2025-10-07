@@ -3,14 +3,15 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { CategorySelect } from '@/components/ui/category-select';
+import { getBackendCategoryKey, getFrontendCategoryKey } from '@/lib/categories';
 
 const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -38,15 +39,13 @@ interface EditExpenseModalProps {
 }
 
 export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
-  const [categories, setCategories] = useState<string[]>(['Food & Dining', 'Transportation', 'Entertainment', 'Groceries', 'Shopping', 'Healthcare', 'Utilities', 'Education' ,'Travel', 'Others']);
-  const [showCustomCategory, setShowCustomCategory] = useState(false);
-  const [customCategory, setCustomCategory] = useState('');
 
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
@@ -54,12 +53,10 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
   useEffect(() => {
     if (expense && open) {
-      if (expense) {
-        setValue('amount', expense.amount);
-        setValue('category', expense.category);
-        setValue('reason', expense.reason);
-        setValue('date', new Date(expense.date).toISOString().split('T')[0]);
-      }
+      setValue('amount', expense.amount);
+      setValue('category', getFrontendCategoryKey(expense.category));
+      setValue('reason', expense.reason);
+      setValue('date', new Date(expense.date).toISOString().split('T')[0]);
     }
   }, [expense, open, setValue]);
 
@@ -73,6 +70,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
         body: JSON.stringify({
           ...data,
           amount: Number(data.amount),
+          category: getBackendCategoryKey(data.category),
         }),
       });
       
@@ -81,8 +79,6 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
       if (response.ok) {
         toast.success('Expense updated successfully!');
         reset();
-        setShowCustomCategory(false);
-        setCustomCategory('');
         onOpenChange(false);
         if (onExpenseUpdated) {
           onExpenseUpdated();
@@ -120,54 +116,12 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
           <div>
             <Label htmlFor="category">Category</Label>
-            {showCustomCategory ? (
-              <div className="flex gap-2">
-                <Input
-                  value={customCategory}
-                  onChange={(e) => setCustomCategory(e.target.value)}
-                  placeholder="Enter custom category"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      if (customCategory.trim()) {
-                        setValue('category', customCategory.trim());
-                        setCategories(prev => [...prev, customCategory.trim()]);
-                        setShowCustomCategory(false);
-                        setCustomCategory('');
-                      }
-                    }
-                  }}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowCustomCategory(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <select
-                  id="category"
-                  {...register('category')}
-                  className="flex-1 p-2 border rounded-md bg-background text-foreground border-input"
-                >
-                  <option value="">Select category</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowCustomCategory(true)}
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
+            <CategorySelect
+              id="category"
+              value={watch('category') || ''}
+              onChange={(value) => setValue('category', value)}
+              placeholder="Select category"
+            />
             {errors.category && (
               <p className="text-sm text-red-500">{errors.category.message}</p>
             )}
