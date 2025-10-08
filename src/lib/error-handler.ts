@@ -22,7 +22,6 @@ export class CustomError extends Error {
 }
 
 export function handleApiError(error: unknown): AppError {
-  console.error('API Error:', error);
 
   if (error instanceof CustomError) {
     return {
@@ -117,7 +116,7 @@ export async function withErrorHandling<T>(
 
 export function createErrorHandler(componentName: string) {
   return (error: unknown, errorInfo?: { componentStack: string }) => {
-    console.error(`Error in ${componentName}:`, error);
+
     if (errorInfo) {
       console.error('Component stack:', errorInfo.componentStack);
     }

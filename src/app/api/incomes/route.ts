@@ -94,8 +94,18 @@ export async function GET(request: NextRequest) {
       ])
     ]);
 
+    // Sanitize user-generated content before sending response
+    
+
+    const sanitizedIncomes = incomes.map((income) => ({
+      ...income,
+      source: sanitizeString(income.source),
+      description: sanitizeString(income.description),
+      category: sanitizeString(income.category)
+    }));
+
     return NextResponse.json({
-      incomes,
+      incomes: sanitizedIncomes,
       totalCount,
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,

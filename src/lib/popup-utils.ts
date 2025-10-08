@@ -69,18 +69,18 @@ export class PopupManager {
   }
 
   // Confirmation dialogs
-  confirmDelete(customMessage?: string): boolean {
+  async confirmDelete(customMessage?: string): Promise<boolean> {
     const message = customMessage || this.messages.confirmation?.delete || 'Are you sure you want to delete this item?';
-    return confirm(message);
+    // Replace with a custom modal implementation for confirmation
+    return await this.showCustomConfirmationModal(message);
   }
-
-  confirmBulkDelete(count: number, customMessage?: string): boolean {
+  async confirmBulkDelete(count: number, customMessage?: string): Promise<boolean> {
     const message = customMessage || 
       this.messages.confirmation?.bulkDelete?.replace('{count}', count.toString()) || 
       `Are you sure you want to delete ${count} items?`;
-    return confirm(message);
+    // Replace with a custom modal implementation for confirmation
+    return await this.showCustomConfirmationModal(message);
   }
-
   // Private helper methods
   private getErrorMessage(error: unknown, fallback: string): string {
     if (error instanceof Error) {
@@ -94,6 +94,15 @@ export class PopupManager {
       return error.message.length < 100 ? error.message : fallback;
     }
     return fallback;
+  }
+
+  // Custom confirmation modal (replace with your own implementation)
+  private async showCustomConfirmationModal(message: string): Promise<boolean> {
+    // Implement your own modal logic here, e.g., using a UI library
+    // For demonstration, we'll log the message and resolve false (not confirmed)
+    // Replace this with actual modal logic in your app
+    console.log('Confirmation message:', message);
+    return Promise.resolve(false);
   }
 }
 

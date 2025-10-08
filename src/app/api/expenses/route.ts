@@ -3,40 +3,66 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Expense from '@/models/Expense';
 import User from '@/models/User';
-import { sanitizeString, sanitizeNumber, isValidObjectId } from '@/lib/input-sanitizer';
+import Income from '@/models/Income';
+import { sanitizeString, isValidObjectId, sanitizeForLog } from '@/lib/input-sanitizer';
+import { expenseValidationSchema, validateRequestBody } from '@/lib/security-validator';
+import { ExpenseItem } from '@/types/dashboard';
 
 
 export async function POST(request: NextRequest) {
   try {
+    
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ 
+        error: 'Unauthorized',
+        code: 'UNAUTHORIZED',
+        details: 'User authentication required'
+      }, { status: 401 });
     }
 
     await connectDB();
-    const body = await request.json();
-
-    const { amount, category, reason, date, type = 'free', budgetId, incomeId, isRecurring = false, frequency, affectsBalance = false } = body;
     
-    // Sanitize inputs
-    const sanitizedCategory = sanitizeString(category);
-    const sanitizedReason = sanitizeString(reason);
-    const sanitizedAmount = sanitizeNumber(amount);
-    
-    // Validate required fields
-    if (!sanitizedAmount || !sanitizedCategory || !sanitizedReason) {
-      return NextResponse.json({ error: 'Invalid input data' }, { status: 400 });
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ 
+        error: 'Invalid JSON data',
+        code: 'INVALID_JSON',
+        details: 'Request body must be valid JSON'
+      }, { status: 400 });
     }
+
+    // Server-side validation with comprehensive security checks
+    let validatedData;
+    try {
+      validatedData = validateRequestBody(expenseValidationSchema, body);
+    } catch (error) {
+      return NextResponse.json({ 
+        error: 'Validation failed',
+        code: 'VALIDATION_ERROR',
+        details: error instanceof Error ? error.message : 'Invalid data format'
+      }, { status: 400 });
+    }
+    
+    const { amount, category, reason, date, type = 'free', budgetId, incomeId, isRecurring = false, frequency, affectsBalance = false } = validatedData;
     
     // Validate ObjectIds if provided
     if (budgetId && !isValidObjectId(budgetId)) {
-      return NextResponse.json({ error: 'Invalid budget ID' }, { status: 400 });
+      return NextResponse.json({ 
+        error: 'Invalid budget ID',
+        code: 'INVALID_BUDGET_ID',
+        details: 'Budget ID must be a valid ObjectId'
+      }, { status: 400 });
     }
     if (incomeId && !isValidObjectId(incomeId)) {
-      return NextResponse.json({ error: 'Invalid income ID' }, { status: 400 });
+      return NextResponse.json({ 
+        error: 'Invalid income ID',
+        code: 'INVALID_INCOME_ID',
+        details: 'Income ID must be a valid ObjectId'
+      }, { status: 400 });
     }
-
-
 
     // Get user and check limits in parallel
     const [user, expenseCount] = await Promise.all([
@@ -45,19 +71,30 @@ export async function POST(request: NextRequest) {
     ]);
     
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ 
+        error: 'User not found',
+        code: 'USER_NOT_FOUND',
+        details: 'User account not found in database'
+      }, { status: 404 });
     }
+    
     if (expenseCount >= user.limits.maxExpenses) {
       return NextResponse.json({ 
-        error: `Expense limit reached. Upgrade to add more than ${user.limits.maxExpenses} expenses.` 
+        error: `Expense limit reached. Upgrade to add more than ${user.limits.maxExpenses} expenses.`,
+        code: 'EXPENSE_LIMIT_REACHED',
+        details: {
+          currentCount: expenseCount,
+          maxAllowed: user.limits.maxExpenses,
+          userPlan: user.plan
+        }
       }, { status: 403 });
     }
     
     const expenseData = {
       userId,
-      amount: sanitizedAmount,
-      category: sanitizedCategory,
-      reason: sanitizedReason,
+      amount,
+      category,
+      reason,
       type,
       date: date ? new Date(date) : new Date(),
       isRecurring,
@@ -74,25 +111,53 @@ export async function POST(request: NextRequest) {
     
     // If expense affects balance and has incomeId, reduce the income amount
     if (affectsBalance && incomeId) {
-      const Income = (await import('@/models/Income')).default;
       await Income.findByIdAndUpdate(
         incomeId,
-        { $inc: { amount: -sanitizedAmount } },
+        { $inc: { amount: -amount } },
         { new: true }
       );
-  
     }
     
     const savedExpense = await Expense.findById(expense._id).lean();
     
-    // If this is a budget expense, log for debugging
+    // If this is a budget expense, log for debugging - sanitize log output
     if (type === 'budget' && budgetId) {
-      console.log(`Budget expense created: ${amount} for budget ${budgetId}`);
+      console.log('Budget expense created', { 
+        amount, 
+        budgetId: sanitizeForLog(budgetId) 
+      });
     }
     
-    return NextResponse.json(savedExpense);
-  } catch {
-    return NextResponse.json({ error: 'Failed to create expense' }, { status: 500 });
+    return NextResponse.json({
+      success: true,
+      data: savedExpense,
+      message: 'Expense created successfully'
+    });
+  } catch (error) {
+    console.error('Error creating expense:', error);
+    
+    // Handle specific MongoDB errors
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ 
+        error: 'Database validation failed',
+        code: 'DB_VALIDATION_ERROR',
+        details: sanitizeString(error.message)
+      }, { status: 400 });
+    }
+    
+    if (error instanceof Error && (error.name === 'MongoError' || error.name === 'MongoServerError')) {
+      return NextResponse.json({ 
+        error: 'Database operation failed',
+        code: 'DATABASE_ERROR',
+        details: 'Please try again later'
+      }, { status: 500 });
+    }
+    
+    return NextResponse.json({ 
+      error: 'Failed to create expense',
+      code: 'INTERNAL_ERROR',
+      details: 'An unexpected error occurred'
+    }, { status: 500 });
   }
 }
 
@@ -124,21 +189,27 @@ export async function GET(request: NextRequest) {
     // Build query
     const query: Record<string, unknown> = { userId, type };
 
-    // Search filter
+    // Search filter - sanitize search input to prevent XSS
     if (search) {
-      query.$or = [
-        { reason: { $regex: search, $options: 'i' } },
-        { category: { $regex: search, $options: 'i' } }
-      ];
+      const sanitizedSearch = sanitizeString(search);
+      if (sanitizedSearch) {
+        query.$or = [
+          { reason: { $regex: sanitizedSearch, $options: 'i' } },
+          { category: { $regex: sanitizedSearch, $options: 'i' } }
+        ];
+      }
     }
 
-    // Category filter
+    // Category filter - sanitize category input
     if (category) {
-      query.category = category;
+      query.category = sanitizeString(category);
     }
 
-    // Budget filter
+    // Budget filter - validate ObjectId
     if (budgetId) {
+      if (!isValidObjectId(budgetId)) {
+        return NextResponse.json({ error: 'Invalid budget ID' }, { status: 400 });
+      }
       query.budgetId = budgetId;
     }
 
@@ -181,9 +252,13 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
     
-    // Build sort object
+    // Validate and build sort object
+    const allowedSortFields = ['date', 'amount', 'category', 'reason', 'createdAt'];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : 'date';
+    const validSortOrder = sortOrder === 'asc' ? 1 : -1;
+    
     const sortObj: Record<string, 1 | -1> = {};
-    sortObj[sortBy] = sortOrder === 'asc' ? 1 : -1;
+    sortObj[validSortBy] = validSortOrder;
     
     let expenses;
     if (type === 'budget') {
@@ -229,13 +304,33 @@ export async function GET(request: NextRequest) {
     const totalCount = await Expense.countDocuments(query);
     const totalPages = Math.ceil(totalCount / limit);
 
+    // Sanitize response data
+    const sanitizedExpenses = expenses.map((expense: ExpenseItem) => ({
+      _id: expense._id,
+      userId: expense.userId,
+      amount: Number(expense.amount),
+      category: sanitizeString(expense.category || ''),
+      reason: sanitizeString(expense.reason || ''),
+      type: expense.type,
+      date: expense.date,
+      isRecurring: expense.isRecurring,
+      affectsBalance: expense.affectsBalance,
+      frequency: expense.frequency,
+      budgetId: expense.budgetId,
+      incomeId: expense.incomeId,
+      budgetName: expense.budgetName ? sanitizeString(expense.budgetName) : undefined,
+      createdAt: expense.createdAt,
+      updatedAt: expense.updatedAt
+    }));
+
     return NextResponse.json({
-      expenses,
-      totalCount,
-      totalPages,
-      currentPage: page
+      expenses: sanitizedExpenses,
+      totalCount: Number(totalCount),
+      totalPages: Number(totalPages),
+      currentPage: Number(page)
     });
-  } catch {
+  } catch (error) {
+    console.error('Error fetching expenses:', error);
     return NextResponse.json({ error: 'Failed to fetch expenses' }, { status: 500 });
   }
 }

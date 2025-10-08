@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongoose';
 import Expense from '@/models/Expense';
+import { sanitizeString } from '@/lib/input-sanitizer';
 
 export async function GET(request: NextRequest) {
   try {
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     const result = reportData.map(item => ({
-      period: item._id,
+      period: sanitizeString(item._id),
       amount: item.amount,
       count: item.count
     }));

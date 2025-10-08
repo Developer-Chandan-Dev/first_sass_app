@@ -192,8 +192,7 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
           onExpenseAdded();
         }
       } else {
-        const errorData = await response.json();
-        console.error('Failed to add expense:', errorData);
+        await response.json();
         toast.error(t.errors.generic);
       }
     } catch (error) {

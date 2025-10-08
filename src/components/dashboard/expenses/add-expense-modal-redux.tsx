@@ -14,10 +14,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import {
   addExpense,
@@ -25,13 +25,15 @@ import {
 } from '@/lib/redux/expense/expenseSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
 import { useAppTranslations } from '@/hooks/useTranslation';
+import { useModalState } from '@/hooks/useModalState';
 import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey } from '@/lib/categories';
+import { TranslationType } from '@/types/dashboard';
 
-const expenseSchema = z.object({
-  amount: z.number().min(0.01, 'Amount must be greater than 0'),
-  category: z.string().min(1, 'Category is required'),
-  reason: z.string().min(1, 'Reason is required'),
+const createExpenseSchema = (t: TranslationType) => z.object({
+  amount: z.number().min(0.01, t.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
+  category: z.string().min(1, t.expenses?.form?.validation?.categoryRequired || 'Category is required'),
+  reason: z.string().min(1, t.expenses?.form?.validation?.reasonRequired || 'Reason is required'),
   date: z.string(),
   isRecurring: z.boolean().default(false),
   frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
@@ -39,7 +41,7 @@ const expenseSchema = z.object({
   incomeId: z.string().optional(),
 });
 
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+type ExpenseFormData = z.infer<ReturnType<typeof createExpenseSchema>>;
 
 interface AddExpenseModalProps {
   open: boolean;
@@ -55,8 +57,21 @@ export function AddExpenseModal({
   onExpenseAdded,
 }: AddExpenseModalProps) {
   const dispatch = useAppDispatch();
-  const { expenses, common } = useAppTranslations();
+  const translations = useAppTranslations();
+  const { expenses, common, errors } = translations;
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
+  
+  const modalState = useModalState({
+    onSuccess: () => {
+      reset();
+      setValue('incomeId', '');
+      onOpenChange(false);
+      onExpenseAdded?.();
+    },
+    successMessage: expenses?.addSuccess || 'Expense added successfully',
+  });
+
+  const expenseSchema = createExpenseSchema(translations);
 
   const {
     register,
@@ -64,7 +79,7 @@ export function AddExpenseModal({
     reset,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors: formErrors },
   } = useForm({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
@@ -80,6 +95,9 @@ export function AddExpenseModal({
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!open) return;
+      
+      modalState.setLoading(true);
       try {
         const incomesRes = await fetch('/api/incomes/connected');
         
@@ -87,42 +105,51 @@ export function AddExpenseModal({
           const incomes = await incomesRes.json();
           setConnectedIncomes(Array.isArray(incomes) ? incomes : []);
         } else {
-          console.warn('Incomes API failed');
-          setConnectedIncomes([]);
+          const errorData = await incomesRes.json().catch(() => ({}));
+          throw new Error(errorData.error || errors?.network || 'Failed to fetch incomes');
         }
       } catch (error) {
-        console.error('Failed to fetch data:', error);
+        modalState.handleError(error, errors?.network || 'Failed to load data');
+        setConnectedIncomes([]);
+      } finally {
+        modalState.setLoading(false);
       }
     };
 
-    if (open) {
-      fetchData();
-    }
-  }, [open, expenseType]);
+    fetchData();
+  }, [open, expenseType, modalState, errors]);
 
   const onSubmit = async (data: ExpenseFormData) => {
-    try {
-      // Validate required fields
-      if (!data.amount || data.amount <= 0) {
-        toast.error('Please enter a valid amount');
-        return;
+    await modalState.executeAsync(async () => {
+      // Additional validation with translated messages
+      const sanitizedAmount = typeof data.amount === 'number' ? data.amount : Number(data.amount);
+      if (!sanitizedAmount || sanitizedAmount <= 0 || isNaN(sanitizedAmount)) {
+        throw new Error(expenses?.form?.validation?.amountGreaterThanZero || 'Please enter a valid amount');
       }
-      
-      if (!data.category?.trim()) {
-        toast.error('Please select a category');
-        return;
+
+      const sanitizedCategory = typeof data.category === 'string' ? data.category.trim() : '';
+      if (!sanitizedCategory) {
+        throw new Error(expenses?.form?.validation?.categoryRequired || 'Please select a category');
       }
-      
-      if (!data.reason?.trim()) {
-        toast.error('Please enter a description');
-        return;
+
+      const sanitizedReason = typeof data.reason === 'string' ? data.reason.trim() : '';
+      if (!sanitizedReason) {
+        throw new Error(expenses?.form?.validation?.reasonRequired || 'Please enter a description');
       }
-      
-      // API call in background
+
+      // Only allow expected frequency values
+      const allowedFrequencies = ['daily', 'weekly', 'monthly', 'yearly'];
+      let sanitizedFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly' | undefined = undefined;
+      if (data.frequency && allowedFrequencies.includes(data.frequency)) {
+        sanitizedFrequency = data.frequency as 'daily' | 'weekly' | 'monthly' | 'yearly';
+      }
+
       const requestData = {
         ...data,
-        amount: Number(data.amount),
-        category: getBackendCategoryKey(data.category),
+        amount: sanitizedAmount,
+        category: getBackendCategoryKey(sanitizedCategory),
+        reason: sanitizedReason,
+        frequency: sanitizedFrequency,
         type: expenseType,
         incomeId: data.affectsBalance ? data.incomeId : undefined,
       };
@@ -131,7 +158,7 @@ export function AddExpenseModal({
 
       // Update UI after successful API response
       dispatch(addExpenseOptimistic(res));
-      
+
       // Update stats after successful API response
       dispatch(
         updateStatsOptimistic({
@@ -143,21 +170,8 @@ export function AddExpenseModal({
         })
       );
 
-      toast.success(expenses?.addSuccess || 'Expense added successfully');
-
-      // Close modal and reset form
-      reset();
-      setValue('incomeId', '');
-      onOpenChange(false);
-      
-      if (onExpenseAdded) {
-        onExpenseAdded();
-      }
-    } catch (error) {
-      console.error('Failed to add expense:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add expense';
-      toast.error(errorMessage);
-    }
+      return res;
+    }, expenses?.addSuccess || 'Expense added successfully');
   };
 
   return (
@@ -166,6 +180,20 @@ export function AddExpenseModal({
         <DialogHeader className="pb-3">
           <DialogTitle className="text-lg">{expenses?.addNewExpense || 'Add New Expense'}</DialogTitle>
         </DialogHeader>
+
+        {modalState.error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{modalState.error}</AlertDescription>
+          </Alert>
+        )}
+
+        {modalState.isLoading && (
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span className="ml-2">{common?.loading || 'Loading...'}</span>
+          </div>
+        )}
 
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -183,9 +211,9 @@ export function AddExpenseModal({
               placeholder="0.00"
               className="mt-1"
             />
-            {errors.amount && (
+            {formErrors.amount && (
               <p className="text-xs sm:text-sm text-red-500 mt-1">
-                {errors.amount.message}
+                {formErrors.amount.message}
               </p>
             )}
           </div>
@@ -201,9 +229,9 @@ export function AddExpenseModal({
               placeholder={expenses?.selectCategory || 'Select category'}
               className="mt-1"
             />
-            {errors.category && (
+            {formErrors.category && (
               <p className="text-xs sm:text-sm text-red-500 mt-1">
-                {errors.category.message}
+                {formErrors.category.message}
               </p>
             )}
           </div>
@@ -219,9 +247,9 @@ export function AddExpenseModal({
               className="mt-1 text-sm"
               rows={3}
             />
-            {errors.reason && (
+            {formErrors.reason && (
               <p className="text-xs sm:text-sm text-red-500 mt-1">
-                {errors.reason.message}
+                {formErrors.reason.message}
               </p>
             )}
           </div>
@@ -236,9 +264,9 @@ export function AddExpenseModal({
               {...register('date')}
               className="mt-1"
             />
-            {errors.date && (
+            {formErrors.date && (
               <p className="text-xs sm:text-sm text-red-500 mt-1">
-                {errors.date.message}
+                {formErrors.date.message}
               </p>
             )}
           </div>
@@ -315,10 +343,11 @@ export function AddExpenseModal({
           <div className="flex flex-col sm:flex-row gap-2 pt-3 sm:pt-4">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={modalState.isSubmitting || modalState.isLoading}
               className="w-full sm:w-auto"
             >
-              {isSubmitting ? (expenses?.adding || 'Adding...') : (expenses?.addExpense || 'Add Expense')}
+              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {modalState.isSubmitting ? (expenses?.adding || 'Adding...') : (expenses?.addExpense || 'Add Expense')}
             </Button>
             <Button
               type="button"

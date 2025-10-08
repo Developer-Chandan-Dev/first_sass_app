@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongoose';
 import Income from '@/models/Income';
+import { sanitizeForLog } from '@/lib/input-sanitizer';
 
 export async function PUT(
   request: NextRequest,
@@ -19,7 +20,7 @@ export async function PUT(
     const body = await request.json();
 
     const { amount, source, category, description, date, isRecurring, isConnected, frequency } = body;
-    console.log("Updation data: ", body, 22);
+    
     const income = await Income.findOneAndUpdate(
       { _id: id, userId },
       {
@@ -30,12 +31,15 @@ export async function PUT(
         ...(date && { date: new Date(date) }),
         ...(isRecurring !== undefined && { isRecurring: Boolean(isRecurring) }),
         ...(isConnected !== undefined && { isConnected: Boolean(isConnected) }),
-        ...(frequency !== undefined && { frequency: isRecurring ? frequency : undefined }),
+        ...(frequency !== undefined && { frequency: isRecurring ? sanitizeForLog(frequency) : undefined }),
         updatedAt: new Date()
       },
       { new: true }
     );
-    console.log("Updated Income: ", income, 38);
+    console.log('Income updated successfully', {
+      id: sanitizeForLog(id),
+      amount: sanitizeForLog(income?.amount)
+    });
 
     if (!income) {
       return NextResponse.json({ error: 'Income not found' }, { status: 404 });
@@ -43,7 +47,9 @@ export async function PUT(
 
     return NextResponse.json(income);
   } catch (error) {
-    console.error('Error updating income:', error);
+    console.error('Error updating income', {
+      message: sanitizeForLog(error instanceof Error ? error.message : 'Unknown error')
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -69,7 +75,9 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Income deleted successfully' });
   } catch (error) {
-    console.error('Error deleting income:', error);
+    console.error('Error deleting income', {
+      message: sanitizeForLog(error instanceof Error ? error.message : 'Unknown error')
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

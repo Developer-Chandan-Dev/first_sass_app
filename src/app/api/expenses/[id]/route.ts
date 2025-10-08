@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongoose';
 import Expense from '@/models/Expense';
-import { sanitizeString, sanitizeNumber, isValidObjectId } from '@/lib/input-sanitizer';
+import { sanitizeString, sanitizeNumber, isValidObjectId, sanitizeForLog } from '@/lib/input-sanitizer';
+import Income from '@/models/Income'
 
 export async function PUT(
   request: NextRequest,
@@ -17,8 +18,8 @@ export async function PUT(
     const { id } = await params;
     
     // Validate ObjectId format to prevent path traversal
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-      return NextResponse.json({ error: 'Invalid expense ID' }, { status: 400 });
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Invalid expense ID format' }, { status: 400 });
     }
     
     const body = await request.json();
@@ -42,7 +43,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Expense not found' }, { status: 404 });
     }
 
-    const Income = (await import('@/models/Income')).default;
+    // const Income = (await import('@/models/Income')).default;
 
     // Restore original income amount if it was affected
     if (originalExpense.affectsBalance && originalExpense.incomeId) {
@@ -79,7 +80,9 @@ export async function PUT(
 
     return NextResponse.json(expense);
   } catch (error) {
-    console.error('Error updating expense:', error);
+    console.error('Error updating expense', {
+      message: sanitizeForLog(error instanceof Error ? error.message : 'Unknown error')
+    });
     return NextResponse.json({ error: 'Failed to update expense' }, { status: 500 });
   }
 }
@@ -97,8 +100,8 @@ export async function DELETE(
     const { id } = await params;
     
     // Validate ObjectId format to prevent path traversal
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-      return NextResponse.json({ error: 'Invalid expense ID' }, { status: 400 });
+    if (!isValidObjectId(id)) {
+      return NextResponse.json({ error: 'Invalid expense ID format' }, { status: 400 });
     }
     
     await connectDB();
@@ -124,7 +127,9 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Expense deleted successfully' });
   } catch (error) {
-    console.error('Error deleting expense:', error);
+    console.error('Error deleting expense', {
+      message: sanitizeForLog(error instanceof Error ? error.message : 'Unknown error')
+    });
     return NextResponse.json({ error: 'Failed to delete expense' }, { status: 500 });
   }
 }

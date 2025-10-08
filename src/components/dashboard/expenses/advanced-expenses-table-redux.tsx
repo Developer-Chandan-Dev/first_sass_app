@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -38,22 +37,10 @@ import {
 } from 'lucide-react';
 import { EditExpenseModal } from './edit-expense-modal-redux';
 import { ExpensePDFExportModal } from './expense-pdf-export-modal';
-import { toast } from 'sonner';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { useAppTranslations } from '@/hooks/useTranslation';
-import { 
-  fetchExpenses, 
-  deleteExpense, 
-  deleteExpenseOptimistic,
-  setCurrentPage,
-  setPageSize,
-  setExpenseType,
-  setFilters,
-  type ExpenseItem,
-} from '@/lib/redux/expense/expenseSlice';
-import { updateStatsOptimistic, refreshStats } from '@/lib/redux/expense/overviewSlice';
-import { updateBudgetSpent } from '@/lib/redux/expense/budgetSlice';
+import { useExpenseTable } from '@/hooks/dashboard/useExpenseTable';
 import { getExpenseAmountColor, getExpenseTooltip } from '@/lib/financial-styles';
+import { sanitizeString } from '@/lib/input-sanitizer';
 
 // Table skeleton component
 function ExpenseTableSkeleton({ expenseType }: { expenseType: 'free' | 'budget' }) {
@@ -79,247 +66,58 @@ interface AdvancedExpensesTableProps {
 }
 
 export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpensesTableProps) {
-  const dispatch = useAppDispatch();
   const { expenses: expensesData, common, table } = useAppTranslations();
-  const { 
-    expenses, 
-    loading, 
-    filters, 
-    currentPage, 
-    totalPages, 
-    totalCount, 
-    pageSize 
-  } = useAppSelector(state => state.expenses);
-  
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeSearchTerm, setActiveSearchTerm] = useState('');
-  const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isPDFExportOpen, setIsPDFExportOpen] = useState(false);
-  const [isSelectedExport, setIsSelectedExport] = useState(false);
-
-  // Set expense type when component mounts or type changes
-  useEffect(() => {
-    dispatch(setExpenseType(expenseType));
-  }, [dispatch, expenseType]);
-
-  // Fetch expenses when component mounts or when filters/pagination changes
-  useEffect(() => {
-    const filtersWithSearch = { ...filters, search: activeSearchTerm };
-    dispatch(fetchExpenses({ 
-      expenseType, 
-      filters: filtersWithSearch, 
-      page: currentPage, 
-      pageSize 
-    }));
-  }, [dispatch, expenseType, filters, activeSearchTerm, currentPage, pageSize]);
-
-  // Watch for when search term becomes empty and trigger search
-  useEffect(() => {
-    if (searchTerm === '' && activeSearchTerm !== '') {
-      setActiveSearchTerm('');
-    }
-  }, [searchTerm, activeSearchTerm]);
-
-  const handleSearch = () => {
-    setActiveSearchTerm(searchTerm);
-    dispatch(setCurrentPage(1));
-  };
-
-  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm('');
-    setActiveSearchTerm('');
-    dispatch(setCurrentPage(1));
-  };
-
-  const handleDelete = async (id: string) => {
-    const confirmMessage = 'Are you sure you want to delete this expense?';
-    if (!confirm(confirmMessage)) {
-      return;
-    }
-    
-    const expense = expenses.find(e => e._id === id);
-    if (!expense) {
-      toast.error('Expense not found');
-      return;
-    }
-    
-    // API call first
-    try {
-      await dispatch(deleteExpense(id)).unwrap();
-      
-      // Update UI after successful API response
-      dispatch(deleteExpenseOptimistic(id));
-      dispatch(updateStatsOptimistic({ 
-        type: expenseType, 
-        amount: expense.amount, 
-        category: expense.category, 
-        operation: 'subtract' 
-      }));
-      
-      if (expenseType === 'budget' && expense.budgetId) {
-        dispatch(updateBudgetSpent({ 
-          budgetId: expense.budgetId, 
-          amount: expense.amount, 
-          operation: 'subtract' 
-        }));
-      }
-      
-      toast.success(expensesData?.deleteSuccess || 'Expense deleted successfully');
-      // Silent stats refresh
-      dispatch(refreshStats(expenseType));
-    } catch (error) {
-      console.error('Delete expense error:', error);
-      toast.error('Failed to delete expense. Please try again.');
-    }
-  };
-
-  const handleBulkDelete = async () => {
-    if (selectedRows.length === 0) {
-      toast.error('No expenses selected');
-      return;
-    }
-    
-    const confirmMessage = `Are you sure you want to delete ${selectedRows.length} expenses?`;
-    if (!confirm(confirmMessage.replace('{count}', selectedRows.length.toString()))) {
-      return;
-    }
-    
-    // API call first
-    try {
-      const response = await fetch('/api/expenses/bulk', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: selectedRows }),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to delete expenses');
-      }
-      
-      // Update UI after successful API response
-      selectedRows.forEach(id => {
-        dispatch(deleteExpenseOptimistic(id));
-      });
-      
-      toast.success(`${selectedRows.length} expenses deleted successfully!`);
-      setSelectedRows([]);
-      
-      // Refresh stats
-      dispatch(refreshStats(expenseType));
-    } catch (error) {
-      console.error('Bulk delete error:', error);
-      const errorMessage = error instanceof Error && error.message.length < 100 
-        ? error.message 
-        : 'Failed to delete expenses. Please try again.';
-      toast.error(errorMessage);
-    }
-  };
-
-  const toggleRowSelection = (id: string) => {
-    setSelectedRows(prev => 
-      prev.includes(id) 
-        ? prev.filter(rowId => rowId !== id)
-        : [...prev, id]
-    );
-  };
-
-  const toggleAllRows = () => {
-    setSelectedRows(
-      selectedRows.length === expenses.length 
-        ? [] 
-        : expenses.map(expense => expense._id)
-    );
-  };
-
-  const handleEdit = (expense: ExpenseItem) => {
-    setEditingExpense(expense);
-    setIsEditModalOpen(true);
-  };
-
-  const handleSort = (column: string) => {
-    const newSortOrder = filters.sortBy === column && filters.sortOrder === 'asc' ? 'desc' : 'asc';
-    dispatch(setFilters({ sortBy: column, sortOrder: newSortOrder }));
-  };
+  const {
+    expenses,
+    loading,
+    filters,
+    currentPage,
+    totalPages,
+    totalCount,
+    pageSize,
+    selectedRows,
+    searchTerm,
+    editingExpense,
+    isEditModalOpen,
+    isPDFExportOpen,
+    isSelectedExport,
+    setSearchTerm,
+    setIsEditModalOpen,
+    setIsPDFExportOpen,
+    setIsSelectedExport,
+    handleSearch,
+    handleSearchKeyPress,
+    handleClearSearch,
+    handleDelete,
+    handleBulkDelete,
+    toggleRowSelection,
+    toggleAllRows,
+    handleEdit,
+    handleSort,
+    handleCSVExport,
+    setCurrentPage,
+    setPageSize,
+  } = useExpenseTable(expenseType);
 
   const getSortIcon = (column: string) => {
     if (filters.sortBy !== column) return <ArrowUpDown className="h-3 w-3" />;
     return filters.sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />;
   };
 
-  const handleCSVExport = (selectedOnly = false) => {
-    const dataToExport = selectedOnly 
-      ? expenses.filter(expense => selectedRows.includes(expense._id))
-      : expenses;
-    
-    if (!dataToExport || dataToExport.length === 0) {
-      toast.error('No data to export');
-      return;
-    }
-    
-    try {
-      const headers = ['Date', 'Description', 'Category', ...(expenseType === 'budget' ? ['Budget Name'] : []), 'Amount', 'Recurring', 'Frequency', 'Created Date'];
-      const csvData = dataToExport.map(expense => [
-        new Date(expense.date).toLocaleDateString(),
-        (expense.reason || '').replace(/["\r\n]/g, ' '),
-        (expense.category || '').replace(/["\r\n]/g, ' '),
-        ...(expenseType === 'budget' ? [(expense.budgetName || '').replace(/["\r\n]/g, ' ')] : []),
-        expense.amount,
-        expense.isRecurring ? 'Yes' : 'No',
-        (expense.frequency || '').replace(/["\r\n]/g, ' '),
-        new Date(expense.createdAt).toLocaleDateString()
-      ]);
-      
-      const csvContent = [headers, ...csvData]
-        .map(row => row.map(field => {
-          const sanitized = String(field || '').replace(/"/g, '""').replace(/[\r\n]/g, ' ');
-          return `"${sanitized}"`;
-        }).join(','))
-        .join('\n');
-      
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `expenses-${selectedOnly ? 'selected-' : ''}${new Date().toISOString().split('T')[0]}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      toast.success(`${dataToExport.length} expenses exported to CSV!`);
-    } catch (error) {
-      console.error('CSV export error:', error);
-      const errorMessage = error instanceof Error && error.message.includes('memory') 
-        ? 'File too large to export. Try exporting fewer records.' 
-        : 'Failed to export CSV. Please try again.';
-      toast.error(errorMessage);
-    }
-  };
-
   return (
     <Card>
       <CardHeader className="pb-3">
         <div className="flex flex-col gap-4">
-          <CardTitle className="text-lg sm:text-xl">{expensesData.title} ({totalCount})</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">{sanitizeString(expensesData?.title || 'Expenses')} ({totalCount})</CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder={expensesData.searchExpenses}
+                  placeholder={sanitizeString(expensesData?.searchExpenses || 'Search expenses')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={handleSearchKeyPress}
+                  onKeyDown={handleSearchKeyPress}
                   className="pl-8 w-full text-sm"
                 />
               </div>
@@ -349,20 +147,20 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="w-auto">
                         <Download className="h-4 w-4 mr-2" />
-                        {expensesData.exportAll} ({selectedRows.length})
+                        {sanitizeString(expensesData?.exportAll || 'Export')} ({selectedRows.length})
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem onClick={() => handleCSVExport(true)}>
                         <FileText className="mr-2 h-4 w-4" />
-                        {expensesData.exportSelectedCSV}
+                        {sanitizeString(expensesData?.exportSelectedCSV || 'Export Selected CSV')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
                         setIsSelectedExport(true);
                         setIsPDFExportOpen(true);
                       }}>
                         <FileText className="mr-2 h-4 w-4" />
-                        {expensesData.exportSelectedPDF}
+                        {sanitizeString(expensesData?.exportSelectedPDF || 'Export Selected PDF')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -375,20 +173,20 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="w-auto">
                     <Download className="h-4 w-4 mr-2" />
-                    {expensesData.exportAll}
+                    {sanitizeString(expensesData?.exportAll || 'Export All')}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => handleCSVExport(false)}>
                     <FileText className="mr-2 h-4 w-4" />
-                    {expensesData.exportAllCSV}
+                    {sanitizeString(expensesData?.exportAllCSV || 'Export All CSV')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => {
                     setIsSelectedExport(false);
                     setIsPDFExportOpen(true);
                   }}>
                     <FileText className="mr-2 h-4 w-4" />
-                    {expensesData.exportAllPDF}
+                    {sanitizeString(expensesData?.exportAllPDF || 'Export All PDF')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -410,34 +208,34 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                   </TableHead>
                   <TableHead className="min-w-[80px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('date')} className="h-auto p-0 font-medium">
-                      {common.date} {getSortIcon('date')}
+                      {sanitizeString(common?.date || 'Date')} {getSortIcon('date')}
                     </Button>
                   </TableHead>
                   <TableHead className="min-w-[120px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('reason')} className="h-auto p-0 font-medium">
-                      {common.description} {getSortIcon('reason')}
+                      {sanitizeString(common?.description || 'Description')} {getSortIcon('reason')}
                     </Button>
                   </TableHead>
                   <TableHead className="hidden sm:table-cell min-w-[100px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('category')} className="h-auto p-0 font-medium">
-                      {common.category} {getSortIcon('category')}
+                      {sanitizeString(common?.category || 'Category')} {getSortIcon('category')}
                     </Button>
                   </TableHead>
                   {expenseType === 'budget' && (
                     <TableHead className="hidden lg:table-cell min-w-[100px]">
                       <Button variant="ghost" size="sm" onClick={() => handleSort('budgetName')} className="h-auto p-0 font-medium">
-                        {expensesData.budget} {getSortIcon('budgetName')}
+                        {sanitizeString(expensesData?.budget || 'Budget')} {getSortIcon('budgetName')}
                       </Button>
                     </TableHead>
                   )}
                   <TableHead className="hidden md:table-cell min-w-[80px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('isRecurring')} className="h-auto p-0 font-medium">
-                      {expensesData.recurring} {getSortIcon('isRecurring')}
+                      {sanitizeString(expensesData?.recurring || 'Recurring')} {getSortIcon('isRecurring')}
                     </Button>
                   </TableHead>
                   <TableHead className="text-right min-w-[80px]">
                     <Button variant="ghost" size="sm" onClick={() => handleSort('amount')} className="h-auto p-0 font-medium">
-                      {common.amount} {getSortIcon('amount')}
+                      {sanitizeString(common?.amount || 'Amount')} {getSortIcon('amount')}
                     </Button>
                   </TableHead>
                   <TableHead className="w-8 sm:w-12"></TableHead>
@@ -449,7 +247,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
               ) : expenses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={expenseType === 'budget' ? 8 : 7} className="text-center py-8 text-muted-foreground">
-                    {expensesData.noExpensesFound}
+                    {sanitizeString(expensesData?.noExpensesFound || 'No expenses found')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -469,29 +267,29 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     </TableCell>
                     <TableCell className="py-2">
                       <div className="font-medium text-sm truncate max-w-[120px] sm:max-w-none">
-                        {expense.reason}
+                        {sanitizeString(expense.reason || '')}
                       </div>
                       <div className="sm:hidden">
-                        <Badge variant="secondary" className="text-xs mt-1">{expense.category}</Badge>
+                        <Badge variant="secondary" className="text-xs mt-1">{sanitizeString(expense.category || '')}</Badge>
                       </div>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell py-2">
-                      <Badge variant="secondary" className="text-xs">{expense.category}</Badge>
+                      <Badge variant="secondary" className="text-xs">{sanitizeString(expense.category || '')}</Badge>
                     </TableCell>
                     {expenseType === 'budget' && (
                       <TableCell className="hidden lg:table-cell py-2">
                         <Badge variant="outline" className="text-xs">
-                          {expense.budgetName || 'Unknown'}
+                          {sanitizeString(expense.budgetName || 'Unknown')}
                         </Badge>
                       </TableCell>
                     )}
                     <TableCell className="hidden md:table-cell py-2">
                       {expense.isRecurring ? (
                         <Badge variant="outline" className="text-xs">
-                          {expense.frequency || 'Recurring'}
+                          {sanitizeString(expense.frequency || 'Recurring')}
                         </Badge>
                       ) : (
-                        <span className="text-xs text-muted-foreground">{expensesData.oneTime}</span>
+                        <span className="text-xs text-muted-foreground">{sanitizeString(expensesData?.oneTime || 'One-time')}</span>
                       )}
                     </TableCell>
                     <TableCell className="text-right font-medium py-2 text-sm">
@@ -500,7 +298,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                           -₹{expense.amount.toLocaleString()}
                         </span>
                         {expense.affectsBalance && (
-                          <div className="w-2 h-2 bg-red-500 rounded-full" title={getExpenseTooltip(expense.affectsBalance)} />
+                          <div className="w-2 h-2 bg-red-500 rounded-full" title={sanitizeString(getExpenseTooltip(expense.affectsBalance) || '')} />
                         )}
                       </div>
                     </TableCell>
@@ -514,14 +312,14 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(expense)}>
                             <Edit className="mr-2 h-4 w-4" />
-                            {common.edit}
+                            {sanitizeString(common?.edit || 'Edit')}
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             className="text-destructive"
-                            onClick={() => handleDelete(expense._id)}
+                            onClick={() => handleDelete(expense._id, expensesData)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            {common.delete}
+                            {sanitizeString(common?.delete || 'Delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -538,23 +336,21 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
           <div className="flex flex-col sm:flex-row items-center gap-2">
             <div className="text-xs sm:text-sm text-muted-foreground">
-              {expensesData.showing} {((currentPage - 1) * pageSize) + 1} {expensesData.to} {Math.min(currentPage * pageSize, totalCount)} {table.of} {totalCount} {expensesData.entries}
+              {sanitizeString(expensesData?.showing || 'Showing')} {((currentPage - 1) * pageSize) + 1} {sanitizeString(expensesData?.to || 'to')} {Math.min(currentPage * pageSize, totalCount)} {sanitizeString(table?.of || 'of')} {totalCount} {sanitizeString(expensesData?.entries || 'entries')}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8">
-                  {pageSize} {expensesData.perPage}
+                  {pageSize} {sanitizeString(expensesData?.perPage || 'per page')}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 {[10, 20, 30, 40, 50, 100].map((size) => (
                   <DropdownMenuItem
                     key={size}
-                    onClick={() => {
-                      dispatch(setPageSize(size));
-                    }}
+                    onClick={() => setPageSize(size)}
                   >
-                    {size} {expensesData.perPage}
+                    {size} {sanitizeString(expensesData?.perPage || 'per page')}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -564,7 +360,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch(setCurrentPage(1))}
+              onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
               className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
@@ -573,7 +369,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)))}
+              onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
               className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
@@ -585,7 +381,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)))}
+              onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
               disabled={currentPage === totalPages}
               className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
@@ -594,7 +390,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch(setCurrentPage(totalPages))}
+              onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
               className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >

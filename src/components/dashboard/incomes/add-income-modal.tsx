@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -11,21 +11,25 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, AlertCircle } from 'lucide-react';
 
-const incomeSchema = z.object({
-  amount: z.number().min(0.01, 'Amount must be greater than 0'),
-  source: z.string().min(1, 'Source is required'),
-  category: z.string().min(1, 'Category is required'),
-  description: z.string().min(1, 'Description is required'),
+import { useAppTranslations } from '@/hooks/useTranslation';
+import { useModalState } from '@/hooks/useModalState';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createIncomeSchema = (t: any) => z.object({
+  amount: z.number().min(0.01, t.income?.form?.validation?.amountPositive || 'Amount must be greater than 0'),
+  source: z.string().min(1, t.income?.form?.validation?.sourceRequired || 'Source is required'),
+  category: z.string().min(1, t.income?.form?.validation?.categoryRequired || 'Category is required'),
+  description: z.string().min(1, t.income?.form?.validation?.descriptionRequired || 'Description is required'),
   date: z.string(),
   isConnected: z.boolean().optional().default(false),
   isRecurring: z.boolean().optional().default(false),
   frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
 });
 
-type IncomeFormData = z.infer<typeof incomeSchema>;
+type IncomeFormData = z.infer<ReturnType<typeof createIncomeSchema>>;
 
 interface AddIncomeModalProps {
   open: boolean;
@@ -34,8 +38,19 @@ interface AddIncomeModalProps {
 }
 
 export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { income, common } = useAppTranslations();
+  const translations = useAppTranslations();
+  const { income, common, errors } = translations;
+  
+  const modalState = useModalState({
+    onSuccess: () => {
+      reset();
+      onOpenChange(false);
+      onIncomeAdded?.();
+    },
+    successMessage: income?.addSuccess || 'Income added successfully',
+  });
+
+  const incomeSchema = createIncomeSchema(translations);
 
   const {
     register,
@@ -43,7 +58,7 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
     reset,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors: formErrors },
   } = useForm({
     resolver: zodResolver(incomeSchema),
     defaultValues: {
@@ -57,30 +72,20 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
   const isConnected = watch('isConnected');
 
   const onSubmit = async (data: IncomeFormData) => {
-    setIsSubmitting(true);
-    try {
-
+    await modalState.executeAsync(async () => {
       const response = await fetch('/api/incomes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        toast.success(income?.addSuccess || 'Income added successfully!');
-        reset();
-        onOpenChange(false);
-        onIncomeAdded?.();
-      } else {
+      if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        toast.error(errorData.error || 'Failed to add income');
+        throw new Error(errorData.error || errors?.generic || 'Failed to add income');
       }
-    } catch (error) {
-      console.error('Error adding income:', error);
-      toast.error('Failed to add income');
-    } finally {
-      setIsSubmitting(false);
-    }
+
+      return await response.json();
+    }, income?.addSuccess || 'Income added successfully');
   };
 
   const incomeSources = [
@@ -101,6 +106,13 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
           <DialogTitle>{income?.addIncomeSource || 'Add Income Source'}</DialogTitle>
         </DialogHeader>
 
+        {modalState.error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{modalState.error}</AlertDescription>
+          </Alert>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <Label htmlFor="amount">{common?.amount || 'Amount'} *</Label>
@@ -111,8 +123,8 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
               {...register('amount', { valueAsNumber: true })}
               placeholder="0.00"
             />
-            {errors.amount && (
-              <p className="text-sm text-red-500 mt-1">{errors.amount.message}</p>
+            {formErrors.amount && (
+              <p className="text-sm text-red-500 mt-1">{formErrors.amount.message}</p>
             )}
           </div>
 
@@ -123,8 +135,8 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
               {...register('source')}
               placeholder="e.g., Company Name, Client Name"
             />
-            {errors.source && (
-              <p className="text-sm text-red-500 mt-1">{errors.source.message}</p>
+            {formErrors.source && (
+              <p className="text-sm text-red-500 mt-1">{formErrors.source.message}</p>
             )}
           </div>
 
@@ -142,8 +154,8 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
                 ))}
               </SelectContent>
             </Select>
-            {errors.category && (
-              <p className="text-sm text-red-500 mt-1">{errors.category.message}</p>
+            {formErrors.category && (
+              <p className="text-sm text-red-500 mt-1">{formErrors.category.message}</p>
             )}
           </div>
 
@@ -155,8 +167,8 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
               placeholder={income?.briefDescriptionOfIncomeSource || 'Brief description of income source'}
               rows={3}
             />
-            {errors.description && (
-              <p className="text-sm text-red-500 mt-1">{errors.description.message}</p>
+            {formErrors.description && (
+              <p className="text-sm text-red-500 mt-1">{formErrors.description.message}</p>
             )}
           </div>
 
@@ -226,10 +238,11 @@ export function AddIncomeModal({ open, onOpenChange, onIncomeAdded }: AddIncomeM
           <div className="flex gap-2 pt-4">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={modalState.isSubmitting || modalState.isLoading}
               className="flex-1"
             >
-              {isSubmitting ? (income?.addingIncome || 'Adding...') : (income?.addIncome || 'Add Income')}
+              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {modalState.isSubmitting ? (income?.addingIncome || 'Adding...') : (income?.addIncome || 'Add Income')}
             </Button>
             <Button
               type="button"

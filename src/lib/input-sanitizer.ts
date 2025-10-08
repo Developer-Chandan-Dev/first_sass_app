@@ -1,26 +1,24 @@
-/**
- * Input sanitization utilities to prevent XSS and injection attacks
- */
+import DOMPurify from 'isomorphic-dompurify';
 
 /**
- * Sanitize string input by removing/escaping dangerous characters
+ * Sanitize string input to prevent XSS attacks
  */
 export function sanitizeString(input: string): string {
   if (typeof input !== 'string') return '';
   
-  return input
-    .replace(/[<>]/g, '') // Remove HTML tags
-    .replace(/javascript:/gi, '') // Remove javascript: protocol
-    .replace(/on\w+=/gi, '') // Remove event handlers
-    .trim();
+  // Remove HTML tags and dangerous characters
+  return DOMPurify.sanitize(input, { 
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: []
+  }).trim();
 }
 
 /**
- * Sanitize numeric input
+ * Sanitize number input
  */
-export function sanitizeNumber(input: unknown): number {
-  const num = parseFloat(String(input));
-  return isNaN(num) ? 0 : Math.max(0, num);
+export function sanitizeNumber(input: number | string): number {
+  const num = typeof input === 'string' ? parseFloat(input) : input;
+  return isNaN(num) ? 0 : Math.abs(num);
 }
 
 /**
@@ -31,20 +29,11 @@ export function isValidObjectId(id: string): boolean {
 }
 
 /**
- * Sanitize object for safe logging (removes sensitive data)
+ * Sanitize for logging to prevent log injection
  */
-export function sanitizeForLogging(obj: unknown): Record<string, unknown> {
-  if (typeof obj !== 'object' || obj === null) return {};
-  
-  const sanitized = { ...(obj as Record<string, unknown>) };
-  
-  // Remove sensitive fields
-  const sensitiveFields = ['password', 'token', 'secret', 'key', 'auth'];
-  sensitiveFields.forEach(field => {
-    if (field in sanitized) {
-      sanitized[field] = '[REDACTED]';
-    }
-  });
-  
-  return sanitized;
+export function sanitizeForLog(input: unknown): string {
+  if (typeof input === 'string') {
+    return input.replace(/[\r\n\t]/g, ' ').substring(0, 100);
+  }
+  return String(input).substring(0, 100);
 }

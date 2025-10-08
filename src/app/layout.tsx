@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
   title: `${seoConfig.siteName} - Smart Expense Management & Budget Tracking`,
   description: `${seoConfig.siteDescription}. Track expenses, manage budgets, and gain insights with our powerful expense management platform.`,
   keywords: 'expense tracker, budget management, personal finance, expense management, financial planning, money tracker, budget planner, expense app',

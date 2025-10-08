@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Search, Download, FileDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import jsPDF from 'jspdf'
 
 interface Expense {
   _id: string;
@@ -146,7 +147,6 @@ export function IncomeExpensesModal({
     }
 
     try {
-      const jsPDF = (await import('jspdf')).default;
       const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
       
       const pageWidth = doc.internal.pageSize.getWidth();

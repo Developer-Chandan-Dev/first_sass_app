@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongoose';
 import Income from '@/models/Income';
+import { sanitizeString } from '@/lib/input-sanitizer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,12 +13,12 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
     const body = await request.json();
-    
+
     const income = new Income({
       userId,
       amount: body.amount,
-      source: body.source,
-      description: body.description,
+      source: sanitizeString(body.source || ''),
+      description: sanitizeString(body.description || ''),
       isConnected: body.isConnected || false,
       isRecurring: body.isRecurring || false,
       frequency: body.frequency,
@@ -57,11 +58,26 @@ export async function GET(request: NextRequest) {
 
     const totalCount = await Income.countDocuments(query);
 
+    const sanitizedIncomes = incomes.map((income) => ({
+      _id: income._id,
+      userId: income.userId,
+      amount: income.amount,
+      source: sanitizeString(income.source || ''),
+      description: sanitizeString(income.description || ''),
+      category: sanitizeString(income.category || ''),
+      isConnected: income.isConnected,
+      isRecurring: income.isRecurring,
+      frequency: income.frequency,
+      date: income.date,
+      createdAt: income.createdAt,
+      updatedAt: income.updatedAt
+    }));
+
     return NextResponse.json({
-      incomes,
-      totalCount,
-      totalPages: Math.ceil(totalCount / limit),
-      currentPage: page,
+      incomes: sanitizedIncomes,
+      totalCount: Number(totalCount),
+      totalPages: Number(Math.ceil(totalCount / limit)),
+      currentPage: Number(page),
     });
   } catch (error) {
     console.error('Error fetching incomes:', error);

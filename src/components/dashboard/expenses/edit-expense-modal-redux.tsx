@@ -11,25 +11,29 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
+import { AlertCircle, Loader2} from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { updateExpense, updateExpenseOptimistic, type ExpenseItem } from '@/lib/redux/expense/expenseSlice';
 import { useAppTranslations } from '@/hooks/useTranslation';
+import { useModalState } from '@/hooks/useModalState';
 import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey, getFrontendCategoryKey } from '@/lib/categories';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { TranslationType } from '@/types/dashboard';
 
-const expenseSchema = z.object({
-  amount: z.number().min(0.01, 'Amount must be greater than 0'),
-  category: z.string().min(1, 'Category is required'),
-  reason: z.string().min(1, 'Reason is required'),
+
+const createExpenseSchema = (t: TranslationType) => z.object({
+  amount: z.number().min(0.01, t.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
+  category: z.string().min(1, t.expenses?.form?.validation?.categoryRequired || 'Category is required'),
+  reason: z.string().min(1, t.expenses?.form?.validation?.reasonRequired || 'Reason is required'),
   date: z.string(),
-  isRecurring: z.boolean().default(false),
+  isRecurring: z.boolean(),
   frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
-  affectsBalance: z.boolean().default(false),
+  affectsBalance: z.boolean(),
   incomeId: z.string().optional(),
 });
 
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+type ExpenseFormData = z.infer<ReturnType<typeof createExpenseSchema>>;
 
 interface EditExpenseModalProps {
   open: boolean;
@@ -40,8 +44,20 @@ interface EditExpenseModalProps {
 
 export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
   const dispatch = useAppDispatch();
-  const { expenses, common } = useAppTranslations();
+  const translations = useAppTranslations();
+  const { expenses, common, errors } = translations;
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
+  
+  const modalState = useModalState({
+    onSuccess: () => {
+      onOpenChange(false);
+      reset();
+      onExpenseUpdated?.();
+    },
+    successMessage: expenses?.updateSuccess || 'Expense updated successfully',
+  });
+
+  const expenseSchema = createExpenseSchema(translations);
 
   const {
     register,
@@ -49,8 +65,8 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
     reset,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
-  } = useForm({
+    formState: { errors: formErrors },
+  } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
   });
 
@@ -59,14 +75,23 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
   useEffect(() => {
     const fetchConnectedIncomes = async () => {
+      if (!open) return;
+      
+      modalState.setLoading(true);
       try {
         const response = await fetch('/api/incomes/connected');
         if (response.ok) {
           const incomes = await response.json();
           setConnectedIncomes(incomes);
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || errors?.network || 'Failed to fetch incomes');
         }
       } catch (error) {
-        console.error('Failed to fetch connected incomes:', error);
+        modalState.handleError(error, errors?.network || 'Failed to load data');
+        setConnectedIncomes([]);
+      } finally {
+        modalState.setLoading(false);
       }
     };
 
@@ -86,48 +111,43 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
         setValue('frequency', expense.frequency);
       }
     }
-  }, [expense, open, setValue]);
+  }, [expense, open, setValue, modalState, errors]);
 
   const onSubmit = async (data: ExpenseFormData) => {
     if (!expense) return;
 
-    try {
+    await modalState.executeAsync(async () => {
+      // Sanitize and validate all user inputs before using them
+      const sanitizedAmount = typeof data.amount === 'number' && isFinite(data.amount) ? data.amount : 0;
+      const sanitizedCategory = typeof data.category === 'string' ? data.category.replace(/[^a-zA-Z0-9-_]/g, '') : '';
+      const sanitizedReason = typeof data.reason === 'string' ? data.reason.replace(/[<>]/g, '') : '';
+      const sanitizedDate = typeof data.date === 'string' ? data.date.replace(/[^0-9\-]/g, '') : '';
+      const sanitizedIncomeId = typeof data.incomeId === 'string' ? data.incomeId.replace(/[^a-zA-Z0-9-_]/g, '') : undefined;
+      const sanitizedFrequency = data.frequency && ['daily', 'weekly', 'monthly', 'yearly'].includes(data.frequency) ? data.frequency : undefined;
+
       const updates = {
-        amount: Number(data.amount),
-        category: getBackendCategoryKey(data.category),
-        reason: data.reason,
-        date: data.date,
-        isRecurring: data.isRecurring,
-        affectsBalance: data.affectsBalance,
-        incomeId: data.affectsBalance ? data.incomeId : undefined,
-        ...(data.frequency && { frequency: data.frequency }),
+        amount: Number(sanitizedAmount),
+        category: getBackendCategoryKey(sanitizedCategory),
+        reason: sanitizedReason,
+        date: sanitizedDate,
+        isRecurring: !!data.isRecurring,
+        affectsBalance: !!data.affectsBalance,
+        incomeId: data.affectsBalance ? sanitizedIncomeId : undefined,
+        ...(sanitizedFrequency && { frequency: sanitizedFrequency }),
       };
 
       // Optimistic update - update UI immediately
       dispatch(updateExpenseOptimistic({ id: expense._id, updates }));
-      toast.success(expenses?.updateSuccess || 'Expense updated successfully!');
-      
-      // Close modal
-      onOpenChange(false);
-      reset();
       
       // API call in background
       try {
         await dispatch(updateExpense({ id: expense._id, updates })).unwrap();
-        // Success - optimistic update is already applied
+        return updates;
       } catch (error) {
-        toast.error('Failed to update expense');
-        console.error('Failed to update expense:', error);
         // Optimistic update will be reverted automatically by Redux
+        throw error;
       }
-      
-      if (onExpenseUpdated) {
-        onExpenseUpdated();
-      }
-    } catch (error) {
-      toast.error('Failed to update expense');
-      console.error('Failed to update expense:', error);
-    }
+    }, expenses?.updateSuccess || 'Expense updated successfully');
   };
 
 
@@ -138,6 +158,20 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
         <DialogHeader className="pb-3">
           <DialogTitle className="text-lg">{expenses?.editExpense || 'Edit Expense'}</DialogTitle>
         </DialogHeader>
+
+        {modalState.error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{modalState.error}</AlertDescription>
+          </Alert>
+        )}
+
+        {modalState.isLoading && (
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span className="ml-2">{common?.loading || 'Loading...'}</span>
+          </div>
+        )}
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
           <div>
@@ -150,8 +184,8 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               placeholder="0.00"
               className="mt-1"
             />
-            {errors.amount && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.amount.message}</p>
+            {formErrors.amount && (
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.amount.message}</p>
             )}
           </div>
 
@@ -164,8 +198,8 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               placeholder={expenses?.selectCategory || 'Select category'}
               className="mt-1"
             />
-            {errors.category && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.category.message}</p>
+            {formErrors.category && (
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.category.message}</p>
             )}
           </div>
 
@@ -178,8 +212,8 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               className="mt-1 text-sm"
               rows={3}
             />
-            {errors.reason && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.reason.message}</p>
+            {formErrors.reason && (
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.reason.message}</p>
             )}
           </div>
 
@@ -191,8 +225,8 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               {...register('date')}
               className="mt-1"
             />
-            {errors.date && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{errors.date.message}</p>
+            {formErrors.date && (
+              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.date.message}</p>
             )}
           </div>
 
@@ -266,8 +300,9 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 pt-3 sm:pt-4">
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
-              {isSubmitting ? 'Updating...' : 'Update Expense'}
+            <Button type="submit" disabled={modalState.isSubmitting || modalState.isLoading} className="w-full sm:w-auto">
+              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {modalState.isSubmitting ? 'Updating...' : (expenses?.editExpense || 'Update Expense')}
             </Button>
             <Button
               type="button"

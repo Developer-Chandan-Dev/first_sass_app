@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { sanitizeForLog } from '@/lib/input-sanitizer';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -26,8 +27,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Dashboard Error Boundary caught an error:', error, errorInfo);
+  componentDidCatch(error: Error) {
+    console.error('Dashboard Error Boundary caught an error:', sanitizeForLog(error.message));
   }
 
   resetError = () => {
@@ -103,7 +104,6 @@ export function useErrorHandler() {
   }, []);
 
   const handleError = React.useCallback((error: Error) => {
-    console.error('Component error:', error);
     setError(error);
   }, []);
 

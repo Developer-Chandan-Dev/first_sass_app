@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Budget from '@/models/Budget';
 import Expense from '@/models/Expense';
+import { sanitizeString } from '@/lib/input-sanitizer';
 
 export async function GET(request: NextRequest) {
   try {
@@ -88,7 +89,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         budgets: budgetsWithStats,
         expenses: budgetExpenses,
-        categories: expenseStats[0].byCategory.map((c: { _id: string }) => c._id),
+        categories: expenseStats[0].byCategory.map((c: { _id: string }) => sanitizeString(c._id)),
         stats: {
           totalBudget: budgets.reduce((sum, b) => sum + b.amount, 0),
           totalSpent: currentSpent,
@@ -154,11 +155,14 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({
         expenses,
-        categories: expenseStats[0].byCategory.map((c: { _id: string }) => c._id),
+        categories: expenseStats[0].byCategory.map((c: { _id: string }) => sanitizeString(c._id)),
         stats: {
           totalSpent: currentSpent,
           totalExpenses: currentExpenses,
-          categoryBreakdown: expenseStats[0].byCategory,
+          categoryBreakdown: expenseStats[0].byCategory.map((c: { _id: string; total: number; count: number }) => ({
+            ...c,
+            _id: sanitizeString(c._id)
+          })),
           recentTrend: expenseStats[0].recent,
           previousMonthSpent: previousSpent,
           previousMonthExpenses: previousExpenses,

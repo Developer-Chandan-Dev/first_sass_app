@@ -13,7 +13,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import {
   addBudget,
@@ -24,16 +25,18 @@ import {
 } from '@/lib/redux/expense/budgetSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
 import { useAppTranslations } from '@/hooks/useTranslation';
+import { useModalState } from '@/hooks/useModalState';
 import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey } from '@/lib/categories';
+import { sanitizeString } from '@/lib/input-sanitizer';
 
 const createBudgetSchema = (t: ReturnType<typeof useAppTranslations>) => z.object({
-  name: z.string().min(1, t.expenses.form.validation.titleRequired),
-  amount: z.number().min(0.01, t.expenses.form.validation.amountGreaterThanZero),
+  name: z.string().min(1, t.expenses?.form?.validation?.titleRequired || 'Title is required'),
+  amount: z.number().min(0.01, t.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
   category: z.string().optional(),
   duration: z.enum(['monthly', 'weekly', 'custom']),
-  startDate: z.string().min(1, t.expenses.form.validation.dateRequired),
-  endDate: z.string().min(1, t.expenses.form.validation.dateRequired),
+  startDate: z.string().min(1, t.expenses?.form?.validation?.dateRequired || 'Start date is required'),
+  endDate: z.string().min(1, t.expenses?.form?.validation?.dateRequired || 'End date is required'),
 });
 
 type BudgetFormData = z.infer<ReturnType<typeof createBudgetSchema>>;
@@ -55,6 +58,15 @@ export function AddBudgetModal({
   const t = useAppTranslations();
   const isEditing = !!budget;
 
+  const modalState = useModalState({
+    onSuccess: () => {
+      reset();
+      onOpenChange(false);
+      onBudgetSaved?.();
+    },
+    successMessage: isEditing ? t.success.updated : t.success.created,
+  });
+
   const budgetSchema = useMemo(() => createBudgetSchema(t), [t]);
 
   const {
@@ -63,7 +75,7 @@ export function AddBudgetModal({
     reset,
     setValue,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors: formErrors },
   } = useForm<BudgetFormData>({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
@@ -107,7 +119,7 @@ export function AddBudgetModal({
   }, [duration, setValue]);
 
   const onSubmit = async (data: BudgetFormData) => {
-    try {
+    await modalState.executeAsync(async () => {
       if (isEditing && budget) {
         // Update existing budget
         const updates = {
@@ -121,56 +133,35 @@ export function AddBudgetModal({
 
         // Optimistic update
         dispatch(updateBudgetOptimistic({ id: budget._id, updates }));
-        toast.success(t.success.updated);
 
         // API call in background
-        try {
-          await dispatch(updateBudget({ id: budget._id, updates })).unwrap();
-        } catch (error) {
-          toast.error(t.errors.generic);
-          console.error('Failed to update budget:', error);
-        }
+        await dispatch(updateBudget({ id: budget._id, updates })).unwrap();
+        return updates;
       } else {
-        // API call in background
-        try {
-          const budgetData = {
-            ...data,
-            category: data.category ? getBackendCategoryKey(data.category) : undefined,
-            isActive: true
-          };
-          const res = await dispatch(addBudget(budgetData)).unwrap();
+        const budgetData = {
+          ...data,
+          category: data.category ? getBackendCategoryKey(data.category) : undefined,
+          isActive: true
+        };
+        const res = await dispatch(addBudget(budgetData)).unwrap();
 
-          // Update UI after successful API response
-          dispatch(addBudgetOptimistic(res));
-          
-          // Update overview stats after successful API response
-          dispatch(
-            updateStatsOptimistic({
-              type: 'budget',
-              amount: Number(res.amount),
-              category: res.category || 'Other',
-              operation: 'add',
-              isExpense: false,
-            })
-          );
-          
-          toast.success(t.success.created);
-        } catch (error) {
-          toast.error(t.errors.generic);
-          console.error('Failed to create budget:', error);
-        }
+        // Update UI after successful API response
+        dispatch(addBudgetOptimistic(res));
+        
+        // Update overview stats after successful API response
+        dispatch(
+          updateStatsOptimistic({
+            type: 'budget',
+            amount: Number(res.amount),
+            category: res.category || 'Other',
+            operation: 'add',
+            isExpense: false,
+          })
+        );
+        
+        return res;
       }
-
-      reset();
-      onOpenChange(false);
-
-      if (onBudgetSaved) {
-        onBudgetSaved();
-      }
-    } catch (error) {
-      toast.error(t.errors.generic);
-      console.error('Failed to save budget:', error);
-    }
+    }, isEditing ? t.success.updated : t.success.created);
   };
 
   return (
@@ -178,9 +169,16 @@ export function AddBudgetModal({
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
           <DialogTitle className="text-lg">
-            {isEditing ? t.expenses.editExpense.replace('Expense', 'Budget') : t.dashboard.addBudget}
+            {isEditing ? 'Edit Budget' : sanitizeString(t.dashboard?.addBudget || 'Add Budget')}
           </DialogTitle>
         </DialogHeader>
+
+        {modalState.error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{sanitizeString(modalState.error || '')}</AlertDescription>
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
@@ -190,11 +188,11 @@ export function AddBudgetModal({
             <Input
               id="name"
               {...register('name')}
-              placeholder={t.expenses.form.titlePlaceholder}
+              placeholder={sanitizeString(t.expenses?.form?.titlePlaceholder || 'Enter title')}
               className="mt-1"
             />
-            {errors.name && (
-              <p className="text-xs text-red-500 mt-1">{errors.name.message}</p>
+            {formErrors.name && (
+              <p className="text-xs text-red-500 mt-1">{formErrors.name.message}</p>
             )}
           </div>
 
@@ -207,12 +205,12 @@ export function AddBudgetModal({
               type="number"
               step="0.01"
               {...register('amount', { valueAsNumber: true })}
-              placeholder={t.expenses.form.amountPlaceholder}
+              placeholder={sanitizeString(t.expenses?.form?.amountPlaceholder || 'Enter amount')}
               className="mt-1"
             />
-            {errors.amount && (
+            {formErrors.amount && (
               <p className="text-xs text-red-500 mt-1">
-                {errors.amount.message}
+                {formErrors.amount.message}
               </p>
             )}
           </div>
@@ -225,7 +223,7 @@ export function AddBudgetModal({
               id="category"
               value={watch('category') || ''}
               onChange={(value) => setValue('category', value)}
-              placeholder={t.expenses.selectCategory}
+              placeholder={sanitizeString(t.expenses?.selectCategory || 'Select category')}
               className="mt-1"
             />
           </div>
@@ -257,9 +255,9 @@ export function AddBudgetModal({
                 className="mt-1"
                 disabled={duration !== 'custom'}
               />
-              {errors.startDate && (
+              {formErrors.startDate && (
                 <p className="text-xs text-red-500 mt-1">
-                  {errors.startDate.message}
+                  {formErrors.startDate.message}
                 </p>
               )}
             </div>
@@ -274,9 +272,9 @@ export function AddBudgetModal({
                 className="mt-1"
                 disabled={duration !== 'custom'}
               />
-              {errors.endDate && (
+              {formErrors.endDate && (
                 <p className="text-xs text-red-500 mt-1">
-                  {errors.endDate.message}
+                  {formErrors.endDate.message}
                 </p>
               )}
             </div>
@@ -285,10 +283,11 @@ export function AddBudgetModal({
           <div className="flex flex-col sm:flex-row gap-2 pt-4">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={modalState.isSubmitting || modalState.isLoading}
               className="w-full sm:w-auto"
             >
-              {isSubmitting
+              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {modalState.isSubmitting
                 ? isEditing
                   ? 'Updating...'
                   : t.expenses.adding

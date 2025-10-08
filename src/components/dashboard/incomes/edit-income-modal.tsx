@@ -11,13 +11,15 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, AlertCircle } from 'lucide-react';
+import { useAppTranslations } from '@/hooks/useTranslation';
+import { useModalState } from '@/hooks/useModalState';
 
 interface EditIncomeModalProps {
   incomeId: string;
   onClose: () => void;
 }
-
 
 
 const frequencies = [
@@ -28,11 +30,18 @@ const frequencies = [
 
 export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { income: incomeTranslations, common, errors } = useAppTranslations();
   const income = useSelector((state: RootState) => 
     state.incomes.incomes.find(inc => inc._id === incomeId)
   );
   
-  const [loading, setLoading] = useState(false);
+  const modalState = useModalState({
+    onSuccess: () => {
+      onClose();
+    },
+    successMessage: incomeTranslations?.updateSuccess || 'Income updated successfully',
+  });
+  
   const [formData, setFormData] = useState({
     amount: '',
     source: '',
@@ -66,14 +75,11 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.amount || !formData.source || !formData.category || !formData.description) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
+    await modalState.executeAsync(async () => {
+      if (!formData.amount || !formData.source || !formData.category || !formData.description) {
+        throw new Error(errors?.validation || 'Please fill in all required fields');
+      }
 
-    setLoading(true);
-
-    try {
       const updates = {
         amount: parseFloat(formData.amount),
         source: formData.source,
@@ -90,26 +96,28 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
       
       // API call
       await dispatch(updateIncome({ id: incomeId, updates })).unwrap();
-
-      toast.success('Income updated successfully');
-      onClose();
-    } catch {
-      toast.error('Failed to update income');
-    } finally {
-      setLoading(false);
-    }
+      
+      return updates;
+    }, incomeTranslations?.updateSuccess || 'Income updated successfully');
   };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Income</DialogTitle>
+          <DialogTitle>{incomeTranslations?.editIncome || 'Edit Income'}</DialogTitle>
         </DialogHeader>
+
+        {modalState.error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{modalState.error}</AlertDescription>
+          </Alert>
+        )}
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount *</Label>
+            <Label htmlFor="amount">{common?.amount || 'Amount'} *</Label>
             <Input
               id="amount"
               type="number"
@@ -124,7 +132,7 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="source">Source *</Label>
+              <Label htmlFor="source">{incomeTranslations?.source || 'Source'} *</Label>
               <Input
                 id="source"
                 placeholder="e.g., Company Name, Client Name"
@@ -135,34 +143,34 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
+              <Label htmlFor="category">{common?.category || 'Category'} *</Label>
               <Select
                 value={formData.category}
                 onValueChange={(value) => setFormData({ ...formData, category: value })}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={incomeTranslations?.selectIncomeCategory || 'Select category'} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Salary">Salary</SelectItem>
-                  <SelectItem value="Freelancing">Freelancing</SelectItem>
-                  <SelectItem value="Business">Business</SelectItem>
-                  <SelectItem value="Investment">Investment</SelectItem>
-                  <SelectItem value="Rental">Rental</SelectItem>
-                  <SelectItem value="Commission">Commission</SelectItem>
-                  <SelectItem value="Bonus">Bonus</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="Salary">{incomeTranslations?.sources?.salary || 'Salary'}</SelectItem>
+                  <SelectItem value="Freelancing">{incomeTranslations?.sources?.freelancing || 'Freelancing'}</SelectItem>
+                  <SelectItem value="Business">{incomeTranslations?.sources?.business || 'Business'}</SelectItem>
+                  <SelectItem value="Investment">{incomeTranslations?.sources?.investment || 'Investment'}</SelectItem>
+                  <SelectItem value="Rental">{incomeTranslations?.sources?.rental || 'Rental'}</SelectItem>
+                  <SelectItem value="Commission">{incomeTranslations?.sources?.commission || 'Commission'}</SelectItem>
+                  <SelectItem value="Bonus">{incomeTranslations?.sources?.bonus || 'Bonus'}</SelectItem>
+                  <SelectItem value="Other">{incomeTranslations?.sources?.other || 'Other'}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
+            <Label htmlFor="description">{common?.description || 'Description'} *</Label>
             <Textarea
               id="description"
-              placeholder="Brief description of income source"
+              placeholder={incomeTranslations?.briefDescriptionOfIncomeSource || 'Brief description of income source'}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
@@ -171,7 +179,7 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">{common?.date || 'Date'}</Label>
             <Input
               id="date"
               type="date"
@@ -184,10 +192,10 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="isConnected" className="text-sm font-medium">
-                  Connect to Balance
+                  {incomeTranslations?.connectToBalance || 'Connect to Balance'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Expenses will reduce from this income
+                  {incomeTranslations?.expensesWillReduceFromThisIncome || 'Expenses will reduce from this income'}
                 </p>
               </div>
               <Switch
@@ -200,10 +208,10 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="recurring" className="text-sm font-medium">
-                  Recurring Income
+                  {incomeTranslations?.recurringIncome || 'Recurring Income'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Regular income source
+                  {incomeTranslations?.regularIncomeSource || 'Regular income source'}
                 </p>
               </div>
               <Switch
@@ -237,10 +245,11 @@ export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
 
           <div className="flex flex-col sm:flex-row gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              {common?.cancel || 'Cancel'}
             </Button>
-            <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? 'Updating...' : 'Update Income'}
+            <Button type="submit" disabled={modalState.isSubmitting || modalState.isLoading} className="flex-1">
+              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {modalState.isSubmitting ? 'Updating...' : (incomeTranslations?.editIncome || 'Update Income')}
             </Button>
           </div>
         </form>
