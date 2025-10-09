@@ -28,11 +28,15 @@ const validateLocale = (locale: string): string => {
 };
 
 export default clerkMiddleware(async (auth, req) => {
-  const intlResponse = intlMiddleware(req);
-  if (intlResponse) return intlResponse;
+  const { pathname } = req.nextUrl;
+  
+  // Skip internationalization for API routes
+  if (!pathname.startsWith('/api')) {
+    const intlResponse = intlMiddleware(req);
+    if (intlResponse) return intlResponse;
+  }
 
   const { userId, sessionClaims } = await auth();
-  const { pathname } = req.nextUrl;
   
   const pathSegments = pathname.split('/');
   const locale = validateLocale(pathSegments[1] || 'en');
