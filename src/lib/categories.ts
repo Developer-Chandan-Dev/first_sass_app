@@ -34,7 +34,7 @@ export const BACKEND_CATEGORY_MAP: Record<string, string> = {
 };
 
 // Get translated category label
-export function getCategoryLabel(categoryKey: string, t: ReturnType<typeof import('@/hooks/useTranslation').useAppTranslations>): string {
+export function getCategoryLabel(categoryKey: string, t: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>): string {
   const category = DEFAULT_CATEGORIES.find(cat => cat.key === categoryKey);
   if (category) {
     return (t.expenses.categories as Record<string, string>)[categoryKey] || categoryKey;
@@ -55,7 +55,7 @@ export function getFrontendCategoryKey(backendKey: string): string {
 }
 
 // Create category options for UI
-export function createCategoryOptions(t: ReturnType<typeof import('@/hooks/useTranslation').useAppTranslations>, customCategories: string[] = []) {
+export function createCategoryOptions(t: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>, customCategories: string[] = []) {
   const defaultOptions = DEFAULT_CATEGORIES.map(cat => ({
     key: cat.key,
     label: getCategoryLabel(cat.key, t),

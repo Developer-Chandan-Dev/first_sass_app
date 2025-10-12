@@ -6,12 +6,13 @@ import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Target, Calendar, AlertTriangle } from 'lucide-react';
-import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
+import { formatCurrency } from '@/hooks/i18n/useBaseTranslations'
 import { useLocale } from 'next-intl';
 import { StatsSkeleton } from '@/components/dashboard/shared/loading-wrapper';
 
 export function StatsCards() {
-  const { dashboard, common } = useAppTranslations();
+  const { dashboard, common } = useDashboardTranslations();
   const locale = useLocale();
   const { free, budget, loading, error } = useSelector((state: RootState) => state.overview);
   

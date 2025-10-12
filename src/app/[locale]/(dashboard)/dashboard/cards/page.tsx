@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, Clock } from 'lucide-react';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 export default function CardsPage() {
-  const { pages, dashboard } = useAppTranslations();
+  const { pages, dashboard } = useDashboardTranslations();
   
   return (
     <div className="space-y-6">

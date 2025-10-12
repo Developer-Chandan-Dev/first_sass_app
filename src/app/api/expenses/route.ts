@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
     let body;
     try {
       body = await request.json();
+      console.log("Body: ", body, 29);
     } catch {
       return NextResponse.json({ 
         error: 'Invalid JSON data',
@@ -128,11 +129,7 @@ export async function POST(request: NextRequest) {
       });
     }
     
-    return NextResponse.json({
-      success: true,
-      data: savedExpense,
-      message: 'Expense created successfully'
-    });
+    return NextResponse.json(savedExpense);
   } catch (error) {
     console.error('Error creating expense:', error);
     

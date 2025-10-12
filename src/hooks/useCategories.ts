@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createCategoryOptions } from '@/lib/categories';
-import { useAppTranslations } from './useTranslation';
+import { useDashboardTranslations } from './i18n';
 
 export function useCategories() {
-  const t = useAppTranslations();
+  const t = useDashboardTranslations();
   const [customCategories, setCustomCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 

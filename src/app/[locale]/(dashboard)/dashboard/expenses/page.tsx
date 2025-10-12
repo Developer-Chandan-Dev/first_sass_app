@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { ExpenseOverviewStats } from '@/components/dashboard/expenses/expense-overview-stats';
 import { RecentActivityOverview } from '@/components/dashboard/expenses/recent-activity-overview';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { LucideIcon } from 'lucide-react';
 
 interface ExpenseType {
@@ -23,7 +23,7 @@ interface ExpenseType {
 }
 
 export default function ExpensesOverviewPage() {
-  const { expenses } = useAppTranslations();
+  const { expenses } = useDashboardTranslations();
 
   // Safe access with fallbacks
   const expenseTypes: ExpenseType[] = [

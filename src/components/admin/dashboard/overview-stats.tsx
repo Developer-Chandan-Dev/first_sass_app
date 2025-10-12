@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, DollarSign, CreditCard, TrendingUp } from 'lucide-react';
-import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useDashboardTranslations, formatCurrency } from '@/hooks/i18n';
 import { useLocale } from 'next-intl';
 
 interface StatsData {
@@ -21,7 +21,7 @@ export function OverviewStats() {
     growthRate: 0,
   });
   const [loading, setLoading] = useState(true);
-  const { admin, dashboard } = useAppTranslations();
+  const { admin, dashboard } = useDashboardTranslations();
   const locale = useLocale();
 
   useEffect(() => {

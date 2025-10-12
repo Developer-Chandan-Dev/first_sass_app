@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AlertTriangle } from 'lucide-react';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 // Transactions skeleton component
 function TransactionsSkeleton() {
@@ -56,7 +56,7 @@ const getCategoryIcon = (category: string) => {
 
 export function RecentTransactions() {
   const { free, budget, loading, error } = useSelector((state: RootState) => state.overview);
-  const { expenses } = useAppTranslations();
+  const { expenses } = useDashboardTranslations();
 
   const formatTimeAgo = useCallback((dateString: string) => {
     const date = new Date(dateString);

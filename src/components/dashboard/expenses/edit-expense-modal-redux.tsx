@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertCircle, Loader2} from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { updateExpense, updateExpenseOptimistic, type ExpenseItem } from '@/lib/redux/expense/expenseSlice';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useModalState } from '@/hooks/useModalState';
 import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey, getFrontendCategoryKey } from '@/lib/categories';
@@ -44,7 +44,7 @@ interface EditExpenseModalProps {
 
 export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
   const dispatch = useAppDispatch();
-  const translations = useAppTranslations();
+  const translations = useDashboardTranslations();
   const { expenses, common, errors } = translations;
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
   

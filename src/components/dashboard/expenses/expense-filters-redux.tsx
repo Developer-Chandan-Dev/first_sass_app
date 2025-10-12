@@ -10,7 +10,7 @@ import { Filter, X, RefreshCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { setFilters, fetchExpenses } from '@/lib/redux/expense/expenseSlice';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 interface ExpenseFiltersProps {
   categories?: string[];
@@ -27,7 +27,7 @@ export function ExpenseFilters({
 }: ExpenseFiltersProps) {
   const dispatch = useAppDispatch();
   const { filters, currentPage, pageSize, loading } = useAppSelector(state => state.expenses);
-  const { expenses, common } = useAppTranslations();
+  const { expenses, common } = useDashboardTranslations();
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const periods = [

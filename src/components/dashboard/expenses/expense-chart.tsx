@@ -13,6 +13,18 @@ interface ChartData {
   amount: number;
 }
 
+interface ExpenseData {
+  _id: string;
+  date: string;
+  amount: number;
+  category?: string;
+  reason?: string;
+}
+
+interface ExpenseResponse {
+  expenses: ExpenseData[];
+}
+
 export function ExpenseChart() {
   const { theme } = useTheme();
   const { user } = useUser();
@@ -32,20 +44,31 @@ export function ExpenseChart() {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 6);
 
-        // Fetch both free and budget expenses
-        const [freeResponse, budgetResponse] = await Promise.all([
-          fetch(`/api/expenses?type=free&from=${startDate.toISOString()}&to=${endDate.toISOString()}`),
-          fetch(`/api/expenses?type=budget&from=${startDate.toISOString()}&to=${endDate.toISOString()}`)
-        ]);
+        // Fetch both free and budget expenses with better error handling
+        let freeData: ExpenseResponse = { expenses: [] };
+        let budgetData: ExpenseResponse = { expenses: [] };
         
-        if (!freeResponse.ok || !budgetResponse.ok) {
-          throw new Error('Failed to fetch expense data');
+        try {
+          const freeResponse = await fetch(`/api/expenses?type=free&from=${startDate.toISOString()}&to=${endDate.toISOString()}`);
+          if (freeResponse.ok) {
+            freeData = await freeResponse.json() as ExpenseResponse;
+          } else {
+            console.warn('Free expenses API failed:', freeResponse.status, freeResponse.statusText);
+          }
+        } catch (error) {
+          console.warn('Failed to fetch free expenses:', error);
         }
         
-        const [freeData, budgetData] = await Promise.all([
-          freeResponse.json(),
-          budgetResponse.json()
-        ]);
+        try {
+          const budgetResponse = await fetch(`/api/expenses?type=budget&from=${startDate.toISOString()}&to=${endDate.toISOString()}`);
+          if (budgetResponse.ok) {
+            budgetData = await budgetResponse.json() as ExpenseResponse;
+          } else {
+            console.warn('Budget expenses API failed:', budgetResponse.status, budgetResponse.statusText);
+          }
+        } catch (error) {
+          console.warn('Failed to fetch budget expenses:', error);
+        }
         
         // Combine both types of expenses with null checks
         const expenses = [...(freeData?.expenses || []), ...(budgetData?.expenses || [])];
@@ -63,7 +86,7 @@ export function ExpenseChart() {
         
         // Sum expenses by date with validation (optimized)
         for (const expense of expenses) {
-          if (expense?.date && typeof expense.amount === 'number') {
+          if (expense && expense.date && typeof expense.amount === 'number') {
             const dateStr = new Date(expense.date).toISOString().split('T')[0];
             if (dateStr in dailyTotals) {
               dailyTotals[dateStr] += expense.amount;
@@ -80,7 +103,9 @@ export function ExpenseChart() {
         setData(chartData);
       } catch (error) {
         console.error('Failed to fetch chart data:', error);
-        setError('Failed to load chart data');
+        // Don't show error for empty data, just show empty state
+        setError(null);
+        setData([]);
       } finally {
         setLoading(false);
       }

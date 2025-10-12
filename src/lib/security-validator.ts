@@ -31,7 +31,10 @@ export const expenseValidationSchema = z.object({
   amount: secureAmountSchema,
   category: secureStringSchema.refine(val => val.length <= 100, 'Category too long'),
   reason: secureStringSchema.refine(val => val.length <= 500, 'Description too long'),
-  date: z.string().datetime().optional(),
+  date: z.string().refine(val => {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    return dateRegex.test(val) || !isNaN(Date.parse(val));
+  }, 'Invalid date format').optional(),
   type: z.enum(['free', 'budget']),
   budgetId: secureObjectIdSchema.optional(),
   incomeId: secureObjectIdSchema.optional(),
@@ -46,7 +49,10 @@ export const incomeValidationSchema = z.object({
   source: secureStringSchema.refine(val => val.length <= 200, 'Source too long'),
   category: secureStringSchema.refine(val => val.length <= 100, 'Category too long'),
   description: secureStringSchema.refine(val => val.length <= 1000, 'Description too long'),
-  date: z.string().datetime().optional(),
+  date: z.string().refine(val => {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    return dateRegex.test(val) || !isNaN(Date.parse(val));
+  }, 'Invalid date format').optional(),
   isRecurring: z.boolean().default(false),
   frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
   isConnected: z.boolean().default(false)

@@ -14,13 +14,13 @@ import { RecentActivity } from '@/components/dashboard/expenses/recent-activity'
 import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
 import { Plus, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 
 
 export default function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { expenses } = useAppTranslations();
+  const { expenses } = useDashboardTranslations();
 
 
 
@@ -38,7 +38,10 @@ export default function ExpensesPage() {
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{expenses.freeExpenses}</h2>
           <p className="text-sm sm:text-base text-muted-foreground">{expenses.trackAndManageDailyExpenses}</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
+        <Button 
+          onClick={() => setIsModalOpen(true)} 
+          className="w-full sm:w-auto"
+        >
           <Plus className="mr-2 h-4 w-4" />
           <span className="sm:inline">{expenses.addExpense}</span>
         </Button>
@@ -48,7 +51,7 @@ export default function ExpensesPage() {
         <TabsList className="grid w-full grid-cols-3 h-auto p-1">
           <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">{expenses.overview}</TabsTrigger>
           <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">{expenses.analytics}</TabsTrigger>
-          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">{expenses.title}</TabsTrigger>
+          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">{expenses?.title?.split(" ")[0]}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">

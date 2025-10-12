@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
-import { useAppTranslations } from './useTranslation';
+import { useDashboardTranslations } from './i18n';
 
 interface ModalState {
   isLoading: boolean;
@@ -18,7 +18,7 @@ interface UseModalStateOptions {
 }
 
 export function useModalState(options: UseModalStateOptions = {}) {
-  const { common, errors } = useAppTranslations();
+  const { common, errors } = useDashboardTranslations();
   const [state, setState] = useState<ModalState>({
     isLoading: false,
     error: null,

@@ -3,7 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useLocale } from '@/contexts/locale-context';
 
 interface SmartNavigationButtonProps {
@@ -29,8 +29,14 @@ export function SmartNavigationButton({
 }: SmartNavigationButtonProps) {
   const { isSignedIn, isLoaded } = useUser();
   const { getLocalizedPath } = useLocale();
+  const [mounted, setMounted] = useState(false);
 
-  if (!isLoaded) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent hydration mismatch by showing loading state until mounted
+  if (!mounted || !isLoaded) {
     return (
       <Button size={size} variant={variant} className={className} disabled>
         Loading...

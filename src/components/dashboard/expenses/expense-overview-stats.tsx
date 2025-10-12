@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DollarSign, Calendar, PieChart, BarChart3 } from 'lucide-react';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useAppSelector } from '@/lib/redux/hooks';
 import { StatsSkeleton } from '@/components/dashboard/shared/loading-wrapper';
 
 export function ExpenseOverviewStats() {
-  const { expenses } = useAppTranslations();
+  const { expenses } = useDashboardTranslations();
   const { free, budget, loading } = useAppSelector(state => state.overview);
 
   // Calculate combined stats from Redux state

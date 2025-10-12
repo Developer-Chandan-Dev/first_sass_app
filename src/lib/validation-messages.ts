@@ -1,7 +1,7 @@
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 export function useValidationMessages() {
-  const { t } = useAppTranslations();
+  const { t } = useDashboardTranslations();
 
   return {
     // Common validation messages

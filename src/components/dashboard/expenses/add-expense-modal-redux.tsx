@@ -24,7 +24,7 @@ import {
   addExpenseOptimistic,
 } from '@/lib/redux/expense/expenseSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useModalState } from '@/hooks/useModalState';
 import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey } from '@/lib/categories';
@@ -57,8 +57,8 @@ export function AddExpenseModal({
   onExpenseAdded,
 }: AddExpenseModalProps) {
   const dispatch = useAppDispatch();
-  const translations = useAppTranslations();
-  const { expenses, common, errors } = translations;
+  const translations = useDashboardTranslations();
+  const { expenses, common } = translations;
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
   
   const modalState = useModalState({
@@ -94,30 +94,22 @@ export function AddExpenseModal({
   const affectsBalance = watch('affectsBalance');
 
   useEffect(() => {
+    if (!open) return;
+    
     const fetchData = async () => {
-      if (!open) return;
-      
-      modalState.setLoading(true);
       try {
         const incomesRes = await fetch('/api/incomes/connected');
-        
         if (incomesRes.ok) {
           const incomes = await incomesRes.json();
           setConnectedIncomes(Array.isArray(incomes) ? incomes : []);
-        } else {
-          const errorData = await incomesRes.json().catch(() => ({}));
-          throw new Error(errorData.error || errors?.network || 'Failed to fetch incomes');
         }
-      } catch (error) {
-        modalState.handleError(error, errors?.network || 'Failed to load data');
+      } catch {
         setConnectedIncomes([]);
-      } finally {
-        modalState.setLoading(false);
       }
     };
 
     fetchData();
-  }, [open, expenseType, modalState, errors]);
+  }, [open]);
 
   const onSubmit = async (data: ExpenseFormData) => {
     await modalState.executeAsync(async () => {

@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle } from 'lucide-react';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useModalState } from '@/hooks/useModalState';
 
 interface EditIncomeModalProps {
@@ -30,7 +30,7 @@ const frequencies = [
 
 export function EditIncomeModal({ incomeId, onClose }: EditIncomeModalProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { income: incomeTranslations, common, errors } = useAppTranslations();
+  const { income: incomeTranslations, common, errors } = useDashboardTranslations();
   const income = useSelector((state: RootState) => 
     state.incomes.incomes.find(inc => inc._id === incomeId)
   );

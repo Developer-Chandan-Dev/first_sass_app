@@ -21,11 +21,11 @@ import { toast } from 'sonner';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
 import { updateBudgetSpent } from '@/lib/redux/expense/budgetSlice';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey } from '@/lib/categories';
 
-const createExpenseSchema = (t: ReturnType<typeof useAppTranslations>) => z.object({
+const createExpenseSchema = (t: ReturnType<typeof useDashboardTranslations>) => z.object({
   amount: z.number().min(0.01, t.expenses.form.validation.amountGreaterThanZero),
   budgetId: z.string().min(1, t.expenses.form.validation.categoryRequired),
   category: z.string().min(1, t.expenses.form.validation.categoryRequired),
@@ -65,7 +65,7 @@ interface AddBudgetExpenseModalProps {
 
 export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: AddBudgetExpenseModalProps) {
   const dispatch = useAppDispatch();
-  const t = useAppTranslations();
+  const t = useDashboardTranslations();
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [connectedIncomes, setConnectedIncomes] = useState<ConnectedIncome[]>([]);
   const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
@@ -166,7 +166,8 @@ export function AddBudgetExpenseModal({ open, onOpenChange, onExpenseAdded }: Ad
       toast.dismiss(loadingToast);
 
       if (response.ok) {
-        await response.json();
+        const newExpense = await response.json();
+        console.log('Budget expense created:', newExpense);
         
         // Update stats after successful API response
         dispatch(updateStatsOptimistic({

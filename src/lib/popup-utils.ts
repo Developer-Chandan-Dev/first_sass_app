@@ -107,7 +107,7 @@ export class PopupManager {
 }
 
 // Factory function to create popup manager with translations
-export function createPopupManager(translations: ReturnType<typeof import('@/hooks/useTranslation').useAppTranslations>, type: 'expense' | 'income'): PopupManager {
+export function createPopupManager(translations: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>, type: 'expense' | 'income'): PopupManager {
   const typeTranslations = type === 'expense' ? translations.expenses : translations.income;
   
   const messages: PopupMessages = {

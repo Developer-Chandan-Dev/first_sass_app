@@ -30,10 +30,9 @@ const validateLocale = (locale: string): string => {
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
   
-  // Skip internationalization for API routes
-  if (!pathname.startsWith('/api')) {
-    const intlResponse = intlMiddleware(req);
-    if (intlResponse) return intlResponse;
+  // Handle API routes separately - let them handle their own auth
+  if (pathname.startsWith('/api')) {
+    return;
   }
 
   const { userId, sessionClaims } = await auth();
@@ -41,6 +40,7 @@ export default clerkMiddleware(async (auth, req) => {
   const pathSegments = pathname.split('/');
   const locale = validateLocale(pathSegments[1] || 'en');
 
+  // Check authentication first before applying internationalization
   if (isProtectedRoute(req) && !userId) {
     return Response.redirect(createSafeRedirectUrl(`/${locale}/login`, req.url));
   }
@@ -53,6 +53,10 @@ export default clerkMiddleware(async (auth, req) => {
       return Response.redirect(createSafeRedirectUrl(`/${locale}/dashboard`, req.url));
     }
   }
+  
+  // Apply internationalization after authentication checks
+  const intlResponse = intlMiddleware(req);
+  if (intlResponse) return intlResponse;
 });
 
 export const config = {

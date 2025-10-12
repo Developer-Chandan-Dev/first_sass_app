@@ -1,4 +1,4 @@
-'use client';
+  'use client';
 
 import { useEffect } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -111,7 +111,7 @@ export function RecentActivity({ expenseType = 'free' }: RecentActivityProps) {
 
           <div className="flex-shrink-0 text-right">
             <p className="text-xs font-medium text-red-600 whitespace-nowrap">
-              -₹{expense.amount.toLocaleString()}
+              -₹{expense?.amount?.toLocaleString()}
             </p>
           </div>
         </div>

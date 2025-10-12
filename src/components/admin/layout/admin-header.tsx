@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { UserButton } from '@clerk/nextjs';
 import { ThemeToggle } from '@/components/common/theme-toggle';
 import { DashboardNavButton } from '@/components/common/dashboard-nav-button';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 interface AdminHeaderProps {
   onMenuClick: () => void;
@@ -14,7 +14,7 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ onMenuClick, onToggleCollapse, isCollapsed }: AdminHeaderProps) {
-  const { admin } = useAppTranslations();
+  const { admin } = useDashboardTranslations();
   
   return (
     <header className="bg-card border-b border-border h-16">

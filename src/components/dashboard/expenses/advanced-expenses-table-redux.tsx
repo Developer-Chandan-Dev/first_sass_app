@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import { EditExpenseModal } from './edit-expense-modal-redux';
 import { ExpensePDFExportModal } from './expense-pdf-export-modal';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useExpenseTable } from '@/hooks/dashboard/useExpenseTable';
 import { getExpenseAmountColor, getExpenseTooltip } from '@/lib/financial-styles';
 import { sanitizeString } from '@/lib/input-sanitizer';
@@ -66,7 +66,7 @@ interface AdvancedExpensesTableProps {
 }
 
 export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpensesTableProps) {
-  const { expenses: expensesData, common, table } = useAppTranslations();
+  const { expenses: expensesData, common, table } = useDashboardTranslations();
   const {
     expenses,
     loading,
@@ -260,7 +260,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                       />
                     </TableCell>
                     <TableCell className="py-2 text-xs sm:text-sm">
-                      {new Date(expense.date).toLocaleDateString('en-US', { 
+                      {new Date(expense.date)?.toLocaleDateString('en-US', { 
                         month: 'short', 
                         day: 'numeric' 
                       })}
@@ -295,7 +295,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
                     <TableCell className="text-right font-medium py-2 text-sm">
                       <div className="flex items-center justify-end gap-1">
                         <span className={getExpenseAmountColor(expense.affectsBalance || false)}>
-                          -₹{expense.amount.toLocaleString()}
+                          -₹{expense.amount?.toLocaleString()}
                         </span>
                         {expense.affectsBalance && (
                           <div className="w-2 h-2 bg-red-500 rounded-full" title={sanitizeString(getExpenseTooltip(expense.affectsBalance) || '')} />

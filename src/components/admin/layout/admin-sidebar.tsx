@@ -14,7 +14,7 @@ import {
   type LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useLocale } from '@/contexts/locale-context';
 
 interface AdminSidebarProps {
@@ -25,7 +25,7 @@ interface AdminSidebarProps {
 }
 
 interface NavigationItem {
-  labelKey: keyof ReturnType<typeof useAppTranslations>['admin'];
+  labelKey: keyof ReturnType<typeof useDashboardTranslations>['admin'];
   href: string;
   icon: LucideIcon;
 }
@@ -40,7 +40,7 @@ const navigation: NavigationItem[] = [
 
 export function AdminSidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: AdminSidebarProps) {
   const pathname = usePathname();
-  const { admin } = useAppTranslations();
+  const { admin } = useDashboardTranslations();
   const { getLocalizedPath } = useLocale();
 
   const handleLinkClick = () => {

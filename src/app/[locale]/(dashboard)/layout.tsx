@@ -16,7 +16,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isSignedIn, user } = useUser();
-  const [mounted, setMounted] = useState(false);
+  const [, setMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -43,21 +43,7 @@ export default function DashboardLayout({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  if (!mounted) {
-    return (
-      <div className="flex h-screen bg-background">
-        <div className="hidden lg:block w-64 bg-card border-r border-border" />
-        <div className="flex-1 flex flex-col">
-          <header className="bg-card border-b border-border p-3 sm:p-4 flex justify-between items-center">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold">Dashboard</h1>
-          </header>
-          <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
-            {children}
-          </main>
-        </div>
-      </div>
-    );
-  }
+
 
   const toggleSidebar = () => {
     if (isMobile) {
@@ -68,7 +54,7 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-background" suppressHydrationWarning>
       {/* Mobile Overlay */}
       {isMobile && isMobileMenuOpen && (
         <div 

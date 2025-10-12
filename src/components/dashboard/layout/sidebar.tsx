@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useLocale } from '@/contexts/locale-context';
@@ -23,7 +23,7 @@ import {
 
 interface SidebarItem {
   icon: LucideIcon;
-  labelKey: keyof ReturnType<typeof useAppTranslations>['sidebar'];
+  labelKey: keyof ReturnType<typeof useDashboardTranslations>['sidebar'];
   href: string;
 }
 
@@ -48,7 +48,7 @@ interface SidebarProps {
 
 export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
-  const { sidebar, landing } = useAppTranslations();
+  const { sidebar } = useDashboardTranslations();
   const { getLocalizedPath } = useLocale();
 
   const handleLinkClick = () => {
@@ -67,7 +67,7 @@ export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: Side
         {!isCollapsed && (
           <div className="flex items-center space-x-2 min-w-0">
             <Zap className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 flex-shrink-0" />
-            <h2 className="text-base sm:text-lg font-bold truncate">{landing.title}</h2>
+            <h2 className="text-base sm:text-lg font-bold truncate">TrackWise</h2>
           </div>
         )}
         {!isMobile && (

@@ -24,13 +24,13 @@ import {
   type Budget,
 } from '@/lib/redux/expense/budgetSlice';
 import { updateStatsOptimistic } from '@/lib/redux/expense/overviewSlice';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useModalState } from '@/hooks/useModalState';
 import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey } from '@/lib/categories';
 import { sanitizeString } from '@/lib/input-sanitizer';
 
-const createBudgetSchema = (t: ReturnType<typeof useAppTranslations>) => z.object({
+const createBudgetSchema = (t: ReturnType<typeof useDashboardTranslations>) => z.object({
   name: z.string().min(1, t.expenses?.form?.validation?.titleRequired || 'Title is required'),
   amount: z.number().min(0.01, t.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
   category: z.string().optional(),
@@ -55,7 +55,7 @@ export function AddBudgetModal({
   onBudgetSaved,
 }: AddBudgetModalProps) {
   const dispatch = useAppDispatch();
-  const t = useAppTranslations();
+  const t = useDashboardTranslations();
   const isEditing = !!budget;
 
   const modalState = useModalState({

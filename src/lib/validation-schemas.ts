@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Create validation schemas with internationalized error messages
-export const createExpenseSchema = (translations?: ReturnType<typeof import('@/hooks/useTranslation').useAppTranslations>) => {
+export const createExpenseSchema = (translations?: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>) => {
   return z.object({
     amount: z.number().min(0.01, translations?.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
     category: z.string().min(1, translations?.expenses?.form?.validation?.categoryRequired || 'Category is required'),
@@ -14,7 +14,7 @@ export const createExpenseSchema = (translations?: ReturnType<typeof import('@/h
   });
 };
 
-export const createIncomeSchema = (translations?: ReturnType<typeof import('@/hooks/useTranslation').useAppTranslations>) => {
+export const createIncomeSchema = (translations?: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>) => {
   return z.object({
     amount: z.number().min(0.01, translations?.income?.form?.validation?.amountPositive || 'Amount must be positive'),
     source: z.string().min(1, translations?.income?.form?.validation?.sourceRequired || 'Source is required'),
@@ -27,7 +27,7 @@ export const createIncomeSchema = (translations?: ReturnType<typeof import('@/ho
   });
 };
 
-export const createBudgetSchema = (translations?: ReturnType<typeof import('@/hooks/useTranslation').useAppTranslations>) => {
+export const createBudgetSchema = (translations?: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>) => {
   return z.object({
     name: z.string().min(1, translations?.expenses?.form?.validation?.titleRequired || 'Name is required'),
     amount: z.number().min(0.01, translations?.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be positive'),

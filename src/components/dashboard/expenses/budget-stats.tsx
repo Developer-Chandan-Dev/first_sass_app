@@ -5,13 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Target, DollarSign, Wallet, BarChart3 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
-import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useDashboardTranslations, formatCurrency } from '@/hooks/i18n';
 import { useLocale } from 'next-intl';
 
 export function BudgetStats() {
   const dispatch = useAppDispatch();
   const { budget, loading } = useAppSelector(state => state.overview);
-  const { expenses, dashboard } = useAppTranslations();
+  const { expenses, dashboard } = useDashboardTranslations();
   const locale = useLocale();
 
   useEffect(() => {

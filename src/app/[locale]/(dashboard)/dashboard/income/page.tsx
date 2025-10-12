@@ -12,13 +12,13 @@ import { AddIncomeModal } from '@/components/dashboard/incomes/add-income-modal'
 import { IncomeStats } from '@/components/dashboard/incomes/income-stats';
 import { IncomeCharts } from '@/components/dashboard/incomes/income-charts';
 import { IncomeFilters } from '@/components/dashboard/incomes/income-filters';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 
 
 export default function IncomePage() {
   const dispatch = useDispatch<AppDispatch>();
-  const { income } = useAppTranslations();
+  const { income } = useDashboardTranslations();
   const { filters, currentPage, pageSize } = useSelector(
     (state: RootState) => state.incomes
   );

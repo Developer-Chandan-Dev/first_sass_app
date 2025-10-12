@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { StatsCards } from '@/components/dashboard/shared/stats-cards';
@@ -14,7 +14,7 @@ import { useAppDispatch } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 
 export default function Dashboard() {
-    const { dashboard, sidebar } = useAppTranslations();
+    const { dashboard, sidebar } = useDashboardTranslations();
     const dispatch = useAppDispatch();
 
     useEffect(() => {

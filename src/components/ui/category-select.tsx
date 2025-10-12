@@ -6,7 +6,7 @@ import { Input } from './input';
 
 import { Plus, Check } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { toast } from 'sonner';
 
 interface CategorySelectProps {
@@ -18,7 +18,7 @@ interface CategorySelectProps {
 }
 
 export function CategorySelect({ value, onChange, placeholder, className, id }: CategorySelectProps) {
-  const t = useAppTranslations();
+  const t = useDashboardTranslations();
   const { categoryOptions, addCustomCategory } = useCategories();
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customCategoryName, setCustomCategoryName] = useState('');

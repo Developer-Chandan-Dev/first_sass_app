@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PieChart, Plus, Edit, Trash2, Check, X } from 'lucide-react';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 import { useCategories } from '@/hooks/useCategories';
 import { DEFAULT_CATEGORIES } from '@/lib/categories';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 export default function CategoriesPage() {
-  const { pages } = useAppTranslations();
+  const { pages } = useDashboardTranslations();
   const { categoryOptions, addCustomCategory, loading, refetch } = useCategories();
   const [newCategory, setNewCategory] = useState('');
   const [isAdding, setIsAdding] = useState(false);

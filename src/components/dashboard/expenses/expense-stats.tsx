@@ -5,13 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Calendar, BarChart3, Target } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
-import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
+import { formatCurrency } from '@/hooks/i18n/useBaseTranslations'
 import { useLocale } from 'next-intl';
 
 export function ExpenseStats() {
   const dispatch = useAppDispatch();
   const { free, loading } = useAppSelector(state => state.overview);
-  const { dashboard, expenses } = useAppTranslations();
+  const { dashboard, expenses } = useDashboardTranslations();
   const locale = useLocale();
 
   useEffect(() => {
@@ -76,12 +77,12 @@ export function ExpenseStats() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {statsData.map((stat) => {
+      {statsData.map((stat, index) => {
         const Icon = stat.icon;
         const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
         
         return (
-          <Card key={stat.title}>
+          <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}

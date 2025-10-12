@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, Target, Calendar } from 'lucide-react';
-import { useAppTranslations, formatCurrency } from '@/hooks/useTranslation';
+import { useDashboardTranslations, formatCurrency } from '@/hooks/i18n';
 import { useLocale } from 'next-intl';
 
 interface TranslatedStatsCardsProps {
@@ -12,7 +12,7 @@ interface TranslatedStatsCardsProps {
 }
 
 export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsCardsProps) {
-  const { dashboard, common, expenses, income } = useAppTranslations();
+  const { dashboard, common, expenses, income } = useDashboardTranslations();
   const locale = useLocale();
   const { free, budget, loading } = useSelector((state: RootState) => state.overview);
   

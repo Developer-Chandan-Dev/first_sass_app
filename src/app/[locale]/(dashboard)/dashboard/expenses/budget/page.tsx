@@ -16,14 +16,14 @@ import { RecentActivity } from '@/components/dashboard/expenses/recent-activity'
 import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
 import { Plus, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useAppTranslations } from '@/hooks/useTranslation';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 import { fetchBudgets } from '@/lib/redux/expense/budgetSlice';
 
 
 export default function BudgetExpensesPage() {
     const dispatch = useAppDispatch();
-    const { expenses } = useAppTranslations();
+    const { expenses } = useDashboardTranslations();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { budgets } = useAppSelector(state => state.budgets);

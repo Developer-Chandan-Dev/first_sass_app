@@ -2,13 +2,13 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { useLocale as useNextIntlLocale } from 'next-intl';
-import { useAppTranslations, formatCurrency, formatDate, formatNumber } from '@/hooks/useTranslation';
+import { useDashboardTranslations, formatCurrency, formatDate, formatNumber } from '@/hooks/i18n';
 
 type Locale = 'en' | 'hi' | 'pa' | 'mr';
 
 interface TranslationContextType {
   locale: Locale;
-  translations: ReturnType<typeof useAppTranslations>;
+  translations: ReturnType<typeof useDashboardTranslations>;
   formatCurrency: (amount: number, currency?: string) => string;
   formatDate: (date: Date | string, options?: Intl.DateTimeFormatOptions) => string;
   formatNumber: (number: number) => string;
@@ -50,7 +50,7 @@ const localeConfigs = {
 
 export function TranslationProvider({ children }: TranslationProviderProps) {
   const locale = useNextIntlLocale() as Locale;
-  const translations = useAppTranslations();
+  const translations = useDashboardTranslations();
   const config = localeConfigs[locale] || localeConfigs.en;
 
   const contextValue: TranslationContextType = {
