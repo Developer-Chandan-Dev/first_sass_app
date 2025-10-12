@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default function ContactPage() {
-  const t = useTranslations('pages.contact');
+  const t = useTranslations('userPages.contact');
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />

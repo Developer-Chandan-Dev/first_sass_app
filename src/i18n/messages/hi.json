@@ -253,7 +253,41 @@
     "planExpensesAhead": "अपने खर्चों की अग्रिम योजना बनाएं",
     "expectedRelease": "अपेक्षित रिलीज: अगला अपडेट",
     "workingOnFeatures": "हम उन्नत सुविधाओं पर काम कर रहे हैं",
-    "nextUpdate": "अगला अपडेट"
+    "nextUpdate": "अगला अपडेट",
+    "pages": {
+      "analytics": {
+        "title": "विश्लेषण",
+        "description": "उन्नत विश्लेषण और अंतर्दृष्टि",
+        "comingSoon": "जल्द आ रहा है",
+        "workingOnFeatures": "हम उन्नत सुविधाओं पर काम कर रहे हैं"
+      },
+      "budgets": {
+        "title": "बजट",
+        "description": "अपने बजट प्रबंधित करें",
+        "comingSoon": "जल्द आ रहा है",
+        "workingOnFeatures": "हम उन्नत सुविधाओं पर काम कर रहे हैं"
+      },
+      "cards": {
+        "title": "कार्ड",
+        "description": "अपने कार्ड प्रबंधित करें",
+        "comingSoon": "जल्द आ रहा है"
+      },
+      "categories": {
+        "title": "श्रेणियां",
+        "description": "खर्च श्रेणियों को प्रबंधित करें"
+      },
+      "notifications": {
+        "title": "सूचनाएं",
+        "description": "अपनी सूचनाएं प्रबंधित करें",
+        "comingSoon": "जल्द आ रहा है"
+      },
+      "settings": {
+        "title": "सेटिंग्स",
+        "description": "एप्लिकेशन सेटिंग्स",
+        "comingSoon": "जल्द आ रहा है",
+        "workingOnFeatures": "हम उन्नत सुविधाओं पर काम कर रहे हैं"
+      }
+    }
   },
   "admin": {
     "users": "उपयोगकर्ता",
@@ -286,7 +320,7 @@
     "time": "h:mm a",
     "dateTime": "dd/MM/yyyy h:mm a"
   },
-  "pages": {
+  "usePages": {
     "about": {
       "badge": "हमारे बारे में",
       "title": "के बारे में",

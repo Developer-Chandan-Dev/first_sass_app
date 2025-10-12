@@ -8,7 +8,7 @@ import { Brain, TrendingUp, Shield, Smartphone, PieChart, Zap } from 'lucide-rea
 import Link from 'next/link';
 
 export default function ServicesPage() {
-  const t = useTranslations('pages.services');
+  const t = useTranslations('userPages.services');
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />

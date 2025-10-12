@@ -18,8 +18,21 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const getBaseUrl = () => {
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  if (process.env.NODE_ENV === 'development') {
+    return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  }
+  throw new Error('Missing required environment variable: NEXT_PUBLIC_APP_URL or NEXT_PUBLIC_SITE_URL');
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
+  metadataBase: new URL(getBaseUrl()),
   title: `${seoConfig.siteName} - Smart Expense Management & Budget Tracking`,
   description: `${seoConfig.siteDescription}. Track expenses, manage budgets, and gain insights with our powerful expense management platform.`,
   keywords: 'expense tracker, budget management, personal finance, expense management, financial planning, money tracker, budget planner, expense app',

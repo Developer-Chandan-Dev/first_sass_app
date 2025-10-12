@@ -230,7 +230,41 @@
     "planExpensesAhead": "Plan your expenses ahead",
     "expectedRelease": "Expected release: Next update",
     "workingOnFeatures": "We're working on advanced features",
-    "nextUpdate": "Next update"
+    "nextUpdate": "Next update",
+    "pages": {
+      "analytics": {
+        "title": "Analytics",
+        "description": "Advanced analytics and insights",
+        "comingSoon": "Coming Soon",
+        "workingOnFeatures": "We're working on advanced features"
+      },
+      "budgets": {
+        "title": "Budgets",
+        "description": "Manage your budgets",
+        "comingSoon": "Coming Soon",
+        "workingOnFeatures": "We're working on advanced features"
+      },
+      "cards": {
+        "title": "Cards",
+        "description": "Manage your cards",
+        "comingSoon": "Coming Soon"
+      },
+      "categories": {
+        "title": "Categories",
+        "description": "Manage expense categories"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Manage your notifications",
+        "comingSoon": "Coming Soon"
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Application settings",
+        "comingSoon": "Coming Soon",
+        "workingOnFeatures": "We're working on advanced features"
+      }
+    }
   },
   "admin": {
     "users": "Users",
@@ -263,7 +297,7 @@
     "time": "h:mm a",
     "dateTime": "MM/dd/yyyy h:mm a"
   },
-  "pages": {
+  "userPages": {
     "about": {
       "badge": "About Us",
       "title": "About",
@@ -758,41 +792,7 @@
       "description": "last 30 days"
     }
   },
-  "pages": {
-    "analytics": {
-      "title": "Analytics",
-      "description": "Detailed insights and reports for your expenses",
-      "comingSoon": "Analytics Coming Soon",
-      "workingOnFeatures": "We're working on advanced analytics features including expense trends, category insights, and detailed reports."
-    },
-    "budgets": {
-      "title": "Budgets",
-      "description": "Detailed insights and reports for your expenses",
-      "comingSoon": "Budgets Coming Soon",
-      "workingOnFeatures": "We're working on advanced budgets features including expense trends, category insights, and detailed reports."
-    },
-    "settings": {
-      "title": "Settings",
-      "description": "Detailed insights and reports for your expenses",
-      "comingSoon": "Settings Coming Soon",
-      "workingOnFeatures": "We're working on advanced settings features including expense trends, category insights, and detailed reports."
-    },
-    "categories": {
-      "title": "Categories",
-      "description": "Manage your expense categories",
-      "comingSoon": "Categories Coming Soon"
-    },
-    "cards": {
-      "title": "Cards",
-      "description": "Manage your payment cards",
-      "comingSoon": "Cards Coming Soon"
-    },
-    "notifications": {
-      "title": "Notifications",
-      "description": "Manage your notifications",
-      "comingSoon": "Notifications Coming Soon"
-    }
-  },
+
   "footer": {
     "description": "The future of expense management. Track, analyze, and optimize your finances with AI-powered insights.",
     "product": {

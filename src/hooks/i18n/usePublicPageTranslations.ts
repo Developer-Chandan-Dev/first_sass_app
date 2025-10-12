@@ -15,7 +15,7 @@ export function usePublicPageTranslations() {
   const tFooter = useTranslations('footer');
   const tAuth = useTranslations('auth');
   const tTestimonials = useTranslations('testimonials');
-  const tPages = useTranslations('pages');
+  const tPages = useTranslations('userPages');
   const tStats = useTranslations('stats');
 
   const safeTLanding = createSafeTranslator(tLanding);

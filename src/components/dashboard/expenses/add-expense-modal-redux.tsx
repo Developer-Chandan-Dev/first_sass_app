@@ -113,27 +113,27 @@ export function AddExpenseModal({
 
   const onSubmit = async (data: ExpenseFormData) => {
     await modalState.executeAsync(async () => {
-      // Additional validation with translated messages
-      const sanitizedAmount = typeof data.amount === 'number' ? data.amount : Number(data.amount);
+      // Input validation and sanitization
+      const sanitizedAmount = parseFloat(String(data.amount));
       if (!sanitizedAmount || sanitizedAmount <= 0 || isNaN(sanitizedAmount)) {
         throw new Error(expenses?.form?.validation?.amountGreaterThanZero || 'Please enter a valid amount');
       }
 
-      const sanitizedCategory = typeof data.category === 'string' ? data.category.trim() : '';
+      const sanitizedCategory = String(data.category || '').trim().replace(/[<>"'&]/g, '');
       if (!sanitizedCategory) {
         throw new Error(expenses?.form?.validation?.categoryRequired || 'Please select a category');
       }
 
-      const sanitizedReason = typeof data.reason === 'string' ? data.reason.trim() : '';
+      const sanitizedReason = String(data.reason || '').trim().replace(/[<>"'&]/g, '');
       if (!sanitizedReason) {
         throw new Error(expenses?.form?.validation?.reasonRequired || 'Please enter a description');
       }
 
-      // Only allow expected frequency values
-      const allowedFrequencies = ['daily', 'weekly', 'monthly', 'yearly'];
-      let sanitizedFrequency: 'daily' | 'weekly' | 'monthly' | 'yearly' | undefined = undefined;
-      if (data.frequency && allowedFrequencies.includes(data.frequency)) {
-        sanitizedFrequency = data.frequency as 'daily' | 'weekly' | 'monthly' | 'yearly';
+      // Whitelist frequency values
+      const allowedFrequencies = ['daily', 'weekly', 'monthly', 'yearly'] as const;
+      let sanitizedFrequency: typeof allowedFrequencies[number] | undefined = undefined;
+      if (data.frequency && allowedFrequencies.includes(data.frequency as typeof allowedFrequencies[number])) {
+        sanitizedFrequency = data.frequency as typeof allowedFrequencies[number];
       }
 
       const requestData = {

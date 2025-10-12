@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default function PricingPage() {
-  const t = useTranslations('pages.pricing');
+  const t = useTranslations('userPages.pricing');
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
