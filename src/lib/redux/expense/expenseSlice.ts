@@ -14,6 +14,7 @@ export interface ExpenseItem {
   frequency?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   affectsBalance?: boolean;
   incomeId?: string;
+  udpatedAt?: string;
 }
 
 export interface ExpenseFilters {

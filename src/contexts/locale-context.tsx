@@ -1,12 +1,13 @@
 'use client';
 
-import { createContext, useContext, ReactNode } from 'react';
-import { useParams } from 'next/navigation';
-
-type Locale = 'en' | 'hi' | 'pa' | 'mr';
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import { useParams, useRouter, usePathname } from 'next/navigation';
+import { SUPPORTED_LOCALES, DEFAULT_LOCALE, STORAGE_KEY, type SupportedLocale } from '@/lib/supported-locales';
 
 interface LocaleContextType {
-  locale: Locale;
+  locale: SupportedLocale;
+  setLocale: (locale: SupportedLocale) => void;
+  availableLocales: readonly SupportedLocale[];
   getLocalizedPath: (path: string) => string;
 }
 
@@ -18,7 +19,29 @@ interface LocaleProviderProps {
 
 export function LocaleProvider({ children }: LocaleProviderProps) {
   const params = useParams();
-  const locale = (params.locale as Locale) || 'en';
+  const router = useRouter();
+  const pathname = usePathname();
+  const initialLocale = (params.locale as SupportedLocale) || DEFAULT_LOCALE;
+  const [locale, setLocaleState] = useState<SupportedLocale>(initialLocale);
+
+  // Load saved language preference on mount
+  useEffect(() => {
+    const savedLocale = localStorage.getItem(STORAGE_KEY) as SupportedLocale;
+    if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale)) {
+      setLocaleState(savedLocale);
+    }
+  }, []);
+
+  const setLocale = (newLocale: SupportedLocale) => {
+    if (!SUPPORTED_LOCALES.includes(newLocale)) return;
+    
+    localStorage.setItem(STORAGE_KEY, newLocale);
+    setLocaleState(newLocale);
+    
+    const currentPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
+    const newPath = `/${newLocale}${currentPath}`;
+    router.push(newPath);
+  };
 
   const getLocalizedPath = (path: string): string => {
     if (path.startsWith('/')) {
@@ -28,7 +51,12 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   };
 
   return (
-    <LocaleContext.Provider value={{ locale, getLocalizedPath }}>
+    <LocaleContext.Provider value={{ 
+      locale, 
+      setLocale, 
+      availableLocales: SUPPORTED_LOCALES,
+      getLocalizedPath 
+    }}>
       {children}
     </LocaleContext.Provider>
   );

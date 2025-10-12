@@ -41,6 +41,7 @@ import { useDashboardTranslations } from '@/hooks/i18n';
 import { useExpenseTable } from '@/hooks/dashboard/useExpenseTable';
 import { getExpenseAmountColor, getExpenseTooltip } from '@/lib/financial-styles';
 import { sanitizeString } from '@/lib/input-sanitizer';
+import { ExpenseItem } from '@/lib/redux/expense/expenseSlice';
 
 // Table skeleton component
 function ExpenseTableSkeleton({ expenseType }: { expenseType: 'free' | 'budget' }) {
@@ -412,7 +413,7 @@ export function AdvancedExpensesTable({ expenseType = 'free' }: AdvancedExpenses
           setIsPDFExportOpen(false);
           setIsSelectedExport(false);
         }}
-        expenses={isSelectedExport ? expenses.filter(expense => selectedRows.includes(expense._id)) : expenses}
+        expenses={isSelectedExport ? expenses.filter((expense: ExpenseItem) => selectedRows.includes(expense._id)) : expenses}
         isSelectedExport={isSelectedExport}
         selectedCount={selectedRows.length}
       />

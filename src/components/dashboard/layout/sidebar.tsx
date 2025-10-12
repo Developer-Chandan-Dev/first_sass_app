@@ -6,6 +6,7 @@ import { useDashboardTranslations } from '@/hooks/i18n';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useLocale } from '@/contexts/locale-context';
+import { LanguageSwitcher } from '@/components/common/language-switcher';
 import { 
   LayoutDashboard, 
   Receipt, 
@@ -109,6 +110,10 @@ export function Sidebar({ isCollapsed, onToggle, isMobile, onMobileClose }: Side
           );
         })}
       </nav>
+      
+      <div className="p-2 border-t">
+        {!isCollapsed && <LanguageSwitcher />}
+      </div>
     </div>
   );
 }
