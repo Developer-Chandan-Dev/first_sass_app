@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { ExpenseOverviewStats } from '@/components/dashboard/expenses/expense-overview-stats';
 import { RecentActivityOverview } from '@/components/dashboard/expenses/recent-activity-overview';
+import { AdvancedAllExpensesTable } from '@/components/dashboard/expenses/advanced-all-expenses-table';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
@@ -112,6 +113,9 @@ export default function ExpensesOverviewPage() {
         })}
       </div>
 
+      {/* Advanced All Expenses Table */}
+      <AdvancedAllExpensesTable />
+      
       {/* Recent Activity Preview */}
       <Card>
         <CardHeader>

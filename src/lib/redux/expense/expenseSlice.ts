@@ -77,7 +77,7 @@ interface FetchExpensesResponse {
 // Async thunk for fetching expenses (only when needed)
 export const fetchExpenses = createAsyncThunk<
   FetchExpensesResponse,
-  { expenseType: 'free' | 'budget'; filters: ExpenseFilters; page: number; pageSize: number }
+  { expenseType: 'free' | 'budget' | 'all'; filters: ExpenseFilters; page: number; pageSize: number }
 >(
   'expenses/fetchExpenses',
   async (params) => {

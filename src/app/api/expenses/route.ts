@@ -184,7 +184,12 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     // Build query
-    const query: Record<string, unknown> = { userId, type };
+    const query: Record<string, unknown> = { userId };
+    
+    // Add type filter only if not 'all'
+    if (type !== 'all') {
+      query.type = type;
+    }
 
     // Search filter - sanitize search input to prevent XSS
     if (search) {
@@ -258,8 +263,8 @@ export async function GET(request: NextRequest) {
     sortObj[validSortBy] = validSortOrder;
     
     let expenses;
-    if (type === 'budget') {
-      // For budget expenses, populate budget name
+    if (type === 'budget' || type === 'all') {
+      // For budget expenses or all expenses, populate budget name
       expenses = await Expense.aggregate([
         { $match: query },
         {
