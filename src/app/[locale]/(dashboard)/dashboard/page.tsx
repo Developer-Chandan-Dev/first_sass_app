@@ -12,6 +12,7 @@ import { safeGet } from '@/lib/safe-access';
 import { Clock, TrendingUp, Target, PieChart, Calendar, Bell } from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 export default function Dashboard() {
     const { dashboard, sidebar } = useDashboardTranslations();
@@ -47,10 +48,11 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">{safeGet(dashboard, 'overview', 'Dashboard Overview')}</h2>
-        <p className="text-muted-foreground">{safeGet(dashboard, 'description', 'Track your financial progress and manage expenses efficiently.')}</p>
-      </div>
+      <PageHeader
+        title={safeGet(dashboard, 'overview', 'Dashboard Overview')}
+        description={safeGet(dashboard, 'description', 'Track your financial progress and manage expenses efficiently.')}
+        showBreadcrumbs={false}
+      />
       
       <ErrorBoundary>
         <StatsCards />

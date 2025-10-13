@@ -12,9 +12,9 @@ import { ExpenseReportChart } from '@/components/dashboard/expenses/expense-repo
 
 import { RecentActivity } from '@/components/dashboard/expenses/recent-activity';
 import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
-import { Plus, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
+import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 
 
@@ -26,26 +26,16 @@ export default function ExpensesPage() {
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <Button variant="ghost" size="sm" asChild className="w-fit">
-        <Link href="/dashboard/expenses">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {expenses.backToExpenses}
-        </Link>
-      </Button>
-      
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div className="text-center sm:text-left">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{expenses.freeExpenses}</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">{expenses.trackAndManageDailyExpenses}</p>
-        </div>
-        <Button 
-          onClick={() => setIsModalOpen(true)} 
-          className="w-full sm:w-auto"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          <span className="sm:inline">{expenses.addExpense}</span>
-        </Button>
-      </div>
+      <PageHeader
+        title={expenses.freeExpenses}
+        description={expenses.trackAndManageDailyExpenses}
+        actions={
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            {expenses.addExpense}
+          </Button>
+        }
+      />
 
       <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
         <TabsList className="grid w-full grid-cols-3 h-auto p-1">

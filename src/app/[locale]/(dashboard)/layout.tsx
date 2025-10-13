@@ -113,7 +113,9 @@ export default function DashboardLayout({
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-20 md:pb-6 relative">
-          {children}
+          <div className="space-y-4">
+            {children}
+          </div>
           <FloatingActionButton />
         </main>
         <BottomNavigation />

@@ -12,6 +12,7 @@ import { ExpenseOverviewStats } from '@/components/dashboard/expenses/expense-ov
 import { RecentActivityOverview } from '@/components/dashboard/expenses/recent-activity-overview';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { LucideIcon } from 'lucide-react';
+import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 interface ExpenseType {
   title: string;
@@ -57,12 +58,10 @@ export default function ExpensesOverviewPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">{expenses?.title || 'Expense Management'}</h2>
-          <p className="text-muted-foreground">{expenses?.subTitle || 'Choose how you want to track your expenses'}</p>
-        </div>
-      </div>
+      <PageHeader
+        title={expenses?.title || 'Expense Management'}
+        description={expenses?.subTitle || 'Choose how you want to track your expenses'}
+      />
 
       {/* Quick Stats */}
       <ExpenseOverviewStats />
