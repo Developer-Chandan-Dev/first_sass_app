@@ -15,12 +15,15 @@ import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-
 import { Plus } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
+import { MobileFAB } from '@/components/dashboard/shared/mobile-fab';
+import { useMobile } from '@/hooks/use-mobile';
 
 
 
 export default function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { expenses } = useDashboardTranslations();
+  const { isMobile } = useMobile();
 
 
 
@@ -30,10 +33,12 @@ export default function ExpensesPage() {
         title={expenses.freeExpenses}
         description={expenses.trackAndManageDailyExpenses}
         actions={
-          <Button onClick={() => setIsModalOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {expenses.addExpense}
-          </Button>
+          !isMobile ? (
+            <Button onClick={() => setIsModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              {expenses.addExpense}
+            </Button>
+          ) : null
         }
       />
 
@@ -77,6 +82,11 @@ export default function ExpensesPage() {
           <AdvancedExpensesTable expenseType="free" />
         </TabsContent>
       </Tabs>
+      
+      <MobileFAB 
+        onClick={() => setIsModalOpen(true)}
+        label={expenses.addExpense}
+      />
       
       <AddExpenseModal 
         open={isModalOpen} 

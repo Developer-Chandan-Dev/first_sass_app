@@ -40,7 +40,7 @@ export function BreadcrumbNavigation({
     // Add home if requested
     if (showHome) {
       items.push({
-        label: dashboard.home || 'Home',
+        label: dashboard.overview || 'Home',
         href: '/',
         isActive: segments.length === 0
       });
@@ -83,7 +83,7 @@ export function BreadcrumbNavigation({
     
     // Override with translations where available
     const translationMap: Record<string, string> = {
-      'dashboard': dashboard.title || config.label,
+      'dashboard': dashboard.overview || config.label,
       'expenses': expenses.title || config.label,
       'free': expenses.freeExpenses || config.label,
       'budget': expenses.budgetExpenses || config.label

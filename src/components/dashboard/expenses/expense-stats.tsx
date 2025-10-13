@@ -9,6 +9,7 @@ import { formatCurrency } from '@/hooks/i18n/useBaseTranslations'
 import { useLocale } from 'next-intl';
 import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { UniversalStatCard } from '../shared/universal-stat-card';
+import { MobileStatsGrid } from '../shared/mobile-stats-grid';
 
 export function ExpenseStats() {
   const dispatch = useAppDispatch();
@@ -75,7 +76,7 @@ export function ExpenseStats() {
 
   if (loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <MobileStatsGrid>
         {[1, 2, 3, 4].map((i) => (
           <UniversalStatCard
             key={i}
@@ -85,12 +86,12 @@ export function ExpenseStats() {
             className="animate-pulse"
           />
         ))}
-      </div>
+      </MobileStatsGrid>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <MobileStatsGrid>
       {statsData.map((stat, index) => (
         <UniversalStatCard
           key={index}
@@ -107,6 +108,6 @@ export function ExpenseStats() {
           getLocalizedPath={getLocalizedPath}
         />
       ))}
-    </div>
+    </MobileStatsGrid>
   );
 }

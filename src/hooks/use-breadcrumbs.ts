@@ -32,7 +32,7 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
     // Add home if requested
     if (showHome) {
       items.push({
-        label: dashboard.home || 'Home',
+        label: dashboard.overview || 'Home',
         href: '/',
         isActive: segments.length === 0
       });
@@ -81,7 +81,7 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
 
     // Handle dynamic segments and provide localized labels
     const segmentMap: Record<string, string> = {
-      'dashboard': dashboard.title || 'Dashboard',
+      'dashboard': dashboard.overview || 'Dashboard',
       'expenses': expenses.title || 'Expenses',
       'income': 'Income',
       'budgets': 'Budgets',

@@ -3,7 +3,6 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { BreadcrumbNavigation } from './breadcrumb-navigation';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 interface PageHeaderProps {

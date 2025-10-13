@@ -72,8 +72,8 @@ export function UniversalStatCard({
   const cardContent = (
     <>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground truncate">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate">
             {title}
           </CardTitle>
           {actions.length > 0 && (
@@ -82,16 +82,16 @@ export function UniversalStatCard({
             </Badge>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
           {progress !== undefined && (
             <ProgressRing 
               progress={progress} 
-              size={24} 
+              size={20} 
               strokeWidth={2}
               className={cn('transition-all duration-300', isHovered && 'scale-110')}
             />
           )}
-          <Icon className={cn('h-4 w-4 text-muted-foreground flex-shrink-0 transition-all', isHovered && 'scale-110')} />
+          <Icon className={cn('h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0 transition-all', isHovered && 'scale-110')} />
           {href && (
             <ArrowRight className={cn(
               'h-3 w-3 text-muted-foreground transition-all duration-300',
@@ -103,7 +103,7 @@ export function UniversalStatCard({
       
       <CardContent className="pb-3">
         <div className="flex items-center justify-between mb-2">
-          <div className={cn('text-2xl font-bold truncate transition-all', isHovered && href && 'text-primary')} title={value}>
+          <div className={cn('text-lg sm:text-2xl font-bold truncate transition-all', isHovered && href && 'text-primary')} title={value}>
             {value}
           </div>
           {extraInfo && (
@@ -119,15 +119,15 @@ export function UniversalStatCard({
             <div className="flex items-center text-xs text-muted-foreground">
               {change && (
                 <>
-                  <div className={cn('mr-1 h-3 w-3 rounded-full transition-all', 
+                  <div className={cn('mr-1 h-2 w-2 sm:h-3 sm:w-3 rounded-full transition-all', 
                     `bg-${trend === 'up' ? 'green' : trend === 'down' ? 'red' : 'blue'}-500`,
                     isHovered && 'animate-pulse'
                   )} />
-                  <span className={trendColors[trend]}>{change}</span>
+                  <span className={cn('text-xs', trendColors[trend])}>{change}</span>
                 </>
               )}
               {description && (
-                <span className={cn('truncate', change && 'ml-1')}>{description}</span>
+                <span className={cn('truncate text-xs', change && 'ml-1')}>{description}</span>
               )}
             </div>
             
