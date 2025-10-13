@@ -1,19 +1,21 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, DollarSign, Calendar, BarChart3, Target } from 'lucide-react';
+import { DollarSign, Calendar, BarChart3, Target, Plus, Eye } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 import { formatCurrency } from '@/hooks/i18n/useBaseTranslations'
 import { useLocale } from 'next-intl';
+import { useLocale as useLocaleContext } from '@/contexts/locale-context';
+import { UniversalStatCard } from '../shared/universal-stat-card';
 
 export function ExpenseStats() {
   const dispatch = useAppDispatch();
   const { free, loading } = useAppSelector(state => state.overview);
   const { dashboard, expenses } = useDashboardTranslations();
   const locale = useLocale();
+  const { getLocalizedPath } = useLocaleContext();
 
   useEffect(() => {
     dispatch(refreshStats('free'));
@@ -26,33 +28,48 @@ export function ExpenseStats() {
       title: dashboard.totalSpent,
       value: formatCurrency(free.totalSpent, 'INR', locale),
       change: `${free.monthlyChange > 0 ? '+' : ''}${free.monthlyChange}%`,
-      trend: free.monthlyChange >= 0 ? 'up' : 'down',
+      trend: free.monthlyChange >= 0 ? 'up' as const : 'down' as const,
       icon: DollarSign,
-      description: dashboard.vsLastMonth
+      description: dashboard.vsLastMonth,
+      href: '/dashboard/expenses',
+      actions: [
+        { icon: Plus, label: 'Add Expense', href: '/dashboard/expenses/free', variant: 'default' as const },
+        { icon: Eye, label: 'View All', href: '/dashboard/expenses', variant: 'outline' as const }
+      ],
+      status: free.totalSpent > 50000 ? 'high' as const : free.totalSpent > 20000 ? 'medium' as const : 'low' as const,
+      extraInfo: `₹${(free.totalSpent / 30).toFixed(0)}/day`
     },
     {
       title: expenses.totalExpenses,
       value: free.totalExpenses.toString(),
       change: `${free.expenseChange > 0 ? '+' : ''}${free.expenseChange}`,
-      trend: free.expenseChange >= 0 ? 'up' : 'down',
+      trend: free.expenseChange >= 0 ? 'up' as const : 'down' as const,
       icon: BarChart3,
-      description: dashboard.vsLastMonth
+      description: dashboard.vsLastMonth,
+      href: '/dashboard/expenses',
+      actions: [
+        { icon: Plus, label: 'Add Transaction', href: '/dashboard/expenses/free', variant: 'default' as const },
+        { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics', variant: 'outline' as const }
+      ],
+      status: free.totalExpenses > 50 ? 'high' as const : free.totalExpenses > 20 ? 'medium' as const : 'low' as const
     },
     {
       title: expenses?.averageExpense,
       value: formatCurrency(Math.round(averageExpense), 'INR', locale),
       change: free.totalExpenses > 0 ? formatCurrency(Math.round(averageExpense), 'INR', locale) : formatCurrency(0, 'INR', locale),
-      trend: 'neutral',
+      trend: 'neutral' as const,
       icon: Target,
-      description: dashboard.perTransaction
+      description: dashboard.perTransaction,
+      status: 'medium' as const
     },
     {
       title: dashboard?.previousMonth,
       value: formatCurrency(free.previousMonthSpent, 'INR', locale),
       change: `${free.previousMonthExpenses} ${expenses.title.toLowerCase()}`,
-      trend: 'neutral',
+      trend: 'neutral' as const,
       icon: Calendar,
-      description: expenses?.lastMonth || dashboard.lastMonth
+      description: expenses?.lastMonth || dashboard.lastMonth,
+      status: 'low' as const
     }
   ];
 
@@ -60,16 +77,13 @@ export function ExpenseStats() {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="h-4 w-20 bg-muted rounded animate-pulse" />
-              <div className="h-4 w-4 bg-muted rounded animate-pulse" />
-            </CardHeader>
-            <CardContent>
-              <div className="h-8 w-24 bg-muted rounded animate-pulse mb-2" />
-              <div className="h-3 w-32 bg-muted rounded animate-pulse" />
-            </CardContent>
-          </Card>
+          <UniversalStatCard
+            key={i}
+            title="Loading..."
+            value="..."
+            icon={DollarSign}
+            className="animate-pulse"
+          />
         ))}
       </div>
     );
@@ -77,33 +91,22 @@ export function ExpenseStats() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {statsData.map((stat, index) => {
-        const Icon = stat.icon;
-        const TrendIcon = stat.trend === 'up' ? TrendingUp : TrendingDown;
-        
-        return (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.title}
-              </CardTitle>
-              <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="flex items-center text-xs text-muted-foreground">
-                <TrendIcon className={`mr-1 h-3 w-3 ${
-                  stat.trend === 'up' ? 'text-green-500' : 'text-red-500'
-                }`} />
-                <span className={stat.trend === 'up' ? 'text-green-500' : 'text-red-500'}>
-                  {stat.change}
-                </span>
-                <span className="ml-1">{stat.description}</span>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+      {statsData.map((stat, index) => (
+        <UniversalStatCard
+          key={index}
+          title={stat.title}
+          value={stat.value}
+          change={stat.change}
+          trend={stat.trend}
+          icon={stat.icon}
+          description={stat.description}
+          href={stat.href}
+          actions={stat.actions}
+          status={stat.status}
+          extraInfo={stat.extraInfo}
+          getLocalizedPath={getLocalizedPath}
+        />
+      ))}
     </div>
   );
 }

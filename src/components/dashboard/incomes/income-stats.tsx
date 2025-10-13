@@ -4,8 +4,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, DollarSign, Calendar, Repeat, Target } from 'lucide-react';
+import { DollarSign, Calendar, Repeat, Target, Plus, Eye, BarChart3 } from 'lucide-react';
 import { useMemo } from 'react';
+import { useLocale as useLocaleContext } from '@/contexts/locale-context';
+import { UniversalStatCard } from '../shared/universal-stat-card';
 
 function StatCardSkeleton() {
   return (
@@ -41,6 +43,7 @@ function InsightCardSkeleton() {
 
 export function IncomeStats() {
   const { incomes, totalIncome, monthlyIncome, loading } = useSelector((state: RootState) => state.incomes);
+  const { getLocalizedPath } = useLocaleContext();
 
   const stats = useMemo(() => {
     if (loading) {
@@ -138,15 +141,24 @@ export function IncomeStats() {
       change: `${stats.totalEntries} entries`,
       trend: 'neutral' as const,
       icon: DollarSign,
-      description: 'All time earnings'
+      description: 'All time earnings',
+      href: '/dashboard/income',
+      actions: [
+        { icon: Plus, label: 'Add Income', href: '/dashboard/income', variant: 'default' as const },
+        { icon: Eye, label: 'View All', href: '/dashboard/income', variant: 'outline' as const }
+      ],
+      status: stats.totalIncome > 100000 ? 'high' as const : stats.totalIncome > 50000 ? 'medium' as const : 'low' as const,
+      extraInfo: `₹${stats.avgIncome.toLocaleString()}/avg`
     },
     {
       title: 'Monthly Income',
       value: `₹${stats.monthlyIncome.toLocaleString()}`,
       change: `${stats.monthlyChange >= 0 ? '+' : ''}${stats.monthlyChange.toFixed(1)}%`,
-      trend: stats.monthlyChange >= 0 ? 'up' : 'down' as const,
+      trend: stats.monthlyChange >= 0 ? 'up' as const : 'down' as const,
       icon: Calendar,
-      description: 'vs last month'
+      description: 'vs last month',
+      href: '/dashboard/income',
+      status: stats.monthlyChange >= 10 ? 'high' as const : stats.monthlyChange >= 0 ? 'medium' as const : 'low' as const
     },
     {
       title: 'Recurring Income',
@@ -154,15 +166,22 @@ export function IncomeStats() {
       change: `${stats.recurringCount} sources`,
       trend: 'up' as const,
       icon: Repeat,
-      description: 'automated income'
+      description: 'automated income',
+      href: '/dashboard/income',
+      actions: [
+        { icon: Plus, label: 'Add Recurring', href: '/dashboard/income', variant: 'default' as const },
+        { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics', variant: 'outline' as const }
+      ],
+      status: stats.recurringCount > 3 ? 'high' as const : stats.recurringCount > 1 ? 'medium' as const : 'low' as const
     },
     {
       title: 'Weekly Income',
       value: `₹${stats.weeklyIncome.toLocaleString()}`,
       change: `Avg ₹${stats.avgIncome.toLocaleString()}`,
       trend: 'neutral' as const,
-      icon: TrendingUp,
-      description: 'this week'
+      icon: Target,
+      description: 'this week',
+      status: 'medium' as const
     }
   ];
 
@@ -170,37 +189,22 @@ export function IncomeStats() {
     <div className="space-y-4">
       {/* Main Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {statCards.map((stat) => {
-          const Icon = stat.icon;
-          const TrendIcon = stat.trend === 'up' ? TrendingUp : stat.trend === 'down' ? TrendingDown : Target;
-          
-          return (
-            <Card key={stat.title} className="relative overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">
-                  {stat.title}
-                </CardTitle>
-                <Icon className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-lg sm:text-2xl font-bold">{stat.value}</div>
-                <div className="flex items-center text-xs text-muted-foreground mt-1">
-                  <TrendIcon className={`mr-1 h-3 w-3 ${
-                    stat.trend === 'up' ? 'text-green-500' : 
-                    stat.trend === 'down' ? 'text-red-500' : 'text-blue-500'
-                  }`} />
-                  <span className={
-                    stat.trend === 'up' ? 'text-green-500' : 
-                    stat.trend === 'down' ? 'text-red-500' : 'text-blue-500'
-                  }>
-                    {stat.change}
-                  </span>
-                  <span className="ml-1">{stat.description}</span>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {statCards.map((stat) => (
+          <UniversalStatCard
+            key={stat.title}
+            title={stat.title}
+            value={stat.value}
+            change={stat.change}
+            trend={stat.trend}
+            icon={stat.icon}
+            description={stat.description}
+            href={stat.href}
+            actions={stat.actions}
+            status={stat.status}
+            extraInfo={stat.extraInfo}
+            getLocalizedPath={getLocalizedPath}
+          />
+        ))}
       </div>
 
       {/* Additional Insights */}
