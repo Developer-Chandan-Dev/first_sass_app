@@ -33,6 +33,7 @@ import { sanitizeString } from '@/lib/input-sanitizer';
 import { getExpenseAmountColor, getExpenseTooltip } from '@/lib/financial-styles';
 import { EditExpenseModal } from './edit-expense-modal-redux';
 import { ExpensePDFExportModal } from './expense-pdf-export-modal';
+import { CategoryFilter } from '../shared/category-filter';
 
 interface AdvancedAllExpensesTableProps {
   className?: string;
@@ -234,19 +235,11 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
             </div>
           </div>
           <div className="flex gap-2">
-            <Select value={filters.category || 'all'} onValueChange={(value) => handleFilterChange('category', value === 'all' ? '' : value)}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="food">Food</SelectItem>
-                <SelectItem value="transport">Transport</SelectItem>
-                <SelectItem value="shopping">Shopping</SelectItem>
-                <SelectItem value="bills">Bills</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+            <CategoryFilter
+              value={filters.category || ''}
+              onValueChange={(value) => handleFilterChange('category', value)}
+              className="w-40"
+            />
 
             <Select value={filters.period || 'all'} onValueChange={(value) => handleFilterChange('period', value)}>
               <SelectTrigger className="w-32">

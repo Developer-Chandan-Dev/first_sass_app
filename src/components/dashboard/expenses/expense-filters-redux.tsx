@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { setFilters, fetchExpenses } from '@/lib/redux/expense/expenseSlice';
 import { useDashboardTranslations } from '@/hooks/i18n';
+import { CategoryFilter } from '../shared/category-filter';
 
 interface ExpenseFiltersProps {
   categories?: string[];
@@ -141,16 +142,15 @@ export function ExpenseFilters({
           <div className="space-y-4 pt-4 border-t">
             {/* Category, Recurring, and Budget in a row on larger screens */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <SelectFilter
-                label={common.category}
-                value={filters.category}
-                onValueChange={(value) => updateFilter('category', value)}
-                options={[
-                  { value: 'all', label: expenses.allCategories },
-                  ...categories.map(cat => ({ value: cat, label: cat }))
-                ]}
-                placeholder={expenses.allCategories}
-              />
+              <div>
+                <Label className="text-sm font-medium">{common.category}</Label>
+                <div className="mt-2">
+                  <CategoryFilter
+                    value={filters.category || ''}
+                    onValueChange={(value) => updateFilter('category', value)}
+                  />
+                </div>
+              </div>
 
               <SelectFilter
                 label={expenses.recurring}
