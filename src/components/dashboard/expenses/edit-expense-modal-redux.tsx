@@ -45,7 +45,7 @@ interface EditExpenseModalProps {
 export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
   const dispatch = useAppDispatch();
   const translations = useDashboardTranslations();
-  const { expenses, common, errors } = translations;
+  const { expenses, common } = translations;
   const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
   
   const modalState = useModalState({

@@ -12,6 +12,7 @@ import { formatCurrency } from '@/hooks/i18n/useBaseTranslations';
 import { useLocale } from 'next-intl';
 import { useMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
+import { ExpenseItem } from '@/lib/redux/expense/expenseSlice';
 
 interface MobileExpenseListProps {
   expenseType: 'free' | 'budget';
