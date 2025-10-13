@@ -1,13 +1,20 @@
 'use client';
 
-import { ChevronRight, Home } from 'lucide-react';
+import { ChevronRight, Home, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { getBreadcrumbConfig, isDynamicSegment, getDynamicSegmentLabel } from '@/lib/breadcrumb-config';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface BreadcrumbItem {
   label: string;
@@ -96,15 +103,19 @@ export function BreadcrumbNavigation({
     return null;
   }
 
+  const currentItem = breadcrumbs[breadcrumbs.length - 1];
+  const parentItems = breadcrumbs.slice(0, -1);
+
   return (
     <nav 
       className={cn(
-        'flex items-center space-x-1 text-sm text-muted-foreground mb-4',
+        'flex items-center text-sm text-muted-foreground mb-4',
         className
       )}
       aria-label="Breadcrumb"
     >
-      <ol className="flex items-center space-x-1">
+      {/* Desktop view */}
+      <ol className="hidden sm:flex items-center space-x-1">
         {breadcrumbs.map((item, index) => (
           <li key={index} className="flex items-center">
             {index > 0 && (
@@ -112,12 +123,10 @@ export function BreadcrumbNavigation({
             )}
             
             {item.href === '' ? (
-              // Ellipsis item
               <span className="px-2 py-1 text-muted-foreground/60">
                 {item.label}
               </span>
             ) : item.isActive ? (
-              // Active item (current page)
               <span 
                 className="px-2 py-1 font-medium text-foreground bg-muted/50 rounded-md"
                 aria-current="page"
@@ -129,7 +138,6 @@ export function BreadcrumbNavigation({
                 )}
               </span>
             ) : (
-              // Clickable link
               <Link
                 href={getLocalizedPath(item.href)}
                 className={cn(
@@ -147,6 +155,50 @@ export function BreadcrumbNavigation({
           </li>
         ))}
       </ol>
+
+      {/* Mobile view */}
+      <div className="flex sm:hidden items-center space-x-2 w-full">
+        {parentItems.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 px-2 text-muted-foreground hover:text-foreground"
+              >
+                <Home className="h-4 w-4" />
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              {parentItems.map((item, index) => (
+                <DropdownMenuItem key={index} asChild>
+                  <Link 
+                    href={getLocalizedPath(item.href)}
+                    className="flex items-center w-full"
+                  >
+                    {index === 0 && showHome ? (
+                      <Home className="h-4 w-4 mr-2" />
+                    ) : null}
+                    <span className="truncate">{item.label}</span>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        
+        {parentItems.length > 0 && (
+          <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
+        )}
+        
+        <span 
+          className="font-medium text-foreground bg-muted/50 rounded-md px-2 py-1 truncate flex-1"
+          aria-current="page"
+        >
+          {currentItem?.label}
+        </span>
+      </div>
     </nav>
   );
 }

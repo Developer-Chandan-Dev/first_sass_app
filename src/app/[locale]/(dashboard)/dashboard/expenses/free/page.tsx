@@ -6,10 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AddExpenseModal } from '@/components/dashboard/expenses/add-expense-modal-redux';
 import { AdvancedExpensesTable } from '@/components/dashboard/expenses/advanced-expenses-table-redux';
-import { ExpenseStats } from '@/components/dashboard/expenses/expense-stats';
+import { FreeStats } from '@/components/dashboard/expenses/free-stats';
 import { ExpenseCategoryChart } from '@/components/dashboard/expenses/expense-category-chart';
 import { ExpenseReportChart } from '@/components/dashboard/expenses/expense-report-chart';
-
 import { RecentActivity } from '@/components/dashboard/expenses/recent-activity';
 import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
 import { Plus } from 'lucide-react';
@@ -50,7 +49,7 @@ export default function ExpensesPage() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
-          <ExpenseStats />
+          <FreeStats />
           
           <div className="grid gap-4 md:gap-6 lg:grid-cols-2 w-full max-w-full">
             <Card className="min-w-0 overflow-hidden">

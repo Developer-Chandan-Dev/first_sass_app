@@ -53,8 +53,8 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
 
   useEffect(() => {
     // Fetch both free and budget expenses
-    dispatch(fetchExpenses({ expenseType: 'all', filters, page: currentPage, pageSize: 20 }));
-  }, [dispatch, filters, currentPage]);
+    dispatch(fetchExpenses({ expenseType: 'all', filters, page: currentPage, pageSize }));
+  }, [dispatch, filters, currentPage, pageSize]);
 
   const handleSearch = () => {
     dispatch(setFilters({ search: searchTerm }));
