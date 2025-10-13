@@ -5,15 +5,18 @@ import { useMemo } from 'react';
 import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { TrendingUp, TrendingDown, DollarSign, CreditCard, Target, Calendar, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, CreditCard, Target, Calendar, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 import { formatCurrency } from '@/hooks/i18n/useBaseTranslations'
 import { useLocale } from 'next-intl';
 import { StatsSkeleton } from '@/components/dashboard/shared/loading-wrapper';
+import Link from 'next/link';
+import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 
 export function StatsCards() {
   const { dashboard, common } = useDashboardTranslations();
   const locale = useLocale();
+  const { getLocalizedPath } = useLocaleContext();
   const { free, budget, loading, error } = useSelector((state: RootState) => state.overview);
   
   // Memoized calculations with fallbacks (moved before early returns)
@@ -40,7 +43,8 @@ export function StatsCards() {
       change: free?.monthlyChange ? (free.monthlyChange > 0 ? `+${free.monthlyChange.toFixed(1)}%` : `${free.monthlyChange.toFixed(1)}%`) : '0%',
       trend: (free?.monthlyChange || 0) >= 0 ? 'up' : 'down',
       icon: DollarSign,
-      description: dashboard?.lastMonth || 'Last Month'
+      description: dashboard?.lastMonth || 'Last Month',
+      href: '/dashboard/expenses'
     },
     {
       title: dashboard?.budgetUsage || 'Budget Usage',
@@ -48,7 +52,8 @@ export function StatsCards() {
       change: `${budgetUsagePercent.toFixed(1)}%`,
       trend: budgetUsagePercent > 80 ? 'down' : 'up',
       icon: Target,
-      description: dashboard?.thisMonth || 'This Month'
+      description: dashboard?.thisMonth || 'This Month',
+      href: '/dashboard/expenses/budget'
     },
     {
       title: dashboard?.categories || 'Categories',
@@ -56,7 +61,8 @@ export function StatsCards() {
       change: `${free?.categoryBreakdown?.length || 0} ${common?.total || 'total'}`,
       trend: 'up',
       icon: CreditCard,
-      description: `${budget?.categoryBreakdown?.length || 0} ${dashboard?.budgetUsage || 'budget'}`
+      description: `${budget?.categoryBreakdown?.length || 0} ${dashboard?.budgetUsage || 'budget'}`,
+      href: '/dashboard/categories'
     },
     {
       title: dashboard?.transactions || 'Transactions',
@@ -64,7 +70,8 @@ export function StatsCards() {
       change: budget?.expenseChange ? (budget.expenseChange > 0 ? `+${budget.expenseChange}` : budget.expenseChange.toString()) : '0',
       trend: (budget?.expenseChange || 0) >= 0 ? 'up' : 'down',
       icon: Calendar,
-      description: dashboard?.thisMonth || 'This Month'
+      description: dashboard?.thisMonth || 'This Month',
+      href: '/dashboard/expenses'
     }
   ];
 
@@ -81,24 +88,29 @@ export function StatsCards() {
         const trendColor = stat.trend === 'up' ? 'text-green-500' : stat.trend === 'down' ? 'text-red-500' : 'text-blue-500';
         
         return (
-          <Card key={stat.title} className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground truncate">
-                {stat.title}
-              </CardTitle>
-              <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold truncate" title={stat.value}>{stat.value}</div>
-              <div className="flex items-center text-xs text-muted-foreground">
-                <TrendIcon className={`mr-1 h-3 w-3 ${trendColor}`} />
-                <span className={trendColor}>
-                  {stat.change}
-                </span>
-                <span className="ml-1 truncate">{stat.description}</span>
-              </div>
-            </CardContent>
-          </Card>
+          <Link key={stat.title} href={getLocalizedPath(stat.href)} className="block">
+            <Card className="hover:shadow-md transition-all hover:scale-[1.02] cursor-pointer group">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground truncate">
+                  {stat.title}
+                </CardTitle>
+                <div className="flex items-center gap-1">
+                  <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <ArrowRight className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold truncate" title={stat.value}>{stat.value}</div>
+                <div className="flex items-center text-xs text-muted-foreground">
+                  <TrendIcon className={`mr-1 h-3 w-3 ${trendColor}`} />
+                  <span className={trendColor}>
+                    {stat.change}
+                  </span>
+                  <span className="ml-1 truncate">{stat.description}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         );
       })}
     </div>

@@ -7,8 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Plus, Eye } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useLocale } from '@/contexts/locale-context';
 
 // Transactions skeleton component
 function TransactionsSkeleton() {
@@ -56,7 +59,8 @@ const getCategoryIcon = (category: string) => {
 
 export function RecentTransactions() {
   const { free, budget, loading, error } = useSelector((state: RootState) => state.overview);
-  const { expenses } = useDashboardTranslations();
+  const { expenses, dashboard } = useDashboardTranslations();
+  const { getLocalizedPath } = useLocale();
 
   const formatTimeAgo = useCallback((dateString: string) => {
     const date = new Date(dateString);
@@ -126,8 +130,22 @@ export function RecentTransactions() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
+        <div className="flex gap-2">
+          <Button asChild size="sm" variant="outline">
+            <Link href={getLocalizedPath('/dashboard/expenses')}>
+              <Eye className="h-4 w-4 mr-1" />
+              View All
+            </Link>
+          </Button>
+          <Button asChild size="sm">
+            <Link href={getLocalizedPath('/dashboard/expenses/free')}>
+              <Plus className="h-4 w-4 mr-1" />
+              Add
+            </Link>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {transactions.length > 0 ? (

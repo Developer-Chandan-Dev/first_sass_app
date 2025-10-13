@@ -9,6 +9,9 @@ import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AdminNavButton } from '@/components/common/admin-nav-button';
 import { LanguageSwitcher } from '@/components/common/language-switcher';
+import { FloatingActionButton } from '@/components/dashboard/shared/floating-action-button';
+import { BottomNavigation } from '@/components/dashboard/layout/bottom-navigation';
+import { DynamicPageTitle } from '@/components/dashboard/layout/dynamic-page-title';
 
 export default function DashboardLayout({
   children,
@@ -94,10 +97,12 @@ export default function DashboardLayout({
                 <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             )}
-            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold truncate">Dashboard</h1>
+            <DynamicPageTitle />
           </div>
-          <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
-            <LanguageSwitcher />
+          <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+            <div className="hidden sm:block">
+              <LanguageSwitcher />
+            </div>
             <AdminNavButton />
             <ThemeToggle />
             {mounted && isLoaded ? (
@@ -107,9 +112,11 @@ export default function DashboardLayout({
             )}
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-20 md:pb-6 relative">
           {children}
+          <FloatingActionButton />
         </main>
+        <BottomNavigation />
       </div>
     </div>
   );
