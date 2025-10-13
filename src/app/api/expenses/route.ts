@@ -183,13 +183,15 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    // Build query
+    // Build query based on type
     const query: Record<string, unknown> = { userId };
     
-    // Add type filter only if not 'all'
-    if (type !== 'all') {
-      query.type = type;
+    if (type === 'budget') {
+      query.type = 'budget';
+    } else if (type === 'free') {
+      query.type = 'free';
     }
+    // For 'all' type, don't add type filter
 
     // Search filter - sanitize search input to prevent XSS
     if (search) {
@@ -263,8 +265,8 @@ export async function GET(request: NextRequest) {
     sortObj[validSortBy] = validSortOrder;
     
     let expenses;
-    if (type === 'budget' || type === 'all') {
-      // For budget expenses or all expenses, populate budget name
+    if (type === 'budget') {
+      // For budget expenses, populate budget name
       expenses = await Expense.aggregate([
         { $match: query },
         {
@@ -296,11 +298,45 @@ export async function GET(request: NextRequest) {
         { $skip: skip },
         { $limit: limit }
       ]);
-    } else {
+    } else if (type === 'free') {
+      // For free expenses, simple query
       expenses = await Expense.find(query)
         .sort(sortObj)
         .skip(skip)
         .limit(limit);
+    } else {
+      // For all expenses, populate budget name for those that have it
+      expenses = await Expense.aggregate([
+        { $match: query },
+        {
+          $addFields: {
+            budgetObjectId: {
+              $cond: {
+                if: { $ne: ['$budgetId', null] },
+                then: { $toObjectId: '$budgetId' },
+                else: null
+              }
+            }
+          }
+        },
+        {
+          $lookup: {
+            from: 'budgets',
+            localField: 'budgetObjectId',
+            foreignField: '_id',
+            as: 'budget'
+          }
+        },
+        {
+          $addFields: {
+            budgetName: { $arrayElemAt: ['$budget.name', 0] }
+          }
+        },
+        { $unset: 'budgetObjectId' },
+        { $sort: sortObj },
+        { $skip: skip },
+        { $limit: limit }
+      ]);
     }
 
     const totalCount = await Expense.countDocuments(query);
