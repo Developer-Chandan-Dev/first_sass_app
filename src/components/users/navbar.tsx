@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
@@ -12,10 +12,15 @@ import { useLocale } from '@/contexts/locale-context';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isSignedIn } = useUser();
+  const [mounted, setMounted] = useState(false);
+  const { isSignedIn, isLoaded } = useUser();
   const { getLocalizedPath } = useLocale();
   const t = useTranslations('navigation');
   const tCommon = useTranslations('common');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm">
@@ -54,7 +59,13 @@ export function Navbar() {
           {/* Desktop Right Actions */}
           <div className="hidden md:flex items-center space-x-3">
             <ThemeToggle />
-            {isSignedIn ? (
+            {!mounted || !isLoaded ? (
+              // Show loading state to prevent hydration mismatch
+              <div className="flex items-center space-x-3">
+                <div className="w-16 h-8 bg-muted animate-pulse rounded"></div>
+                <div className="w-20 h-8 bg-muted animate-pulse rounded"></div>
+              </div>
+            ) : isSignedIn ? (
               <>
                 <Button variant="ghost" size="sm" asChild>
                   <Link href={getLocalizedPath('/dashboard')}>{tCommon('dashboard')}</Link>
@@ -120,7 +131,13 @@ export function Navbar() {
               </Link>
               
               <div className="border-t border-border/50 pt-4 px-4 space-y-3">
-                {isSignedIn ? (
+                {!mounted || !isLoaded ? (
+                  // Show loading state for mobile menu
+                  <div className="space-y-2">
+                    <div className="w-full h-10 bg-muted animate-pulse rounded"></div>
+                    <div className="w-full h-10 bg-muted animate-pulse rounded"></div>
+                  </div>
+                ) : isSignedIn ? (
                   <>
                     <Button variant="ghost" asChild className="w-full justify-start hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-950/50 dark:hover:to-purple-950/50">
                       <Link href={getLocalizedPath('/dashboard')} onClick={() => setIsOpen(false)}>{tCommon('dashboard')}</Link>

@@ -15,8 +15,8 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isSignedIn, user } = useUser();
-  const [, setMounted] = useState(false);
+  const { isSignedIn, user, isLoaded } = useUser();
+  const [mounted, setMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -100,7 +100,11 @@ export default function DashboardLayout({
             <LanguageSwitcher />
             <AdminNavButton />
             <ThemeToggle />
-            <UserButton />
+            {mounted && isLoaded ? (
+              <UserButton />
+            ) : (
+              <div className="w-8 h-8 bg-muted animate-pulse rounded-full"></div>
+            )}
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">

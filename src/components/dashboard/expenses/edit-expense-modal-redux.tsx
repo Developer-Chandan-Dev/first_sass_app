@@ -74,31 +74,25 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
   const affectsBalance = watch('affectsBalance');
 
   useEffect(() => {
+    if (!open) return;
+    
     const fetchConnectedIncomes = async () => {
-      if (!open) return;
-      
-      modalState.setLoading(true);
       try {
         const response = await fetch('/api/incomes/connected');
         if (response.ok) {
           const incomes = await response.json();
           setConnectedIncomes(incomes);
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || errors?.network || 'Failed to fetch incomes');
         }
       } catch (error) {
-        modalState.handleError(error, errors?.network || 'Failed to load data');
+        console.error('Failed to fetch incomes:', error);
         setConnectedIncomes([]);
-      } finally {
-        modalState.setLoading(false);
       }
     };
 
-    if (open) {
-      fetchConnectedIncomes();
-    }
+    fetchConnectedIncomes();
+  }, [open]);
 
+  useEffect(() => {
     if (expense && open) {
       setValue('amount', expense.amount);
       setValue('category', getFrontendCategoryKey(expense.category));
@@ -111,7 +105,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
         setValue('frequency', expense.frequency);
       }
     }
-  }, [expense, open, setValue, modalState, errors]);
+  }, [expense, open, setValue]);
 
   const onSubmit = async (data: ExpenseFormData) => {
     if (!expense) return;
