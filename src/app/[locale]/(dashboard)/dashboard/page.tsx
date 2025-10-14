@@ -51,7 +51,6 @@ export default function Dashboard() {
       <PageHeader
         title={safeGet(dashboard, 'overview', 'Dashboard Overview')}
         description={safeGet(dashboard, 'description', 'Track your financial progress and manage expenses efficiently.')}
-        showBreadcrumbs={false}
       />
       
       <ErrorBoundary>

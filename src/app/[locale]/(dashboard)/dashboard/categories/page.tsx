@@ -11,6 +11,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { DEFAULT_CATEGORIES } from '@/lib/categories';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 export default function CategoriesPage() {
   const { pages } = useDashboardTranslations();
@@ -97,12 +98,10 @@ export default function CategoriesPage() {
   
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{pages.categories.title}</h1>
-        <p className="text-muted-foreground">
-          {pages.categories.description}
-        </p>
-      </div>
+      <PageHeader
+        title={pages.categories.title}
+        description={pages.categories.description}
+      />
 
       {/* Add New Category */}
       <Card>

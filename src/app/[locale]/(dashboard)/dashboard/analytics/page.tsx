@@ -1,18 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, Clock } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
+import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 export default function AnalyticsPage() {
   const { pages, dashboard } = useDashboardTranslations();
   
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{pages.analytics.title}</h1>
-        <p className="text-muted-foreground">
-          {pages.analytics.description}
-        </p>
-      </div>
+      <PageHeader
+        title={pages.analytics.title}
+        description={pages.analytics.description}
+      />
 
       <Card className="text-center py-12">
         <CardHeader>

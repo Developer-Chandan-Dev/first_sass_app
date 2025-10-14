@@ -12,6 +12,7 @@ import { LanguageSwitcher } from '@/components/common/language-switcher';
 import { FloatingActionButton } from '@/components/dashboard/shared/floating-action-button';
 import { BottomNavigation } from '@/components/dashboard/layout/bottom-navigation';
 import { DynamicPageTitle } from '@/components/dashboard/layout/dynamic-page-title';
+import { usePathname } from 'next/navigation';
 
 export default function DashboardLayout({
   children,
@@ -19,10 +20,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isSignedIn, user, isLoaded } = useUser();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // Hide global FAB on expense pages that have their own MobileFAB
+  const hideGlobalFAB = pathname?.includes('/expenses/free') || pathname?.includes('/expenses/budget');
 
   // Create user in database on first visit
   useEffect(() => {
@@ -116,7 +121,7 @@ export default function DashboardLayout({
           <div className="space-y-4">
             {children}
           </div>
-          <FloatingActionButton />
+          {!hideGlobalFAB && <FloatingActionButton />}
         </main>
         <BottomNavigation />
       </div>

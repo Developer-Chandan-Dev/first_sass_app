@@ -14,16 +14,18 @@ import { ExpenseReportChart } from '@/components/dashboard/expenses/expense-repo
 
 import { RecentActivity } from '@/components/dashboard/expenses/recent-activity';
 import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
-import { Plus, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
-
+import { PageHeader } from '@/components/dashboard/layout/page-header';
+import { MobileFAB } from '@/components/dashboard/shared/mobile-fab';
 import { fetchBudgets } from '@/lib/redux/expense/budgetSlice';
+import { useMobile } from '@/hooks/use-mobile';
 
 
 export default function BudgetExpensesPage() {
     const dispatch = useAppDispatch();
     const { expenses } = useDashboardTranslations();
+    const { isMobile } = useMobile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { budgets } = useAppSelector(state => state.budgets);
@@ -33,23 +35,18 @@ export default function BudgetExpensesPage() {
   }, [dispatch]);
   return (
     <div className="space-y-4 md:space-y-6">
-      <Button variant="ghost" size="sm" asChild className="w-fit">
-        <Link href="/dashboard/expenses">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {expenses.backToExpenses}
-        </Link>
-      </Button>
-      
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div className="text-center sm:text-left">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{expenses.budgetExpenses}</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">{expenses.manageExpensesWithinBudgetLimits}</p>
-        </div>
-        <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto">
-          <Plus className="mr-2 h-4 w-4" />
-          <span className="sm:inline">{expenses.addBudgetExpense}</span>
-        </Button>
-      </div>
+      <PageHeader
+        title={expenses.budgetExpenses}
+        description={expenses.manageExpensesWithinBudgetLimits}
+        actions={
+          !isMobile ? (
+            <Button onClick={() => setIsModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              {expenses.addBudgetExpense}
+            </Button>
+          ) : null
+        }
+      />
 
       <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
         <TabsList className="grid w-full grid-cols-4 h-auto p-1">
@@ -97,8 +94,13 @@ export default function BudgetExpensesPage() {
         </TabsContent>
       </Tabs>
       
+      <MobileFAB 
+        onClick={() => setIsModalOpen(true)}
+        label={expenses.addBudgetExpense}
+      />
+      
       <AddBudgetExpenseModal 
-        open={isModalOpen} 
+        open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onExpenseAdded={() => {}} // Redux handles updates automatically
       />

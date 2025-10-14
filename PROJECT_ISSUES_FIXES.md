@@ -197,16 +197,36 @@
 - **Impact**: Consistent dashboard layout rendering
 - **Time Saved**: ~45 minutes
 
+### **Issue #14: Pagination Bug in Advanced Expenses Table**
+- **Date**: Latest Session
+- **Severity**: High 🟠
+- **Problem**: "Items per page" functionality not working - always showing 20 items regardless of selection
+- **Root Cause**: useEffect hardcoded pageSize to 20 instead of using dynamic Redux state value
+- **Solution**: Changed hardcoded `pageSize: 20` to dynamic `pageSize` from Redux state and added pageSize to dependency array
+- **Files Changed**: `src/components/dashboard/expenses/advanced-all-expenses-table.tsx`
+- **Impact**: Fixed pagination functionality, users can now select 10, 20, 30, 40, 50, or 100 items per page
+- **Time Saved**: ~1 hour
+
+### **Issue #15: TypeScript Errors in FreeStats Component**
+- **Date**: Latest Session
+- **Severity**: Medium 🟡
+- **Problem**: TypeScript compilation errors due to non-existent translation keys
+- **Root Cause**: Using translation keys `totalFreeSpent` and `freeExpensesCount` that don't exist in translation files
+- **Solution**: Replaced non-existent translation keys with hardcoded fallback strings
+- **Files Changed**: `src/components/dashboard/expenses/free-stats.tsx`
+- **Impact**: Fixed TypeScript compilation, component renders without errors
+- **Time Saved**: ~30 minutes
+
 ---
 
 ## 📊 **Updated Summary Statistics**
-- **Total Issues Resolved**: 13
+- **Total Issues Resolved**: 15
 - **Critical Issues**: 6
 - **Performance Issues**: 2
 - **Security Issues**: 1
-- **UI/UX Issues**: 4
+- **UI/UX Issues**: 5
 - **API Issues**: 2
-- **Development Time Saved**: ~20+ hours
+- **Development Time Saved**: ~22+ hours
 
 ---
 
