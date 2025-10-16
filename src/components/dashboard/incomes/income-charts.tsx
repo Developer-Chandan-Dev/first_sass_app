@@ -302,7 +302,7 @@ export function IncomeCharts() {
                   <Tooltip
                     formatter={(value: number) => [
                       `₹${value.toLocaleString()}`,
-                      income.amount || 'Amount',
+                      income.form.amount || 'Amount',
                     ]}
                     contentStyle={{ fontSize: '12px' }}
                   />
