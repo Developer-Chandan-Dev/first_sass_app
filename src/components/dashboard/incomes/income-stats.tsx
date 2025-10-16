@@ -55,7 +55,7 @@ export function IncomeStats() {
     (state: RootState) => state.incomes
   );
   const { getLocalizedPath } = useLocaleContext();
-  const { income, dashboard } = useDashboardTranslations();
+  const { income, dashboard, expenses } = useDashboardTranslations();
 
   const stats = useMemo(() => {
     if (loading) {
@@ -224,7 +224,7 @@ export function IncomeStats() {
         },
         {
           icon: BarChart3,
-          label: dashboard.analytics || 'Analytics',
+          label: expenses.analytics || 'Analytics',
           href: '/dashboard/analytics',
           variant: 'outline' as const,
         },
