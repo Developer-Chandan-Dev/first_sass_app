@@ -62,15 +62,15 @@ export default function IncomePage() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview" className="text-xs sm:text-sm">
             <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">{income.incomeOverview}</span>
+            <span className="hidden xs:inline">{income.overview}</span>
           </TabsTrigger>
           <TabsTrigger value="table" className="text-xs sm:text-sm">
             <Table className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">{income.incomeTable}</span>
+            <span className="hidden xs:inline">{income.table}</span>
           </TabsTrigger>
           <TabsTrigger value="charts" className="text-xs sm:text-sm">
             <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            <span className="hidden xs:inline">{income.incomeCharts}</span>
+            <span className="hidden xs:inline">{income.charts}</span>
           </TabsTrigger>
         </TabsList>
 

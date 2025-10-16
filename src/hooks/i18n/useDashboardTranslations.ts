@@ -563,7 +563,6 @@ export function useDashboardTranslations() {
         entries: safeTIncome('entries', 'entries'),
         viewAll: safeTIncome('viewAll', 'View All'),
         avg: safeTIncome('avg', 'avg'),
-        source: safeTIncome('sources', 'sources'),
         automatedIncome: safeTIncome('automatedIncome', 'automated income'),
         addRecurring: safeTIncome('addRecurring', 'Add Recurring'),
         weeklyIncome: safeTIncome('weeklyIncome', 'Weekly Income'),
