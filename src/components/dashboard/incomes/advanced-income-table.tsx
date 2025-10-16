@@ -45,10 +45,11 @@ import {
 } from '@/hooks/dashboard/useIncomeTable';
 import { getIncomeAmountColor, getIncomeTooltip } from '@/lib/financial-styles';
 import { sanitizeString } from '@/lib/input-sanitizer';
-import { useDashboardTranslations } from '@/hooks/i18n';
+import { useBaseTranslations, useDashboardTranslations } from '@/hooks/i18n';
 
 export function AdvancedIncomeTable() {
-  const { income, common, table } = useDashboardTranslations();
+  const { income, table, expenses } = useDashboardTranslations();
+  const { common } = useBaseTranslations();
   const {
     incomes,
     loading,
@@ -143,7 +144,7 @@ export function AdvancedIncomeTable() {
                     <DropdownMenuContent>
                       <DropdownMenuItem onClick={() => handleCSVExport(true)}>
                         <FileText className="mr-2 h-4 w-4" />
-                        {income.exportSelectedCSV || 'Export Selected CSV'}
+                        {expenses.exportSelectedCSV || 'Export Selected CSV'}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
@@ -152,7 +153,7 @@ export function AdvancedIncomeTable() {
                         }}
                       >
                         <FileText className="mr-2 h-4 w-4" />
-                        {income.exportSelectedPDF || 'Export Selected PDF'}
+                        {expenses.exportSelectedPDF || 'Export Selected PDF'}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -170,13 +171,13 @@ export function AdvancedIncomeTable() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="w-auto">
                     <Download className="h-4 w-4 mr-2" />
-                    {income.exportAll || 'Export All'}
+                    {expenses.exportAll || 'Export All'}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => handleCSVExport(false)}>
                     <FileText className="mr-2 h-4 w-4" />
-                    {income.exportAllCSV || 'Export All CSV'}
+                    {expenses.exportAllCSV || 'Export All CSV'}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
@@ -185,7 +186,7 @@ export function AdvancedIncomeTable() {
                     }}
                   >
                     <FileText className="mr-2 h-4 w-4" />
-                    {income.exportAllPDF || 'Export All PDF'}
+                    {expenses.exportAllPDF || 'Export All PDF'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -311,48 +312,48 @@ export function AdvancedIncomeTable() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  incomes.map((income) => (
-                    <TableRow key={income._id}>
+                  incomes.map((incomeItem) => (
+                    <TableRow key={incomeItem._id}>
                       <TableCell className="py-2">
                         <Checkbox
-                          checked={selectedRows.includes(income._id)}
-                          onCheckedChange={() => toggleRowSelection(income._id)}
+                          checked={selectedRows.includes(incomeItem._id)}
+                          onCheckedChange={() => toggleRowSelection(incomeItem._id)}
                         />
                       </TableCell>
                       <TableCell className="py-2 text-xs sm:text-sm">
-                        {new Date(income.date).toLocaleDateString('en-US', {
+                        {new Date(incomeItem.date).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
                         })}
                       </TableCell>
                       <TableCell className="py-2">
                         <div className="font-medium text-sm truncate max-w-[120px] sm:max-w-none">
-                          {sanitizeString(income.source || '')}
+                          {sanitizeString(incomeItem.source || '')}
                         </div>
                         <div className="sm:hidden">
                           <Badge variant="secondary" className="text-xs mt-1">
-                            {sanitizeString(income.category || '')}
+                            {sanitizeString(incomeItem.category || '')}
                           </Badge>
                         </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell py-2">
                         <Badge variant="secondary" className="text-xs">
-                          {sanitizeString(income.category || '')}
+                          {sanitizeString(incomeItem.category || '')}
                         </Badge>
                       </TableCell>
                       <TableCell className="hidden md:table-cell py-2">
                         <div className="text-xs text-muted-foreground truncate max-w-[120px]">
-                          {sanitizeString(income.description || '-')}
+                          {sanitizeString(incomeItem.description || '-')}
                         </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell py-2">
-                        {income.isRecurring ? (
+                        {incomeItem.isRecurring ? (
                           <Badge variant="outline" className="text-xs">
-                            {sanitizeString(income.frequency || 'Recurring')}
+                            {sanitizeString(incomeItem.frequency || 'Recurring')}
                           </Badge>
                         ) : (
                           <span className="text-xs text-muted-foreground">
-                            {income.oneTime || 'One-time'}
+                            {expenses.oneTime || 'One-time'}
                           </span>
                         )}
                       </TableCell>
@@ -360,16 +361,16 @@ export function AdvancedIncomeTable() {
                         <div className="flex items-center justify-end gap-1">
                           <span
                             className={getIncomeAmountColor(
-                              income.isConnected || false
+                              incomeItem.isConnected || false
                             )}
                           >
-                            +₹{income.amount.toLocaleString()}
+                            +₹{incomeItem.amount.toLocaleString()}
                           </span>
-                          {income.isConnected && (
+                          {incomeItem.isConnected && (
                             <div
                               className="w-2 h-2 bg-blue-500 rounded-full"
                               title={sanitizeString(
-                                getIncomeTooltip(income.isConnected) || ''
+                                getIncomeTooltip(incomeItem.isConnected) || ''
                               )}
                             />
                           )}
@@ -387,23 +388,23 @@ export function AdvancedIncomeTable() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            {income.isConnected && (
+                            {incomeItem.isConnected && (
                               <DropdownMenuItem
-                                onClick={() => setViewingExpenses(income)}
+                                onClick={() => setViewingExpenses(incomeItem)}
                               >
                                 <Eye className="mr-2 h-4 w-4" />
                                 {income.viewExpenses || 'View Expenses'}
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem
-                              onClick={() => handleEdit(income)}
+                              onClick={() => handleEdit(incomeItem)}
                             >
                               <Edit className="mr-2 h-4 w-4" />
                               {common.edit}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => handleDelete(income._id)}
+                              onClick={() => handleDelete(incomeItem._id)}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
                               {common.delete}

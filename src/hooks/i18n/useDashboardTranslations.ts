@@ -488,6 +488,7 @@ export function useDashboardTranslations() {
         incomeOverview: safeTIncome('overview', 'Overview'),
         incomeTable: safeTIncome('table', 'Table'),
         incomeCharts: safeTIncome('charts', 'Charts'),
+        viewExpenses: safeTIncome('viewExpenses', 'View Expenses'),
         sources: {
           salary: safeTIncome('sources.salary', 'Salary'),
           freelancing: safeTIncome('sources.freelancing', 'Freelancing'),
@@ -540,7 +541,7 @@ export function useDashboardTranslations() {
               'Date is required'
             ),
           },
-        },
+        }
       },
 
       table: {
@@ -557,6 +558,8 @@ export function useDashboardTranslations() {
         last: safeTTable('last', 'Last'),
         showing: safeTTable('showing', 'Showing'),
         entries: safeTTable('entries', 'entries'),
+        to: safeTTable('to', 'to'),
+        perPage: safeTTable('perPage', 'per page'),
       },
 
       stats: {
