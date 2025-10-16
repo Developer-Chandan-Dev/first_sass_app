@@ -12,11 +12,14 @@ export async function GET() {
 
     await connectDB();
     const plans = await Plan.find().sort({ price: 1 });
-    
+
     return NextResponse.json({ plans });
   } catch (error) {
     console.error('Plans fetch error:', error);
-    return NextResponse.json({ error: 'Failed to fetch plans' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch plans' },
+      { status: 500 }
+    );
   }
 }
 
@@ -31,11 +34,14 @@ export async function POST(request: NextRequest) {
     const { name, price, interval, features } = body;
 
     if (!name || price === undefined) {
-      return NextResponse.json({ error: 'Name and price are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Name and price are required' },
+        { status: 400 }
+      );
     }
 
     await connectDB();
-    
+
     const plan = await Plan.create({
       name,
       price: parseFloat(price),
@@ -52,6 +58,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ plan });
   } catch (error) {
     console.error('Plan creation error:', error);
-    return NextResponse.json({ error: 'Failed to create plan' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create plan' },
+      { status: 500 }
+    );
   }
 }

@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     if (search) {
       query.$or = [
         { source: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
+        { description: { $regex: search, $options: 'i' } },
       ];
     }
 
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
         case 'today':
           query.date = {
             $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-            $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+            $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1),
           };
           break;
         case 'week':
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         case 'month':
           query.date = {
             $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-            $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
+            $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1),
           };
           break;
       }
@@ -65,43 +65,44 @@ export async function GET(request: NextRequest) {
     if (startDate && endDate) {
       query.date = {
         $gte: new Date(startDate),
-        $lte: new Date(endDate)
+        $lte: new Date(endDate),
       };
     }
 
-    const [incomes, totalCount, totalIncome, monthlyIncome] = await Promise.all([
-      Income.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Income.countDocuments(query),
-      Income.aggregate([
-        { $match: { userId } },
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-      ]),
-      Income.aggregate([
-        {
-          $match: {
-            userId,
-            date: {
-              $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-              $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
-            }
-          }
-        },
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-      ])
-    ]);
+    const [incomes, totalCount, totalIncome, monthlyIncome] = await Promise.all(
+      [
+        Income.find(query)
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Income.countDocuments(query),
+        Income.aggregate([
+          { $match: { userId } },
+          { $group: { _id: null, total: { $sum: '$amount' } } },
+        ]),
+        Income.aggregate([
+          {
+            $match: {
+              userId,
+              date: {
+                $gte: new Date(now.getFullYear(), now.getMonth(), 1),
+                $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1),
+              },
+            },
+          },
+          { $group: { _id: null, total: { $sum: '$amount' } } },
+        ]),
+      ]
+    );
 
     // Sanitize user-generated content before sending response
-    
 
     const sanitizedIncomes = incomes.map((income) => ({
       ...income,
       source: sanitizeString(income.source),
       description: sanitizeString(income.description),
-      category: sanitizeString(income.category)
+      category: sanitizeString(income.category),
     }));
 
     return NextResponse.json({
@@ -110,11 +111,14 @@ export async function GET(request: NextRequest) {
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
       totalIncome: totalIncome[0]?.total || 0,
-      monthlyIncome: monthlyIncome[0]?.total || 0
+      monthlyIncome: monthlyIncome[0]?.total || 0,
     });
   } catch (error) {
     console.error('Error fetching incomes:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -129,19 +133,34 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const { amount, source, category, description, date, isRecurring, frequency, isConnected } = body;
-    
+    const {
+      amount,
+      source,
+      category,
+      description,
+      date,
+      isRecurring,
+      frequency,
+      isConnected,
+    } = body;
+
     // Sanitize inputs
     const sanitizedAmount = sanitizeNumber(amount);
     const sanitizedSource = sanitizeString(source);
     const sanitizedCategory = sanitizeString(category);
     const sanitizedDescription = sanitizeString(description);
-    
-    if (!sanitizedAmount || !sanitizedSource || !sanitizedCategory || !sanitizedDescription) {
-      return NextResponse.json({ error: 'Invalid input data' }, { status: 400 });
-    }
-    
 
+    if (
+      !sanitizedAmount ||
+      !sanitizedSource ||
+      !sanitizedCategory ||
+      !sanitizedDescription
+    ) {
+      return NextResponse.json(
+        { error: 'Invalid input data' },
+        { status: 400 }
+      );
+    }
 
     const incomeData = {
       userId,
@@ -152,15 +171,18 @@ export async function POST(request: NextRequest) {
       date: date ? new Date(date) : new Date(),
       isRecurring: Boolean(isRecurring),
       frequency: isRecurring ? frequency : undefined,
-      isConnected: Boolean(isConnected)
+      isConnected: Boolean(isConnected),
     };
-    
+
     const income = new Income(incomeData);
     const savedIncome = await income.save();
 
     return NextResponse.json(savedIncome, { status: 201 });
   } catch (error) {
     console.error('Error creating income:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

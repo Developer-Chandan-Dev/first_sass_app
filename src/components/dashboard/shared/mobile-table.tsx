@@ -1,12 +1,16 @@
 'use client';
 
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 import { MoreVertical, Edit, Trash2 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useMobile } from '@/hooks/use-mobile';
 
@@ -28,12 +32,12 @@ interface MobileTableProps {
   emptyMessage?: string;
 }
 
-export function MobileTable({ 
-  items, 
-  onEdit, 
-  onDelete, 
+export function MobileTable({
+  items,
+  onEdit,
+  onDelete,
   className,
-  emptyMessage = 'No items found'
+  emptyMessage = 'No items found',
 }: MobileTableProps) {
   const { isMobile, mounted } = useMobile();
 
@@ -77,10 +81,12 @@ export function MobileTable({
                 )}
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-semibold">{item.amount}</span>
-                  <span className="text-sm text-muted-foreground">{item.date}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {item.date}
+                  </span>
                 </div>
               </div>
-              
+
               {(onEdit || onDelete) && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -96,7 +102,7 @@ export function MobileTable({
                       </DropdownMenuItem>
                     )}
                     {onDelete && (
-                      <DropdownMenuItem 
+                      <DropdownMenuItem
                         onClick={() => onDelete(item.id)}
                         className="text-destructive"
                       >

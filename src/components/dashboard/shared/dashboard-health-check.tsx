@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  CheckCircle, 
-  XCircle, 
-  AlertTriangle, 
-  RefreshCw, 
-  Server
+import {
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  RefreshCw,
+  Server,
 } from 'lucide-react';
 
 interface HealthCheck {
@@ -33,27 +33,29 @@ export function DashboardHealthCheck() {
     try {
       const response = await fetch('/api/expenses/dashboard?type=free', {
         method: 'HEAD',
-        cache: 'no-cache'
+        cache: 'no-cache',
       });
       checks.push({
         name: 'API Connection',
         status: response.ok ? 'healthy' : 'error',
-        message: response.ok ? 'API is responding' : `API returned ${response.status}`,
-        lastChecked: new Date()
+        message: response.ok
+          ? 'API is responding'
+          : `API returned ${response.status}`,
+        lastChecked: new Date(),
       });
     } catch {
       checks.push({
         name: 'API Connection',
         status: 'error',
         message: 'Failed to connect to API',
-        lastChecked: new Date()
+        lastChecked: new Date(),
       });
     }
 
     // Database Health Check (indirect)
     try {
       const response = await fetch('/api/expenses?limit=1', {
-        cache: 'no-cache'
+        cache: 'no-cache',
       });
       if (response.ok) {
         await response.json(); // Consume response
@@ -61,15 +63,17 @@ export function DashboardHealthCheck() {
       checks.push({
         name: 'Database',
         status: response.ok ? 'healthy' : 'error',
-        message: response.ok ? 'Database is accessible' : 'Database connection failed',
-        lastChecked: new Date()
+        message: response.ok
+          ? 'Database is accessible'
+          : 'Database connection failed',
+        lastChecked: new Date(),
       });
     } catch {
       checks.push({
         name: 'Database',
         status: 'error',
         message: 'Database health check failed',
-        lastChecked: new Date()
+        lastChecked: new Date(),
       });
     }
 
@@ -79,19 +83,22 @@ export function DashboardHealthCheck() {
       localStorage.setItem(testKey, 'test');
       const retrieved = localStorage.getItem(testKey);
       localStorage.removeItem(testKey);
-      
+
       checks.push({
         name: 'Local Storage',
         status: retrieved === 'test' ? 'healthy' : 'warning',
-        message: retrieved === 'test' ? 'Local storage is working' : 'Local storage may have issues',
-        lastChecked: new Date()
+        message:
+          retrieved === 'test'
+            ? 'Local storage is working'
+            : 'Local storage may have issues',
+        lastChecked: new Date(),
       });
     } catch {
       checks.push({
         name: 'Local Storage',
         status: 'error',
         message: 'Local storage is not available',
-        lastChecked: new Date()
+        lastChecked: new Date(),
       });
     }
 
@@ -99,8 +106,10 @@ export function DashboardHealthCheck() {
     checks.push({
       name: 'Network',
       status: navigator.onLine ? 'healthy' : 'error',
-      message: navigator.onLine ? 'Network connection is active' : 'No network connection',
-      lastChecked: new Date()
+      message: navigator.onLine
+        ? 'Network connection is active'
+        : 'No network connection',
+      lastChecked: new Date(),
     });
 
     setHealthChecks(checks);
@@ -110,14 +119,14 @@ export function DashboardHealthCheck() {
 
   useEffect(() => {
     runHealthChecks();
-    
+
     // Set up periodic health checks
     const interval = setInterval(runHealthChecks, 5 * 60 * 1000); // Every 5 minutes
-    
+
     // Listen for network changes
     const handleOnline = () => runHealthChecks();
     const handleOffline = () => runHealthChecks();
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
@@ -150,9 +159,14 @@ export function DashboardHealthCheck() {
     }
   };
 
-  const overallStatus = healthChecks.length === 0 ? 'loading' : 
-    healthChecks.some(check => check.status === 'error') ? 'error' :
-    healthChecks.some(check => check.status === 'warning') ? 'warning' : 'healthy';
+  const overallStatus =
+    healthChecks.length === 0
+      ? 'loading'
+      : healthChecks.some((check) => check.status === 'error')
+        ? 'error'
+        : healthChecks.some((check) => check.status === 'warning')
+          ? 'warning'
+          : 'healthy';
 
   if (overallStatus === 'healthy') {
     return null; // Don't show when everything is working
@@ -172,7 +186,9 @@ export function DashboardHealthCheck() {
             onClick={runHealthChecks}
             disabled={loading}
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw
+              className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`}
+            />
             Refresh
           </Button>
         </div>
@@ -182,22 +198,31 @@ export function DashboardHealthCheck() {
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Some system components are experiencing issues. This may affect functionality.
+              Some system components are experiencing issues. This may affect
+              functionality.
             </AlertDescription>
           </Alert>
         )}
 
         <div className="grid gap-3 sm:grid-cols-2">
           {healthChecks.map((check) => (
-            <div key={check.name} className="flex items-center justify-between p-3 border rounded-lg">
+            <div
+              key={check.name}
+              className="flex items-center justify-between p-3 border rounded-lg"
+            >
               <div className="flex items-center gap-3">
                 {getStatusIcon(check.status)}
                 <div>
                   <p className="font-medium text-sm">{check.name}</p>
-                  <p className="text-xs text-muted-foreground">{check.message}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {check.message}
+                  </p>
                 </div>
               </div>
-              <Badge variant={getStatusVariant(check.status)} className="text-xs">
+              <Badge
+                variant={getStatusVariant(check.status)}
+                className="text-xs"
+              >
                 {check.status}
               </Badge>
             </div>

@@ -26,48 +26,63 @@ export function useModalState(options: UseModalStateOptions = {}) {
   });
 
   const setLoading = useCallback((loading: boolean) => {
-    setState(prev => ({ ...prev, isLoading: loading, error: null }));
+    setState((prev) => ({ ...prev, isLoading: loading, error: null }));
   }, []);
 
   const setSubmitting = useCallback((submitting: boolean) => {
-    setState(prev => ({ ...prev, isSubmitting: submitting, error: null }));
+    setState((prev) => ({ ...prev, isSubmitting: submitting, error: null }));
   }, []);
 
   const setError = useCallback((error: string | null) => {
-    setState(prev => ({ ...prev, error, isLoading: false, isSubmitting: false }));
+    setState((prev) => ({
+      ...prev,
+      error,
+      isLoading: false,
+      isSubmitting: false,
+    }));
   }, []);
 
-  const handleSuccess = useCallback((message?: string) => {
-    setState({ isLoading: false, error: null, isSubmitting: false });
-    toast.success(message || options.successMessage || common.success);
-    options.onSuccess?.();
-  }, [options, common.success]);
+  const handleSuccess = useCallback(
+    (message?: string) => {
+      setState({ isLoading: false, error: null, isSubmitting: false });
+      toast.success(message || options.successMessage || common.success);
+      options.onSuccess?.();
+    },
+    [options, common.success]
+  );
 
-  const handleError = useCallback((error: unknown, customMessage?: string) => {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : customMessage || options.errorMessage || errors.generic;
-    
-    setError(errorMessage);
-    toast.error(errorMessage);
-    options.onError?.(errorMessage);
-  }, [options, errors.generic, setError]);
+  const handleError = useCallback(
+    (error: unknown, customMessage?: string) => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : customMessage || options.errorMessage || errors.generic;
 
-  const executeAsync = useCallback(async <T>(
-    asyncFn: () => Promise<T>,
-    successMessage?: string,
-    errorMessage?: string
-  ): Promise<T | null> => {
-    try {
-      setSubmitting(true);
-      const result = await asyncFn();
-      handleSuccess(successMessage);
-      return result;
-    } catch (error) {
-      handleError(error, errorMessage);
-      return null;
-    }
-  }, [setSubmitting, handleSuccess, handleError]);
+      setError(errorMessage);
+      toast.error(errorMessage);
+      options.onError?.(errorMessage);
+    },
+    [options, errors.generic, setError]
+  );
+
+  const executeAsync = useCallback(
+    async <T>(
+      asyncFn: () => Promise<T>,
+      successMessage?: string,
+      errorMessage?: string
+    ): Promise<T | null> => {
+      try {
+        setSubmitting(true);
+        const result = await asyncFn();
+        handleSuccess(successMessage);
+        return result;
+      } catch (error) {
+        handleError(error, errorMessage);
+        return null;
+      }
+    },
+    [setSubmitting, handleSuccess, handleError]
+  );
 
   const reset = useCallback(() => {
     setState({ isLoading: false, error: null, isSubmitting: false });

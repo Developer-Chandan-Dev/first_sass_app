@@ -53,14 +53,14 @@ export function PlansTable() {
 
   const deletePlan = async (planId: string) => {
     if (!confirm('Are you sure you want to delete this plan?')) return;
-    
+
     try {
       const response = await fetch(`/api/admin/plans/${planId}`, {
         method: 'DELETE',
       });
-      
+
       if (response.ok) {
-        setPlans(plans.filter(p => p._id !== planId));
+        setPlans(plans.filter((p) => p._id !== planId));
         toast.success('Plan deleted successfully');
       } else {
         toast.error('Failed to delete plan');
@@ -74,7 +74,7 @@ export function PlansTable() {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader>
               <div className="h-6 bg-muted rounded w-20"></div>
@@ -110,7 +110,7 @@ export function PlansTable() {
                     <Edit className="h-4 w-4 mr-2" />
                     Edit Plan
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     className="text-red-600"
                     onClick={() => deletePlan(plan._id)}
                   >
@@ -121,9 +121,7 @@ export function PlansTable() {
               </DropdownMenu>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold">
-                ${plan.price}
-              </span>
+              <span className="text-2xl font-bold">${plan.price}</span>
               <span className="text-sm text-muted-foreground">
                 /{plan.interval}
               </span>
@@ -132,11 +130,13 @@ export function PlansTable() {
               </Badge>
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             {/* Features */}
             <div className="space-y-2">
-              <h4 className="text-sm font-medium text-muted-foreground">Features</h4>
+              <h4 className="text-sm font-medium text-muted-foreground">
+                Features
+              </h4>
               <ul className="text-sm space-y-1">
                 <li>• {plan.features.maxExpenses} expenses</li>
                 <li>• {plan.features.maxBudgets} budgets</li>

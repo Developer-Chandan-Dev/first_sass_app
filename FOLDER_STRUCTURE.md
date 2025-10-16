@@ -44,17 +44,20 @@ src/
 ## 🎯 **Benefits of New Structure**
 
 ### **📦 Modular Organization:**
+
 - **expenses/**: All expense-related components in one place
 - **layout/**: Navigation and layout components
 - **shared/**: Reusable components across features
 - **Future-ready**: Easy to add new feature modules
 
 ### **🔍 Easy Navigation:**
+
 - **Clear separation**: Each feature has its own folder
 - **Logical grouping**: Related components together
 - **Scalable**: Can easily add budgets/, reports/, etc.
 
 ### **🛠️ Maintainability:**
+
 - **Import clarity**: Clear import paths
 - **Component discovery**: Easy to find components
 - **Team collaboration**: Multiple developers can work on different modules
@@ -62,6 +65,7 @@ src/
 ## 🚀 **Future Expansion Ready**
 
 When adding new features, simply create new folders:
+
 - `components/dashboard/budgets/` - Budget tracking components
 - `components/dashboard/reports/` - Advanced reporting
 - `components/dashboard/categories/` - Category management
@@ -74,7 +78,7 @@ When adding new features, simply create new folders:
 import { AddExpenseModal } from '@/components/dashboard/expenses/add-expense-modal';
 import { ExpenseStats } from '@/components/dashboard/expenses/expense-stats';
 
-// Layout components  
+// Layout components
 import { Sidebar } from '@/components/dashboard/layout/sidebar';
 
 // Shared components

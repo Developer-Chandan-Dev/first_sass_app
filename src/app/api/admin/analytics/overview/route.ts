@@ -31,6 +31,9 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Admin analytics error:', error);
-    return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch analytics' },
+      { status: 500 }
+    );
   }
 }

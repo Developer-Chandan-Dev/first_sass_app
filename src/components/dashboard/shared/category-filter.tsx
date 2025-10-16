@@ -1,6 +1,12 @@
 'use client';
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useCategories } from '@/hooks/useCategories';
 import { useDashboardTranslations } from '@/hooks/i18n';
 
@@ -10,7 +16,11 @@ interface CategoryFilterProps {
   className?: string;
 }
 
-export function CategoryFilter({ value, onValueChange, className }: CategoryFilterProps) {
+export function CategoryFilter({
+  value,
+  onValueChange,
+  className,
+}: CategoryFilterProps) {
   const { categoryOptions, loading } = useCategories();
   const { common } = useDashboardTranslations();
 

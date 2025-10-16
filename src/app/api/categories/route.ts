@@ -12,14 +12,17 @@ export async function GET() {
     }
 
     await connectDB();
-    
+
     const categories = await Category.find({ userId }).sort({ createdAt: -1 });
-    const categoryNames = categories.map(cat => cat.name);
+    const categoryNames = categories.map((cat) => cat.name);
 
     return NextResponse.json({ categories: categoryNames });
   } catch (error) {
     console.error('Error fetching categories:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -32,9 +35,12 @@ export async function POST(request: NextRequest) {
     }
 
     const { name } = await request.json();
-    
+
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
-      return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Category name is required' },
+        { status: 400 }
+      );
     }
 
     const categoryName = name.trim();
@@ -42,9 +48,15 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     // Check if category already exists for this user
-    const existingCategory = await Category.findOne({ userId, name: categoryName });
+    const existingCategory = await Category.findOne({
+      userId,
+      name: categoryName,
+    });
     if (existingCategory) {
-      return NextResponse.json({ error: 'Category already exists' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Category already exists' },
+        { status: 400 }
+      );
     }
 
     // Create new category
@@ -55,13 +67,16 @@ export async function POST(request: NextRequest) {
 
     await category.save();
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       category: categoryName,
-      message: 'Category created successfully' 
+      message: 'Category created successfully',
     });
   } catch (error) {
     console.error('Error creating category:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -74,31 +89,54 @@ export async function PUT(request: NextRequest) {
     }
 
     const { oldName, newName } = await request.json();
-    
-    if (!oldName || !newName || typeof oldName !== 'string' || typeof newName !== 'string') {
-      return NextResponse.json({ error: 'Old name and new name are required' }, { status: 400 });
+
+    if (
+      !oldName ||
+      !newName ||
+      typeof oldName !== 'string' ||
+      typeof newName !== 'string'
+    ) {
+      return NextResponse.json(
+        { error: 'Old name and new name are required' },
+        { status: 400 }
+      );
     }
 
     const trimmedOldName = oldName.trim();
     const trimmedNewName = newName.trim();
 
     if (trimmedNewName.length === 0) {
-      return NextResponse.json({ error: 'New category name cannot be empty' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'New category name cannot be empty' },
+        { status: 400 }
+      );
     }
 
     await connectDB();
 
     // Check if old category exists
-    const existingCategory = await Category.findOne({ userId, name: trimmedOldName });
+    const existingCategory = await Category.findOne({
+      userId,
+      name: trimmedOldName,
+    });
     if (!existingCategory) {
-      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Category not found' },
+        { status: 404 }
+      );
     }
 
     // Check if new name already exists (and it's different from old name)
     if (trimmedOldName !== trimmedNewName) {
-      const duplicateCategory = await Category.findOne({ userId, name: trimmedNewName });
+      const duplicateCategory = await Category.findOne({
+        userId,
+        name: trimmedNewName,
+      });
       if (duplicateCategory) {
-        return NextResponse.json({ error: 'Category with this name already exists' }, { status: 400 });
+        return NextResponse.json(
+          { error: 'Category with this name already exists' },
+          { status: 400 }
+        );
       }
     }
 
@@ -108,14 +146,17 @@ export async function PUT(request: NextRequest) {
       { name: trimmedNewName }
     );
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Category updated successfully',
       oldName: trimmedOldName,
-      newName: trimmedNewName
+      newName: trimmedNewName,
     });
   } catch (error) {
     console.error('Error updating category:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -128,9 +169,12 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { name } = await request.json();
-    
+
     if (!name || typeof name !== 'string' || name.trim().length === 0) {
-      return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Category name is required' },
+        { status: 400 }
+      );
     }
 
     const categoryName = name.trim();
@@ -138,20 +182,29 @@ export async function DELETE(request: NextRequest) {
     await connectDB();
 
     // Check if category exists
-    const existingCategory = await Category.findOne({ userId, name: categoryName });
+    const existingCategory = await Category.findOne({
+      userId,
+      name: categoryName,
+    });
     if (!existingCategory) {
-      return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Category not found' },
+        { status: 404 }
+      );
     }
 
     // Delete category
     await Category.deleteOne({ userId, name: categoryName });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Category deleted successfully',
-      deletedCategory: categoryName
+      deletedCategory: categoryName,
     });
   } catch (error) {
     console.error('Error deleting category:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

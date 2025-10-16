@@ -10,7 +10,11 @@ interface DashboardNavButtonProps {
   className?: string;
 }
 
-export function DashboardNavButton({ variant = 'outline', size = 'sm', className }: DashboardNavButtonProps) {
+export function DashboardNavButton({
+  variant = 'outline',
+  size = 'sm',
+  className,
+}: DashboardNavButtonProps) {
   return (
     <Button asChild variant={variant} size={size} className={className}>
       <Link href="/dashboard">

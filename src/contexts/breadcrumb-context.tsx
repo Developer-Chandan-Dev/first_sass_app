@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useCallback,
+} from 'react';
 
 interface BreadcrumbOverride {
   path: string;
@@ -16,38 +22,45 @@ interface BreadcrumbContextType {
   getOverride: (path: string) => BreadcrumbOverride | undefined;
 }
 
-const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(undefined);
+const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(
+  undefined
+);
 
 export function BreadcrumbProvider({ children }: { children: ReactNode }) {
   const [overrides, setOverrides] = useState<BreadcrumbOverride[]>([]);
 
   const addOverride = useCallback((override: BreadcrumbOverride) => {
-    setOverrides(prev => {
-      const filtered = prev.filter(o => o.path !== override.path);
+    setOverrides((prev) => {
+      const filtered = prev.filter((o) => o.path !== override.path);
       return [...filtered, override];
     });
   }, []);
 
   const removeOverride = useCallback((path: string) => {
-    setOverrides(prev => prev.filter(o => o.path !== path));
+    setOverrides((prev) => prev.filter((o) => o.path !== path));
   }, []);
 
   const clearOverrides = useCallback(() => {
     setOverrides([]);
   }, []);
 
-  const getOverride = useCallback((path: string) => {
-    return overrides.find(o => o.path === path);
-  }, [overrides]);
+  const getOverride = useCallback(
+    (path: string) => {
+      return overrides.find((o) => o.path === path);
+    },
+    [overrides]
+  );
 
   return (
-    <BreadcrumbContext.Provider value={{
-      overrides,
-      addOverride,
-      removeOverride,
-      clearOverrides,
-      getOverride
-    }}>
+    <BreadcrumbContext.Provider
+      value={{
+        overrides,
+        addOverride,
+        removeOverride,
+        clearOverrides,
+        getOverride,
+      }}
+    >
       {children}
     </BreadcrumbContext.Provider>
   );
@@ -62,7 +75,11 @@ export function useBreadcrumb() {
 }
 
 // Hook for setting page-specific breadcrumb overrides
-export function useBreadcrumbOverride(path: string, label: string, description?: string) {
+export function useBreadcrumbOverride(
+  path: string,
+  label: string,
+  description?: string
+) {
   const { addOverride, removeOverride } = useBreadcrumb();
 
   const setOverride = useCallback(() => {

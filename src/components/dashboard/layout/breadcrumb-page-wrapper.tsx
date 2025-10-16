@@ -10,10 +10,10 @@ interface BreadcrumbPageWrapperProps {
   showBreadcrumbs?: boolean;
 }
 
-export function BreadcrumbPageWrapper({ 
-  children, 
+export function BreadcrumbPageWrapper({
+  children,
   className,
-  showBreadcrumbs = true 
+  showBreadcrumbs = true,
 }: BreadcrumbPageWrapperProps) {
   return (
     <div className={cn('space-y-4', className)}>

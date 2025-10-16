@@ -21,17 +21,17 @@ export async function GET() {
           _id: null,
           totalIncome: { $sum: '$amount' },
           connectedIncome: {
-            $sum: { $cond: [{ $eq: ['$isConnected', true] }, '$amount', 0] }
+            $sum: { $cond: [{ $eq: ['$isConnected', true] }, '$amount', 0] },
           },
           unconnectedIncome: {
-            $sum: { $cond: [{ $eq: ['$isConnected', false] }, '$amount', 0] }
+            $sum: { $cond: [{ $eq: ['$isConnected', false] }, '$amount', 0] },
           },
           totalIncomes: { $sum: 1 },
           connectedIncomes: {
-            $sum: { $cond: [{ $eq: ['$isConnected', true] }, 1, 0] }
-          }
-        }
-      }
+            $sum: { $cond: [{ $eq: ['$isConnected', true] }, 1, 0] },
+          },
+        },
+      },
     ]);
 
     // Aggregate expense data
@@ -42,11 +42,11 @@ export async function GET() {
           _id: null,
           totalExpenses: { $sum: '$amount' },
           balanceAffectingExpenses: {
-            $sum: { $cond: [{ $eq: ['$affectsBalance', true] }, '$amount', 0] }
+            $sum: { $cond: [{ $eq: ['$affectsBalance', true] }, '$amount', 0] },
           },
-          totalExpenseCount: { $sum: 1 }
-        }
-      }
+          totalExpenseCount: { $sum: 1 },
+        },
+      },
     ]);
 
     const income = incomeStats[0] || {
@@ -54,19 +54,20 @@ export async function GET() {
       connectedIncome: 0,
       unconnectedIncome: 0,
       totalIncomes: 0,
-      connectedIncomes: 0
+      connectedIncomes: 0,
     };
 
     const expense = expenseStats[0] || {
       totalExpenses: 0,
       balanceAffectingExpenses: 0,
-      totalExpenseCount: 0
+      totalExpenseCount: 0,
     };
 
     // Calculate balance (only if there's connected income)
-    const balance = income.connectedIncomes > 0 
-      ? income.connectedIncome - expense.balanceAffectingExpenses 
-      : null;
+    const balance =
+      income.connectedIncomes > 0
+        ? income.connectedIncome - expense.balanceAffectingExpenses
+        : null;
 
     return NextResponse.json({
       income: {
@@ -74,18 +75,21 @@ export async function GET() {
         connected: income.connectedIncome,
         unconnected: income.unconnectedIncome,
         count: income.totalIncomes,
-        connectedCount: income.connectedIncomes
+        connectedCount: income.connectedIncomes,
       },
       expenses: {
         total: expense.totalExpenses,
         balanceAffecting: expense.balanceAffectingExpenses,
-        count: expense.totalExpenseCount
+        count: expense.totalExpenseCount,
       },
       balance,
-      hasConnectedIncome: income.connectedIncomes > 0
+      hasConnectedIncome: income.connectedIncomes > 0,
     });
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
-    return NextResponse.json({ error: 'Failed to fetch dashboard stats' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch dashboard stats' },
+      { status: 500 }
+    );
   }
 }

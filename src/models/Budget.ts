@@ -25,7 +25,7 @@ const BudgetSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['monthly', 'weekly', 'custom'],
-    default: 'monthly'
+    default: 'monthly',
   },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },

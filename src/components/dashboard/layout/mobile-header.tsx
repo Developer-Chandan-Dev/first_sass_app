@@ -13,18 +13,21 @@ interface MobileHeaderProps {
   className?: string;
 }
 
-export function MobileHeader({ 
-  title, 
-  onMenuToggle, 
+export function MobileHeader({
+  title,
+  onMenuToggle,
   showBackButton = false,
-  className 
+  className,
 }: MobileHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { dashboard } = useDashboardTranslations();
 
   const handleBack = () => {
-    if (pathname.includes('/expenses/free') || pathname.includes('/expenses/budget')) {
+    if (
+      pathname.includes('/expenses/free') ||
+      pathname.includes('/expenses/budget')
+    ) {
       router.push('/dashboard/expenses');
     } else {
       router.back();
@@ -32,10 +35,12 @@ export function MobileHeader({
   };
 
   return (
-    <div className={cn(
-      'flex items-center justify-between p-4 bg-background border-b lg:hidden',
-      className
-    )}>
+    <div
+      className={cn(
+        'flex items-center justify-between p-4 bg-background border-b lg:hidden',
+        className
+      )}
+    >
       <div className="flex items-center gap-3">
         {showBackButton ? (
           <Button

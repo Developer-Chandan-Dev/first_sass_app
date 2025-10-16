@@ -3,11 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { 
-  Wallet, 
-  Target, 
-  ArrowRight
-} from 'lucide-react';
+import { Wallet, Target, ArrowRight } from 'lucide-react';
 import { ExpenseOverviewStats } from '@/components/dashboard/expenses/expense-overview-stats';
 import { RecentActivityOverview } from '@/components/dashboard/expenses/recent-activity-overview';
 import { AdvancedAllExpensesTable } from '@/components/dashboard/expenses/advanced-all-expenses-table';
@@ -31,37 +27,43 @@ export default function ExpensesOverviewPage() {
   const expenseTypes: ExpenseType[] = [
     {
       title: expenses?.expenseType?.[0]?.title || 'Free Expenses',
-      description: expenses?.expenseType?.[0]?.description || 'Track your daily expenses without budget constraints',
+      description:
+        expenses?.expenseType?.[0]?.description ||
+        'Track your daily expenses without budget constraints',
       features: expenses?.expenseType?.[0]?.features || [
         'Unlimited tracking',
         'Category management',
         'Analytics & reports',
-        'Export data'
+        'Export data',
       ],
       icon: Wallet,
       href: '/dashboard/expenses/free',
-      color: 'bg-blue-500'
+      color: 'bg-blue-500',
     },
     {
       title: expenses?.expenseType?.[1]?.title || 'Budget Expenses',
-      description: expenses?.expenseType?.[1]?.description || 'Manage expenses within predefined budget limits',
+      description:
+        expenses?.expenseType?.[1]?.description ||
+        'Manage expenses within predefined budget limits',
       features: expenses?.expenseType?.[1]?.features || [
         'Budget limits',
         'Spending alerts',
         'Goal tracking',
-        'Budget analysis'
+        'Budget analysis',
       ],
       icon: Target,
       href: '/dashboard/expenses/budget',
-      color: 'bg-green-500'
-    }
+      color: 'bg-green-500',
+    },
   ];
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={expenses?.title || 'Expense Management'}
-        description={expenses?.subTitle || 'Choose how you want to track your expenses'}
+        description={
+          expenses?.subTitle || 'Choose how you want to track your expenses'
+        }
       />
 
       {/* Quick Stats */}
@@ -97,11 +99,7 @@ export default function ExpensesOverviewPage() {
                     </li>
                   ))}
                 </ul>
-                <Button 
-                  asChild 
-                  className="w-full" 
-                  variant="default"
-                >
+                <Button asChild className="w-full" variant="default">
                   <Link href={type.href}>
                     {expenses?.getStarted || 'Get Started'}
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -115,15 +113,18 @@ export default function ExpensesOverviewPage() {
 
       {/* Advanced All Expenses Table */}
       <AdvancedAllExpensesTable />
-      
+
       {/* Recent Activity Preview */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>{expenses?.recentExpenses || 'Recent Activity'}</CardTitle>
+            <CardTitle>
+              {expenses?.recentExpenses || 'Recent Activity'}
+            </CardTitle>
             <Button variant="outline" size="sm" asChild>
               <Link href="/dashboard/expenses/free">
-                {expenses?.viewAll || 'View All'} <ArrowRight className="ml-2 h-4 w-4" />
+                {expenses?.viewAll || 'View All'}{' '}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>

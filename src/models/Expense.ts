@@ -28,7 +28,7 @@ const ExpenseSchema = new mongoose.Schema<IExpense>({
     type: String,
     required: true,
     enum: ['free', 'budget'],
-    default: 'free'
+    default: 'free',
   },
   budgetId: { type: String, index: true }, // Reference to budget for budget expenses
   incomeId: { type: String, index: true }, // Reference to income source

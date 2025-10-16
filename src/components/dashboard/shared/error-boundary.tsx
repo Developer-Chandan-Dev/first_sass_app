@@ -17,7 +17,10 @@ interface ErrorBoundaryProps {
   fallback?: React.ComponentType<{ error?: Error; resetError: () => void }>;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -28,7 +31,10 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 
   componentDidCatch(error: Error) {
-    console.error('Dashboard Error Boundary caught an error:', sanitizeForLog(error.message));
+    console.error(
+      'Dashboard Error Boundary caught an error:',
+      sanitizeForLog(error.message)
+    );
   }
 
   resetError = () => {
@@ -39,17 +45,33 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     if (this.state.hasError) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
-        return <FallbackComponent error={this.state.error} resetError={this.resetError} />;
+        return (
+          <FallbackComponent
+            error={this.state.error}
+            resetError={this.resetError}
+          />
+        );
       }
 
-      return <DefaultErrorFallback error={this.state.error} resetError={this.resetError} />;
+      return (
+        <DefaultErrorFallback
+          error={this.state.error}
+          resetError={this.resetError}
+        />
+      );
     }
 
     return this.props.children;
   }
 }
 
-function DefaultErrorFallback({ error, resetError }: { error?: Error; resetError: () => void }) {
+function DefaultErrorFallback({
+  error,
+  resetError,
+}: {
+  error?: Error;
+  resetError: () => void;
+}) {
   return (
     <Card className="w-full">
       <CardHeader>
@@ -62,24 +84,25 @@ function DefaultErrorFallback({ error, resetError }: { error?: Error; resetError
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            {error?.message || 'An unexpected error occurred while loading this component.'}
+            {error?.message ||
+              'An unexpected error occurred while loading this component.'}
           </AlertDescription>
         </Alert>
-        
+
         <div className="flex gap-2">
           <Button onClick={resetError} variant="outline" size="sm">
             <RefreshCw className="h-4 w-4 mr-2" />
             Try Again
           </Button>
-          <Button 
-            onClick={() => window.location.reload()} 
-            variant="default" 
+          <Button
+            onClick={() => window.location.reload()}
+            variant="default"
             size="sm"
           >
             Reload Page
           </Button>
         </div>
-        
+
         {process.env.NODE_ENV === 'development' && error && (
           <details className="mt-4">
             <summary className="cursor-pointer text-sm font-medium">

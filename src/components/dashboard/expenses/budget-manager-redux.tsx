@@ -10,18 +10,18 @@ import { Plus, Edit, Trash2, Target } from 'lucide-react';
 import { AddBudgetModal } from './add-budget-modal-redux';
 import { toast } from 'sonner';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { 
-  fetchBudgets, 
-  deleteBudget, 
+import {
+  fetchBudgets,
+  deleteBudget,
   deleteBudgetOptimistic,
   updateBudget,
   updateBudgetOptimistic,
-  type Budget 
+  type Budget,
 } from '@/lib/redux/expense/budgetSlice';
 
 export function BudgetManager() {
   const dispatch = useAppDispatch();
-  const { budgets, loading } = useAppSelector(state => state.budgets);
+  const { budgets, loading } = useAppSelector((state) => state.budgets);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
 
@@ -32,11 +32,18 @@ export function BudgetManager() {
 
     // API call in background
     try {
-      await dispatch(updateBudget({ id: budgetId, updates: { isActive } })).unwrap();
+      await dispatch(
+        updateBudget({ id: budgetId, updates: { isActive } })
+      ).unwrap();
     } catch {
       toast.error('Failed to update budget');
       // Revert optimistic update
-      dispatch(updateBudgetOptimistic({ id: budgetId, updates: { isActive: !isActive } }));
+      dispatch(
+        updateBudgetOptimistic({
+          id: budgetId,
+          updates: { isActive: !isActive },
+        })
+      );
     }
   };
 
@@ -51,7 +58,8 @@ export function BudgetManager() {
     try {
       await dispatch(deleteBudget(budgetId)).unwrap();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete budget';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to delete budget';
       toast.error(errorMessage);
       // Revert by refetching
       dispatch(fetchBudgets());
@@ -65,9 +73,19 @@ export function BudgetManager() {
 
   const getStatusBadge = (budget: Budget) => {
     if (!budget.isActive) return <Badge variant="secondary">Inactive</Badge>;
-    if (budget.percentage >= 100) return <Badge variant="destructive">Exceeded</Badge>;
-    if (budget.percentage >= 75) return <Badge variant="outline" className="border-yellow-500 text-yellow-600">Warning</Badge>;
-    return <Badge variant="default" className="bg-green-500">Active</Badge>;
+    if (budget.percentage >= 100)
+      return <Badge variant="destructive">Exceeded</Badge>;
+    if (budget.percentage >= 75)
+      return (
+        <Badge variant="outline" className="border-yellow-500 text-yellow-600">
+          Warning
+        </Badge>
+      );
+    return (
+      <Badge variant="default" className="bg-green-500">
+        Active
+      </Badge>
+    );
   };
 
   if (loading) {
@@ -75,7 +93,7 @@ export function BudgetManager() {
       <Card>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <div key={i} className="h-16 bg-muted rounded"></div>
             ))}
           </div>
@@ -95,9 +113,7 @@ export function BudgetManager() {
             </CardTitle>
             <Button onClick={() => setIsModalOpen(true)}>
               <Plus className="max-sm:mr-2 h-4 w-4" />
-              <span className="max-sm:hidden">
-                Add Budget
-              </span>
+              <span className="max-sm:hidden">Add Budget</span>
             </Button>
           </div>
         </CardHeader>
@@ -106,7 +122,9 @@ export function BudgetManager() {
             <div className="text-center py-8">
               <Target className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">No budgets created</h3>
-              <p className="text-muted-foreground mb-4">Create your first budget to start tracking expenses</p>
+              <p className="text-muted-foreground mb-4">
+                Create your first budget to start tracking expenses
+              </p>
               <Button onClick={() => setIsModalOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Create Budget
@@ -118,16 +136,22 @@ export function BudgetManager() {
                 <div key={budget._id} className="border rounded-lg p-3 sm:p-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-medium text-sm sm:text-base">{budget.name}</h3>
+                      <h3 className="font-medium text-sm sm:text-base">
+                        {budget.name}
+                      </h3>
                       {getStatusBadge(budget)}
                       {budget.category && (
-                        <Badge variant="outline" className="text-xs">{budget.category}</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {budget.category}
+                        </Badge>
                       )}
                     </div>
                     <div className="flex items-center gap-1 sm:gap-2">
                       <Switch
                         checked={budget.isActive}
-                        onCheckedChange={(checked) => handleToggleActive(budget._id, checked)}
+                        onCheckedChange={(checked) =>
+                          handleToggleActive(budget._id, checked)
+                        }
                       />
                       <Button
                         variant="ghost"
@@ -147,19 +171,23 @@ export function BudgetManager() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs sm:text-sm">
                       <span>₹{(budget.spent || 0).toLocaleString()} spent</span>
-                      <span>₹{(budget.amount || 0).toLocaleString()} budget</span>
+                      <span>
+                        ₹{(budget.amount || 0).toLocaleString()} budget
+                      </span>
                     </div>
-                    <Progress 
-                      value={Math.min(budget.percentage || 0, 100)} 
+                    <Progress
+                      value={Math.min(budget.percentage || 0, 100)}
                       className="h-2"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>{(budget.percentage || 0).toFixed(1)}% used</span>
-                      <span>₹{(budget.remaining || 0).toLocaleString()} remaining</span>
+                      <span>
+                        ₹{(budget.remaining || 0).toLocaleString()} remaining
+                      </span>
                     </div>
                   </div>
                 </div>

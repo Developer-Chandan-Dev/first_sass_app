@@ -4,17 +4,17 @@
 export function safeGet<T>(obj: unknown, path: string, defaultValue: T): T {
   try {
     if (obj == null) return defaultValue;
-    
+
     const keys = path.split('.');
     let result: unknown = obj;
-    
+
     for (const key of keys) {
       if (result == null || typeof result !== 'object') {
         return defaultValue;
       }
       result = (result as Record<string, unknown>)[key];
     }
-    
+
     return result !== undefined ? (result as T) : defaultValue;
   } catch {
     return defaultValue;
@@ -41,7 +41,7 @@ export function safeString(value: unknown, defaultValue = ''): string {
  * Safely parse arrays
  */
 export function safeArray<T>(value: unknown, defaultValue: T[] = []): T[] {
-  return Array.isArray(value) ? value as T[] : defaultValue;
+  return Array.isArray(value) ? (value as T[]) : defaultValue;
 }
 
 /**
@@ -54,7 +54,7 @@ export function sanitizeText(text: string): string {
       '>': '&gt;',
       '"': '&quot;',
       "'": '&#x27;',
-      '&': '&amp;'
+      '&': '&amp;',
     };
     return map[match] || match;
   });

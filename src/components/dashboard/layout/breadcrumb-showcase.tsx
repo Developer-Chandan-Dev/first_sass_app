@@ -9,7 +9,7 @@ import { Code, Navigation, Settings, Zap } from 'lucide-react';
 export function BreadcrumbShowcase() {
   const { breadcrumbs, currentPage, isHomePage } = useBreadcrumbs({
     showHome: true,
-    maxItems: 4
+    maxItems: 4,
   });
 
   const features = [
@@ -17,26 +17,26 @@ export function BreadcrumbShowcase() {
       icon: Navigation,
       title: 'Smart Navigation',
       description: 'Automatically generates breadcrumbs based on current route',
-      status: 'Active'
+      status: 'Active',
     },
     {
       icon: Settings,
       title: 'Configurable',
       description: 'Customizable labels, icons, and behavior per route',
-      status: 'Active'
+      status: 'Active',
     },
     {
       icon: Zap,
       title: 'Performance Optimized',
       description: 'Memoized calculations and efficient re-renders',
-      status: 'Active'
+      status: 'Active',
     },
     {
       icon: Code,
       title: 'Developer Friendly',
       description: 'TypeScript support with comprehensive configuration',
-      status: 'Active'
-    }
+      status: 'Active',
+    },
   ];
 
   return (
@@ -53,7 +53,7 @@ export function BreadcrumbShowcase() {
             <h4 className="font-medium mb-2">Current Breadcrumb Trail:</h4>
             <BreadcrumbNavigation className="bg-muted/50 p-3 rounded-lg" />
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
               <span className="font-medium">Current Page:</span>
@@ -65,7 +65,9 @@ export function BreadcrumbShowcase() {
             </div>
             <div>
               <span className="font-medium">Is Home Page:</span>
-              <p className="text-muted-foreground">{isHomePage ? 'Yes' : 'No'}</p>
+              <p className="text-muted-foreground">
+                {isHomePage ? 'Yes' : 'No'}
+              </p>
             </div>
           </div>
         </CardContent>
@@ -114,7 +116,11 @@ export function BreadcrumbShowcase() {
                   {crumb.href || 'current'}
                 </code>
                 <span className="text-muted-foreground">→</span>
-                <span className={crumb.isActive ? 'font-medium' : 'text-muted-foreground'}>
+                <span
+                  className={
+                    crumb.isActive ? 'font-medium' : 'text-muted-foreground'
+                  }
+                >
                   {crumb.label}
                 </span>
                 {crumb.isActive && (

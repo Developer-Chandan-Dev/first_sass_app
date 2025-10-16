@@ -72,15 +72,24 @@ export const refreshStats = createAsyncThunk(
   'stats/refreshStats',
   async (expenseType: 'free' | 'budget', { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/expenses/dashboard?type=${expenseType}`);
+      const response = await fetch(
+        `/api/expenses/dashboard?type=${expenseType}`
+      );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `HTTP ${response.status}: Failed to fetch stats`);
+        throw new Error(
+          errorData.error || `HTTP ${response.status}: Failed to fetch stats`
+        );
       }
       const data = await response.json();
-      return { type: expenseType, stats: data.stats || {}, expenses: data.expenses || [] };
+      return {
+        type: expenseType,
+        stats: data.stats || {},
+        expenses: data.expenses || [],
+      };
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to fetch stats';
+      const message =
+        error instanceof Error ? error.message : 'Failed to fetch stats';
       return rejectWithValue(message);
     }
   }
@@ -93,9 +102,26 @@ const statsSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    updateStatsOptimistic: (state, action: PayloadAction<{ type: 'free' | 'budget'; amount: number; category: string; operation: 'add' | 'subtract'; isExpense?: boolean; reason?: string }>) => {
-      const { type, amount, category, operation, isExpense = true, reason = '' } = action.payload;
-      
+    updateStatsOptimistic: (
+      state,
+      action: PayloadAction<{
+        type: 'free' | 'budget';
+        amount: number;
+        category: string;
+        operation: 'add' | 'subtract';
+        isExpense?: boolean;
+        reason?: string;
+      }>
+    ) => {
+      const {
+        type,
+        amount,
+        category,
+        operation,
+        isExpense = true,
+        reason = '',
+      } = action.payload;
+
       // Add to recent expenses for both types when adding
       if (operation === 'add' && isExpense) {
         const newExpense: ExpenseDocument = {
@@ -105,9 +131,9 @@ const statsSlice = createSlice({
           reason,
           date: new Date().toISOString(),
           createdAt: new Date().toISOString(),
-          type
+          type,
         };
-        
+
         if (type === 'free') {
           state.free.expenses.unshift(newExpense);
           if (state.free.expenses.length > 7) state.free.expenses.pop();
@@ -116,29 +142,43 @@ const statsSlice = createSlice({
           if (state.budget.expenses.length > 5) state.budget.expenses.pop();
         }
       }
-      
+
       if (type === 'free') {
         // Handle free expenses only
         const freeStats = state.free;
         if (operation === 'add') {
           freeStats.totalExpenses += 1;
           freeStats.totalSpent += amount;
-          
-          const categoryIndex = freeStats.categoryBreakdown.findIndex(c => c._id === category);
+
+          const categoryIndex = freeStats.categoryBreakdown.findIndex(
+            (c) => c._id === category
+          );
           if (categoryIndex !== -1) {
             freeStats.categoryBreakdown[categoryIndex].total += amount;
             freeStats.categoryBreakdown[categoryIndex].count += 1;
           } else {
-            freeStats.categoryBreakdown.push({ _id: category, total: amount, count: 1 });
+            freeStats.categoryBreakdown.push({
+              _id: category,
+              total: amount,
+              count: 1,
+            });
           }
         } else {
           freeStats.totalExpenses = Math.max(0, freeStats.totalExpenses - 1);
           freeStats.totalSpent = Math.max(0, freeStats.totalSpent - amount);
-          
-          const categoryIndex = freeStats.categoryBreakdown.findIndex(c => c._id === category);
+
+          const categoryIndex = freeStats.categoryBreakdown.findIndex(
+            (c) => c._id === category
+          );
           if (categoryIndex !== -1) {
-            freeStats.categoryBreakdown[categoryIndex].total = Math.max(0, freeStats.categoryBreakdown[categoryIndex].total - amount);
-            freeStats.categoryBreakdown[categoryIndex].count = Math.max(0, freeStats.categoryBreakdown[categoryIndex].count - 1);
+            freeStats.categoryBreakdown[categoryIndex].total = Math.max(
+              0,
+              freeStats.categoryBreakdown[categoryIndex].total - amount
+            );
+            freeStats.categoryBreakdown[categoryIndex].count = Math.max(
+              0,
+              freeStats.categoryBreakdown[categoryIndex].count - 1
+            );
             if (freeStats.categoryBreakdown[categoryIndex].count === 0) {
               freeStats.categoryBreakdown.splice(categoryIndex, 1);
             }
@@ -146,28 +186,48 @@ const statsSlice = createSlice({
         }
       } else if (type === 'budget') {
         const budgetStats = state.budget;
-        
+
         if (isExpense) {
           // Budget expense (spending from budget)
           if (operation === 'add') {
             budgetStats.totalExpenses += 1;
             budgetStats.totalSpent += amount;
-            
-            const categoryIndex = budgetStats.categoryBreakdown.findIndex(c => c._id === category);
+
+            const categoryIndex = budgetStats.categoryBreakdown.findIndex(
+              (c) => c._id === category
+            );
             if (categoryIndex !== -1) {
               budgetStats.categoryBreakdown[categoryIndex].total += amount;
               budgetStats.categoryBreakdown[categoryIndex].count += 1;
             } else {
-              budgetStats.categoryBreakdown.push({ _id: category, total: amount, count: 1 });
+              budgetStats.categoryBreakdown.push({
+                _id: category,
+                total: amount,
+                count: 1,
+              });
             }
           } else {
-            budgetStats.totalExpenses = Math.max(0, budgetStats.totalExpenses - 1);
-            budgetStats.totalSpent = Math.max(0, budgetStats.totalSpent - amount);
-            
-            const categoryIndex = budgetStats.categoryBreakdown.findIndex(c => c._id === category);
+            budgetStats.totalExpenses = Math.max(
+              0,
+              budgetStats.totalExpenses - 1
+            );
+            budgetStats.totalSpent = Math.max(
+              0,
+              budgetStats.totalSpent - amount
+            );
+
+            const categoryIndex = budgetStats.categoryBreakdown.findIndex(
+              (c) => c._id === category
+            );
             if (categoryIndex !== -1) {
-              budgetStats.categoryBreakdown[categoryIndex].total = Math.max(0, budgetStats.categoryBreakdown[categoryIndex].total - amount);
-              budgetStats.categoryBreakdown[categoryIndex].count = Math.max(0, budgetStats.categoryBreakdown[categoryIndex].count - 1);
+              budgetStats.categoryBreakdown[categoryIndex].total = Math.max(
+                0,
+                budgetStats.categoryBreakdown[categoryIndex].total - amount
+              );
+              budgetStats.categoryBreakdown[categoryIndex].count = Math.max(
+                0,
+                budgetStats.categoryBreakdown[categoryIndex].count - 1
+              );
               if (budgetStats.categoryBreakdown[categoryIndex].count === 0) {
                 budgetStats.categoryBreakdown.splice(categoryIndex, 1);
               }
@@ -178,7 +238,10 @@ const statsSlice = createSlice({
           if (operation === 'add') {
             budgetStats.totalBudget += amount;
           } else {
-            budgetStats.totalBudget = Math.max(0, budgetStats.totalBudget - amount);
+            budgetStats.totalBudget = Math.max(
+              0,
+              budgetStats.totalBudget - amount
+            );
           }
         }
       }
@@ -198,7 +261,7 @@ const statsSlice = createSlice({
       })
       .addCase(refreshStats.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string || 'Failed to refresh stats';
+        state.error = (action.payload as string) || 'Failed to refresh stats';
       });
   },
 });

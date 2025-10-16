@@ -36,7 +36,7 @@ export function useCategories() {
 
       if (response.ok) {
         const data = await response.json();
-        setCustomCategories(prev => [...prev, data.category]);
+        setCustomCategories((prev) => [...prev, data.category]);
         return { success: true, category: data.category };
       } else {
         const error = await response.json();

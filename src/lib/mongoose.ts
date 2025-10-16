@@ -13,42 +13,44 @@ function validateMongoURI(uri: string): boolean {
     if (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://')) {
       return false;
     }
-    
+
     // For production, ensure we're not connecting to localhost/internal IPs
     // unless explicitly allowed (for development/testing)
     if (process.env.NODE_ENV === 'production') {
       // Allow MongoDB Atlas and other cloud providers
-      const isCloudService = uri.includes('.mongodb.net') || 
-                            uri.includes('mongodb-atlas') ||
-                            uri.includes('mongodb+srv://');
-      
+      const isCloudService =
+        uri.includes('.mongodb.net') ||
+        uri.includes('mongodb-atlas') ||
+        uri.includes('mongodb+srv://');
+
       // Block clear localhost/internal connections in production
-      const isLocalhost = uri.includes('localhost:') || 
-                         uri.includes('127.0.0.1:') ||
-                         uri.includes('192.168.') ||
-                         uri.includes('10.') ||
-                         uri.includes('172.16.') ||
-                         uri.includes('172.17.') ||
-                         uri.includes('172.18.') ||
-                         uri.includes('172.19.') ||
-                         uri.includes('172.20.') ||
-                         uri.includes('172.21.') ||
-                         uri.includes('172.22.') ||
-                         uri.includes('172.23.') ||
-                         uri.includes('172.24.') ||
-                         uri.includes('172.25.') ||
-                         uri.includes('172.26.') ||
-                         uri.includes('172.27.') ||
-                         uri.includes('172.28.') ||
-                         uri.includes('172.29.') ||
-                         uri.includes('172.30.') ||
-                         uri.includes('172.31.');
-      
+      const isLocalhost =
+        uri.includes('localhost:') ||
+        uri.includes('127.0.0.1:') ||
+        uri.includes('192.168.') ||
+        uri.includes('10.') ||
+        uri.includes('172.16.') ||
+        uri.includes('172.17.') ||
+        uri.includes('172.18.') ||
+        uri.includes('172.19.') ||
+        uri.includes('172.20.') ||
+        uri.includes('172.21.') ||
+        uri.includes('172.22.') ||
+        uri.includes('172.23.') ||
+        uri.includes('172.24.') ||
+        uri.includes('172.25.') ||
+        uri.includes('172.26.') ||
+        uri.includes('172.27.') ||
+        uri.includes('172.28.') ||
+        uri.includes('172.29.') ||
+        uri.includes('172.30.') ||
+        uri.includes('172.31.');
+
       if (isLocalhost && !isCloudService) {
         return false;
       }
     }
-    
+
     return true;
   } catch {
     return false;
@@ -56,7 +58,10 @@ function validateMongoURI(uri: string): boolean {
 }
 
 // Only validate if you have specific compliance requirements
-if (process.env.VALIDATE_MONGODB_URI === 'true' && !validateMongoURI(MONGODB_URI)) {
+if (
+  process.env.VALIDATE_MONGODB_URI === 'true' &&
+  !validateMongoURI(MONGODB_URI)
+) {
   throw new Error('Invalid MongoDB URI configuration');
 }
 

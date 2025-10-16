@@ -73,7 +73,10 @@ export function ExpenseReportChart({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <CardTitle className="text-base sm:text-lg">Expense Report</CardTitle>
-          <Select value={period} onValueChange={(value) => setPeriod(value as ReportPeriod)} >
+          <Select
+            value={period}
+            onValueChange={(value) => setPeriod(value as ReportPeriod)}
+          >
             <SelectTrigger className="w-32 sm:w-40 text-sm">
               <SelectValue placeholder="Select Period" />
             </SelectTrigger>

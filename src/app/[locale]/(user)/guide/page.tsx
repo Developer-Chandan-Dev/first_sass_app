@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  BookOpen, 
-  DollarSign, 
-  TrendingUp, 
-  Wallet, 
-  PieChart, 
+import {
+  BookOpen,
+  DollarSign,
+  TrendingUp,
+  Wallet,
+  PieChart,
   Settings,
   Plus,
   Download,
@@ -18,7 +18,7 @@ import {
   Target,
   Bell,
   Calendar,
-  Link as LinkIcon
+  Link as LinkIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,9 +26,12 @@ export default function GuidePage() {
   return (
     <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-6xl">
       <div className="text-center mb-4 sm:mb-8">
-        <h1 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4">💰 Expense Management Guide</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4">
+          💰 Expense Management Guide
+        </h1>
         <p className="text-sm sm:text-xl text-muted-foreground mb-4 sm:mb-6">
-          Complete guide to managing your finances with our advanced expense tracker
+          Complete guide to managing your finances with our advanced expense
+          tracker
         </p>
         <div className="sm:flex sm:flex-row justify-center gap-2 sm:gap-4">
           <Link href="/dashboard">
@@ -49,12 +52,42 @@ export default function GuidePage() {
       <Tabs defaultValue="overview" className="space-y-4 sm:space-y-6">
         <div className="overflow-x-auto">
           <TabsList className="flex w-max min-w-full">
-            <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap">Overview</TabsTrigger>
-            <TabsTrigger value="income" className="text-xs sm:text-sm whitespace-nowrap">Income</TabsTrigger>
-            <TabsTrigger value="expenses" className="text-xs sm:text-sm whitespace-nowrap">Expenses</TabsTrigger>
-            <TabsTrigger value="balance" className="text-xs sm:text-sm whitespace-nowrap">Balance</TabsTrigger>
-            <TabsTrigger value="features" className="text-xs sm:text-sm whitespace-nowrap">Features</TabsTrigger>
-            <TabsTrigger value="tips" className="text-xs sm:text-sm whitespace-nowrap">Tips</TabsTrigger>
+            <TabsTrigger
+              value="overview"
+              className="text-xs sm:text-sm whitespace-nowrap"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger
+              value="income"
+              className="text-xs sm:text-sm whitespace-nowrap"
+            >
+              Income
+            </TabsTrigger>
+            <TabsTrigger
+              value="expenses"
+              className="text-xs sm:text-sm whitespace-nowrap"
+            >
+              Expenses
+            </TabsTrigger>
+            <TabsTrigger
+              value="balance"
+              className="text-xs sm:text-sm whitespace-nowrap"
+            >
+              Balance
+            </TabsTrigger>
+            <TabsTrigger
+              value="features"
+              className="text-xs sm:text-sm whitespace-nowrap"
+            >
+              Features
+            </TabsTrigger>
+            <TabsTrigger
+              value="tips"
+              className="text-xs sm:text-sm whitespace-nowrap"
+            >
+              Tips
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -68,35 +101,50 @@ export default function GuidePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Our expense management system helps you track income and expenses with advanced balance management. 
-                You can connect income sources to expenses for automatic balance calculation.
+                Our expense management system helps you track income and
+                expenses with advanced balance management. You can connect
+                income sources to expenses for automatic balance calculation.
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-sm sm:text-base">Key Concepts:</h3>
+                  <h3 className="font-semibold text-sm sm:text-base">
+                    Key Concepts:
+                  </h3>
                   <div className="space-y-2">
                     <div className="flex items-start gap-2">
                       <div className="w-3 h-3 bg-blue-500 rounded-full mt-0.5 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm"><strong>Connected Income:</strong> Affects balance calculation</span>
+                      <span className="text-xs sm:text-sm">
+                        <strong>Connected Income:</strong> Affects balance
+                        calculation
+                      </span>
                     </div>
                     <div className="flex items-start gap-2">
                       <div className="w-3 h-3 bg-green-500 rounded-full mt-0.5 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm"><strong>Unconnected Income:</strong> Tracking only</span>
+                      <span className="text-xs sm:text-sm">
+                        <strong>Unconnected Income:</strong> Tracking only
+                      </span>
                     </div>
                     <div className="flex items-start gap-2">
                       <div className="w-3 h-3 bg-red-500 rounded-full mt-0.5 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm"><strong>Balance-Affecting Expense:</strong> Reduces from connected income</span>
+                      <span className="text-xs sm:text-sm">
+                        <strong>Balance-Affecting Expense:</strong> Reduces from
+                        connected income
+                      </span>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="w-3 h-3 bg-gray-500 rounded-full mt-0.5 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm"><strong>Regular Expense:</strong> Tracking only</span>
+                      <span className="text-xs sm:text-sm">
+                        <strong>Regular Expense:</strong> Tracking only
+                      </span>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-sm sm:text-base">Main Features:</h3>
+                  <h3 className="font-semibold text-sm sm:text-base">
+                    Main Features:
+                  </h3>
                   <ul className="space-y-1 text-xs sm:text-sm">
                     <li>• Income & Expense Tracking</li>
                     <li>• Balance Management</li>
@@ -118,18 +166,30 @@ export default function GuidePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="text-center p-3 sm:p-4 border rounded-lg">
                   <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-green-600" />
-                  <h3 className="font-semibold mb-2 text-sm sm:text-base">1. Add Income</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Start by adding your income sources with connection options</p>
+                  <h3 className="font-semibold mb-2 text-sm sm:text-base">
+                    1. Add Income
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Start by adding your income sources with connection options
+                  </p>
                 </div>
                 <div className="text-center p-3 sm:p-4 border rounded-lg">
                   <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-red-600" />
-                  <h3 className="font-semibold mb-2 text-sm sm:text-base">2. Track Expenses</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Add expenses and choose if they affect your balance</p>
+                  <h3 className="font-semibold mb-2 text-sm sm:text-base">
+                    2. Track Expenses
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Add expenses and choose if they affect your balance
+                  </p>
                 </div>
                 <div className="text-center p-3 sm:p-4 border rounded-lg">
                   <Wallet className="h-6 w-6 sm:h-8 sm:w-8 mx-auto mb-2 text-blue-600" />
-                  <h3 className="font-semibold mb-2 text-sm sm:text-base">3. Monitor Balance</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">View your real-time balance and financial insights</p>
+                  <h3 className="font-semibold mb-2 text-sm sm:text-base">
+                    3. Monitor Balance
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    View your real-time balance and financial insights
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -149,7 +209,9 @@ export default function GuidePage() {
                 <h3 className="font-semibold">Adding Income Sources</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
-                    <h4 className="font-medium text-sm sm:text-base">Step-by-Step:</h4>
+                    <h4 className="font-medium text-sm sm:text-base">
+                      Step-by-Step:
+                    </h4>
                     <ol className="list-decimal list-inside space-y-1 sm:space-y-2 text-xs sm:text-sm">
                       <li>Navigate to Dashboard → Income</li>
                       <li>Click &quot;Add Income&quot; button</li>
@@ -161,16 +223,34 @@ export default function GuidePage() {
                     </ol>
                   </div>
                   <div className="space-y-3">
-                    <h4 className="font-medium text-sm sm:text-base">Income Types:</h4>
+                    <h4 className="font-medium text-sm sm:text-base">
+                      Income Types:
+                    </h4>
                     <div className="flex flex-wrap gap-1 sm:gap-2">
-                      <Badge variant="outline" className="text-xs">Salary</Badge>
-                      <Badge variant="outline" className="text-xs">Freelancing</Badge>
-                      <Badge variant="outline" className="text-xs">Business</Badge>
-                      <Badge variant="outline" className="text-xs">Investment</Badge>
-                      <Badge variant="outline" className="text-xs">Rental</Badge>
-                      <Badge variant="outline" className="text-xs">Commission</Badge>
-                      <Badge variant="outline" className="text-xs">Bonus</Badge>
-                      <Badge variant="outline" className="text-xs">Other</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Salary
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Freelancing
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Business
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Investment
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Rental
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Commission
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Bonus
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Other
+                      </Badge>
                     </div>
                   </div>
                 </div>
@@ -310,7 +390,9 @@ export default function GuidePage() {
               <div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
                 <h3 className="font-semibold mb-2">Balance Formula</h3>
                 <p className="text-sm">
-                  <strong>Balance = Connected Income - Balance-Affecting Expenses</strong>
+                  <strong>
+                    Balance = Connected Income - Balance-Affecting Expenses
+                  </strong>
                 </p>
               </div>
 

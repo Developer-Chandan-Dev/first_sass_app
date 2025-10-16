@@ -1,12 +1,40 @@
 import { z } from 'zod';
 
 // Create validation schemas with internationalized error messages
-export const createExpenseSchema = (translations?: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>) => {
+export const createExpenseSchema = (
+  translations?: ReturnType<
+    typeof import('@/hooks/i18n').useDashboardTranslations
+  >
+) => {
   return z.object({
-    amount: z.number().min(0.01, translations?.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
-    category: z.string().min(1, translations?.expenses?.form?.validation?.categoryRequired || 'Category is required'),
-    reason: z.string().min(1, translations?.expenses?.form?.validation?.reasonRequired || 'Reason is required'),
-    date: z.string().min(1, translations?.expenses?.form?.validation?.dateRequired || 'Date is required'),
+    amount: z
+      .number()
+      .min(
+        0.01,
+        translations?.expenses?.form?.validation?.amountGreaterThanZero ||
+          'Amount must be greater than 0'
+      ),
+    category: z
+      .string()
+      .min(
+        1,
+        translations?.expenses?.form?.validation?.categoryRequired ||
+          'Category is required'
+      ),
+    reason: z
+      .string()
+      .min(
+        1,
+        translations?.expenses?.form?.validation?.reasonRequired ||
+          'Reason is required'
+      ),
+    date: z
+      .string()
+      .min(
+        1,
+        translations?.expenses?.form?.validation?.dateRequired ||
+          'Date is required'
+      ),
     isRecurring: z.boolean().default(false),
     frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
     affectsBalance: z.boolean().default(false),
@@ -14,27 +42,83 @@ export const createExpenseSchema = (translations?: ReturnType<typeof import('@/h
   });
 };
 
-export const createIncomeSchema = (translations?: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>) => {
+export const createIncomeSchema = (
+  translations?: ReturnType<
+    typeof import('@/hooks/i18n').useDashboardTranslations
+  >
+) => {
   return z.object({
-    amount: z.number().min(0.01, translations?.income?.form?.validation?.amountPositive || 'Amount must be positive'),
-    source: z.string().min(1, translations?.income?.form?.validation?.sourceRequired || 'Source is required'),
+    amount: z
+      .number()
+      .min(
+        0.01,
+        translations?.income?.form?.validation?.amountPositive ||
+          'Amount must be positive'
+      ),
+    source: z
+      .string()
+      .min(
+        1,
+        translations?.income?.form?.validation?.sourceRequired ||
+          'Source is required'
+      ),
     category: z.string().min(1, 'Category is required'),
     description: z.string().min(1, 'Description is required'),
-    date: z.string().min(1, translations?.income?.form?.validation?.dateRequired || 'Date is required'),
+    date: z
+      .string()
+      .min(
+        1,
+        translations?.income?.form?.validation?.dateRequired ||
+          'Date is required'
+      ),
     isConnected: z.boolean().optional().default(false),
     isRecurring: z.boolean().optional().default(false),
     frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
   });
 };
 
-export const createBudgetSchema = (translations?: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>) => {
+export const createBudgetSchema = (
+  translations?: ReturnType<
+    typeof import('@/hooks/i18n').useDashboardTranslations
+  >
+) => {
   return z.object({
-    name: z.string().min(1, translations?.expenses?.form?.validation?.titleRequired || 'Name is required'),
-    amount: z.number().min(0.01, translations?.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be positive'),
-    category: z.string().min(1, translations?.expenses?.form?.validation?.categoryRequired || 'Category is required'),
+    name: z
+      .string()
+      .min(
+        1,
+        translations?.expenses?.form?.validation?.titleRequired ||
+          'Name is required'
+      ),
+    amount: z
+      .number()
+      .min(
+        0.01,
+        translations?.expenses?.form?.validation?.amountGreaterThanZero ||
+          'Amount must be positive'
+      ),
+    category: z
+      .string()
+      .min(
+        1,
+        translations?.expenses?.form?.validation?.categoryRequired ||
+          'Category is required'
+      ),
     description: z.string().optional(),
-    startDate: z.string().min(1, translations?.expenses?.form?.validation?.dateRequired || 'Start date is required'),
-    endDate: z.string().min(1, translations?.expenses?.form?.validation?.dateRequired || 'End date is required'),
+    startDate: z
+      .string()
+      .min(
+        1,
+        translations?.expenses?.form?.validation?.dateRequired ||
+          'Start date is required'
+      ),
+    endDate: z
+      .string()
+      .min(
+        1,
+        translations?.expenses?.form?.validation?.dateRequired ||
+          'End date is required'
+      ),
     alertThreshold: z.number().min(0).max(100).optional(),
   });
 };

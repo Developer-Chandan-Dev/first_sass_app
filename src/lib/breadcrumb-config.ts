@@ -1,18 +1,18 @@
-import { 
-  Home, 
-  LayoutDashboard, 
-  Wallet, 
-  Target, 
-  PieChart, 
-  BarChart3, 
-  Settings, 
+import {
+  Home,
+  LayoutDashboard,
+  Wallet,
+  Target,
+  PieChart,
+  BarChart3,
+  Settings,
   User,
   Plus,
   Edit,
   Eye,
   FileText,
   Download,
-  Upload
+  Upload,
 } from 'lucide-react';
 
 export interface BreadcrumbConfig {
@@ -28,120 +28,124 @@ export const breadcrumbConfig: BreadcrumbConfig = {
   '/': {
     label: 'Home',
     icon: Home,
-    description: 'Dashboard home'
+    description: 'Dashboard home',
   },
-  'dashboard': {
+  dashboard: {
     label: 'Dashboard',
     icon: LayoutDashboard,
-    description: 'Main dashboard'
+    description: 'Main dashboard',
   },
-  
+
   // Expense paths
-  'expenses': {
+  expenses: {
     label: 'Expenses',
     icon: Wallet,
-    description: 'Expense management'
+    description: 'Expense management',
   },
-  'free': {
+  free: {
     label: 'Free Expenses',
     icon: Wallet,
-    description: 'Track daily expenses'
+    description: 'Track daily expenses',
   },
-  'budget': {
+  budget: {
     label: 'Budget Expenses',
     icon: Target,
-    description: 'Budget-controlled expenses'
+    description: 'Budget-controlled expenses',
   },
-  
+
   // Income paths
-  'income': {
+  income: {
     label: 'Income',
     icon: PieChart,
-    description: 'Income tracking'
+    description: 'Income tracking',
   },
-  
+
   // Budget paths
-  'budgets': {
+  budgets: {
     label: 'Budgets',
     icon: Target,
-    description: 'Budget management'
+    description: 'Budget management',
   },
-  
+
   // Category paths
-  'categories': {
+  categories: {
     label: 'Categories',
     icon: PieChart,
-    description: 'Category management'
+    description: 'Category management',
   },
-  
+
   // Analytics paths
-  'analytics': {
+  analytics: {
     label: 'Analytics',
     icon: BarChart3,
-    description: 'Financial analytics'
+    description: 'Financial analytics',
   },
-  
+
   // Settings paths
-  'settings': {
+  settings: {
     label: 'Settings',
     icon: Settings,
-    description: 'Application settings'
+    description: 'Application settings',
   },
-  'profile': {
+  profile: {
     label: 'Profile',
     icon: User,
-    description: 'User profile'
+    description: 'User profile',
   },
-  
+
   // Action paths
-  'add': {
+  add: {
     label: 'Add',
     icon: Plus,
-    description: 'Add new item'
+    description: 'Add new item',
   },
-  'edit': {
+  edit: {
     label: 'Edit',
     icon: Edit,
-    description: 'Edit item'
+    description: 'Edit item',
   },
-  'view': {
+  view: {
     label: 'View',
     icon: Eye,
-    description: 'View details'
+    description: 'View details',
   },
-  'new': {
+  new: {
     label: 'New',
     icon: Plus,
-    description: 'Create new'
+    description: 'Create new',
   },
-  
+
   // Report paths
-  'reports': {
+  reports: {
     label: 'Reports',
     icon: FileText,
-    description: 'Financial reports'
+    description: 'Financial reports',
   },
-  'export': {
+  export: {
     label: 'Export',
     icon: Download,
-    description: 'Export data'
+    description: 'Export data',
   },
-  'import': {
+  import: {
     label: 'Import',
     icon: Upload,
-    description: 'Import data'
-  }
+    description: 'Import data',
+  },
 };
 
 export function getBreadcrumbConfig(segment: string) {
-  return breadcrumbConfig[segment] || {
-    label: segment.charAt(0).toUpperCase() + segment.slice(1),
-    description: `${segment} page`
-  };
+  return (
+    breadcrumbConfig[segment] || {
+      label: segment.charAt(0).toUpperCase() + segment.slice(1),
+      description: `${segment} page`,
+    }
+  );
 }
 
 export function isUuidSegment(segment: string): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(segment);
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    segment
+  );
 }
 
 export function isNumericSegment(segment: string): boolean {
@@ -152,22 +156,25 @@ export function isDynamicSegment(segment: string): boolean {
   return isUuidSegment(segment) || isNumericSegment(segment);
 }
 
-export function getDynamicSegmentLabel(segment: string, context: string[]): string {
+export function getDynamicSegmentLabel(
+  segment: string,
+  context: string[]
+): string {
   if (!isDynamicSegment(segment)) {
     return segment;
   }
-  
+
   // Get the previous segment for context
   const prevSegment = context[context.length - 1];
-  
+
   const contextMap: Record<string, string> = {
-    'expenses': 'Edit Expense',
-    'income': 'Edit Income',
-    'budgets': 'Edit Budget',
-    'categories': 'Edit Category',
-    'reports': 'View Report',
-    'analytics': 'View Analytics'
+    expenses: 'Edit Expense',
+    income: 'Edit Income',
+    budgets: 'Edit Budget',
+    categories: 'Edit Category',
+    reports: 'View Report',
+    analytics: 'View Analytics',
   };
-  
+
   return contextMap[prevSegment] || 'Edit';
 }

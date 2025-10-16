@@ -19,18 +19,24 @@ export async function GET(
     const expenses = await Expense.find({
       userId,
       incomeId,
-      affectsBalance: true
+      affectsBalance: true,
     }).sort({ date: -1 });
 
-    const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    const totalSpent = expenses.reduce(
+      (sum, expense) => sum + expense.amount,
+      0
+    );
 
     return NextResponse.json({
       expenses,
       totalSpent,
-      count: expenses.length
+      count: expenses.length,
     });
   } catch (error) {
     console.error('Error fetching income expenses:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

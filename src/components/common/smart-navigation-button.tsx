@@ -14,7 +14,13 @@ interface SmartNavigationButtonProps {
   children?: ReactNode;
   className?: string;
   size?: 'default' | 'sm' | 'lg' | 'icon';
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
 }
 
 export function SmartNavigationButton({
@@ -25,7 +31,7 @@ export function SmartNavigationButton({
   children,
   className,
   size = 'default',
-  variant = 'default'
+  variant = 'default',
 }: SmartNavigationButtonProps) {
   const { isSignedIn, isLoaded } = useUser();
   const { getLocalizedPath } = useLocale();
@@ -46,7 +52,13 @@ export function SmartNavigationButton({
 
   return (
     <Button size={size} variant={variant} className={className} asChild>
-      <Link href={isSignedIn ? getLocalizedPath(signedInHref) : getLocalizedPath(signedOutHref)}>
+      <Link
+        href={
+          isSignedIn
+            ? getLocalizedPath(signedInHref)
+            : getLocalizedPath(signedOutHref)
+        }
+      >
         {isSignedIn ? signedInText : signedOutText}
         {children}
       </Link>

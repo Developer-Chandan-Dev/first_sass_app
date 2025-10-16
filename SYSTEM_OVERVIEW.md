@@ -3,6 +3,7 @@
 ## ✅ **System Architecture**
 
 ### **📁 File Structure**
+
 ```
 src/
 ├── app/
@@ -51,6 +52,7 @@ src/
 ## 🔗 **Component Connections**
 
 ### **Main Expenses Page** (`/dashboard/expenses`)
+
 - **Tabs**: Overview, Analytics, Expenses
 - **Components Used**:
   - `ExpenseStats` → API: `/api/expenses/stats?type=free`
@@ -61,6 +63,7 @@ src/
   - `AddExpenseModal` → Create: `POST /api/expenses`
 
 ### **API Endpoints Status**
+
 - ✅ `GET /api/expenses` - Pagination, filtering, search
 - ✅ `POST /api/expenses` - Create with type support
 - ✅ `PUT /api/expenses/[id]` - Update individual expense
@@ -72,6 +75,7 @@ src/
 - ✅ `GET /api/expenses/report?period=X&type=free` - Report data
 
 ### **Data Flow**
+
 1. **User adds expense** → `AddExpenseModal` → `POST /api/expenses` → Refresh trigger
 2. **Table loads data** → `AdvancedExpensesTable` → `GET /api/expenses` (with filters)
 3. **Charts load data** → Components → Respective API endpoints
@@ -81,6 +85,7 @@ src/
 ## 🎯 **Key Features Implemented**
 
 ### **✅ Advanced Table**
+
 - Pagination (10 items per page)
 - Search functionality
 - Bulk selection and delete
@@ -89,12 +94,14 @@ src/
 - Loading states
 
 ### **✅ Custom Categories**
+
 - Default categories: Food & Dining, Travel, Shopping, Bills, Others
 - Add custom categories via modal
 - Dynamic category loading
 - Category-based filtering
 
 ### **✅ Advanced Filtering**
+
 - Period filters: All Time, Today, Last 7 Days, Last 30 Days
 - Category-specific filtering
 - Date range selection
@@ -102,6 +109,7 @@ src/
 - Filter state management
 
 ### **✅ Data Visualization**
+
 - Statistics cards with trends
 - Pie chart for category breakdown
 - Bar chart for spending trends
@@ -109,6 +117,7 @@ src/
 - Mobile-responsive charts
 
 ### **✅ CRUD Operations**
+
 - Create expenses with validation
 - Read with advanced filtering
 - Update individual expenses
@@ -118,6 +127,7 @@ src/
 ## 🔧 **System Status**
 
 ### **✅ Working Components**
+
 - All API endpoints functional
 - Database model updated with type field
 - UI components properly connected
@@ -126,9 +136,11 @@ src/
 - Theme support (light/dark)
 
 ### **🎯 Ready for Testing**
+
 The system is now fully integrated and ready for testing. All components are connected properly and should work together seamlessly.
 
 ### **📱 Mobile Optimization**
+
 - Collapsible sidebar for mobile
 - Responsive table design
 - Touch-friendly interactions

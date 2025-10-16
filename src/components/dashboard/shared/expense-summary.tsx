@@ -20,19 +20,29 @@ export function ExpenseSummary() {
 
         // Fetch both free and budget expenses
         const [freeResponse, budgetResponse] = await Promise.all([
-          fetch(`/api/expenses?type=free&from=${startOfMonth.toISOString()}&to=${endOfMonth.toISOString()}`),
-          fetch(`/api/expenses?type=budget&from=${startOfMonth.toISOString()}&to=${endOfMonth.toISOString()}`)
+          fetch(
+            `/api/expenses?type=free&from=${startOfMonth.toISOString()}&to=${endOfMonth.toISOString()}`
+          ),
+          fetch(
+            `/api/expenses?type=budget&from=${startOfMonth.toISOString()}&to=${endOfMonth.toISOString()}`
+          ),
         ]);
-        
+
         if (freeResponse.ok && budgetResponse.ok) {
           const [freeData, budgetData] = await Promise.all([
             freeResponse.json(),
-            budgetResponse.json()
+            budgetResponse.json(),
           ]);
-          
-          const freeTotal = freeData.expenses.reduce((sum: number, expense: { amount: number }) => sum + expense.amount, 0);
-          const budgetTotal = budgetData.expenses.reduce((sum: number, expense: { amount: number }) => sum + expense.amount, 0);
-          
+
+          const freeTotal = freeData.expenses.reduce(
+            (sum: number, expense: { amount: number }) => sum + expense.amount,
+            0
+          );
+          const budgetTotal = budgetData.expenses.reduce(
+            (sum: number, expense: { amount: number }) => sum + expense.amount,
+            0
+          );
+
           setMonthlyTotal(freeTotal + budgetTotal);
         }
       } catch (error) {

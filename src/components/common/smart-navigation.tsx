@@ -9,7 +9,10 @@ interface SmartNavigationProps {
   fallback?: string;
 }
 
-export function SmartNavigation({ redirectTo = 'auto', fallback = '/' }: SmartNavigationProps) {
+export function SmartNavigation({
+  redirectTo = 'auto',
+  fallback = '/',
+}: SmartNavigationProps) {
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
 

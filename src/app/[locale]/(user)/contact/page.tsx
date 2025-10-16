@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+import { Metadata } from 'next';
 import { useTranslations } from 'next-intl';
 import { Navbar } from '@/components/users/navbar';
 import { Footer } from '@/components/users/footer';
@@ -18,14 +18,14 @@ export const metadata: Metadata = {
     description: `Need help with ${seoConfig.siteName}? Contact our support team for assistance.`,
     url: `${seoConfig.siteUrl}/contact`,
   },
-}
+};
 
 export default function ContactPage() {
   const t = useTranslations('userPages.contact');
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      
+
       <section className="pt-32 pb-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -34,7 +34,10 @@ export default function ContactPage() {
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               {t('title')}
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> {t('titleHighlight')}</span>
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                {' '}
+                {t('titleHighlight')}
+              </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {t('subtitle')}
@@ -46,10 +49,26 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold mb-6">{t('info.title')}</h2>
               <div className="space-y-6">
                 {[
-                  { icon: <Mail className="w-5 h-5" />, title: t('info.email'), info: seoConfig.supportEmail },
-                  { icon: <Phone className="w-5 h-5" />, title: t('info.phone'), info: "+1 (555) 123-4567" },
-                  { icon: <MapPin className="w-5 h-5" />, title: t('info.address'), info: t('info.addressValue') },
-                  { icon: <Clock className="w-5 h-5" />, title: t('info.hours'), info: t('info.hoursValue') }
+                  {
+                    icon: <Mail className="w-5 h-5" />,
+                    title: t('info.email'),
+                    info: seoConfig.supportEmail,
+                  },
+                  {
+                    icon: <Phone className="w-5 h-5" />,
+                    title: t('info.phone'),
+                    info: '+1 (555) 123-4567',
+                  },
+                  {
+                    icon: <MapPin className="w-5 h-5" />,
+                    title: t('info.address'),
+                    info: t('info.addressValue'),
+                  },
+                  {
+                    icon: <Clock className="w-5 h-5" />,
+                    title: t('info.hours'),
+                    info: t('info.hoursValue'),
+                  },
                 ].map((item, index) => (
                   <div key={index} className="flex items-start space-x-4">
                     <div className="text-blue-400 mt-1">{item.icon}</div>

@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 export default function BudgetsPage() {
   const { pages, dashboard } = useDashboardTranslations();
-  
+
   return (
     <div className="space-y-6">
       <PageHeader

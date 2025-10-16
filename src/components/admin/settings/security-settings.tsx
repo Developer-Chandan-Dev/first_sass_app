@@ -22,22 +22,22 @@ export function SecuritySettings() {
             placeholder="Session timeout"
           />
         </div>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="twoFactor">Require 2FA</Label>
           <Switch id="twoFactor" />
         </div>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="passwordPolicy">Strong Password Policy</Label>
           <Switch id="passwordPolicy" defaultChecked />
         </div>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="loginAttempts">Limit Login Attempts</Label>
           <Switch id="loginAttempts" defaultChecked />
         </div>
-        
+
         <Button>Update Security</Button>
       </CardContent>
     </Card>

@@ -25,15 +25,16 @@ export default function DashboardLayout({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   // Hide global FAB on expense pages that have their own MobileFAB
-  const hideGlobalFAB = pathname?.includes('/expenses/free') || pathname?.includes('/expenses/budget');
+  const hideGlobalFAB =
+    pathname?.includes('/expenses/free') ||
+    pathname?.includes('/expenses/budget');
 
   // Create user in database on first visit
   useEffect(() => {
     if (isSignedIn && user) {
-      fetch('/api/users', { method: 'POST' })
-        .catch(console.error);
+      fetch('/api/users', { method: 'POST' }).catch(console.error);
     }
   }, [isSignedIn, user]);
 
@@ -45,13 +46,11 @@ export default function DashboardLayout({
         setIsCollapsed(true);
       }
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-
 
   const toggleSidebar = () => {
     if (isMobile) {
@@ -65,29 +64,31 @@ export default function DashboardLayout({
     <div className="flex h-screen bg-background" suppressHydrationWarning>
       {/* Mobile Overlay */}
       {isMobile && isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
-      
+
       {/* Sidebar */}
-      <div className={cn(
-        'transition-all duration-300',
-        isMobile ? (
-          isMobileMenuOpen 
-            ? 'fixed inset-y-0 left-0 z-50 translate-x-0' 
-            : 'fixed inset-y-0 left-0 z-50 -translate-x-full'
-        ) : 'relative'
-      )}>
-        <Sidebar 
+      <div
+        className={cn(
+          'transition-all duration-300',
+          isMobile
+            ? isMobileMenuOpen
+              ? 'fixed inset-y-0 left-0 z-50 translate-x-0'
+              : 'fixed inset-y-0 left-0 z-50 -translate-x-full'
+            : 'relative'
+        )}
+      >
+        <Sidebar
           isCollapsed={isMobile ? false : isCollapsed}
           onToggle={toggleSidebar}
           isMobile={isMobile}
           onMobileClose={() => setIsMobileMenuOpen(false)}
         />
       </div>
-      
+
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-card border-b border-border p-3 sm:p-4 flex justify-between items-center">
@@ -118,9 +119,7 @@ export default function DashboardLayout({
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 pb-20 md:pb-6 relative">
-          <div className="space-y-4">
-            {children}
-          </div>
+          <div className="space-y-4">{children}</div>
           {!hideGlobalFAB && <FloatingActionButton />}
         </main>
         <BottomNavigation />

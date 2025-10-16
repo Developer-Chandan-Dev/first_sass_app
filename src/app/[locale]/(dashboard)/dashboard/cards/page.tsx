@@ -1,3 +1,5 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, Clock } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
@@ -5,7 +7,7 @@ import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 export default function CardsPage() {
   const { pages, dashboard } = useDashboardTranslations();
-  
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -22,8 +24,8 @@ export default function CardsPage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
-            We&apos;re working on advanced cards features including expense trends, 
-            category insights, and detailed reports.
+            We&apos;re working on advanced cards features including expense
+            trends, category insights, and detailed reports.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <Clock className="w-4 h-4" />

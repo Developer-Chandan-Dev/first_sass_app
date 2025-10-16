@@ -21,7 +21,7 @@ export function PlatformSettings() {
             placeholder="Site name"
           />
         </div>
-        
+
         <div>
           <Label htmlFor="maxUsers">Max Users</Label>
           <Input
@@ -31,17 +31,17 @@ export function PlatformSettings() {
             placeholder="Maximum users"
           />
         </div>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="maintenance">Maintenance Mode</Label>
           <Switch id="maintenance" />
         </div>
-        
+
         <div className="flex items-center justify-between">
           <Label htmlFor="registration">Allow Registration</Label>
           <Switch id="registration" defaultChecked />
         </div>
-        
+
         <Button>Save Settings</Button>
       </CardContent>
     </Card>

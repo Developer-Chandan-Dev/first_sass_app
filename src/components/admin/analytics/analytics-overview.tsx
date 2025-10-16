@@ -39,8 +39,9 @@ export function AnalyticsOverview() {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       {metrics.map((metric) => {
         const Icon = metric.icon;
-        const isPositive = metric.trend === 'up' && metric.change.startsWith('+');
-        
+        const isPositive =
+          metric.trend === 'up' && metric.change.startsWith('+');
+
         return (
           <Card key={metric.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -53,7 +54,9 @@ export function AnalyticsOverview() {
               <div className="text-lg sm:text-2xl font-bold text-foreground">
                 {metric.value}
               </div>
-              <p className={`text-xs ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+              <p
+                className={`text-xs ${isPositive ? 'text-green-600' : 'text-red-600'}`}
+              >
                 {metric.change} from last month
               </p>
             </CardContent>

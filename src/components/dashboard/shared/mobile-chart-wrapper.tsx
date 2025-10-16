@@ -13,12 +13,12 @@ interface MobileChartWrapperProps {
   desktopHeight?: string;
 }
 
-export function MobileChartWrapper({ 
-  title, 
-  children, 
+export function MobileChartWrapper({
+  title,
+  children,
   className,
   mobileHeight = 'h-64',
-  desktopHeight = 'h-80'
+  desktopHeight = 'h-80',
 }: MobileChartWrapperProps) {
   const { isMobile, mounted } = useMobile();
 
@@ -38,18 +38,14 @@ export function MobileChartWrapper({
   return (
     <Card className={className}>
       <CardHeader className="pb-3">
-        <CardTitle className={cn(
-          'text-base',
-          isMobile ? 'text-sm' : 'text-base'
-        )}>
+        <CardTitle
+          className={cn('text-base', isMobile ? 'text-sm' : 'text-base')}
+        >
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 sm:p-6">
-        <div className={cn(
-          'w-full',
-          isMobile ? mobileHeight : desktopHeight
-        )}>
+        <div className={cn('w-full', isMobile ? mobileHeight : desktopHeight)}>
           {children}
         </div>
       </CardContent>

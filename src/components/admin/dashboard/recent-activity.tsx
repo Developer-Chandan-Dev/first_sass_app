@@ -38,25 +38,37 @@ const activities = [
 export function RecentActivity() {
   const getActivityColor = (type: string) => {
     switch (type) {
-      case 'upgrade': return 'bg-green-100 text-green-800';
-      case 'signup': return 'bg-blue-100 text-blue-800';
-      case 'cancel': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'upgrade':
+        return 'bg-green-100 text-green-800';
+      case 'signup':
+        return 'bg-blue-100 text-blue-800';
+      case 'cancel':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   return (
     <Card className="w-full">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm sm:text-base lg:text-lg">Recent Activity</CardTitle>
+        <CardTitle className="text-sm sm:text-base lg:text-lg">
+          Recent Activity
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3 sm:space-y-4">
           {activities.map((activity) => (
-            <div key={activity.id} className="flex items-center space-x-2 sm:space-x-3">
+            <div
+              key={activity.id}
+              className="flex items-center space-x-2 sm:space-x-3"
+            >
               <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
                 <AvatarFallback className="text-xs">
-                  {activity.user.split(' ').map(n => n[0]).join('')}
+                  {activity.user
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
@@ -68,8 +80,8 @@ export function RecentActivity() {
                 </p>
               </div>
               <div className="flex flex-col items-end space-y-1">
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className={`text-xs px-1 py-0 h-4 ${getActivityColor(activity.type)}`}
                 >
                   {activity.type}

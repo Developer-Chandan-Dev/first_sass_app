@@ -7,9 +7,13 @@ export const MOBILE_BREAKPOINTS = {
 
 export function isMobileDevice(userAgent?: string): boolean {
   if (typeof window === 'undefined' && !userAgent) return false;
-  
-  const ua = userAgent || (typeof window !== 'undefined' ? window.navigator.userAgent : '');
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+
+  const ua =
+    userAgent ||
+    (typeof window !== 'undefined' ? window.navigator.userAgent : '');
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    ua
+  );
 }
 
 export function getTouchSupport(): boolean {
@@ -25,7 +29,9 @@ export function getViewportSize() {
   };
 }
 
-export function isMobileViewport(breakpoint: number = MOBILE_BREAKPOINTS.md): boolean {
+export function isMobileViewport(
+  breakpoint: number = MOBILE_BREAKPOINTS.md
+): boolean {
   if (typeof window === 'undefined') return false;
   return window.innerWidth < breakpoint;
 }
@@ -36,14 +42,14 @@ export const mobileOptimizations = {
     minSize: 'min-h-[44px] min-w-[44px]', // Apple's recommended minimum
     padding: 'p-3',
   },
-  
+
   // Mobile-optimized spacing
   spacing: {
     container: 'px-4 py-3',
     section: 'space-y-4',
     card: 'p-4',
   },
-  
+
   // Mobile typography
   typography: {
     title: 'text-lg sm:text-xl',
@@ -51,7 +57,7 @@ export const mobileOptimizations = {
     body: 'text-sm',
     caption: 'text-xs',
   },
-  
+
   // Mobile grid layouts
   grid: {
     stats: 'grid-cols-2 gap-3 sm:gap-4',

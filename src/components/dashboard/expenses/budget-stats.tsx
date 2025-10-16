@@ -11,7 +11,7 @@ import { UniversalStatCard } from '../shared/universal-stat-card';
 
 export function BudgetStats() {
   const dispatch = useAppDispatch();
-  const { budget, loading } = useAppSelector(state => state.overview);
+  const { budget, loading } = useAppSelector((state) => state.overview);
   const { expenses, dashboard } = useDashboardTranslations();
   const locale = useLocale();
   const { getLocalizedPath } = useLocaleContext();
@@ -21,7 +21,8 @@ export function BudgetStats() {
   }, [dispatch]);
 
   const remaining = budget.totalBudget - budget.totalSpent;
-  const budgetUsagePercent = budget.totalBudget > 0 ? ((budget.totalSpent / budget.totalBudget) * 100) : 0;
+  const budgetUsagePercent =
+    budget.totalBudget > 0 ? (budget.totalSpent / budget.totalBudget) * 100 : 0;
 
   const statsData = [
     {
@@ -33,46 +34,72 @@ export function BudgetStats() {
       description: expenses.activeBudgets,
       href: '/dashboard/budgets',
       actions: [
-        { icon: Plus, label: 'Add Budget', href: '/dashboard/budgets', variant: 'default' as const },
-        { icon: Eye, label: 'Manage', href: '/dashboard/budgets', variant: 'outline' as const }
+        {
+          icon: Plus,
+          label: 'Add Budget',
+          href: '/dashboard/budgets',
+          variant: 'default' as const,
+        },
+        {
+          icon: Eye,
+          label: 'Manage',
+          href: '/dashboard/budgets',
+          variant: 'outline' as const,
+        },
       ],
       status: 'medium' as const,
-      progress: budgetUsagePercent
+      progress: budgetUsagePercent,
     },
     {
       title: expenses.budgetSpent,
       value: formatCurrency(budget.totalSpent, 'INR', locale),
       change: `${budget.monthlyChange > 0 ? '+' : ''}${budget.monthlyChange}%`,
-      trend: budget.monthlyChange >= 0 ? 'up' as const : 'down' as const,
+      trend: budget.monthlyChange >= 0 ? ('up' as const) : ('down' as const),
       icon: DollarSign,
       description: dashboard.vsLastMonth,
       href: '/dashboard/expenses/budget',
       actions: [
-        { icon: Plus, label: 'Add Expense', href: '/dashboard/expenses/budget', variant: 'default' as const },
-        { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics', variant: 'outline' as const }
+        {
+          icon: Plus,
+          label: 'Add Expense',
+          href: '/dashboard/expenses/budget',
+          variant: 'default' as const,
+        },
+        {
+          icon: BarChart3,
+          label: 'Analytics',
+          href: '/dashboard/analytics',
+          variant: 'outline' as const,
+        },
       ],
-      status: budgetUsagePercent > 80 ? 'high' as const : budgetUsagePercent > 60 ? 'medium' as const : 'low' as const
+      status:
+        budgetUsagePercent > 80
+          ? ('high' as const)
+          : budgetUsagePercent > 60
+            ? ('medium' as const)
+            : ('low' as const),
     },
     {
       title: expenses.remaining,
       value: formatCurrency(remaining, 'INR', locale),
       change: remaining > 0 ? expenses.available : expenses.exceeded,
-      trend: remaining > 0 ? 'up' as const : 'down' as const,
+      trend: remaining > 0 ? ('up' as const) : ('down' as const),
       icon: Wallet,
       description: expenses.budgetLeft,
-      status: remaining > 0 ? 'low' as const : 'high' as const,
-      extraInfo: `${budgetUsagePercent.toFixed(1)}% used`
+      status: remaining > 0 ? ('low' as const) : ('high' as const),
+      extraInfo: `${budgetUsagePercent.toFixed(1)}% used`,
     },
     {
       title: expenses.budgetExpensesCount,
       value: budget.totalExpenses.toString(),
       change: `${budget.expenseChange > 0 ? '+' : ''}${budget.expenseChange}`,
-      trend: budget.expenseChange >= 0 ? 'up' as const : 'down' as const,
+      trend: budget.expenseChange >= 0 ? ('up' as const) : ('down' as const),
       icon: BarChart3,
       description: dashboard.vsLastMonth,
       href: '/dashboard/expenses/budget',
-      status: budget.totalExpenses > 20 ? 'medium' as const : 'low' as const
-    }
+      status:
+        budget.totalExpenses > 20 ? ('medium' as const) : ('low' as const),
+    },
   ];
 
   if (loading) {

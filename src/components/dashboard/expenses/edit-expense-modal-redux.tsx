@@ -4,34 +4,68 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { AlertCircle, Loader2} from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
-import { updateExpense, updateExpenseOptimistic, type ExpenseItem } from '@/lib/redux/expense/expenseSlice';
+import {
+  updateExpense,
+  updateExpenseOptimistic,
+  type ExpenseItem,
+} from '@/lib/redux/expense/expenseSlice';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { useModalState } from '@/hooks/useModalState';
 import { CategorySelect } from '@/components/ui/category-select';
-import { getBackendCategoryKey, getFrontendCategoryKey } from '@/lib/categories';
+import {
+  getBackendCategoryKey,
+  getFrontendCategoryKey,
+} from '@/lib/categories';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { TranslationType } from '@/types/dashboard';
 
-
-const createExpenseSchema = (t: TranslationType) => z.object({
-  amount: z.number().min(0.01, t.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
-  category: z.string().min(1, t.expenses?.form?.validation?.categoryRequired || 'Category is required'),
-  reason: z.string().min(1, t.expenses?.form?.validation?.reasonRequired || 'Reason is required'),
-  date: z.string(),
-  isRecurring: z.boolean(),
-  frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
-  affectsBalance: z.boolean(),
-  incomeId: z.string().optional(),
-});
+const createExpenseSchema = (t: TranslationType) =>
+  z.object({
+    amount: z
+      .number()
+      .min(
+        0.01,
+        t.expenses?.form?.validation?.amountGreaterThanZero ||
+          'Amount must be greater than 0'
+      ),
+    category: z
+      .string()
+      .min(
+        1,
+        t.expenses?.form?.validation?.categoryRequired || 'Category is required'
+      ),
+    reason: z
+      .string()
+      .min(
+        1,
+        t.expenses?.form?.validation?.reasonRequired || 'Reason is required'
+      ),
+    date: z.string(),
+    isRecurring: z.boolean(),
+    frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
+    affectsBalance: z.boolean(),
+    incomeId: z.string().optional(),
+  });
 
 type ExpenseFormData = z.infer<ReturnType<typeof createExpenseSchema>>;
 
@@ -42,12 +76,19 @@ interface EditExpenseModalProps {
   onExpenseUpdated?: () => void;
 }
 
-export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
+export function EditExpenseModal({
+  open,
+  onOpenChange,
+  expense,
+  onExpenseUpdated,
+}: EditExpenseModalProps) {
   const dispatch = useAppDispatch();
   const translations = useDashboardTranslations();
   const { expenses, common } = translations;
-  const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
-  
+  const [connectedIncomes, setConnectedIncomes] = useState<
+    Array<{ _id: string; source: string; description: string; amount: number }>
+  >([]);
+
   const modalState = useModalState({
     onSuccess: () => {
       onOpenChange(false);
@@ -75,7 +116,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
   useEffect(() => {
     if (!open) return;
-    
+
     const fetchConnectedIncomes = async () => {
       try {
         const response = await fetch('/api/incomes/connected');
@@ -112,12 +153,27 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
     await modalState.executeAsync(async () => {
       // Sanitize and validate all user inputs before using them
-      const sanitizedAmount = typeof data.amount === 'number' && isFinite(data.amount) ? data.amount : 0;
-      const sanitizedCategory = typeof data.category === 'string' ? data.category.replace(/[^a-zA-Z0-9-_]/g, '') : '';
-      const sanitizedReason = typeof data.reason === 'string' ? data.reason.replace(/[<>]/g, '') : '';
-      const sanitizedDate = typeof data.date === 'string' ? data.date.replace(/[^0-9\-]/g, '') : '';
-      const sanitizedIncomeId = typeof data.incomeId === 'string' ? data.incomeId.replace(/[^a-zA-Z0-9-_]/g, '') : undefined;
-      const sanitizedFrequency = data.frequency && ['daily', 'weekly', 'monthly', 'yearly'].includes(data.frequency) ? data.frequency : undefined;
+      const sanitizedAmount =
+        typeof data.amount === 'number' && isFinite(data.amount)
+          ? data.amount
+          : 0;
+      const sanitizedCategory =
+        typeof data.category === 'string'
+          ? data.category.replace(/[^a-zA-Z0-9-_]/g, '')
+          : '';
+      const sanitizedReason =
+        typeof data.reason === 'string' ? data.reason.replace(/[<>]/g, '') : '';
+      const sanitizedDate =
+        typeof data.date === 'string' ? data.date.replace(/[^0-9\-]/g, '') : '';
+      const sanitizedIncomeId =
+        typeof data.incomeId === 'string'
+          ? data.incomeId.replace(/[^a-zA-Z0-9-_]/g, '')
+          : undefined;
+      const sanitizedFrequency =
+        data.frequency &&
+        ['daily', 'weekly', 'monthly', 'yearly'].includes(data.frequency)
+          ? data.frequency
+          : undefined;
 
       const updates = {
         amount: Number(sanitizedAmount),
@@ -132,7 +188,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
       // Optimistic update - update UI immediately
       dispatch(updateExpenseOptimistic({ id: expense._id, updates }));
-      
+
       // API call in background
       try {
         await dispatch(updateExpense({ id: expense._id, updates })).unwrap();
@@ -144,13 +200,13 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
     }, expenses?.updateSuccess || 'Expense updated successfully');
   };
 
-
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
-          <DialogTitle className="text-lg">{expenses?.editExpense || 'Edit Expense'}</DialogTitle>
+          <DialogTitle className="text-lg">
+            {expenses?.editExpense || 'Edit Expense'}
+          </DialogTitle>
         </DialogHeader>
 
         {modalState.error && (
@@ -166,10 +222,15 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
             <span className="ml-2">{common?.loading || 'Loading...'}</span>
           </div>
         )}
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-3 sm:space-y-4"
+        >
           <div>
-            <Label htmlFor="amount" className="text-sm">{common?.amount || 'Amount'}</Label>
+            <Label htmlFor="amount" className="text-sm">
+              {common?.amount || 'Amount'}
+            </Label>
             <Input
               id="amount"
               type="number"
@@ -179,12 +240,16 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               className="mt-1"
             />
             {formErrors.amount && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.amount.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">
+                {formErrors.amount.message}
+              </p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="category" className="text-sm">{common?.category || 'Category'}</Label>
+            <Label htmlFor="category" className="text-sm">
+              {common?.category || 'Category'}
+            </Label>
             <CategorySelect
               id="category"
               value={watch('category') || ''}
@@ -193,26 +258,36 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               className="mt-1"
             />
             {formErrors.category && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.category.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">
+                {formErrors.category.message}
+              </p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="reason" className="text-sm">{expenses?.reason || 'Description'}</Label>
+            <Label htmlFor="reason" className="text-sm">
+              {expenses?.reason || 'Description'}
+            </Label>
             <Textarea
               id="reason"
               {...register('reason')}
-              placeholder={expenses?.reasonPlaceholder || 'What was this expense for?'}
+              placeholder={
+                expenses?.reasonPlaceholder || 'What was this expense for?'
+              }
               className="mt-1 text-sm"
               rows={3}
             />
             {formErrors.reason && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.reason.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">
+                {formErrors.reason.message}
+              </p>
             )}
           </div>
 
           <div>
-            <Label htmlFor="date" className="text-sm">{common?.date || 'Date'}</Label>
+            <Label htmlFor="date" className="text-sm">
+              {common?.date || 'Date'}
+            </Label>
             <Input
               id="date"
               type="date"
@@ -220,7 +295,9 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
               className="mt-1"
             />
             {formErrors.date && (
-              <p className="text-xs sm:text-sm text-red-500 mt-1">{formErrors.date.message}</p>
+              <p className="text-xs sm:text-sm text-red-500 mt-1">
+                {formErrors.date.message}
+              </p>
             )}
           </div>
 
@@ -231,22 +308,35 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
                   {expenses?.reduceFromBalance || 'Reduce from Balance'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  {expenses?.deductFromConnectedIncome || 'Deduct from connected income'}
+                  {expenses?.deductFromConnectedIncome ||
+                    'Deduct from connected income'}
                 </p>
               </div>
               <Switch
                 id="affectsBalance"
                 checked={affectsBalance}
-                onCheckedChange={(checked) => setValue('affectsBalance', checked)}
+                onCheckedChange={(checked) =>
+                  setValue('affectsBalance', checked)
+                }
               />
             </div>
-            
+
             {affectsBalance && (
               <div>
-                <Label className="text-sm">{expenses?.selectIncomeSource || 'Select Income Source'}</Label>
-                <Select value={watch('incomeId')} onValueChange={(value) => setValue('incomeId', value)}>
+                <Label className="text-sm">
+                  {expenses?.selectIncomeSource || 'Select Income Source'}
+                </Label>
+                <Select
+                  value={watch('incomeId')}
+                  onValueChange={(value) => setValue('incomeId', value)}
+                >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={expenses?.chooseIncomeToReduceFrom || 'Choose income to reduce from'} />
+                    <SelectValue
+                      placeholder={
+                        expenses?.chooseIncomeToReduceFrom ||
+                        'Choose income to reduce from'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {connectedIncomes.map((income) => (
@@ -274,19 +364,40 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
                 onCheckedChange={(checked) => setValue('isRecurring', checked)}
               />
             </div>
-            
+
             {isRecurring && (
               <div>
-                <Label className="text-sm">{expenses?.frequency || 'Frequency'}</Label>
-                <Select onValueChange={(value) => setValue('frequency', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
+                <Label className="text-sm">
+                  {expenses?.frequency || 'Frequency'}
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    setValue(
+                      'frequency',
+                      value as 'daily' | 'weekly' | 'monthly' | 'yearly'
+                    )
+                  }
+                >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={expenses?.selectFrequency || 'Select frequency'} />
+                    <SelectValue
+                      placeholder={
+                        expenses?.selectFrequency || 'Select frequency'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="daily">{expenses?.frequencies?.daily || 'Daily'}</SelectItem>
-                    <SelectItem value="weekly">{expenses?.frequencies?.weekly || 'Weekly'}</SelectItem>
-                    <SelectItem value="monthly">{expenses?.frequencies?.monthly || 'Monthly'}</SelectItem>
-                    <SelectItem value="yearly">{expenses?.frequencies?.yearly || 'Yearly'}</SelectItem>
+                    <SelectItem value="daily">
+                      {expenses?.frequencies?.daily || 'Daily'}
+                    </SelectItem>
+                    <SelectItem value="weekly">
+                      {expenses?.frequencies?.weekly || 'Weekly'}
+                    </SelectItem>
+                    <SelectItem value="monthly">
+                      {expenses?.frequencies?.monthly || 'Monthly'}
+                    </SelectItem>
+                    <SelectItem value="yearly">
+                      {expenses?.frequencies?.yearly || 'Yearly'}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -294,9 +405,17 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 pt-3 sm:pt-4">
-            <Button type="submit" disabled={modalState.isSubmitting || modalState.isLoading} className="w-full sm:w-auto">
-              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {modalState.isSubmitting ? 'Updating...' : (expenses?.editExpense || 'Update Expense')}
+            <Button
+              type="submit"
+              disabled={modalState.isSubmitting || modalState.isLoading}
+              className="w-full sm:w-auto"
+            >
+              {modalState.isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {modalState.isSubmitting
+                ? 'Updating...'
+                : expenses?.editExpense || 'Update Expense'}
             </Button>
             <Button
               type="button"

@@ -1,7 +1,13 @@
 'use client';
 
 import { useLocale } from '@/contexts/locale-context';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Globe } from 'lucide-react';
 import { LOCALE_NAMES } from '@/lib/supported-locales';
 

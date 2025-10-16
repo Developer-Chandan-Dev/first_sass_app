@@ -11,7 +11,7 @@ export function DashboardSkeleton() {
         <Skeleton className="h-8 w-64 mb-2" />
         <Skeleton className="h-4 w-96" />
       </div>
-      
+
       {/* Stats cards skeleton */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
@@ -27,7 +27,7 @@ export function DashboardSkeleton() {
           </Card>
         ))}
       </div>
-      
+
       {/* Chart and transactions skeleton */}
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
         <Card>
@@ -38,8 +38,11 @@ export function DashboardSkeleton() {
             <div className="h-48 md:h-64 flex flex-col justify-end space-y-2 p-4">
               <div className="flex items-end justify-between h-full space-x-2">
                 {[45, 65, 35, 80, 55, 40, 70].map((height, i) => (
-                  <div key={i} className="flex flex-col items-center space-y-2 flex-1">
-                    <Skeleton 
+                  <div
+                    key={i}
+                    className="flex flex-col items-center space-y-2 flex-1"
+                  >
+                    <Skeleton
                       className="w-full rounded-t"
                       style={{ height: `${height}%` }}
                     />
@@ -50,7 +53,7 @@ export function DashboardSkeleton() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <Skeleton className="h-6 w-40" />
@@ -91,7 +94,7 @@ export function ExpensePageSkeleton() {
           <Skeleton className="h-4 w-64" />
         </div>
       </div>
-      
+
       {/* Stats overview */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
@@ -106,7 +109,7 @@ export function ExpensePageSkeleton() {
           </Card>
         ))}
       </div>
-      
+
       {/* Expense types */}
       <div className="grid gap-6 md:grid-cols-2">
         {[1, 2].map((i) => (

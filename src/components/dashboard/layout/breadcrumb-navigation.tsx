@@ -3,11 +3,15 @@
 import { ChevronRight, Home, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { useLocale as useLocaleContext } from '@/contexts/locale-context';
-import { getBreadcrumbConfig, isDynamicSegment, getDynamicSegmentLabel } from '@/lib/breadcrumb-config';
+import {
+  getBreadcrumbConfig,
+  isDynamicSegment,
+  getDynamicSegmentLabel,
+} from '@/lib/breadcrumb-config';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,10 +32,10 @@ interface BreadcrumbNavigationProps {
   maxItems?: number;
 }
 
-export function BreadcrumbNavigation({ 
-  className, 
-  showHome = true, 
-  maxItems = 4 
+export function BreadcrumbNavigation({
+  className,
+  showHome = true,
+  maxItems = 4,
 }: BreadcrumbNavigationProps) {
   const pathname = usePathname();
   const { dashboard, expenses } = useDashboardTranslations();
@@ -39,9 +43,10 @@ export function BreadcrumbNavigation({
 
   const breadcrumbs = useMemo(() => {
     // Remove locale prefix and split path
-    const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, '') || '/';
+    const pathWithoutLocale =
+      pathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, '') || '/';
     const segments = pathWithoutLocale.split('/').filter(Boolean);
-    
+
     const items: BreadcrumbItem[] = [];
 
     // Add home if requested
@@ -49,7 +54,7 @@ export function BreadcrumbNavigation({
       items.push({
         label: dashboard.overview || 'Home',
         href: '/',
-        isActive: segments.length === 0
+        isActive: segments.length === 0,
       });
     }
 
@@ -58,14 +63,14 @@ export function BreadcrumbNavigation({
     segments.forEach((segment, index) => {
       currentPath += `/${segment}`;
       const isLast = index === segments.length - 1;
-      
+
       // Get localized label for segment
       const label = getSegmentLabel(segment, segments, index);
-      
+
       items.push({
         label,
         href: currentPath,
-        isActive: isLast
+        isActive: isLast,
       });
     });
 
@@ -73,13 +78,21 @@ export function BreadcrumbNavigation({
     if (maxItems && items.length > maxItems) {
       const firstItem = items[0];
       const lastItems = items.slice(-maxItems + 1);
-      return [firstItem, { label: '...', href: '', isActive: false }, ...lastItems];
+      return [
+        firstItem,
+        { label: '...', href: '', isActive: false },
+        ...lastItems,
+      ];
     }
 
     return items;
   }, [pathname, dashboard, showHome, maxItems]);
 
-  function getSegmentLabel(segment: string, segments: string[], index: number): string {
+  function getSegmentLabel(
+    segment: string,
+    segments: string[],
+    index: number
+  ): string {
     // Handle dynamic segments first
     if (isDynamicSegment(segment)) {
       return getDynamicSegmentLabel(segment, segments.slice(0, index));
@@ -87,13 +100,13 @@ export function BreadcrumbNavigation({
 
     // Get configuration for the segment
     const config = getBreadcrumbConfig(segment);
-    
+
     // Override with translations where available
     const translationMap: Record<string, string> = {
-      'dashboard': dashboard.overview || config.label,
-      'expenses': expenses.title || config.label,
-      'free': expenses.freeExpenses || config.label,
-      'budget': expenses.budgetExpenses || config.label
+      dashboard: dashboard.overview || config.label,
+      expenses: expenses.title || config.label,
+      free: expenses.freeExpenses || config.label,
+      budget: expenses.budgetExpenses || config.label,
     };
 
     return translationMap[segment] || config.label;
@@ -107,7 +120,7 @@ export function BreadcrumbNavigation({
   const parentItems = breadcrumbs.slice(0, -1);
 
   return (
-    <nav 
+    <nav
       className={cn(
         'flex items-center text-sm text-muted-foreground mb-4',
         className
@@ -121,13 +134,13 @@ export function BreadcrumbNavigation({
             {index > 0 && (
               <ChevronRight className="h-4 w-4 mx-1 text-muted-foreground/60" />
             )}
-            
+
             {item.href === '' ? (
               <span className="px-2 py-1 text-muted-foreground/60">
                 {item.label}
               </span>
             ) : item.isActive ? (
-              <span 
+              <span
                 className="px-2 py-1 font-medium text-foreground bg-muted/50 rounded-md"
                 aria-current="page"
               >
@@ -161,9 +174,9 @@ export function BreadcrumbNavigation({
         {parentItems.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="h-8 px-2 text-muted-foreground hover:text-foreground"
               >
                 <Home className="h-4 w-4" />
@@ -173,7 +186,7 @@ export function BreadcrumbNavigation({
             <DropdownMenuContent align="start" className="w-48">
               {parentItems.map((item, index) => (
                 <DropdownMenuItem key={index} asChild>
-                  <Link 
+                  <Link
                     href={getLocalizedPath(item.href)}
                     className="flex items-center w-full"
                   >
@@ -187,12 +200,12 @@ export function BreadcrumbNavigation({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-        
+
         {parentItems.length > 0 && (
           <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
         )}
-        
-        <span 
+
+        <span
           className="font-medium text-foreground bg-muted/50 rounded-md px-2 py-1 truncate flex-1"
           aria-current="page"
         >

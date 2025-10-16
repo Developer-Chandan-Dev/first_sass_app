@@ -20,7 +20,7 @@ export function LoadingWrapper({
   children,
   skeleton,
   className = '',
-  loadingText = 'Loading...'
+  loadingText = 'Loading...',
 }: LoadingWrapperProps) {
   if (error) {
     return (
@@ -55,7 +55,13 @@ export function LoadingWrapper({
 }
 
 // Skeleton components for different layouts
-export function TableSkeleton({ rows = 5, columns = 6 }: { rows?: number; columns?: number }) {
+export function TableSkeleton({
+  rows = 5,
+  columns = 6,
+}: {
+  rows?: number;
+  columns?: number;
+}) {
   return (
     <div className="space-y-3">
       {Array.from({ length: rows }).map((_, i) => (
@@ -89,7 +95,7 @@ export function ChartSkeleton() {
       <div className="flex items-end justify-between h-full space-x-2">
         {[45, 65, 35, 80, 55, 40, 70].map((height, i) => (
           <div key={i} className="flex flex-col items-center space-y-2 flex-1">
-            <Skeleton 
+            <Skeleton
               className="w-full rounded-t"
               style={{ height: `${height}%` }}
             />

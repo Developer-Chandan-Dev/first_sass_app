@@ -25,7 +25,7 @@ export function TranslatedNav({ items, className }: TranslatedNavProps) {
       {items.map((item) => {
         const isActive = pathname.includes(item.href);
         const Icon = item.icon;
-        
+
         return (
           <Link
             key={item.key}

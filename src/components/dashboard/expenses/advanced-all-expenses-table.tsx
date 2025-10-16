@@ -2,21 +2,46 @@
 
 import { useState, useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
-import { fetchExpenses, setFilters, setCurrentPage, setPageSize, deleteExpense, ExpenseItem } from '@/lib/redux/expense/expenseSlice';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  fetchExpenses,
+  setFilters,
+  setCurrentPage,
+  setPageSize,
+  deleteExpense,
+  ExpenseItem,
+} from '@/lib/redux/expense/expenseSlice';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  MoreVertical, 
-  Edit, 
-  Trash2, 
-  Search, 
-  Download, 
+import {
+  MoreVertical,
+  Edit,
+  Trash2,
+  Search,
+  Download,
   FileText,
   X,
   ChevronLeft,
@@ -25,12 +50,14 @@ import {
   ChevronsRight,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
 } from 'lucide-react';
-import { useLocale } from 'next-intl';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { sanitizeString } from '@/lib/input-sanitizer';
-import { getExpenseAmountColor, getExpenseTooltip } from '@/lib/financial-styles';
+import {
+  getExpenseAmountColor,
+  getExpenseTooltip,
+} from '@/lib/financial-styles';
 import { EditExpenseModal } from './edit-expense-modal-redux';
 import { ExpensePDFExportModal } from './expense-pdf-export-modal';
 import { CategoryFilter } from '../shared/category-filter';
@@ -39,21 +66,39 @@ interface AdvancedAllExpensesTableProps {
   className?: string;
 }
 
-export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTableProps) {
+export function AdvancedAllExpensesTable({
+  className,
+}: AdvancedAllExpensesTableProps) {
   const dispatch = useAppDispatch();
-  const { expenses, loading, filters, currentPage, totalPages, totalCount, pageSize } = useAppSelector(state => state.expenses);
+  const {
+    expenses,
+    loading,
+    filters,
+    currentPage,
+    totalPages,
+    totalCount,
+    pageSize,
+  } = useAppSelector((state) => state.expenses);
   const { expenses: expensesData, common } = useDashboardTranslations();
-  const locale = useLocale();
   const [selectedExpenses, setSelectedExpenses] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(null);
+  const [editingExpense, setEditingExpense] = useState<ExpenseItem | null>(
+    null
+  );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPDFExportOpen, setIsPDFExportOpen] = useState(false);
   const [isSelectedExport, setIsSelectedExport] = useState(false);
 
   useEffect(() => {
     // Fetch both free and budget expenses
-    dispatch(fetchExpenses({ expenseType: 'all', filters, page: currentPage, pageSize }));
+    dispatch(
+      fetchExpenses({
+        expenseType: 'all',
+        filters,
+        page: currentPage,
+        pageSize,
+      })
+    );
   }, [dispatch, filters, currentPage, pageSize]);
 
   const handleSearch = () => {
@@ -76,23 +121,28 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
   };
 
   const handleSort = (column: string) => {
-    const newOrder = filters.sortBy === column && filters.sortOrder === 'asc' ? 'desc' : 'asc';
+    const newOrder =
+      filters.sortBy === column && filters.sortOrder === 'asc' ? 'desc' : 'asc';
     dispatch(setFilters({ sortBy: column, sortOrder: newOrder }));
   };
 
   const handleCSVExport = (selectedOnly: boolean = false) => {
-    const dataToExport = selectedOnly ? expenses.filter(e => selectedExpenses.includes(e._id)) : expenses;
+    const dataToExport = selectedOnly
+      ? expenses.filter((e) => selectedExpenses.includes(e._id))
+      : expenses;
     const csvContent = [
       ['Date', 'Description', 'Category', 'Type', 'Amount'].join(','),
-      ...dataToExport.map(expense => [
-        new Date(expense.date).toLocaleDateString(),
-        `"${expense.reason}"`,
-        expense.category,
-        expense.budgetId ? 'Budget' : 'Free',
-        expense.amount
-      ].join(','))
+      ...dataToExport.map((expense) =>
+        [
+          new Date(expense.date).toLocaleDateString(),
+          `"${expense.reason}"`,
+          expense.category,
+          expense.budgetId ? 'Budget' : 'Free',
+          expense.amount,
+        ].join(',')
+      ),
     ].join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -124,20 +174,24 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
   };
 
   const toggleExpenseSelection = (id: string) => {
-    setSelectedExpenses(prev => 
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    setSelectedExpenses((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
   const toggleSelectAll = () => {
-    setSelectedExpenses(prev => 
-      prev.length === expenses.length ? [] : expenses.map(e => e._id)
+    setSelectedExpenses((prev) =>
+      prev.length === expenses.length ? [] : expenses.map((e) => e._id)
     );
   };
 
   const getSortIcon = (column: string) => {
     if (filters.sortBy !== column) return <ArrowUpDown className="h-3 w-3" />;
-    return filters.sortOrder === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />;
+    return filters.sortOrder === 'asc' ? (
+      <ArrowUp className="h-3 w-3" />
+    ) : (
+      <ArrowDown className="h-3 w-3" />
+    );
   };
 
   const getExpenseType = (expense: ExpenseItem) => {
@@ -149,14 +203,17 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
       <CardHeader className="pb-3">
         <div className="flex flex-col gap-4">
           <CardTitle className="text-lg sm:text-xl">
-            {sanitizeString(expensesData?.title || 'All Expenses')} ({totalCount})
+            {sanitizeString(expensesData?.title || 'All Expenses')} (
+            {totalCount})
           </CardTitle>
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1 flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder={sanitizeString(expensesData?.searchExpenses || 'Search expenses')}
+                  placeholder={sanitizeString(
+                    expensesData?.searchExpenses || 'Search expenses'
+                  )}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={handleSearchKeyPress}
@@ -197,16 +254,23 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
                         <FileText className="mr-2 h-4 w-4" />
                         Export Selected CSV
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => {
-                        setIsSelectedExport(true);
-                        setIsPDFExportOpen(true);
-                      }}>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setIsSelectedExport(true);
+                          setIsPDFExportOpen(true);
+                        }}
+                      >
                         <FileText className="mr-2 h-4 w-4" />
                         Export Selected PDF
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="w-auto">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleBulkDelete}
+                    className="w-auto"
+                  >
                     Delete ({selectedExpenses.length})
                   </Button>
                 </>
@@ -223,10 +287,12 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
                     <FileText className="mr-2 h-4 w-4" />
                     Export All CSV
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => {
-                    setIsSelectedExport(false);
-                    setIsPDFExportOpen(true);
-                  }}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setIsSelectedExport(false);
+                      setIsPDFExportOpen(true);
+                    }}
+                  >
                     <FileText className="mr-2 h-4 w-4" />
                     Export All PDF
                   </DropdownMenuItem>
@@ -241,7 +307,10 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
               className="w-40"
             />
 
-            <Select value={filters.period || 'all'} onValueChange={(value) => handleFilterChange('period', value)}>
+            <Select
+              value={filters.period || 'all'}
+              onValueChange={(value) => handleFilterChange('period', value)}
+            >
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Period" />
               </SelectTrigger>
@@ -264,36 +333,69 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
                 <TableRow>
                   <TableHead className="w-8 sm:w-12">
                     <Checkbox
-                      checked={selectedExpenses.length === expenses.length && expenses.length > 0}
+                      checked={
+                        selectedExpenses.length === expenses.length &&
+                        expenses.length > 0
+                      }
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
                   <TableHead className="min-w-[80px]">
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('date')} className="h-auto p-0 font-medium">
-                      {sanitizeString(common?.date || 'Date')} {getSortIcon('date')}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('date')}
+                      className="h-auto p-0 font-medium"
+                    >
+                      {sanitizeString(common?.date || 'Date')}{' '}
+                      {getSortIcon('date')}
                     </Button>
                   </TableHead>
                   <TableHead className="min-w-[120px]">
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('reason')} className="h-auto p-0 font-medium">
-                      {sanitizeString(common?.description || 'Description')} {getSortIcon('reason')}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('reason')}
+                      className="h-auto p-0 font-medium"
+                    >
+                      {sanitizeString(common?.description || 'Description')}{' '}
+                      {getSortIcon('reason')}
                     </Button>
                   </TableHead>
                   <TableHead className="hidden sm:table-cell min-w-[100px]">
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('category')} className="h-auto p-0 font-medium">
-                      {sanitizeString(common?.category || 'Category')} {getSortIcon('category')}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('category')}
+                      className="h-auto p-0 font-medium"
+                    >
+                      {sanitizeString(common?.category || 'Category')}{' '}
+                      {getSortIcon('category')}
                     </Button>
                   </TableHead>
                   <TableHead className="hidden md:table-cell min-w-[80px]">
                     Type
                   </TableHead>
                   <TableHead className="hidden md:table-cell min-w-[80px]">
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('isRecurring')} className="h-auto p-0 font-medium">
-                      {sanitizeString(expensesData?.recurring || 'Recurring')} {getSortIcon('isRecurring')}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('isRecurring')}
+                      className="h-auto p-0 font-medium"
+                    >
+                      {sanitizeString(expensesData?.recurring || 'Recurring')}{' '}
+                      {getSortIcon('isRecurring')}
                     </Button>
                   </TableHead>
                   <TableHead className="text-right min-w-[80px]">
-                    <Button variant="ghost" size="sm" onClick={() => handleSort('amount')} className="h-auto p-0 font-medium">
-                      {sanitizeString(common?.amount || 'Amount')} {getSortIcon('amount')}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSort('amount')}
+                      className="h-auto p-0 font-medium"
+                    >
+                      {sanitizeString(common?.amount || 'Amount')}{' '}
+                      {getSortIcon('amount')}
                     </Button>
                   </TableHead>
                   <TableHead className="w-8 sm:w-12"></TableHead>
@@ -312,8 +414,13 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
                   ))
                 ) : expenses.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      {sanitizeString(expensesData?.noExpensesFound || 'No expenses found')}
+                    <TableCell
+                      colSpan={8}
+                      className="text-center py-8 text-muted-foreground"
+                    >
+                      {sanitizeString(
+                        expensesData?.noExpensesFound || 'No expenses found'
+                      )}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -322,13 +429,15 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
                       <TableCell className="py-2">
                         <Checkbox
                           checked={selectedExpenses.includes(expense._id)}
-                          onCheckedChange={() => toggleExpenseSelection(expense._id)}
+                          onCheckedChange={() =>
+                            toggleExpenseSelection(expense._id)
+                          }
                         />
                       </TableCell>
                       <TableCell className="py-2 text-xs sm:text-sm">
-                        {new Date(expense.date)?.toLocaleDateString('en-US', { 
-                          month: 'short', 
-                          day: 'numeric' 
+                        {new Date(expense.date)?.toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
                         })}
                       </TableCell>
                       <TableCell className="py-2">
@@ -336,14 +445,21 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
                           {sanitizeString(expense.reason || '')}
                         </div>
                         <div className="sm:hidden">
-                          <Badge variant="secondary" className="text-xs mt-1">{sanitizeString(expense.category || '')}</Badge>
+                          <Badge variant="secondary" className="text-xs mt-1">
+                            {sanitizeString(expense.category || '')}
+                          </Badge>
                         </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell py-2">
-                        <Badge variant="secondary" className="text-xs">{sanitizeString(expense.category || '')}</Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {sanitizeString(expense.category || '')}
+                        </Badge>
                       </TableCell>
                       <TableCell className="hidden md:table-cell py-2">
-                        <Badge variant={expense.budgetId ? 'default' : 'outline'} className="text-xs">
+                        <Badge
+                          variant={expense.budgetId ? 'default' : 'outline'}
+                          className="text-xs"
+                        >
                           {getExpenseType(expense)}
                         </Badge>
                       </TableCell>
@@ -353,32 +469,51 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
                             {sanitizeString(expense.frequency || 'Recurring')}
                           </Badge>
                         ) : (
-                          <span className="text-xs text-muted-foreground">{sanitizeString(expensesData?.oneTime || 'One-time')}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {sanitizeString(
+                              expensesData?.oneTime || 'One-time'
+                            )}
+                          </span>
                         )}
                       </TableCell>
                       <TableCell className="text-right font-medium py-2 text-sm">
                         <div className="flex items-center justify-end gap-1">
-                          <span className={getExpenseAmountColor(expense.affectsBalance || false)}>
+                          <span
+                            className={getExpenseAmountColor(
+                              expense.affectsBalance || false
+                            )}
+                          >
                             -₹{expense.amount?.toLocaleString()}
                           </span>
                           {expense.affectsBalance && (
-                            <div className="w-2 h-2 bg-red-500 rounded-full" title={sanitizeString(getExpenseTooltip(expense.affectsBalance) || '')} />
+                            <div
+                              className="w-2 h-2 bg-red-500 rounded-full"
+                              title={sanitizeString(
+                                getExpenseTooltip(expense.affectsBalance) || ''
+                              )}
+                            />
                           )}
                         </div>
                       </TableCell>
                       <TableCell className="py-2">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                            >
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEdit(expense)}>
+                            <DropdownMenuItem
+                              onClick={() => handleEdit(expense)}
+                            >
                               <Edit className="mr-2 h-4 w-4" />
                               {sanitizeString(common?.edit || 'Edit')}
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               className="text-destructive"
                               onClick={() => handleDelete(expense._id)}
                             >
@@ -400,7 +535,10 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
           <div className="flex flex-col sm:flex-row items-center gap-2">
             <div className="text-xs sm:text-sm text-muted-foreground">
-              {sanitizeString(expensesData?.showing || 'Showing')} {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalCount)} of {totalCount} {sanitizeString(expensesData?.entries || 'entries')}
+              {sanitizeString(expensesData?.showing || 'Showing')}{' '}
+              {(currentPage - 1) * pageSize + 1} to{' '}
+              {Math.min(currentPage * pageSize, totalCount)} of {totalCount}{' '}
+              {sanitizeString(expensesData?.entries || 'entries')}
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -433,7 +571,9 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch(setCurrentPage(Math.max(currentPage - 1, 1)))}
+              onClick={() =>
+                dispatch(setCurrentPage(Math.max(currentPage - 1, 1)))
+              }
               disabled={currentPage === 1}
               className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
@@ -445,7 +585,9 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)))}
+              onClick={() =>
+                dispatch(setCurrentPage(Math.min(currentPage + 1, totalPages)))
+              }
               disabled={currentPage === totalPages}
               className="h-8 w-8 p-0 sm:h-9 sm:w-9"
             >
@@ -463,20 +605,26 @@ export function AdvancedAllExpensesTable({ className }: AdvancedAllExpensesTable
           </div>
         </div>
       </CardContent>
-      
+
       <EditExpenseModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         expense={editingExpense}
       />
-      
+
       <ExpensePDFExportModal
         isOpen={isPDFExportOpen}
         onClose={() => {
           setIsPDFExportOpen(false);
           setIsSelectedExport(false);
         }}
-        expenses={isSelectedExport ? expenses.filter((expense: ExpenseItem) => selectedExpenses.includes(expense._id)) : expenses}
+        expenses={
+          isSelectedExport
+            ? expenses.filter((expense: ExpenseItem) =>
+                selectedExpenses.includes(expense._id)
+              )
+            : expenses
+        }
         isSelectedExport={isSelectedExport}
         selectedCount={selectedExpenses.length}
       />

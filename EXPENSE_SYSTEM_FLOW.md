@@ -15,22 +15,26 @@ Database (MongoDB)
 ## 📊 **Data Flow - Step by Step**
 
 ### **1. User Opens Expense Page**
+
 ```
 Dashboard → Expenses Tab → ExpensePage Component
 ```
 
 **What happens:**
+
 1. `ExpensePage` component loads
 2. Redux automatically fetches expenses from API
 3. Expenses are stored in Redux store
 4. UI displays the expense list
 
 ### **2. User Clicks "Add Expense"**
+
 ```
 ExpensePage → AddExpenseModal opens
 ```
 
 **Component Flow:**
+
 ```typescript
 // In ExpensePage
 const [showAddModal, setShowAddModal] = useState(false);
@@ -39,7 +43,7 @@ const [showAddModal, setShowAddModal] = useState(false);
   Add Expense
 </Button>
 
-<AddExpenseModal 
+<AddExpenseModal
   open={showAddModal}
   onOpenChange={setShowAddModal}
   onExpenseAdded={() => {
@@ -52,16 +56,17 @@ const [showAddModal, setShowAddModal] = useState(false);
 ### **3. Add Expense Modal Workflow**
 
 #### **Step 1: Modal Opens**
+
 ```typescript
 // AddExpenseModal component
 export function AddExpenseModal({ open, onOpenChange }) {
   // 1. Initialize modal state
   const modalState = useModalState({
     onSuccess: () => {
-      reset();           // Clear form
+      reset(); // Clear form
       onOpenChange(false); // Close modal
       onExpenseAdded?.(); // Refresh parent
-    }
+    },
   });
 
   // 2. When modal opens, fetch connected incomes
@@ -74,6 +79,7 @@ export function AddExpenseModal({ open, onOpenChange }) {
 ```
 
 #### **Step 2: User Fills Form**
+
 ```typescript
 // Form fields
 - Amount: 100
@@ -85,18 +91,19 @@ export function AddExpenseModal({ open, onOpenChange }) {
 ```
 
 #### **Step 3: User Submits Form**
+
 ```typescript
 const onSubmit = async (data) => {
   await modalState.executeAsync(async () => {
     // 1. Prepare data
     const requestData = {
       amount: 100,
-      category: "food",
-      reason: "Lunch at restaurant",
-      date: "2024-01-15",
-      type: "free", // or "budget"
+      category: 'food',
+      reason: 'Lunch at restaurant',
+      date: '2024-01-15',
+      type: 'free', // or "budget"
       affectsBalance: true,
-      incomeId: "income123"
+      incomeId: 'income123',
     };
 
     // 2. Send to Redux (which calls API)
@@ -106,12 +113,14 @@ const onSubmit = async (data) => {
     dispatch(addExpenseOptimistic(result));
 
     // 4. Update statistics
-    dispatch(updateStatsOptimistic({
-      type: "free",
-      amount: 100,
-      category: "food",
-      operation: "add"
-    }));
+    dispatch(
+      updateStatsOptimistic({
+        type: 'free',
+        amount: 100,
+        category: 'food',
+        operation: 'add',
+      })
+    );
 
     return result;
   });
@@ -121,32 +130,34 @@ const onSubmit = async (data) => {
 ## 🔄 **Redux Flow - State Management**
 
 ### **Redux Store Structure**
+
 ```typescript
 store = {
   expenses: {
     expenses: [
       {
-        _id: "exp123",
+        _id: 'exp123',
         amount: 100,
-        category: "food",
-        reason: "Lunch",
-        date: "2024-01-15",
-        userId: "user123",
-        type: "free"
-      }
+        category: 'food',
+        reason: 'Lunch',
+        date: '2024-01-15',
+        userId: 'user123',
+        type: 'free',
+      },
     ],
     loading: false,
-    error: null
+    error: null,
   },
   overview: {
     totalExpenses: 500,
     monthlyExpenses: 200,
-    categories: ["food", "transport"]
-  }
-}
+    categories: ['food', 'transport'],
+  },
+};
 ```
 
 ### **Redux Actions Flow**
+
 ```typescript
 // 1. User submits form
 dispatch(addExpense(data))
@@ -170,23 +181,24 @@ ExpenseList shows new expense
 ## 🌐 **API Routes - Backend Logic**
 
 ### **POST /api/expenses**
+
 ```typescript
 // In /api/expenses/route.ts
 export async function POST(request) {
   // 1. Get user from authentication
   const { userId } = await auth();
-  
+
   // 2. Validate input data
   if (!amount || !category || !reason) {
-    return error("Missing required fields");
+    return error('Missing required fields');
   }
-  
+
   // 3. Check user limits
   const expenseCount = await Expense.countDocuments({ userId });
   if (expenseCount >= user.limits.maxExpenses) {
-    return error("Expense limit reached");
+    return error('Expense limit reached');
   }
-  
+
   // 4. Save to database
   const expense = new Expense({
     userId,
@@ -194,17 +206,17 @@ export async function POST(request) {
     category,
     reason,
     date,
-    type
+    type,
   });
   await expense.save();
-  
+
   // 5. If affects balance, reduce income
   if (affectsBalance && incomeId) {
     await Income.findByIdAndUpdate(incomeId, {
-      $inc: { amount: -amount }
+      $inc: { amount: -amount },
     });
   }
-  
+
   // 6. Return saved expense
   return { success: true, data: expense };
 }
@@ -213,6 +225,7 @@ export async function POST(request) {
 ## 🔗 **Component Connections**
 
 ### **Parent-Child Relationship**
+
 ```
 Dashboard
   └── ExpensePage
@@ -226,6 +239,7 @@ Dashboard
 ```
 
 ### **Data Sharing Between Components**
+
 ```typescript
 // ExpensePage (Parent)
 function ExpensePage() {
@@ -235,14 +249,14 @@ function ExpensePage() {
 
   return (
     <>
-      <ExpenseTable 
+      <ExpenseTable
         expenses={expenses}
         onEdit={(expense) => {
           setSelectedExpense(expense);
           setShowEditModal(true);
         }}
       />
-      
+
       <EditExpenseModal
         open={showEditModal}
         expense={selectedExpense}
@@ -262,23 +276,26 @@ function ExpensePage() {
 ### **Scenario: User adds a $50 food expense**
 
 #### **Step 1: User Action**
+
 ```
 User clicks "Add Expense" → AddExpenseModal opens
 ```
 
 #### **Step 2: Modal Initialization**
+
 ```typescript
 // Modal opens and fetches connected incomes
 useEffect(() => {
   modalState.setLoading(true);
   fetch('/api/incomes/connected')
-    .then(response => response.json())
-    .then(incomes => setConnectedIncomes(incomes))
+    .then((response) => response.json())
+    .then((incomes) => setConnectedIncomes(incomes))
     .finally(() => modalState.setLoading(false));
 }, [open]);
 ```
 
 #### **Step 3: User Fills Form**
+
 ```
 Amount: 50
 Category: Food & Dining
@@ -289,48 +306,53 @@ Income Source: Monthly Salary ($3000)
 ```
 
 #### **Step 4: Form Submission**
+
 ```typescript
 // When user clicks "Add Expense"
 const onSubmit = async (data) => {
   // Show loading spinner on button
   modalState.setSubmitting(true);
-  
+
   try {
     // Call API through Redux
-    const result = await dispatch(addExpense({
-      amount: 50,
-      category: "food",
-      reason: "Pizza delivery",
-      date: "2024-01-15",
-      affectsBalance: true,
-      incomeId: "salary123"
-    })).unwrap();
-    
+    const result = await dispatch(
+      addExpense({
+        amount: 50,
+        category: 'food',
+        reason: 'Pizza delivery',
+        date: '2024-01-15',
+        affectsBalance: true,
+        incomeId: 'salary123',
+      })
+    ).unwrap();
+
     // Success: Show toast notification
-    toast.success("Expense added successfully!");
-    
+    toast.success('Expense added successfully!');
+
     // Update UI immediately (optimistic update)
     dispatch(addExpenseOptimistic(result));
-    
+
     // Update statistics
-    dispatch(updateStatsOptimistic({
-      amount: 50,
-      category: "food",
-      operation: "add"
-    }));
-    
+    dispatch(
+      updateStatsOptimistic({
+        amount: 50,
+        category: 'food',
+        operation: 'add',
+      })
+    );
+
     // Close modal and reset form
     onOpenChange(false);
     reset();
-    
   } catch (error) {
     // Error: Show error message
-    toast.error("Failed to add expense");
+    toast.error('Failed to add expense');
   }
 };
 ```
 
 #### **Step 5: API Processing**
+
 ```typescript
 // API receives request
 POST /api/expenses
@@ -358,13 +380,14 @@ await Income.findByIdAndUpdate("salary123", {
 });
 
 // API returns success
-return { 
-  success: true, 
+return {
+  success: true,
   data: { _id: "exp456", amount: 50, ... }
 };
 ```
 
 #### **Step 6: UI Updates**
+
 ```typescript
 // Redux store updates
 state.expenses.expenses.push(newExpense);
@@ -380,9 +403,10 @@ IncomeBalance → Shows reduced balance ($2950)
 ## 🔧 **Key Integration Points**
 
 ### **1. Redux Integration**
+
 ```typescript
 // Components connect to Redux
-const expenses = useSelector(state => state.expenses.expenses);
+const expenses = useSelector((state) => state.expenses.expenses);
 const dispatch = useAppDispatch();
 
 // Actions update global state
@@ -392,6 +416,7 @@ dispatch(deleteExpense(id));
 ```
 
 ### **2. API Integration**
+
 ```typescript
 // Redux actions call API
 export const addExpense = createAsyncThunk(
@@ -399,7 +424,7 @@ export const addExpense = createAsyncThunk(
   async (expenseData) => {
     const response = await fetch('/api/expenses', {
       method: 'POST',
-      body: JSON.stringify(expenseData)
+      body: JSON.stringify(expenseData),
     });
     return response.json();
   }
@@ -407,6 +432,7 @@ export const addExpense = createAsyncThunk(
 ```
 
 ### **3. Database Integration**
+
 ```typescript
 // API routes interact with MongoDB
 import Expense from '@/models/Expense';
@@ -416,15 +442,17 @@ await expense.save();
 ```
 
 ### **4. Real-time Updates**
+
 ```typescript
 // Optimistic updates for better UX
 dispatch(addExpenseOptimistic(newExpense)); // Update UI immediately
-dispatch(addExpense(newExpense));           // Then sync with server
+dispatch(addExpense(newExpense)); // Then sync with server
 ```
 
 ## 🎨 **UI State Management**
 
 ### **Loading States**
+
 ```typescript
 // Modal shows loading during operations
 {modalState.isLoading && <LoadingSpinner />}
@@ -432,15 +460,17 @@ dispatch(addExpense(newExpense));           // Then sync with server
 ```
 
 ### **Error Handling**
+
 ```typescript
 // Errors are displayed to user
 {modalState.error && <ErrorAlert message={modalState.error} />}
 ```
 
 ### **Success Feedback**
+
 ```typescript
 // Success notifications
-toast.success("Expense added successfully!");
+toast.success('Expense added successfully!');
 ```
 
 This is how all the expense components work together - from user interaction to database storage and back to UI updates! 🎯

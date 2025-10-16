@@ -31,7 +31,9 @@ export function UsersTable() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`/api/admin/users?page=${currentPage}&limit=10`);
+        const response = await fetch(
+          `/api/admin/users?page=${currentPage}&limit=10`
+        );
         if (response.ok) {
           const data = await response.json();
           setUsers(data.users);
@@ -43,15 +45,18 @@ export function UsersTable() {
         setLoading(false);
       }
     };
-    
+
     fetchUsers();
   }, [currentPage]);
 
   const getPlanColor = (plan: string) => {
     switch (plan) {
-      case 'pro': return 'bg-blue-100 text-blue-800';
-      case 'premium': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pro':
+        return 'bg-blue-100 text-blue-800';
+      case 'premium':
+        return 'bg-purple-100 text-purple-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -60,8 +65,11 @@ export function UsersTable() {
       <Card>
         <CardContent className="p-4">
           <div className="space-y-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="flex items-center space-x-3 animate-pulse">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="flex items-center space-x-3 animate-pulse"
+              >
                 <div className="w-8 h-8 bg-muted rounded-full"></div>
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-muted rounded w-1/3"></div>
@@ -78,13 +86,18 @@ export function UsersTable() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base sm:text-lg">All Users ({users.length})</CardTitle>
+        <CardTitle className="text-base sm:text-lg">
+          All Users ({users.length})
+        </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {/* Mobile View */}
         <div className="block sm:hidden">
           {users.map((user) => (
-            <div key={user._id} className="p-4 border-b border-border last:border-b-0">
+            <div
+              key={user._id}
+              className="p-4 border-b border-border last:border-b-0"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3 min-w-0 flex-1">
                   <Avatar className="h-8 w-8">
@@ -95,7 +108,9 @@ export function UsersTable() {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium truncate">{user.email}</p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge className={`text-xs px-2 py-0 ${getPlanColor(user.plan)}`}>
+                      <Badge
+                        className={`text-xs px-2 py-0 ${getPlanColor(user.plan)}`}
+                      >
                         {user.plan}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
@@ -131,16 +146,29 @@ export function UsersTable() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">User</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Plan</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Joined</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Role</th>
-                <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+                  User
+                </th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+                  Plan
+                </th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+                  Joined
+                </th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">
+                  Role
+                </th>
+                <th className="text-right p-4 text-sm font-medium text-muted-foreground">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user._id} className="border-b border-border hover:bg-muted/50">
+                <tr
+                  key={user._id}
+                  className="border-b border-border hover:bg-muted/50"
+                >
                   <td className="p-4">
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-8 w-8">
@@ -165,7 +193,11 @@ export function UsersTable() {
                   <td className="p-4 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0"
+                        >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -193,7 +225,7 @@ export function UsersTable() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
               Previous
@@ -204,7 +236,9 @@ export function UsersTable() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
               Next

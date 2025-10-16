@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Budget from '@/models/Budget';
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -27,11 +30,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json(budget);
   } catch (error) {
     console.error('Error updating budget:', error);
-    return NextResponse.json({ error: 'Failed to update budget' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update budget' },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -50,6 +59,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     return NextResponse.json({ message: 'Budget deleted successfully' });
   } catch (error) {
     console.error('Error deleting budget:', error);
-    return NextResponse.json({ error: 'Failed to delete budget' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete budget' },
+      { status: 500 }
+    );
   }
 }

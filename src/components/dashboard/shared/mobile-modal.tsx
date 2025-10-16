@@ -1,8 +1,18 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import { useMobile } from '@/hooks/use-mobile';
 
 interface MobileModalProps {
@@ -13,12 +23,12 @@ interface MobileModalProps {
   className?: string;
 }
 
-export function MobileModal({ 
-  open, 
-  onOpenChange, 
-  title, 
-  children, 
-  className 
+export function MobileModal({
+  open,
+  onOpenChange,
+  title,
+  children,
+  className,
 }: MobileModalProps) {
   const { isMobile, mounted } = useMobile();
 
@@ -33,9 +43,7 @@ export function MobileModal({
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
           </DrawerHeader>
-          <div className="px-4 pb-4">
-            {children}
-          </div>
+          <div className="px-4 pb-4">{children}</div>
         </DrawerContent>
       </Drawer>
     );

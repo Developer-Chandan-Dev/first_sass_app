@@ -3,7 +3,14 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, DollarSign, CreditCard, Target, Calendar } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  CreditCard,
+  Target,
+  Calendar,
+} from 'lucide-react';
 import { useDashboardTranslations, formatCurrency } from '@/hooks/i18n';
 import { useLocale } from 'next-intl';
 
@@ -11,16 +18,22 @@ interface TranslatedStatsCardsProps {
   variant?: 'dashboard' | 'expenses' | 'income';
 }
 
-export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsCardsProps) {
+export function TranslatedStatsCards({
+  variant = 'dashboard',
+}: TranslatedStatsCardsProps) {
   const { dashboard, common, expenses, income } = useDashboardTranslations();
   const locale = useLocale();
-  const { free, budget, loading } = useSelector((state: RootState) => state.overview);
-  
+  const { free, budget, loading } = useSelector(
+    (state: RootState) => state.overview
+  );
+
   const totalExpenses = free.totalSpent + budget.totalSpent;
   const totalTransactions = free.totalExpenses + budget.totalExpenses;
-  const budgetUsagePercent = budget.totalBudget > 0 ? ((budget.totalSpent / budget.totalBudget) * 100) : 0;
-  const averageExpense = free.totalExpenses > 0 ? free.totalSpent / free.totalExpenses : 0;
-  
+  const budgetUsagePercent =
+    budget.totalBudget > 0 ? (budget.totalSpent / budget.totalBudget) * 100 : 0;
+  const averageExpense =
+    free.totalExpenses > 0 ? free.totalSpent / free.totalExpenses : 0;
+
   const getStatsData = () => {
     switch (variant) {
       case 'expenses':
@@ -31,7 +44,7 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: `${free.monthlyChange > 0 ? '+' : ''}${free.monthlyChange}%`,
             trend: free.monthlyChange >= 0 ? 'up' : 'down',
             icon: DollarSign,
-            description: dashboard.vsLastMonth
+            description: dashboard.vsLastMonth,
           },
           {
             title: expenses.totalExpenses,
@@ -39,7 +52,7 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: `${free.expenseChange > 0 ? '+' : ''}${free.expenseChange}`,
             trend: free.expenseChange >= 0 ? 'up' : 'down',
             icon: Calendar,
-            description: dashboard.vsLastMonth
+            description: dashboard.vsLastMonth,
           },
           {
             title: dashboard.averageExpense,
@@ -47,7 +60,7 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: formatCurrency(Math.round(averageExpense), 'INR', locale),
             trend: 'neutral',
             icon: Target,
-            description: dashboard.perTransaction
+            description: dashboard.perTransaction,
           },
           {
             title: dashboard.previousMonth,
@@ -55,10 +68,10 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: `${free.previousMonthExpenses} ${expenses.title.toLowerCase()}`,
             trend: 'neutral',
             icon: Calendar,
-            description: dashboard.lastMonth
-          }
+            description: dashboard.lastMonth,
+          },
         ];
-      
+
       case 'income':
         return [
           {
@@ -67,7 +80,7 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: '+0%',
             trend: 'neutral',
             icon: DollarSign,
-            description: dashboard.thisMonth
+            description: dashboard.thisMonth,
           },
           {
             title: income.monthlyIncome,
@@ -75,7 +88,7 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: '+0%',
             trend: 'neutral',
             icon: TrendingUp,
-            description: dashboard.thisMonth
+            description: dashboard.thisMonth,
           },
           {
             title: income.balance,
@@ -83,7 +96,7 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: '+0%',
             trend: 'neutral',
             icon: CreditCard,
-            description: dashboard.thisMonth
+            description: dashboard.thisMonth,
           },
           {
             title: income.connected,
@@ -91,19 +104,22 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: '0 sources',
             trend: 'neutral',
             icon: Target,
-            description: common.total
-          }
+            description: common.total,
+          },
         ];
-      
+
       default: // dashboard
         return [
           {
             title: dashboard.totalExpenses,
             value: formatCurrency(totalExpenses, 'INR', locale),
-            change: free.monthlyChange > 0 ? `+${free.monthlyChange.toFixed(1)}%` : `${free.monthlyChange.toFixed(1)}%`,
+            change:
+              free.monthlyChange > 0
+                ? `+${free.monthlyChange.toFixed(1)}%`
+                : `${free.monthlyChange.toFixed(1)}%`,
             trend: free.monthlyChange >= 0 ? 'up' : 'down',
             icon: DollarSign,
-            description: dashboard.lastMonth
+            description: dashboard.lastMonth,
           },
           {
             title: dashboard.budgetUsage,
@@ -111,24 +127,29 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             change: `${budgetUsagePercent.toFixed(1)}%`,
             trend: budgetUsagePercent > 80 ? 'down' : 'up',
             icon: Target,
-            description: dashboard.thisMonth
+            description: dashboard.thisMonth,
           },
           {
             title: dashboard.categories,
-            value: (free.categoryBreakdown.length + budget.categoryBreakdown.length).toString(),
+            value: (
+              free.categoryBreakdown.length + budget.categoryBreakdown.length
+            ).toString(),
             change: `${free.categoryBreakdown.length} ${common.total}`,
             trend: 'up',
             icon: CreditCard,
-            description: `${budget.categoryBreakdown.length} ${dashboard.budgetUsage}`
+            description: `${budget.categoryBreakdown.length} ${dashboard.budgetUsage}`,
           },
           {
             title: dashboard.transactions,
             value: totalTransactions.toString(),
-            change: budget.expenseChange > 0 ? `+${budget.expenseChange}` : budget.expenseChange.toString(),
+            change:
+              budget.expenseChange > 0
+                ? `+${budget.expenseChange}`
+                : budget.expenseChange.toString(),
             trend: budget.expenseChange >= 0 ? 'up' : 'down',
             icon: Calendar,
-            description: dashboard.thisMonth
-          }
+            description: dashboard.thisMonth,
+          },
         ];
     }
   };
@@ -158,8 +179,13 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => {
         const Icon = stat.icon;
-        const TrendIcon = stat.trend === 'up' ? TrendingUp : stat.trend === 'down' ? TrendingDown : TrendingUp;
-        
+        const TrendIcon =
+          stat.trend === 'up'
+            ? TrendingUp
+            : stat.trend === 'down'
+              ? TrendingDown
+              : TrendingUp;
+
         return (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -171,10 +197,24 @@ export function TranslatedStatsCards({ variant = 'dashboard' }: TranslatedStatsC
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
               <div className="flex items-center text-xs text-muted-foreground">
-                <TrendIcon className={`mr-1 h-3 w-3 ${
-                  stat.trend === 'up' ? 'text-green-500' : stat.trend === 'down' ? 'text-red-500' : 'text-blue-500'
-                }`} />
-                <span className={stat.trend === 'up' ? 'text-green-500' : stat.trend === 'down' ? 'text-red-500' : 'text-blue-500'}>
+                <TrendIcon
+                  className={`mr-1 h-3 w-3 ${
+                    stat.trend === 'up'
+                      ? 'text-green-500'
+                      : stat.trend === 'down'
+                        ? 'text-red-500'
+                        : 'text-blue-500'
+                  }`}
+                />
+                <span
+                  className={
+                    stat.trend === 'up'
+                      ? 'text-green-500'
+                      : stat.trend === 'down'
+                        ? 'text-red-500'
+                        : 'text-blue-500'
+                  }
+                >
                   {stat.change}
                 </span>
                 <span className="ml-1">{stat.description}</span>

@@ -25,14 +25,20 @@ interface ExpenseFiltersProps {
   isRefreshing?: boolean;
 }
 
-export function ExpenseFilters({ filters, onFiltersChange, categories, onRefresh, isRefreshing = false }: ExpenseFiltersProps) {
+export function ExpenseFilters({
+  filters,
+  onFiltersChange,
+  categories,
+  onRefresh,
+  isRefreshing = false,
+}: ExpenseFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const periods = [
     { key: 'all', label: 'All Time' },
     { key: 'today', label: 'Today' },
     { key: 'week', label: 'Last 7 Days' },
-    { key: 'month', label: 'Last 30 Days' }
+    { key: 'month', label: 'Last 30 Days' },
   ];
 
   const updateFilter = (key: keyof ExpenseFiltersType, value: string) => {
@@ -45,11 +51,13 @@ export function ExpenseFilters({ filters, onFiltersChange, categories, onRefresh
       category: '',
       startDate: '',
       endDate: '',
-      search: ''
+      search: '',
     });
   };
 
-  const activeFiltersCount = Object.values(filters).filter(v => v && v !== 'all').length;
+  const activeFiltersCount = Object.values(filters).filter(
+    (v) => v && v !== 'all'
+  ).length;
 
   return (
     <Card>
@@ -85,22 +93,29 @@ export function ExpenseFilters({ filters, onFiltersChange, categories, onRefresh
               </Badge>
             )}
           </Button>
-          
+
           <div className="flex gap-2 w-full sm:w-auto">
             {onRefresh && (
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={onRefresh}
                 disabled={isRefreshing}
                 className="w-full sm:w-auto"
               >
-                <RefreshCw className={`w-4 h-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`w-4 h-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`}
+                />
                 Refresh
               </Button>
             )}
             {activeFiltersCount > 0 && (
-              <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full sm:w-auto">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="w-full sm:w-auto"
+              >
                 <X className="w-4 h-4 mr-1" />
                 Clear
               </Button>
@@ -126,7 +141,9 @@ export function ExpenseFilters({ filters, onFiltersChange, categories, onRefresh
                 {categories.map((category) => (
                   <Button
                     key={category}
-                    variant={filters.category === category ? 'default' : 'outline'}
+                    variant={
+                      filters.category === category ? 'default' : 'outline'
+                    }
                     size="sm"
                     onClick={() => updateFilter('category', category)}
                     className="text-xs sm:text-sm truncate"

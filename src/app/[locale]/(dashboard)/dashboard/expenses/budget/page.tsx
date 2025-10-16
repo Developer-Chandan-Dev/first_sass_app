@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAppSelector, useAppDispatch  } from '@/lib/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,16 +21,15 @@ import { MobileFAB } from '@/components/dashboard/shared/mobile-fab';
 import { fetchBudgets } from '@/lib/redux/expense/budgetSlice';
 import { useMobile } from '@/hooks/use-mobile';
 
-
 export default function BudgetExpensesPage() {
-    const dispatch = useAppDispatch();
-    const { expenses } = useDashboardTranslations();
-    const { isMobile } = useMobile();
+  const dispatch = useAppDispatch();
+  const { expenses } = useDashboardTranslations();
+  const { isMobile } = useMobile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { budgets } = useAppSelector(state => state.budgets);
+  const { budgets } = useAppSelector((state) => state.budgets);
 
-    useEffect(() => {
+  useEffect(() => {
     dispatch(fetchBudgets());
   }, [dispatch]);
   return (
@@ -50,28 +49,49 @@ export default function BudgetExpensesPage() {
 
       <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
         <TabsList className="grid w-full grid-cols-4 h-auto p-1">
-          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">{expenses.overview}</TabsTrigger>
-          <TabsTrigger value="budgets" className="text-xs sm:text-sm px-2 py-2">{expenses.budgets}</TabsTrigger>
-          <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">{expenses.analytics}</TabsTrigger>
-          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">{expenses?.title?.split(" ")[0]}</TabsTrigger>
+          <TabsTrigger
+            value="overview"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            {expenses.overview}
+          </TabsTrigger>
+          <TabsTrigger value="budgets" className="text-xs sm:text-sm px-2 py-2">
+            {expenses.budgets}
+          </TabsTrigger>
+          <TabsTrigger
+            value="analytics"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            {expenses.analytics}
+          </TabsTrigger>
+          <TabsTrigger
+            value="expenses"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            {expenses?.title?.split(' ')[0]}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
           <BudgetStats />
-          
+
           <div className="grid gap-4 md:gap-6 lg:grid-cols-2 w-full max-w-full">
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{expenses.expensesByCategory}</CardTitle>
+                <CardTitle className="text-lg">
+                  {expenses.expensesByCategory}
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-0 overflow-hidden">
                 <ExpenseCategoryChart expenseType="budget" />
               </CardContent>
             </Card>
-            
+
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{expenses.recentActivity}</CardTitle>
+                <CardTitle className="text-lg">
+                  {expenses.recentActivity}
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-0 overflow-hidden">
                 <RecentActivity expenseType="budget" />
@@ -93,13 +113,13 @@ export default function BudgetExpensesPage() {
           <AdvancedExpensesTable expenseType="budget" />
         </TabsContent>
       </Tabs>
-      
-      <MobileFAB 
+
+      <MobileFAB
         onClick={() => setIsModalOpen(true)}
         label={expenses.addBudgetExpense}
       />
-      
-      <AddBudgetExpenseModal 
+
+      <AddBudgetExpenseModal
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onExpenseAdded={() => {}} // Redux handles updates automatically

@@ -1,11 +1,15 @@
 'use client';
 
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MoreVertical, Edit, Trash2, Calendar } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
 import { deleteExpense } from '@/lib/redux/expense/expenseSlice';
 import { formatCurrency } from '@/hooks/i18n/useBaseTranslations';
@@ -20,13 +24,13 @@ interface MobileExpenseListProps {
   className?: string;
 }
 
-export function MobileExpenseList({ 
-  expenseType, 
-  onEdit, 
-  className 
+export function MobileExpenseList({
+  expenseType,
+  onEdit,
+  className,
 }: MobileExpenseListProps) {
   const { isMobile, mounted } = useMobile();
-  const { expenses, loading } = useAppSelector(state => state.expenses);
+  const { expenses, loading } = useAppSelector((state) => state.expenses);
   const dispatch = useAppDispatch();
   const locale = useLocale();
 
@@ -34,7 +38,7 @@ export function MobileExpenseList({
     return null;
   }
 
-  const filteredExpenses = expenses.filter(expense => 
+  const filteredExpenses = expenses.filter((expense) =>
     expenseType === 'free' ? !expense.budgetId : !!expense.budgetId
   );
 
@@ -46,9 +50,9 @@ export function MobileExpenseList({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(locale, { 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString(locale, {
+      month: 'short',
+      day: 'numeric',
     });
   };
 
@@ -96,7 +100,7 @@ export function MobileExpenseList({
                     {expense.category}
                   </Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-semibold">
                     {formatCurrency(expense.amount, 'INR', locale)}
@@ -105,13 +109,15 @@ export function MobileExpenseList({
                     {formatDate(expense.date)}
                   </span>
                 </div>
-                
-
               </div>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 ml-2"
+                  >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -122,7 +128,7 @@ export function MobileExpenseList({
                       Edit
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => handleDelete(expense._id)}
                     className="text-destructive"
                   >

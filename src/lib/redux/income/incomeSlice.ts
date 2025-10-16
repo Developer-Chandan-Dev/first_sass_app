@@ -46,21 +46,25 @@ const initialState: IncomeState = {
     category: '',
     startDate: '',
     endDate: '',
-    search: ''
+    search: '',
   },
   currentPage: 1,
   totalPages: 1,
   totalCount: 0,
   pageSize: 10,
   totalIncome: 0,
-  monthlyIncome: 0
+  monthlyIncome: 0,
 };
 
 export const fetchIncomes = createAsyncThunk(
   'incomes/fetchIncomes',
-  async (params: { filters: IncomeFilters; page: number; pageSize: number }) => {
+  async (params: {
+    filters: IncomeFilters;
+    page: number;
+    pageSize: number;
+  }) => {
     const { filters, page, pageSize } = params;
-    
+
     const searchParams = new URLSearchParams({
       page: page.toString(),
       limit: pageSize.toString(),
@@ -68,25 +72,27 @@ export const fetchIncomes = createAsyncThunk(
       period: filters.period,
       category: filters.category,
       startDate: filters.startDate,
-      endDate: filters.endDate
+      endDate: filters.endDate,
     });
 
     const response = await fetch(`/api/incomes?${searchParams}`);
     if (!response.ok) throw new Error('Failed to fetch incomes');
-    
+
     return await response.json();
   }
 );
 
 export const addIncome = createAsyncThunk(
   'incomes/addIncome',
-  async (incomeData: Omit<IncomeItem, '_id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
+  async (
+    incomeData: Omit<IncomeItem, '_id' | 'userId' | 'createdAt' | 'updatedAt'>
+  ) => {
     const response = await fetch('/api/incomes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(incomeData),
     });
-    
+
     if (!response.ok) throw new Error('Failed to add income');
     return await response.json();
   }
@@ -100,7 +106,7 @@ export const updateIncome = createAsyncThunk(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
     });
-    
+
     if (!response.ok) throw new Error('Failed to update income');
     return await response.json();
   }
@@ -112,7 +118,7 @@ export const deleteIncome = createAsyncThunk(
     const response = await fetch(`/api/incomes/${id}`, {
       method: 'DELETE',
     });
-    
+
     if (!response.ok) throw new Error('Failed to delete income');
     return id;
   }
@@ -126,25 +132,28 @@ const incomeSlice = createSlice({
       state.filters = { ...state.filters, ...action.payload };
       state.currentPage = 1;
     },
-    
+
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
-    
+
     setPageSize: (state, action: PayloadAction<number>) => {
       state.pageSize = action.payload;
       state.currentPage = 1;
     },
-    
+
     addIncomeOptimistic: (state, action: PayloadAction<IncomeItem>) => {
       state.incomes.unshift(action.payload);
       state.totalCount += 1;
       state.totalIncome += action.payload.amount;
     },
-    
-    updateIncomeOptimistic: (state, action: PayloadAction<{ id: string; updates: Partial<IncomeItem> }>) => {
+
+    updateIncomeOptimistic: (
+      state,
+      action: PayloadAction<{ id: string; updates: Partial<IncomeItem> }>
+    ) => {
       const { id, updates } = action.payload;
-      const index = state.incomes.findIndex(income => income._id === id);
+      const index = state.incomes.findIndex((income) => income._id === id);
       if (index !== -1) {
         const oldAmount = state.incomes[index].amount;
         state.incomes[index] = { ...state.incomes[index], ...updates };
@@ -153,14 +162,14 @@ const incomeSlice = createSlice({
         }
       }
     },
-    
+
     deleteIncomeOptimistic: (state, action: PayloadAction<string>) => {
       const id = action.payload;
-      const income = state.incomes.find(income => income._id === id);
+      const income = state.incomes.find((income) => income._id === id);
       if (income) {
         state.totalIncome -= income.amount;
       }
-      state.incomes = state.incomes.filter(income => income._id !== id);
+      state.incomes = state.incomes.filter((income) => income._id !== id);
       state.totalCount -= 1;
     },
   },
@@ -180,22 +189,26 @@ const incomeSlice = createSlice({
       .addCase(fetchIncomes.rejected, (state) => {
         state.loading = false;
       })
-      
+
       .addCase(addIncome.fulfilled, (state, action) => {
-        const tempIndex = state.incomes.findIndex(income => income._id && income._id.startsWith('temp_'));
+        const tempIndex = state.incomes.findIndex(
+          (income) => income._id && income._id.startsWith('temp_')
+        );
         if (tempIndex !== -1) {
           state.incomes[tempIndex] = action.payload;
         }
       })
       .addCase(addIncome.rejected, (state) => {
-        state.incomes = state.incomes.filter(income => income._id && !income._id.startsWith('temp_'));
+        state.incomes = state.incomes.filter(
+          (income) => income._id && !income._id.startsWith('temp_')
+        );
         state.totalCount -= 1;
       })
-      
+
       .addCase(updateIncome.rejected, (state, action) => {
         console.error('Failed to update income:', action.error);
       })
-      
+
       .addCase(deleteIncome.rejected, (state, action) => {
         console.error('Failed to delete income:', action.error);
       });

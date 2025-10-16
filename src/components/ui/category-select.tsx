@@ -17,7 +17,13 @@ interface CategorySelectProps {
   id?: string;
 }
 
-export function CategorySelect({ value, onChange, placeholder, className, id }: CategorySelectProps) {
+export function CategorySelect({
+  value,
+  onChange,
+  placeholder,
+  className,
+  id,
+}: CategorySelectProps) {
   const t = useDashboardTranslations();
   const { categoryOptions, addCustomCategory } = useCategories();
   const [showCustomInput, setShowCustomInput] = useState(false);
@@ -29,7 +35,7 @@ export function CategorySelect({ value, onChange, placeholder, className, id }: 
 
     setIsAdding(true);
     const result = await addCustomCategory(customCategoryName.trim());
-    
+
     if (result.success) {
       onChange(result.category);
       setCustomCategoryName('');

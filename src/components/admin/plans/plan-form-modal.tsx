@@ -4,12 +4,23 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 
 const planSchema = z.object({
@@ -31,7 +42,11 @@ interface PlanFormModalProps {
   onSuccess: () => void;
 }
 
-export function PlanFormModal({ open, onOpenChange, onSuccess }: PlanFormModalProps) {
+export function PlanFormModal({
+  open,
+  onOpenChange,
+  onSuccess,
+}: PlanFormModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -55,7 +70,7 @@ export function PlanFormModal({ open, onOpenChange, onSuccess }: PlanFormModalPr
 
   const onSubmit = async (data: PlanFormData) => {
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch('/api/admin/plans', {
         method: 'POST',
@@ -121,13 +136,19 @@ export function PlanFormModal({ open, onOpenChange, onSuccess }: PlanFormModalPr
                 placeholder="9.99"
               />
               {errors.price && (
-                <p className="text-sm text-red-500 mt-1">{errors.price.message}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.price.message}
+                </p>
               )}
             </div>
 
             <div>
               <Label htmlFor="interval">Billing</Label>
-              <Select onValueChange={(value) => setValue('interval', value as 'monthly' | 'yearly')}>
+              <Select
+                onValueChange={(value) =>
+                  setValue('interval', value as 'monthly' | 'yearly')
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select interval" />
                 </SelectTrigger>
@@ -148,7 +169,9 @@ export function PlanFormModal({ open, onOpenChange, onSuccess }: PlanFormModalPr
                 {...register('maxExpenses', { valueAsNumber: true })}
               />
               {errors.maxExpenses && (
-                <p className="text-sm text-red-500 mt-1">{errors.maxExpenses.message}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.maxExpenses.message}
+                </p>
               )}
             </div>
 
@@ -160,16 +183,20 @@ export function PlanFormModal({ open, onOpenChange, onSuccess }: PlanFormModalPr
                 {...register('maxBudgets', { valueAsNumber: true })}
               />
               {errors.maxBudgets && (
-                <p className="text-sm text-red-500 mt-1">{errors.maxBudgets.message}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.maxBudgets.message}
+                </p>
               )}
             </div>
           </div>
 
           <div className="space-y-3">
             <Label>Features</Label>
-            
+
             <div className="flex items-center justify-between">
-              <Label htmlFor="analytics" className="text-sm">Analytics Dashboard</Label>
+              <Label htmlFor="analytics" className="text-sm">
+                Analytics Dashboard
+              </Label>
               <Switch
                 id="analytics"
                 checked={watch('analytics')}
@@ -178,7 +205,9 @@ export function PlanFormModal({ open, onOpenChange, onSuccess }: PlanFormModalPr
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="export" className="text-sm">Data Export</Label>
+              <Label htmlFor="export" className="text-sm">
+                Data Export
+              </Label>
               <Switch
                 id="export"
                 checked={watch('export')}
@@ -187,7 +216,9 @@ export function PlanFormModal({ open, onOpenChange, onSuccess }: PlanFormModalPr
             </div>
 
             <div className="flex items-center justify-between">
-              <Label htmlFor="priority" className="text-sm">Priority Support</Label>
+              <Label htmlFor="priority" className="text-sm">
+                Priority Support
+              </Label>
               <Switch
                 id="priority"
                 checked={watch('priority')}

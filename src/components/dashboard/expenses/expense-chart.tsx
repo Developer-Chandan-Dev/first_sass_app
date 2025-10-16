@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+} from 'recharts';
 import { useUser } from '@clerk/nextjs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle, TrendingUp } from 'lucide-react';
@@ -31,7 +38,7 @@ export function ExpenseChart() {
   const [data, setData] = useState<ChartData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const isDark = theme === 'dark';
 
   useEffect(() => {
@@ -47,35 +54,50 @@ export function ExpenseChart() {
         // Fetch both free and budget expenses with better error handling
         let freeData: ExpenseResponse = { expenses: [] };
         let budgetData: ExpenseResponse = { expenses: [] };
-        
+
         try {
-          const freeResponse = await fetch(`/api/expenses?type=free&from=${startDate.toISOString()}&to=${endDate.toISOString()}`);
+          const freeResponse = await fetch(
+            `/api/expenses?type=free&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+          );
           if (freeResponse.ok) {
-            freeData = await freeResponse.json() as ExpenseResponse;
+            freeData = (await freeResponse.json()) as ExpenseResponse;
           } else {
-            console.warn('Free expenses API failed:', freeResponse.status, freeResponse.statusText);
+            console.warn(
+              'Free expenses API failed:',
+              freeResponse.status,
+              freeResponse.statusText
+            );
           }
         } catch (error) {
           console.warn('Failed to fetch free expenses:', error);
         }
-        
+
         try {
-          const budgetResponse = await fetch(`/api/expenses?type=budget&from=${startDate.toISOString()}&to=${endDate.toISOString()}`);
+          const budgetResponse = await fetch(
+            `/api/expenses?type=budget&from=${startDate.toISOString()}&to=${endDate.toISOString()}`
+          );
           if (budgetResponse.ok) {
-            budgetData = await budgetResponse.json() as ExpenseResponse;
+            budgetData = (await budgetResponse.json()) as ExpenseResponse;
           } else {
-            console.warn('Budget expenses API failed:', budgetResponse.status, budgetResponse.statusText);
+            console.warn(
+              'Budget expenses API failed:',
+              budgetResponse.status,
+              budgetResponse.statusText
+            );
           }
         } catch (error) {
           console.warn('Failed to fetch budget expenses:', error);
         }
-        
+
         // Combine both types of expenses with null checks
-        const expenses = [...(freeData?.expenses || []), ...(budgetData?.expenses || [])];
-        
+        const expenses = [
+          ...(freeData?.expenses || []),
+          ...(budgetData?.expenses || []),
+        ];
+
         // Group expenses by date
         const dailyTotals: { [key: string]: number } = {};
-        
+
         // Initialize all 7 days with 0
         for (let i = 6; i >= 0; i--) {
           const date = new Date();
@@ -83,7 +105,7 @@ export function ExpenseChart() {
           const dateStr = date.toISOString().split('T')[0];
           dailyTotals[dateStr] = 0;
         }
-        
+
         // Sum expenses by date with validation (optimized)
         for (const expense of expenses) {
           if (expense && expense.date && typeof expense.amount === 'number') {
@@ -93,13 +115,15 @@ export function ExpenseChart() {
             }
           }
         }
-        
+
         // Convert to chart format
         const chartData = Object.entries(dailyTotals).map(([date, amount]) => ({
-          date: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+          date: new Date(date).toLocaleDateString('en-US', {
+            weekday: 'short',
+          }),
           amount,
         }));
-        
+
         setData(chartData);
       } catch (error) {
         console.error('Failed to fetch chart data:', error);
@@ -144,18 +168,18 @@ export function ExpenseChart() {
   return (
     <div className="w-full overflow-hidden">
       <ResponsiveContainer width="100%" height={180} className="md:!h-[220px]">
-        <BarChart 
+        <BarChart
           data={data}
           margin={{ top: 10, right: 5, left: -10, bottom: 0 }}
         >
-          <XAxis 
-            dataKey="date" 
+          <XAxis
+            dataKey="date"
             tick={{ fontSize: 11 }}
             axisLine={false}
             tickLine={false}
             className="text-xs md:text-sm"
           />
-          <YAxis 
+          <YAxis
             tick={{ fontSize: 10 }}
             axisLine={false}
             tickLine={false}
@@ -163,19 +187,22 @@ export function ExpenseChart() {
             className="text-xs"
             tickFormatter={(value) => `₹${value}`}
           />
-          <Tooltip 
-            formatter={(value: number) => [`₹${value?.toLocaleString() || '0'}`, 'Amount']}
-            contentStyle={{ 
-              backgroundColor: isDark ? '#1f2937' : 'white', 
+          <Tooltip
+            formatter={(value: number) => [
+              `₹${value?.toLocaleString() || '0'}`,
+              'Amount',
+            ]}
+            contentStyle={{
+              backgroundColor: isDark ? '#1f2937' : 'white',
               border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
               borderRadius: '6px',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              color: isDark ? '#f9fafb' : '#111827'
+              color: isDark ? '#f9fafb' : '#111827',
             }}
           />
-          <Bar 
-            dataKey="amount" 
-            fill="#3b82f6" 
+          <Bar
+            dataKey="amount"
+            fill="#3b82f6"
             radius={[2, 2, 0, 0]}
             maxBarSize={35}
           />

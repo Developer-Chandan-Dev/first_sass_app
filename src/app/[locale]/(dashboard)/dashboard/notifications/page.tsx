@@ -1,10 +1,12 @@
+'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, Clock } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
 
 export default function NotificationsPage() {
   const { pages, dashboard } = useDashboardTranslations();
-  
+
   return (
     <div className="space-y-6">
       <div>
@@ -19,12 +21,14 @@ export default function NotificationsPage() {
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
             <BarChart3 className="w-8 h-8 text-primary" />
           </div>
-          <CardTitle className="text-2xl">{pages.notifications.comingSoon}</CardTitle>
+          <CardTitle className="text-2xl">
+            {pages.notifications.comingSoon}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground mb-4">
-            We&apos;re working on advanced notifications features including expense trends, 
-            category insights, and detailed reports.
+            We&apos;re working on advanced notifications features including
+            expense trends, category insights, and detailed reports.
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <Clock className="w-4 h-4" />

@@ -4,10 +4,19 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/redux/store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { DollarSign, Calendar, Repeat, Target, Plus, Eye, BarChart3 } from 'lucide-react';
+import {
+  DollarSign,
+  Calendar,
+  Repeat,
+  Target,
+  Plus,
+  Eye,
+  BarChart3,
+} from 'lucide-react';
 import { useMemo } from 'react';
 import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { UniversalStatCard } from '../shared/universal-stat-card';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 function StatCardSkeleton() {
   return (
@@ -42,8 +51,11 @@ function InsightCardSkeleton() {
 }
 
 export function IncomeStats() {
-  const { incomes, totalIncome, monthlyIncome, loading } = useSelector((state: RootState) => state.incomes);
+  const { incomes, totalIncome, monthlyIncome, loading } = useSelector(
+    (state: RootState) => state.incomes
+  );
   const { getLocalizedPath } = useLocaleContext();
+  const { income, dashboard } = useDashboardTranslations();
 
   const stats = useMemo(() => {
     if (loading) {
@@ -56,10 +68,10 @@ export function IncomeStats() {
         avgIncome: 0,
         weeklyIncome: 0,
         totalEntries: 0,
-        topCategory: null
+        topCategory: null,
       };
     }
-    
+
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
@@ -68,20 +80,29 @@ export function IncomeStats() {
 
     // Calculate last month's income
     const lastMonthIncome = incomes
-      .filter(income => {
+      .filter((income) => {
         const incomeDate = new Date(income.date);
-        return incomeDate.getMonth() === lastMonth && incomeDate.getFullYear() === lastMonthYear;
+        return (
+          incomeDate.getMonth() === lastMonth &&
+          incomeDate.getFullYear() === lastMonthYear
+        );
       })
       .reduce((sum, income) => sum + income.amount, 0);
 
     // Calculate monthly change
-    const monthlyChange = lastMonthIncome > 0 
-      ? ((monthlyIncome - lastMonthIncome) / lastMonthIncome) * 100 
-      : monthlyIncome > 0 ? 100 : 0;
+    const monthlyChange =
+      lastMonthIncome > 0
+        ? ((monthlyIncome - lastMonthIncome) / lastMonthIncome) * 100
+        : monthlyIncome > 0
+          ? 100
+          : 0;
 
     // Calculate recurring income
-    const recurringIncomes = incomes.filter(income => income.isRecurring);
-    const recurringAmount = recurringIncomes.reduce((sum, income) => sum + income.amount, 0);
+    const recurringIncomes = incomes.filter((income) => income.isRecurring);
+    const recurringAmount = recurringIncomes.reduce(
+      (sum, income) => sum + income.amount,
+      0
+    );
 
     // Calculate average income per entry
     const avgIncome = incomes.length > 0 ? totalIncome / incomes.length : 0;
@@ -90,17 +111,21 @@ export function IncomeStats() {
     const weekStart = new Date(now);
     weekStart.setDate(now.getDate() - now.getDay());
     const weeklyIncome = incomes
-      .filter(income => new Date(income.date) >= weekStart)
+      .filter((income) => new Date(income.date) >= weekStart)
       .reduce((sum, income) => sum + income.amount, 0);
 
     // Calculate category distribution
-    const categoryStats = incomes.reduce((acc, income) => {
-      acc[income.category] = (acc[income.category] || 0) + income.amount;
-      return acc;
-    }, {} as Record<string, number>);
+    const categoryStats = incomes.reduce(
+      (acc, income) => {
+        acc[income.category] = (acc[income.category] || 0) + income.amount;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
-    const topCategory = Object.entries(categoryStats)
-      .sort(([,a], [,b]) => b - a)[0];
+    const topCategory = Object.entries(categoryStats).sort(
+      ([, a], [, b]) => b - a
+    )[0];
 
     return {
       totalIncome,
@@ -111,7 +136,9 @@ export function IncomeStats() {
       avgIncome,
       weeklyIncome,
       totalEntries: incomes.length,
-      topCategory: topCategory ? { name: topCategory[0], amount: topCategory[1] } : null
+      topCategory: topCategory
+        ? { name: topCategory[0], amount: topCategory[1] }
+        : null,
     };
   }, [incomes, totalIncome, monthlyIncome, loading]);
 
@@ -136,53 +163,88 @@ export function IncomeStats() {
 
   const statCards = [
     {
-      title: 'Total Income',
+      title: income.totalIncome,
       value: `₹${stats.totalIncome.toLocaleString()}`,
-      change: `${stats.totalEntries} entries`,
+      change: `${stats.totalEntries} ${income.entries || 'entries'}`,
       trend: 'neutral' as const,
       icon: DollarSign,
-      description: 'All time earnings',
+      description: income.allTimeEarnings || 'All time earnings',
       href: '/dashboard/income',
       actions: [
-        { icon: Plus, label: 'Add Income', href: '/dashboard/income', variant: 'default' as const },
-        { icon: Eye, label: 'View All', href: '/dashboard/income', variant: 'outline' as const }
+        {
+          icon: Plus,
+          label: income.addIncome,
+          href: '/dashboard/income',
+          variant: 'default' as const,
+        },
+        {
+          icon: Eye,
+          label: income.viewAll || 'View All',
+          href: '/dashboard/income',
+          variant: 'outline' as const,
+        },
       ],
-      status: stats.totalIncome > 100000 ? 'high' as const : stats.totalIncome > 50000 ? 'medium' as const : 'low' as const,
-      extraInfo: `₹${stats.avgIncome.toLocaleString()}/avg`
+      status:
+        stats.totalIncome > 100000
+          ? ('high' as const)
+          : stats.totalIncome > 50000
+            ? ('medium' as const)
+            : ('low' as const),
+      extraInfo: `₹${stats.avgIncome.toLocaleString()}/${income.avg || 'avg'}`,
     },
     {
-      title: 'Monthly Income',
+      title: income.monthlyIncome,
       value: `₹${stats.monthlyIncome.toLocaleString()}`,
       change: `${stats.monthlyChange >= 0 ? '+' : ''}${stats.monthlyChange.toFixed(1)}%`,
-      trend: stats.monthlyChange >= 0 ? 'up' as const : 'down' as const,
+      trend: stats.monthlyChange >= 0 ? ('up' as const) : ('down' as const),
       icon: Calendar,
-      description: 'vs last month',
+      description: dashboard.vsLastMonth,
       href: '/dashboard/income',
-      status: stats.monthlyChange >= 10 ? 'high' as const : stats.monthlyChange >= 0 ? 'medium' as const : 'low' as const
+      status:
+        stats.monthlyChange >= 10
+          ? ('high' as const)
+          : stats.monthlyChange >= 0
+            ? ('medium' as const)
+            : ('low' as const),
     },
     {
-      title: 'Recurring Income',
+      title: income.recurringIncome,
       value: `₹${stats.recurringAmount.toLocaleString()}`,
-      change: `${stats.recurringCount} sources`,
+      change: `${stats.recurringCount} ${income.sources || 'sources'}`,
       trend: 'up' as const,
       icon: Repeat,
-      description: 'automated income',
+      description: income.automatedIncome || 'automated income',
       href: '/dashboard/income',
       actions: [
-        { icon: Plus, label: 'Add Recurring', href: '/dashboard/income', variant: 'default' as const },
-        { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics', variant: 'outline' as const }
+        {
+          icon: Plus,
+          label: income.addRecurring || 'Add Recurring',
+          href: '/dashboard/income',
+          variant: 'default' as const,
+        },
+        {
+          icon: BarChart3,
+          label: dashboard.analytics || 'Analytics',
+          href: '/dashboard/analytics',
+          variant: 'outline' as const,
+        },
       ],
-      status: stats.recurringCount > 3 ? 'high' as const : stats.recurringCount > 1 ? 'medium' as const : 'low' as const
+      status:
+        stats.recurringCount > 3
+          ? ('high' as const)
+          : stats.recurringCount > 1
+            ? ('medium' as const)
+            : ('low' as const),
     },
     {
-      title: 'Weekly Income',
+      title: income.weeklyIncome || 'Weekly Income',
       value: `₹${stats.weeklyIncome.toLocaleString()}`,
-      change: `Avg ₹${stats.avgIncome.toLocaleString()}`,
+      change: `${income.avg || 'Avg'} ₹${stats.avgIncome.toLocaleString()}`,
       trend: 'neutral' as const,
       icon: Target,
-      description: 'this week',
-      status: 'medium' as const
-    }
+      description: income.thisWeek || 'this week',
+      status: 'medium' as const,
+    },
   ];
 
   return (
@@ -212,7 +274,9 @@ export function IncomeStats() {
         {/* Top Category */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Top Income Category</CardTitle>
+            <CardTitle className="text-base">
+              {income.topIncomeCategory || 'Top Income Category'}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {stats.topCategory ? (
@@ -224,19 +288,25 @@ export function IncomeStats() {
                   </Badge>
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {((stats.topCategory.amount / stats.totalIncome) * 100).toFixed(1)}% of total income
+                  {(
+                    (stats.topCategory.amount / stats.totalIncome) *
+                    100
+                  ).toFixed(1)}
+                  % {income.ofTotalIncome || 'of total income'}
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                    style={{ 
-                      width: `${(stats.topCategory.amount / stats.totalIncome) * 100}%` 
+                    style={{
+                      width: `${(stats.topCategory.amount / stats.totalIncome) * 100}%`,
                     }}
                   />
                 </div>
               </div>
             ) : (
-              <div className="text-sm text-muted-foreground">No income data available</div>
+              <div className="text-sm text-muted-foreground">
+                {income.noIncomeData || 'No income data available'}
+              </div>
             )}
           </CardContent>
         </Card>
@@ -244,24 +314,36 @@ export function IncomeStats() {
         {/* Quick Stats */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">Quick Insights</CardTitle>
+            <CardTitle className="text-base">
+              {income.quickInsights || 'Quick Insights'}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Average per entry</span>
-                <span className="font-medium">₹{stats.avgIncome.toLocaleString()}</span>
+                <span className="text-muted-foreground">
+                  {income.averagePerEntry || 'Average per entry'}
+                </span>
+                <span className="font-medium">
+                  ₹{stats.avgIncome.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Recurring sources</span>
+                <span className="text-muted-foreground">
+                  {income.recurringSources || 'Recurring sources'}
+                </span>
                 <span className="font-medium">{stats.recurringCount}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Total entries</span>
+                <span className="text-muted-foreground">
+                  {income.totalEntries || 'Total entries'}
+                </span>
                 <span className="font-medium">{stats.totalEntries}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">This week</span>
+                <span className="text-muted-foreground">
+                  {income.thisWeek || 'This week'}
+                </span>
                 <span className="font-medium text-green-600">
                   ₹{stats.weeklyIncome.toLocaleString()}
                 </span>

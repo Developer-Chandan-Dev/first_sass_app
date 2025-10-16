@@ -14,42 +14,51 @@ import { IncomeCharts } from '@/components/dashboard/incomes/income-charts';
 import { IncomeFilters } from '@/components/dashboard/incomes/income-filters';
 import { useDashboardTranslations } from '@/hooks/i18n';
 
-
-
 export default function IncomePage() {
   const dispatch = useDispatch<AppDispatch>();
   const { income } = useDashboardTranslations();
   const { filters, currentPage, pageSize } = useSelector(
     (state: RootState) => state.incomes
   );
-  
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    dispatch(fetchIncomes({ 
-      filters, 
-      page: currentPage, 
-      pageSize 
-    }));
+    dispatch(
+      fetchIncomes({
+        filters,
+        page: currentPage,
+        pageSize,
+      })
+    );
   }, [dispatch, filters, currentPage, pageSize]);
 
   return (
     <div className="space-y-4 p-2 sm:p-4 lg:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">{income.incomeManagement}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">
+            {income.incomeManagement}
+          </h1>
           <p className="text-muted-foreground text-sm sm:text-base">
             {income.trackAndManageIncome}
           </p>
         </div>
-        <Button onClick={() => setShowAddModal(true)} className="w-full sm:w-auto">
+        <Button
+          onClick={() => setShowAddModal(true)}
+          className="w-full sm:w-auto"
+        >
           <Plus className="h-4 w-4 mr-2" />
           {income.addIncome}
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-4"
+      >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview" className="text-xs sm:text-sm">
             <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
@@ -79,8 +88,8 @@ export default function IncomePage() {
         </TabsContent>
       </Tabs>
 
-      <AddIncomeModal 
-        open={showAddModal} 
+      <AddIncomeModal
+        open={showAddModal}
         onOpenChange={setShowAddModal}
         onIncomeAdded={() => {
           dispatch(fetchIncomes({ filters, page: currentPage, pageSize }));

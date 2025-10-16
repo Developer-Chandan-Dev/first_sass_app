@@ -3,7 +3,13 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, DollarSign, Wallet, PiggyBank } from 'lucide-react';
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Wallet,
+  PiggyBank,
+} from 'lucide-react';
 
 interface DashboardStats {
   income: {
@@ -72,7 +78,7 @@ export function IncomeBalanceCards() {
       description: `${stats.income.count} sources`,
       icon: DollarSign,
       trend: 'up' as const,
-      color: 'text-green-600'
+      color: 'text-green-600',
     },
     {
       title: 'Total Expenses',
@@ -80,8 +86,8 @@ export function IncomeBalanceCards() {
       description: `${stats.expenses.count} transactions`,
       icon: TrendingDown,
       trend: 'down' as const,
-      color: 'text-red-600'
-    }
+      color: 'text-red-600',
+    },
   ];
 
   // Add balance card only if there's connected income
@@ -91,8 +97,8 @@ export function IncomeBalanceCards() {
       value: `₹${stats.balance?.toLocaleString() || '0'}`,
       description: 'Connected income - expenses',
       icon: Wallet,
-      trend: (stats.balance || 0) >= 0 ? 'up' as const : 'down' as const,
-      color: (stats.balance || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+      trend: (stats.balance || 0) >= 0 ? ('up' as const) : ('down' as const),
+      color: (stats.balance || 0) >= 0 ? 'text-green-600' : 'text-red-600',
     });
   }
 
@@ -104,7 +110,7 @@ export function IncomeBalanceCards() {
       description: `${stats.income.connectedCount} connected sources`,
       icon: PiggyBank,
       trend: 'up' as const,
-      color: 'text-blue-600'
+      color: 'text-blue-600',
     });
   }
 
@@ -113,7 +119,7 @@ export function IncomeBalanceCards() {
       {cards.map((card) => {
         const Icon = card.icon;
         const TrendIcon = card.trend === 'up' ? TrendingUp : TrendingDown;
-        
+
         return (
           <Card key={card.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -132,7 +138,7 @@ export function IncomeBalanceCards() {
           </Card>
         );
       })}
-      
+
       {/* Connection Status Badge */}
       {stats.hasConnectedIncome && (
         <Card className="md:col-span-2 lg:col-span-4">
@@ -142,7 +148,8 @@ export function IncomeBalanceCards() {
                 Balance Tracking Active
               </Badge>
               <span className="text-sm text-muted-foreground">
-                {stats.income.connectedCount} income source(s) connected to expenses
+                {stats.income.connectedCount} income source(s) connected to
+                expenses
               </span>
             </div>
           </CardContent>

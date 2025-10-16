@@ -1,5 +1,5 @@
-import { MetadataRoute } from 'next'
-import { seoConfig } from '@/lib/seo'
+import { MetadataRoute } from 'next';
+import { seoConfig } from '@/lib/seo';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,5 +9,5 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ['/dashboard/', '/api/'],
     },
     sitemap: `${seoConfig.siteUrl}/sitemap.xml`,
-  }
+  };
 }

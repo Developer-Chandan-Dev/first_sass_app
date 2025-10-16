@@ -3,7 +3,13 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from './button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './card';
 import { sanitizeForLog } from '@/lib/input-sanitizer';
 
 interface Props {
@@ -31,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ error, errorInfo });
     this.props.onError?.(error, errorInfo);
-    
+
     // Log error to console in development - sanitized
     if (process.env.NODE_ENV === 'development') {
       console.error('Error caught by boundary:', sanitizeForLog(error.message));
@@ -61,7 +67,8 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
               <CardTitle className="text-xl">Something went wrong</CardTitle>
               <CardDescription>
-                An unexpected error occurred. Please try refreshing the page or go back to the dashboard.
+                An unexpected error occurred. Please try refreshing the page or
+                go back to the dashboard.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -83,7 +90,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   </div>
                 </details>
               )}
-              
+
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Button
                   onClick={this.handleRetry}
@@ -134,11 +141,11 @@ export function useErrorBoundary() {
 }
 
 // Modal Error Boundary for modals specifically
-export function ModalErrorBoundary({ 
-  children, 
-  onError 
-}: { 
-  children: ReactNode; 
+export function ModalErrorBoundary({
+  children,
+  onError,
+}: {
+  children: ReactNode;
   onError?: () => void;
 }) {
   return (

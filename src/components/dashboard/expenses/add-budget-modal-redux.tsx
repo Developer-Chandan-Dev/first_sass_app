@@ -30,14 +30,36 @@ import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey } from '@/lib/categories';
 import { sanitizeString } from '@/lib/input-sanitizer';
 
-const createBudgetSchema = (t: ReturnType<typeof useDashboardTranslations>) => z.object({
-  name: z.string().min(1, t.expenses?.form?.validation?.titleRequired || 'Title is required'),
-  amount: z.number().min(0.01, t.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
-  category: z.string().optional(),
-  duration: z.enum(['monthly', 'weekly', 'custom']),
-  startDate: z.string().min(1, t.expenses?.form?.validation?.dateRequired || 'Start date is required'),
-  endDate: z.string().min(1, t.expenses?.form?.validation?.dateRequired || 'End date is required'),
-});
+const createBudgetSchema = (t: ReturnType<typeof useDashboardTranslations>) =>
+  z.object({
+    name: z
+      .string()
+      .min(
+        1,
+        t.expenses?.form?.validation?.titleRequired || 'Title is required'
+      ),
+    amount: z
+      .number()
+      .min(
+        0.01,
+        t.expenses?.form?.validation?.amountGreaterThanZero ||
+          'Amount must be greater than 0'
+      ),
+    category: z.string().optional(),
+    duration: z.enum(['monthly', 'weekly', 'custom']),
+    startDate: z
+      .string()
+      .min(
+        1,
+        t.expenses?.form?.validation?.dateRequired || 'Start date is required'
+      ),
+    endDate: z
+      .string()
+      .min(
+        1,
+        t.expenses?.form?.validation?.dateRequired || 'End date is required'
+      ),
+  });
 
 type BudgetFormData = z.infer<ReturnType<typeof createBudgetSchema>>;
 
@@ -119,49 +141,56 @@ export function AddBudgetModal({
   }, [duration, setValue]);
 
   const onSubmit = async (data: BudgetFormData) => {
-    await modalState.executeAsync(async () => {
-      if (isEditing && budget) {
-        // Update existing budget
-        const updates = {
-          name: data.name,
-          amount: Number(data.amount),
-          category: data.category ? getBackendCategoryKey(data.category) : undefined,
-          duration: data.duration,
-          startDate: data.startDate,
-          endDate: data.endDate,
-        };
+    await modalState.executeAsync(
+      async () => {
+        if (isEditing && budget) {
+          // Update existing budget
+          const updates = {
+            name: data.name,
+            amount: Number(data.amount),
+            category: data.category
+              ? getBackendCategoryKey(data.category)
+              : undefined,
+            duration: data.duration,
+            startDate: data.startDate,
+            endDate: data.endDate,
+          };
 
-        // Optimistic update
-        dispatch(updateBudgetOptimistic({ id: budget._id, updates }));
+          // Optimistic update
+          dispatch(updateBudgetOptimistic({ id: budget._id, updates }));
 
-        // API call in background
-        await dispatch(updateBudget({ id: budget._id, updates })).unwrap();
-        return updates;
-      } else {
-        const budgetData = {
-          ...data,
-          category: data.category ? getBackendCategoryKey(data.category) : undefined,
-          isActive: true
-        };
-        const res = await dispatch(addBudget(budgetData)).unwrap();
+          // API call in background
+          await dispatch(updateBudget({ id: budget._id, updates })).unwrap();
+          return updates;
+        } else {
+          const budgetData = {
+            ...data,
+            category: data.category
+              ? getBackendCategoryKey(data.category)
+              : undefined,
+            isActive: true,
+          };
+          const res = await dispatch(addBudget(budgetData)).unwrap();
 
-        // Update UI after successful API response
-        dispatch(addBudgetOptimistic(res));
-        
-        // Update overview stats after successful API response
-        dispatch(
-          updateStatsOptimistic({
-            type: 'budget',
-            amount: Number(res.amount),
-            category: res.category || 'Other',
-            operation: 'add',
-            isExpense: false,
-          })
-        );
-        
-        return res;
-      }
-    }, isEditing ? t.success.updated : t.success.created);
+          // Update UI after successful API response
+          dispatch(addBudgetOptimistic(res));
+
+          // Update overview stats after successful API response
+          dispatch(
+            updateStatsOptimistic({
+              type: 'budget',
+              amount: Number(res.amount),
+              category: res.category || 'Other',
+              operation: 'add',
+              isExpense: false,
+            })
+          );
+
+          return res;
+        }
+      },
+      isEditing ? t.success.updated : t.success.created
+    );
   };
 
   return (
@@ -169,14 +198,18 @@ export function AddBudgetModal({
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
           <DialogTitle className="text-lg">
-            {isEditing ? 'Edit Budget' : sanitizeString(t.dashboard?.addBudget || 'Add Budget')}
+            {isEditing
+              ? 'Edit Budget'
+              : sanitizeString(t.dashboard?.addBudget || 'Add Budget')}
           </DialogTitle>
         </DialogHeader>
 
         {modalState.error && (
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{sanitizeString(modalState.error || '')}</AlertDescription>
+            <AlertDescription>
+              {sanitizeString(modalState.error || '')}
+            </AlertDescription>
           </Alert>
         )}
 
@@ -188,11 +221,15 @@ export function AddBudgetModal({
             <Input
               id="name"
               {...register('name')}
-              placeholder={sanitizeString(t.expenses?.form?.titlePlaceholder || 'Enter title')}
+              placeholder={sanitizeString(
+                t.expenses?.form?.titlePlaceholder || 'Enter title'
+              )}
               className="mt-1"
             />
             {formErrors.name && (
-              <p className="text-xs text-red-500 mt-1">{formErrors.name.message}</p>
+              <p className="text-xs text-red-500 mt-1">
+                {formErrors.name.message}
+              </p>
             )}
           </div>
 
@@ -205,7 +242,9 @@ export function AddBudgetModal({
               type="number"
               step="0.01"
               {...register('amount', { valueAsNumber: true })}
-              placeholder={sanitizeString(t.expenses?.form?.amountPlaceholder || 'Enter amount')}
+              placeholder={sanitizeString(
+                t.expenses?.form?.amountPlaceholder || 'Enter amount'
+              )}
               className="mt-1"
             />
             {formErrors.amount && (
@@ -223,7 +262,9 @@ export function AddBudgetModal({
               id="category"
               value={watch('category') || ''}
               onChange={(value) => setValue('category', value)}
-              placeholder={sanitizeString(t.expenses?.selectCategory || 'Select category')}
+              placeholder={sanitizeString(
+                t.expenses?.selectCategory || 'Select category'
+              )}
               className="mt-1"
             />
           </div>
@@ -286,7 +327,9 @@ export function AddBudgetModal({
               disabled={modalState.isSubmitting || modalState.isLoading}
               className="w-full sm:w-auto"
             >
-              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {modalState.isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               {modalState.isSubmitting
                 ? isEditing
                   ? 'Updating...'

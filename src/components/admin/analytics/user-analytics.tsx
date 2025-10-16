@@ -1,7 +1,14 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from 'recharts';
 
 const data = [
   { name: 'Free', value: 65, color: '#94a3b8' },
@@ -13,7 +20,9 @@ export function UserAnalytics() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base sm:text-lg">User Distribution</CardTitle>
+        <CardTitle className="text-base sm:text-lg">
+          User Distribution
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-64 sm:h-80 w-full">
@@ -32,18 +41,16 @@ export function UserAnalytics() {
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip 
-                contentStyle={{ 
+              <Tooltip
+                contentStyle={{
                   backgroundColor: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '6px',
                   fontSize: '12px',
-                  color: 'hsl(var(--foreground))'
+                  color: 'hsl(var(--foreground))',
                 }}
               />
-              <Legend 
-                wrapperStyle={{ fontSize: '12px' }}
-              />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>

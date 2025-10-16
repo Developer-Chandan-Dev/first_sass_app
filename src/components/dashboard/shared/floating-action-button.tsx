@@ -30,26 +30,26 @@ export function FloatingActionButton({ className }: FloatingActionButtonProps) {
       icon: Plus,
       label: dashboard?.addExpense || 'Add Expense',
       href: '/dashboard/expenses/free',
-      color: 'bg-blue-500 hover:bg-blue-600'
+      color: 'bg-blue-500 hover:bg-blue-600',
     },
     {
       icon: DollarSign,
       label: dashboard?.addIncome || 'Add Income',
       href: '/dashboard/income',
-      color: 'bg-green-500 hover:bg-green-600'
+      color: 'bg-green-500 hover:bg-green-600',
     },
     {
       icon: Receipt,
       label: 'View Expenses',
       href: '/dashboard/expenses',
-      color: 'bg-purple-500 hover:bg-purple-600'
+      color: 'bg-purple-500 hover:bg-purple-600',
     },
     {
       icon: Target,
       label: 'Budget Expense',
       href: '/dashboard/expenses/budget',
-      color: 'bg-orange-500 hover:bg-orange-600'
-    }
+      color: 'bg-orange-500 hover:bg-orange-600',
+    },
   ];
 
   const handleActionClick = () => {
@@ -60,25 +60,27 @@ export function FloatingActionButton({ className }: FloatingActionButtonProps) {
     <>
       {/* Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/20 z-40 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
-      
+
       {/* Quick Actions Menu */}
       {isOpen && (
-        <Card className={cn(
-          "fixed bottom-24 right-4 z-50 w-64 shadow-xl transition-all duration-200",
-          "md:bottom-6 md:right-20"
-        )}>
+        <Card
+          className={cn(
+            'fixed bottom-24 right-4 z-50 w-64 shadow-xl transition-all duration-200',
+            'md:bottom-6 md:right-20'
+          )}
+        >
           <CardContent className="p-3">
             <div className="space-y-2">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-semibold text-sm">Quick Actions</h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-6 w-6 p-0"
                   onClick={() => setIsOpen(false)}
                 >
@@ -96,13 +98,17 @@ export function FloatingActionButton({ className }: FloatingActionButtonProps) {
                     onClick={handleActionClick}
                   >
                     <Link href={getLocalizedPath(action.href)}>
-                      <div className={cn(
-                        "w-8 h-8 rounded-full flex items-center justify-center mr-3",
-                        action.color
-                      )}>
+                      <div
+                        className={cn(
+                          'w-8 h-8 rounded-full flex items-center justify-center mr-3',
+                          action.color
+                        )}
+                      >
                         <Icon className="h-4 w-4 text-white" />
                       </div>
-                      <span className="text-sm font-medium">{action.label}</span>
+                      <span className="text-sm font-medium">
+                        {action.label}
+                      </span>
                     </Link>
                   </Button>
                 );
@@ -111,16 +117,16 @@ export function FloatingActionButton({ className }: FloatingActionButtonProps) {
           </CardContent>
         </Card>
       )}
-      
+
       {/* FAB Button */}
       <Button
         size="lg"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed z-50 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all",
-          "bottom-20 right-4 md:bottom-6 md:right-6",
-          "bg-primary hover:bg-primary/90",
-          isOpen && "rotate-45",
+          'fixed z-50 h-14 w-14 rounded-full shadow-lg hover:shadow-xl transition-all',
+          'bottom-20 right-4 md:bottom-6 md:right-6',
+          'bg-primary hover:bg-primary/90',
+          isOpen && 'rotate-45',
           className
         )}
       >

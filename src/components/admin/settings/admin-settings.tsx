@@ -23,13 +23,15 @@ export function AdminSettings() {
             <Button size="sm">Add</Button>
           </div>
         </div>
-        
+
         <div>
           <Label>Current Admins</Label>
           <div className="mt-2 space-y-2">
             <div className="flex items-center justify-between p-2 border rounded">
               <span className="text-sm">admin@example.com</span>
-              <Button variant="outline" size="sm">Remove</Button>
+              <Button variant="outline" size="sm">
+                Remove
+              </Button>
             </div>
           </div>
         </div>

@@ -11,7 +11,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "seed": "tsx scripts/seed.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "check": "node scripts/quick-check.js",
+    "pre-commit": "node scripts/pre-commit-check.js",
+    "fix-all": "npm run lint:fix && npm run format"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.32.0",

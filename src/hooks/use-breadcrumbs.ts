@@ -24,9 +24,10 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
 
   const breadcrumbs = useMemo(() => {
     // Remove locale prefix and split path
-    const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, '') || '/';
+    const pathWithoutLocale =
+      pathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, '') || '/';
     const segments = pathWithoutLocale.split('/').filter(Boolean);
-    
+
     const items: BreadcrumbItem[] = [];
 
     // Add home if requested
@@ -34,7 +35,7 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
       items.push({
         label: dashboard.overview || 'Home',
         href: '/',
-        isActive: segments.length === 0
+        isActive: segments.length === 0,
       });
     }
 
@@ -43,14 +44,14 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
     segments.forEach((segment, index) => {
       currentPath += `/${segment}`;
       const isLast = index === segments.length - 1;
-      
+
       // Get localized label for segment
       const label = getSegmentLabel(segment, segments, index, customLabels);
-      
+
       items.push({
         label,
         href: currentPath,
-        isActive: isLast
+        isActive: isLast,
       });
     });
 
@@ -59,9 +60,9 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
       const firstItem = items[0];
       const lastItems = items.slice(-maxItems + 1);
       return [
-        firstItem, 
-        { label: '...', href: '', isActive: false }, 
-        ...lastItems
+        firstItem,
+        { label: '...', href: '', isActive: false },
+        ...lastItems,
       ];
     }
 
@@ -69,9 +70,9 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
   }, [pathname, dashboard, expenses, showHome, maxItems, customLabels]);
 
   function getSegmentLabel(
-    segment: string, 
-    segments: string[], 
-    index: number, 
+    segment: string,
+    segments: string[],
+    index: number,
     customLabels: Record<string, string>
   ): string {
     // Check custom labels first
@@ -81,28 +82,32 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
 
     // Handle dynamic segments and provide localized labels
     const segmentMap: Record<string, string> = {
-      'dashboard': dashboard.overview || 'Dashboard',
-      'expenses': expenses.title || 'Expenses',
-      'income': 'Income',
-      'budgets': 'Budgets',
-      'categories': 'Categories',
-      'analytics': 'Analytics',
-      'settings': 'Settings',
-      'profile': 'Profile',
-      'free': expenses.freeExpenses || 'Free Expenses',
-      'budget': expenses.budgetExpenses || 'Budget Expenses',
-      'reports': 'Reports',
-      'export': 'Export',
-      'import': 'Import',
-      'add': 'Add',
-      'edit': 'Edit',
-      'view': 'View',
-      'new': 'New'
+      dashboard: dashboard.overview || 'Dashboard',
+      expenses: expenses.title || 'Expenses',
+      income: 'Income',
+      budgets: 'Budgets',
+      categories: 'Categories',
+      analytics: 'Analytics',
+      settings: 'Settings',
+      profile: 'Profile',
+      free: expenses.freeExpenses || 'Free Expenses',
+      budget: expenses.budgetExpenses || 'Budget Expenses',
+      reports: 'Reports',
+      export: 'Export',
+      import: 'Import',
+      add: 'Add',
+      edit: 'Edit',
+      view: 'View',
+      new: 'New',
     };
 
     // Check if it's a dynamic ID (UUID pattern or number)
-    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(segment) || 
-        /^\d+$/.test(segment)) {
+    if (
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        segment
+      ) ||
+      /^\d+$/.test(segment)
+    ) {
       // Get context from previous segment
       const prevSegment = segments[index - 1];
       if (prevSegment === 'expenses') {
@@ -120,12 +125,14 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
       return 'Edit';
     }
 
-    return segmentMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+    return (
+      segmentMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
+    );
   }
 
   return {
     breadcrumbs,
     currentPage: breadcrumbs[breadcrumbs.length - 1]?.label || '',
-    isHomePage: breadcrumbs.length <= 1
+    isHomePage: breadcrumbs.length <= 1,
   };
 }

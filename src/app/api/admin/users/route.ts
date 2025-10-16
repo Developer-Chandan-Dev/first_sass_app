@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const query: Record<string, unknown> = {};
-    
+
     if (search) {
       query.email = { $regex: search, $options: 'i' };
     }
-    
+
     if (plan && plan !== 'all') {
       query.plan = plan;
     }
@@ -46,6 +46,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Admin users fetch error:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch users' },
+      { status: 500 }
+    );
   }
 }

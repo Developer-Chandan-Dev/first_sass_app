@@ -47,7 +47,9 @@
     "confirmDelete": "Are you sure you want to delete this item?",
     "confirmBulkDelete": "Are you sure you want to delete {count} items?",
     "loadingData": "Loading data...",
-    "noDataAvailable": "No data available"
+    "noDataAvailable": "No data available",
+    "export": "Export",
+    "clear": "Clear"
   },
   "navigation": {
     "home": "Home",
@@ -118,54 +120,7 @@
     "uptime": "Uptime",
     "countries": "Countries"
   },
-  "pricing": {
-    "monthly": "Monthly",
-    "yearly": "Yearly",
-    "save": "Save",
-    "mostPopular": "Most Popular",
-    "getStarted": "Get Started",
-    "currentPlan": "Current Plan",
-    "upgrade": "Upgrade",
-    "downgrade": "Downgrade",
-    "plans": {
-      "free": {
-        "name": "Free",
-        "features": [
-          "Basic expense tracking",
-          "5 categories",
-          "Mobile app",
-          "Email support"
-        ]
-      },
-      "pro": {
-        "name": "Pro",
-        "features": [
-          "Unlimited tracking",
-          "AI insights",
-          "Advanced analytics",
-          "Priority support"
-        ]
-      },
-      "premium": {
-        "name": "Premium",
-        "features": [
-          "Team collaboration",
-          "Custom categories",
-          "API access",
-          "White-label options"
-        ]
-      },
-      "ultra": {
-        "name": "Ultra",
-        "features": [
-          "Enterprise features",
-          "Dedicated support",
-          "Custom integrations",
-          "SLA guarantee"
-        ]
-      }
-    }
-  },
+
   "testimonials": {
     "sarah": {
       "name": "Sarah Chen",
@@ -416,7 +371,45 @@
           "question": "What support do you offer?",
           "answer": "We provide 24/7 email support for all plans, with priority support for Pro and above."
         }
+      },
+      "plans": {
+      "free": {
+        "name": "Free",
+        "features": [
+          "Basic expense tracking",
+          "5 categories",
+          "Mobile app",
+          "Email support"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "features": [
+          "Unlimited tracking",
+          "AI insights",
+          "Advanced analytics",
+          "Priority support"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "features": [
+          "Team collaboration",
+          "Custom categories",
+          "API access",
+          "White-label options"
+        ]
+      },
+      "ultra": {
+        "name": "Ultra",
+        "features": [
+          "Enterprise features",
+          "Dedicated support",
+          "Custom integrations",
+          "SLA guarantee"
+        ]
       }
+    }
     }
   },
   "expenses": {
@@ -570,17 +563,12 @@
     "exportAll": "Export All",
     "exportAllCSV": "Export All CSV",
     "exportAllPDF": "Export All PDF",
-    "deleteSelected": "Delete Selected",
     "date": "Date",
     "description": "Description",
-    "budget": "Budget",
-    "recurring": "Recurring",
     "amount": "Amount",
-    "oneTime": "One-time",
     "edit": "Edit",
     "delete": "Delete",
     "showing": "Showing",
-    "to": "to",
     "of": "of",
     "entries": "entries",
     "perPage": "per page",
@@ -589,9 +577,6 @@
     "areYouSureDeleteExpense": "Are you sure you want to delete this expense?",
     "areYouSureDeleteExpenses": "Are you sure you want to delete these expenses?",
     "confirmBulkDelete": "Are you sure you want to delete {count} expenses?",
-    "updateError": "Failed to update expense",
-    "updating": "Updating...",
-    "updateExpense": "Update Expense",
     "expensesDeletedSuccessfully": "Expenses deleted successfully!",
     "failedToDeleteExpenses": "Failed to delete expenses",
     "totalBudget": "Total Budget",
@@ -604,7 +589,6 @@
     "exceeded": "Exceeded",
     "budgetLeft": "budget left",
     "lastMonth": "Last Month",
-    "addBudgetExpense": "Add Budget Expense",
     "form": {
       "title": "Title",
       "titlePlaceholder": "Enter expense title",
@@ -657,7 +641,6 @@
     "selectIncomeCategory": "Select income category",
     "briefDescriptionOfIncomeSource": "Brief description of income source",
     "addingIncome": "Adding...",
-    "addIncome": "Add Income",
     "incomeManagement": "Income Management",
     "trackAndManageIncome": "Track and manage your income sources",
     "overview": "Overview",
@@ -674,9 +657,6 @@
       "bonus": "Bonus",
       "other": "Other"
     },
-    "addError": "Failed to add income",
-    "sourcePlaceholder": "e.g., Company Name, Client Name",
-    "selectFrequency": "Select frequency",
     "frequency": "Frequency",
     "updating": "Updating...",
     "selectFrequency": "Select frequency",
@@ -706,7 +686,54 @@
         "dateRequired": "Date is required"
       }
     },
-    "frequency": "Frequency"
+    "exportSelectedCSV": "Export Selected CSV",
+    "exportSelectedPDF": "Export Selected PDF",
+    "exportAll": "Export All",
+    "exportAllCSV": "Export All CSV",
+    "exportAllPDF": "Export All PDF",
+    "oneTime": "One-time",
+    "viewExpenses": "View Expenses",
+    "allTimeEarnings": "All time earnings",
+    "entries": "entries",
+    "viewAll": "View All",
+    "avg": "avg",
+    "source": "sources",
+    "automatedIncome": "automated income",
+    "addRecurring": "Add Recurring",
+    "weeklyIncome": "Weekly Income",
+    "thisWeek": "This week",
+    "topIncomeCategory": "Top Income Category",
+    "ofTotalIncome": "of total income",
+    "noIncomeData": "No income data available",
+    "quickInsights": "Quick Insights",
+    "averagePerEntry": "Average per entry",
+    "recurringSources": "Recurring sources",
+    "totalEntries": "Total entries",
+    "allTime": "All Time",
+    "today": "Today",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "allTypes": "All Types",
+    "allCategories": "All Categories",
+    "advancedFilters": "Advanced Filters",
+    "refresh": "Refresh",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "incomeAnalytics": "Income Analytics",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "days": "days",
+    "weeks": "weeks",
+    "months": "months",
+    "years": "years",
+    "incomeBy": "Income by",
+    "incomeByCategory": "Income by Category",
+    "sixMonthTrend": "6-Month Trend",
+    "incomeSummary": "Income Summary",
+    "avgPerEntry": "Avg per Entry",
+    "topCategories": "Top Categories"
   },
   "auth": {
     "login": "Login",
@@ -772,7 +799,9 @@
     "first": "First",
     "last": "Last",
     "showing": "Showing",
-    "entries": "entries"
+    "entries": "entries",
+    "to": "to",
+    "perPage": "per page"
   },
   "expenseCards": {
     "totalExpenses": {
@@ -814,5 +843,41 @@
     "copyright": "© 2025 TrackWise. All rights reserved.",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service"
+  },
+  "pdfExport": {
+    "title": "Export PDF Report",
+    "selectedItems": "Export Selected Items ({count})",
+    "reportTitle": "Report Title",
+    "reportTitleRequired": "Report Title *",
+    "subtitle": "Subtitle",
+    "additionalInfo": "Additional information...",
+    "layoutOptions": "Layout Options",
+    "orientation": "Orientation",
+    "portrait": "Portrait",
+    "landscape": "Landscape",
+    "fontSize": "Font Size",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "dateFormat": "Date Format",
+    "shortDate": "Short (Jan 15, 2024)",
+    "longDate": "Long (January 15, 2024)",
+    "includeColumns": "Include Columns",
+    "category": "Category",
+    "recurringStatus": "Recurring Status",
+    "createdDate": "Created Date",
+    "description": "Description",
+    "reportPreview": "Report Preview",
+    "expenseEntries": "{count} expense entries",
+    "incomeEntries": "{count} income entries",
+    "totalAmount": "Total Amount: ₹{amount}",
+    "format": "Format: {orientation} PDF",
+    "generatePDF": "Generate PDF",
+    "pleaseEnterTitle": "Please enter a title for the report",
+    "pdfExportedSuccess": "PDF exported successfully!",
+    "generatedOn": "Generated on {date}",
+    "selectedReport": "Selected {type} Report ({count} items)",
+    "expenseReport": "Expense Report",
+    "incomeReport": "Income Report"
   }
 }

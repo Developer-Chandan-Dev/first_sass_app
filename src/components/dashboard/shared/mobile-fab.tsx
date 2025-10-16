@@ -11,7 +11,11 @@ interface MobileFABProps {
   className?: string;
 }
 
-export function MobileFAB({ onClick, label = 'Add', className }: MobileFABProps) {
+export function MobileFAB({
+  onClick,
+  label = 'Add',
+  className,
+}: MobileFABProps) {
   const { isMobile, mounted } = useMobile();
 
   if (!mounted || !isMobile) {

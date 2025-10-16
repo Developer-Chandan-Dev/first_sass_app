@@ -17,14 +17,10 @@ import { PageHeader } from '@/components/dashboard/layout/page-header';
 import { MobileFAB } from '@/components/dashboard/shared/mobile-fab';
 import { useMobile } from '@/hooks/use-mobile';
 
-
-
 export default function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { expenses } = useDashboardTranslations();
   const { isMobile } = useMobile();
-
-
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -43,27 +39,46 @@ export default function ExpensesPage() {
 
       <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
         <TabsList className="grid w-full grid-cols-3 h-auto p-1">
-          <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 py-2">{expenses.overview}</TabsTrigger>
-          <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 py-2">{expenses.analytics}</TabsTrigger>
-          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-2 py-2">{expenses?.title?.split(" ")[0]}</TabsTrigger>
+          <TabsTrigger
+            value="overview"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            {expenses.overview}
+          </TabsTrigger>
+          <TabsTrigger
+            value="analytics"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            {expenses.analytics}
+          </TabsTrigger>
+          <TabsTrigger
+            value="expenses"
+            className="text-xs sm:text-sm px-2 py-2"
+          >
+            {expenses?.title?.split(' ')[0]}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4 md:space-y-6">
           <FreeStats />
-          
+
           <div className="grid gap-4 md:gap-6 lg:grid-cols-2 w-full max-w-full">
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{expenses.expensesByCategory}</CardTitle>
+                <CardTitle className="text-lg">
+                  {expenses.expensesByCategory}
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-0 overflow-hidden">
                 <ExpenseCategoryChart />
               </CardContent>
             </Card>
-            
+
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">{expenses.recentActivity}</CardTitle>
+                <CardTitle className="text-lg">
+                  {expenses.recentActivity}
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-0 overflow-hidden">
                 <RecentActivity />
@@ -81,14 +96,14 @@ export default function ExpensesPage() {
           <AdvancedExpensesTable expenseType="free" />
         </TabsContent>
       </Tabs>
-      
-      <MobileFAB 
+
+      <MobileFAB
         onClick={() => setIsModalOpen(true)}
         label={expenses.addExpense}
       />
-      
-      <AddExpenseModal 
-        open={isModalOpen} 
+
+      <AddExpenseModal
+        open={isModalOpen}
         onOpenChange={setIsModalOpen}
         expenseType="free"
       />

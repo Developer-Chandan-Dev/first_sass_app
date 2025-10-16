@@ -1,12 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useTranslations } from 'next-intl';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
@@ -33,24 +45,36 @@ export interface PDFExportOptions {
   selectedOnly?: boolean;
 }
 
-export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedExport = false, selectedCount = 0 }: PDFExportModalProps) {
+export function PDFExportModal({
+  isOpen,
+  onClose,
+  incomes,
+  onExport,
+  isSelectedExport = false,
+  selectedCount = 0,
+}: PDFExportModalProps) {
+  const t = useTranslations('pdfExport');
+  const tCommon = useTranslations('common');
+
   const [options, setOptions] = useState<PDFExportOptions>({
-    title: isSelectedExport ? `Selected Income Report (${selectedCount} items)` : 'Income Report',
-    subtitle: `Generated on ${new Date().toLocaleDateString()}`,
+    title: isSelectedExport
+      ? t('selectedReport', { type: 'Income', count: selectedCount })
+      : t('incomeReport'),
+    subtitle: t('generatedOn', { date: new Date().toLocaleDateString() }),
     includeDescription: true,
     includeRecurring: true,
     includeCreatedDate: false,
     dateFormat: 'short',
     orientation: 'landscape',
-    fontSize: 'medium'
+    fontSize: 'medium',
   });
 
   const handleExport = () => {
     if (!options.title.trim()) {
-      toast.error('Please enter a title for the report');
+      toast.error(t('pleaseEnterTitle'));
       return;
     }
-    
+
     onExport(options);
     onClose();
   };
@@ -62,30 +86,36 @@ export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedE
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {isSelectedExport ? `Export Selected Items (${selectedCount})` : 'Export PDF Report'}
+            {isSelectedExport
+              ? t('selectedItems', { count: selectedCount })
+              : t('title')}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           {/* Report Info */}
           <div className="space-y-3">
             <div className="space-y-2">
-              <Label htmlFor="title">Report Title *</Label>
+              <Label htmlFor="title">{t('reportTitleRequired')}</Label>
               <Input
                 id="title"
                 value={options.title}
-                onChange={(e) => setOptions({ ...options, title: e.target.value })}
-                placeholder="Income Report"
+                onChange={(e) =>
+                  setOptions({ ...options, title: e.target.value })
+                }
+                placeholder={t('incomeReport')}
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="subtitle">Subtitle</Label>
+              <Label htmlFor="subtitle">{t('subtitle')}</Label>
               <Textarea
                 id="subtitle"
                 value={options.subtitle}
-                onChange={(e) => setOptions({ ...options, subtitle: e.target.value })}
-                placeholder="Additional information..."
+                onChange={(e) =>
+                  setOptions({ ...options, subtitle: e.target.value })
+                }
+                placeholder={t('additionalInfo')}
                 rows={2}
               />
             </div>
@@ -93,14 +123,14 @@ export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedE
 
           {/* Layout Options */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium">Layout Options</h4>
-            
+            <h4 className="text-sm font-medium">{t('layoutOptions')}</h4>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Orientation</Label>
+                <Label>{t('orientation')}</Label>
                 <Select
                   value={options.orientation}
-                  onValueChange={(value: 'portrait' | 'landscape') => 
+                  onValueChange={(value: 'portrait' | 'landscape') =>
                     setOptions({ ...options, orientation: value })
                   }
                 >
@@ -108,17 +138,17 @@ export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedE
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="portrait">Portrait</SelectItem>
-                    <SelectItem value="landscape">Landscape</SelectItem>
+                    <SelectItem value="portrait">{t('portrait')}</SelectItem>
+                    <SelectItem value="landscape">{t('landscape')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
-                <Label>Font Size</Label>
+                <Label>{t('fontSize')}</Label>
                 <Select
                   value={options.fontSize}
-                  onValueChange={(value: 'small' | 'medium' | 'large') => 
+                  onValueChange={(value: 'small' | 'medium' | 'large') =>
                     setOptions({ ...options, fontSize: value })
                   }
                 >
@@ -126,19 +156,19 @@ export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedE
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="small">Small</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="large">Large</SelectItem>
+                    <SelectItem value="small">{t('small')}</SelectItem>
+                    <SelectItem value="medium">{t('medium')}</SelectItem>
+                    <SelectItem value="large">{t('large')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
-              <Label>Date Format</Label>
+              <Label>{t('dateFormat')}</Label>
               <Select
                 value={options.dateFormat}
-                onValueChange={(value: 'short' | 'long') => 
+                onValueChange={(value: 'short' | 'long') =>
                   setOptions({ ...options, dateFormat: value })
                 }
               >
@@ -146,8 +176,8 @@ export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedE
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="short">Short (Jan 15, 2024)</SelectItem>
-                  <SelectItem value="long">Long (January 15, 2024)</SelectItem>
+                  <SelectItem value="short">{t('shortDate')}</SelectItem>
+                  <SelectItem value="long">{t('longDate')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -155,59 +185,81 @@ export function PDFExportModal({ isOpen, onClose, incomes, onExport, isSelectedE
 
           {/* Column Options */}
           <div className="space-y-3">
-            <h4 className="text-sm font-medium">Include Columns</h4>
-            
+            <h4 className="text-sm font-medium">{t('includeColumns')}</h4>
+
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="description"
                   checked={options.includeDescription}
-                  onCheckedChange={(checked) => 
-                    setOptions({ ...options, includeDescription: checked as boolean })
+                  onCheckedChange={(checked) =>
+                    setOptions({
+                      ...options,
+                      includeDescription: checked as boolean,
+                    })
                   }
                 />
-                <Label htmlFor="description" className="text-sm">Description</Label>
+                <Label htmlFor="description" className="text-sm">
+                  {t('description')}
+                </Label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="recurring"
                   checked={options.includeRecurring}
-                  onCheckedChange={(checked) => 
-                    setOptions({ ...options, includeRecurring: checked as boolean })
+                  onCheckedChange={(checked) =>
+                    setOptions({
+                      ...options,
+                      includeRecurring: checked as boolean,
+                    })
                   }
                 />
-                <Label htmlFor="recurring" className="text-sm">Recurring Status</Label>
+                <Label htmlFor="recurring" className="text-sm">
+                  {t('recurringStatus')}
+                </Label>
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="createdDate"
                   checked={options.includeCreatedDate}
-                  onCheckedChange={(checked) => 
-                    setOptions({ ...options, includeCreatedDate: checked as boolean })
+                  onCheckedChange={(checked) =>
+                    setOptions({
+                      ...options,
+                      includeCreatedDate: checked as boolean,
+                    })
                   }
                 />
-                <Label htmlFor="createdDate" className="text-sm">Created Date</Label>
+                <Label htmlFor="createdDate" className="text-sm">
+                  {t('createdDate')}
+                </Label>
               </div>
             </div>
           </div>
 
           {/* Preview Info */}
           <div className="bg-muted p-3 rounded-lg text-sm">
-            <div className="font-medium mb-1">Report Preview:</div>
-            <div>• {incomes.length} income entries</div>
-            <div>• Total Amount: ₹{totalAmount.toLocaleString()}</div>
-            <div>• Format: {options.orientation} PDF</div>
+            <div className="font-medium mb-1">{t('reportPreview')}:</div>
+            <div>• {t('incomeEntries', { count: incomes.length })}</div>
+            <div>
+              • {t('totalAmount', { amount: totalAmount.toLocaleString() })}
+            </div>
+            <div>• {t('format', { orientation: options.orientation })}</div>
           </div>
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1"
+            >
+              {tCommon('cancel')}
             </Button>
             <Button onClick={handleExport} className="flex-1">
-              Generate PDF
+              {t('generatePDF')}
             </Button>
           </div>
         </div>

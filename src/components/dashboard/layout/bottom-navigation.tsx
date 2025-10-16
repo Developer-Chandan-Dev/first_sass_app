@@ -5,13 +5,13 @@ import { usePathname } from 'next/navigation';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/contexts/locale-context';
-import { 
-  LayoutDashboard, 
-  Receipt, 
-  DollarSign, 
-  TrendingUp, 
+import {
+  LayoutDashboard,
+  Receipt,
+  DollarSign,
+  TrendingUp,
   Settings,
-  type LucideIcon
+  type LucideIcon,
 } from 'lucide-react';
 
 interface BottomNavItem {
@@ -38,16 +38,17 @@ export function BottomNavigation() {
       <div className="grid grid-cols-5 h-16">
         {bottomNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-          
+          const isActive =
+            pathname === item.href || pathname.startsWith(item.href + '/');
+
           return (
             <Link
               key={item.href}
               href={getLocalizedPath(item.href)}
               className={cn(
                 'flex flex-col items-center justify-center gap-1 transition-colors',
-                isActive 
-                  ? 'text-primary bg-primary/10' 
+                isActive
+                  ? 'text-primary bg-primary/10'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >

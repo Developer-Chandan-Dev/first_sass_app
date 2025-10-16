@@ -47,7 +47,9 @@
     "confirmDelete": "तुम्हाला खरोखर हा आयटम हटवायचा आहे का?",
     "confirmBulkDelete": "तुम्हाला खरोखर {count} आयटम हटवायचे आहेत का?",
     "loadingData": "डेटा लोड होत आहे...",
-    "noDataAvailable": "कोणताही डेटा उपलब्ध नाही"
+    "noDataAvailable": "कोणताही डेटा उपलब्ध नाही",
+    "export": "निर्यात करा",
+    "clear": "साफ करा"
   },
   "navigation": {
     "home": "मुख्यपृष्ठ",
@@ -117,34 +119,6 @@
     "trackedExpenses": "ट्रॅक केलेले खर्च",
     "uptime": "अपटाइम",
     "countries": "देश"
-  },
-  "pricing": {
-    "monthly": "मासिक",
-    "yearly": "वार्षिक",
-    "save": "बचत",
-    "mostPopular": "सर्वात लोकप्रिय",
-    "getStarted": "सुरुवात करा",
-    "currentPlan": "सध्याची योजना",
-    "upgrade": "अपग्रेड",
-    "downgrade": "डाउनग्रेड",
-    "plans": {
-      "free": {
-        "name": "विनामूल्य",
-        "features": ["मूलभूत खर्च ट्रॅकिंग", "5 श्रेणी", "मोबाइल अॅप", "ईमेल समर्थन"]
-      },
-      "pro": {
-        "name": "प्रो",
-        "features": ["अमर्यादित ट्रॅकिंग", "एआय अंतर्दृष्टी", "प्रगत विश्लेषण", "प्राधान्य समर्थन"]
-      },
-      "premium": {
-        "name": "प्रीमियम",
-        "features": ["संघ सहयोग", "सानुकूल श्रेणी", "एपीआय प्रवेश", "व्हाइट-लेबल पर्याय"]
-      },
-      "ultra": {
-        "name": "अल्ट्रा",
-        "features": ["एंटरप्राइझ वैशिष्ट्ये", "समर्पित समर्थन", "सानुकूल एकीकरण", "एसएलए हमी"]
-      }
-    }
   },
   "testimonials": {
     "sarah": {
@@ -283,7 +257,10 @@
       "title": "बद्दल",
       "subtitle": "आम्ही आर्थिक व्यवस्थापन प्रत्येकासाठी प्रवेशयोग्य, बुद्धिमान आणि सहज बनवण्याच्या मिशनवर आहोत.",
       "stats": {
-        "users": { "title": "1M+ वापरकर्ते", "desc": "आमच्या प्लॅटफॉर्मवर भरवसा ठेवतात" },
+        "users": {
+          "title": "1M+ वापरकर्ते",
+          "desc": "आमच्या प्लॅटफॉर्मवर भरवसा ठेवतात"
+        },
         "ai": { "title": "AI-चालित", "desc": "स्मार्ट अंतर्दृष्टी" },
         "award": { "title": "पुरस्कार जेतू", "desc": "उद्योग मान्यता" },
         "global": { "title": "जागतिक पोहोच", "desc": "150+ देश" }
@@ -395,6 +372,44 @@
         "support": {
           "question": "तुम्ही कोणता सपोर्ट देता?",
           "answer": "आम्ही सर्व योजनांसाठी 24/7 ईमेल सपोर्ट प्रदान करतो, प्रो आणि त्यापेक्षा वरच्या योजनांसाठी प्राधान्य सपोर्टसह."
+        }
+      },
+      "plans": {
+        "free": {
+          "name": "विनामूल्य",
+          "features": [
+            "मूलभूत खर्च ट्रॅकिंग",
+            "5 श्रेणी",
+            "मोबाइल अॅप",
+            "ईमेल समर्थन"
+          ]
+        },
+        "pro": {
+          "name": "प्रो",
+          "features": [
+            "अमर्यादित ट्रॅकिंग",
+            "एआय अंतर्दृष्टी",
+            "प्रगत विश्लेषण",
+            "प्राधान्य समर्थन"
+          ]
+        },
+        "premium": {
+          "name": "प्रीमियम",
+          "features": [
+            "संघ सहयोग",
+            "सानुकूल श्रेणी",
+            "एपीआय प्रवेश",
+            "व्हाइट-लेबल पर्याय"
+          ]
+        },
+        "ultra": {
+          "name": "अल्ट्रा",
+          "features": [
+            "एंटरप्राइझ वैशिष्ट्ये",
+            "समर्पित समर्थन",
+            "सानुकूल एकीकरण",
+            "एसएलए हमी"
+          ]
         }
       }
     }
@@ -581,6 +596,7 @@
     "exceeded": "ओलांडले",
     "budgetLeft": "बजेट उरले",
     "lastMonth": "मागील महिना",
+    "addBudgetExpense": "बजेट खर्च जोडा",
     "form": {
       "title": "शीर्षक",
       "titlePlaceholder": "खर्च शीर्षक प्रविष्ट करा",
@@ -633,7 +649,6 @@
     "selectIncomeCategory": "उत्पन्न श्रेणी निवडा",
     "briefDescriptionOfIncomeSource": "उत्पन्न स्रोताचे संक्षिप्त वर्णन",
     "addingIncome": "जोडत आहे...",
-    "addIncome": "उत्पन्न जोडा",
     "incomeManagement": "उत्पन्न व्यवस्थापन",
     "trackAndManageIncome": "तुमचे उत्पन्न स्रोत ट्रॅक आणि व्यवस्थापित करा",
     "overview": "विहंगावलोकन",
@@ -650,10 +665,11 @@
       "bonus": "बोनस",
       "other": "इतर"
     },
+    "frequency": "वारंवारता",
+    "updating": "अपडेट करत आहे...",
+    "selectFrequency": "वारंवारता निवडा",
     "addError": "उत्पन्न जोडण्यात अयशस्वी",
     "sourcePlaceholder": "उदा., कंपनीचे नाव, क्लायंटचे नाव",
-    "selectFrequency": "वारंवारता निवडा",
-    "frequency": "वारंवारता",
     "frequencies": {
       "daily": "दैनिक",
       "weekly": "साप्ताहिक",
@@ -677,7 +693,55 @@
         "sourceRequired": "स्रोत आवश्यक आहे",
         "dateRequired": "तारीख आवश्यक आहे"
       }
-    }
+    },
+    "exportSelectedCSV": "निवडलेले CSV निर्यात करा",
+    "exportSelectedPDF": "निवडलेले PDF निर्यात करा",
+    "exportAll": "सर्व निर्यात करा",
+    "exportAllCSV": "सर्व CSV निर्यात करा",
+    "exportAllPDF": "सर्व PDF निर्यात करा",
+    "oneTime": "एकदाच",
+    "viewExpenses": "खर्च पहा",
+    "allTimeEarnings": "सर्व काळाची कमाई",
+    "entries": "नोंदी",
+    "viewAll": "सर्व पहा",
+    "avg": "सरासरी",
+    "source": "स्रोत",
+    "automatedIncome": "स्वयंचलित उत्पन्न",
+    "addRecurring": "आवर्ती जोडा",
+    "weeklyIncome": "साप्ताहिक उत्पन्न",
+    "thisWeek": "या आठवड्यात",
+    "topIncomeCategory": "शीर्ष उत्पन्न श्रेणी",
+    "ofTotalIncome": "एकूण उत्पन्नाचे",
+    "noIncomeData": "कोणतेही उत्पन्न डेटा उपलब्ध नाही",
+    "quickInsights": "द्रुत अंतर्दृष्टी",
+    "averagePerEntry": "प्रति नोंद सरासरी",
+    "recurringSources": "आवर्ती स्रोत",
+    "totalEntries": "एकूण नोंदी",
+    "allTime": "सर्व काळ",
+    "today": "आज",
+    "last7Days": "गेले 7 दिवस",
+    "last30Days": "गेले 30 दिवस",
+    "allTypes": "सर्व प्रकार",
+    "allCategories": "सर्व श्रेणी",
+    "advancedFilters": "प्रगत फिल्टर",
+    "refresh": "रिफ्रेश करा",
+    "startDate": "सुरुवातीची तारीख",
+    "endDate": "समाप्तीची तारीख",
+    "incomeAnalytics": "उत्पन्न विश्लेषण",
+    "daily": "दैनिक",
+    "weekly": "साप्ताहिक",
+    "monthly": "मासिक",
+    "yearly": "वार्षिक",
+    "days": "दिवस",
+    "weeks": "आठवडे",
+    "months": "महिने",
+    "years": "वर्षे",
+    "incomeBy": "द्वारे उत्पन्न",
+    "incomeByCategory": "श्रेणीनुसार उत्पन्न",
+    "sixMonthTrend": "6-महिन्याचा ट्रेंड",
+    "incomeSummary": "उत्पन्न सारांश",
+    "avgPerEntry": "प्रति नोंद सरासरी",
+    "topCategories": "शीर्ष श्रेण्या"
   },
   "auth": {
     "login": "लॉगिन",
@@ -743,7 +807,9 @@
     "first": "पहिले",
     "last": "शेवटचे",
     "showing": "दाखवत आहे",
-    "entries": "नोंदी"
+    "entries": "नोंदी",
+    "to": "पासून",
+    "perPage": "प्रति पृष्ठ"
   },
   "expenseCards": {
     "totalExpenses": {
@@ -784,5 +850,41 @@
     "copyright": "© 2025 ट्रॅकवाइझ. सर्व हक्क राखीव.",
     "privacy": "गोपनीयता धोरण",
     "terms": "सेवा अटी"
+  },
+  "pdfExport": {
+    "title": "PDF अहवाल निर्यात करा",
+    "selectedItems": "निवडलेले आयटम निर्यात करा ({count})",
+    "reportTitle": "अहवाल शीर्षक",
+    "reportTitleRequired": "अहवाल शीर्षक *",
+    "subtitle": "उपशीर्षक",
+    "additionalInfo": "अतिरिक्त माहिती...",
+    "layoutOptions": "लेआउट पर्याय",
+    "orientation": "ओरिएंटेशन",
+    "portrait": "पोर्ट्रेट",
+    "landscape": "लँडस्केप",
+    "fontSize": "फॉन्ट आकार",
+    "small": "लहान",
+    "medium": "मध्यम",
+    "large": "मोठे",
+    "dateFormat": "तारीख स्वरूप",
+    "shortDate": "लहान (15 जानेवारी, 2024)",
+    "longDate": "लांब (15 जानेवारी, 2024)",
+    "includeColumns": "स्तंभ समाविष्ट करा",
+    "category": "श्रेणी",
+    "recurringStatus": "आवर्ती स्थिती",
+    "createdDate": "तयार केलेली तारीख",
+    "description": "वर्णन",
+    "reportPreview": "अहवाल पूर्वावलोकन",
+    "expenseEntries": "{count} खर्च नोंदी",
+    "incomeEntries": "{count} उत्पन्न नोंदी",
+    "totalAmount": "एकूण रक्कम: ₹{amount}",
+    "format": "स्वरूप: {orientation} PDF",
+    "generatePDF": "PDF जनरेट करा",
+    "pleaseEnterTitle": "कृपया अहवालासाठी शीर्षक प्रविष्ट करा",
+    "pdfExportedSuccess": "PDF यशस्वीरित्या निर्यात केला गेला!",
+    "generatedOn": "{date} रोजी जनरेट केले",
+    "selectedReport": "निवडलेला {type} अहवाल ({count} आयटम)",
+    "expenseReport": "खर्च अहवाल",
+    "incomeReport": "उत्पन्न अहवाल"
   }
 }

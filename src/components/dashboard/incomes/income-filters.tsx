@@ -7,57 +7,102 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Filter, X, RefreshCw } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/lib/redux/store';
 import { setFilters, fetchIncomes } from '@/lib/redux/income/incomeSlice';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
-const periods = [
-  { key: 'all', label: 'All Time' },
-  { key: 'today', label: 'Today' },
-  { key: 'week', label: 'Last 7 Days' },
-  { key: 'month', label: 'Last 30 Days' }
+interface IncomeTranslations {
+  allTime?: string;
+  today?: string;
+  last7Days?: string;
+  last30Days?: string;
+  allTypes?: string;
+  recurringIncome?: string;
+  oneTime?: string;
+  allCategories?: string;
+  advancedFilters?: string;
+  refresh?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+const getPeriods = (income: IncomeTranslations) => [
+  { key: 'all', label: income.allTime || 'All Time' },
+  { key: 'today', label: income.today || 'Today' },
+  { key: 'week', label: income.last7Days || 'Last 7 Days' },
+  { key: 'month', label: income.last30Days || 'Last 30 Days' },
 ];
 
-const categories = ['Salary', 'Freelance', 'Business', 'Investment', 'Rental', 'Other'];
+const categories = [
+  'Salary',
+  'Freelance',
+  'Business',
+  'Investment',
+  'Rental',
+  'Other',
+];
 
-const filterOptions = {
+const getFilterOptions = (income: IncomeTranslations) => ({
   recurring: [
-    { value: 'all', label: 'All Types' },
-    { value: 'true', label: 'Recurring' },
-    { value: 'false', label: 'One-time' }
-  ]
-};
+    { value: 'all', label: income.allTypes || 'All Types' },
+    { value: 'true', label: income.recurringIncome || 'Recurring' },
+    { value: 'false', label: income.oneTime || 'One-time' },
+  ],
+});
 
 export function IncomeFilters() {
   const dispatch = useDispatch<AppDispatch>();
-  const { filters, currentPage, pageSize, loading } = useSelector((state: RootState) => state.incomes);
+  const { filters, currentPage, pageSize, loading } = useSelector(
+    (state: RootState) => state.incomes
+  );
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const { income, common } = useDashboardTranslations();
+
+  const periods = getPeriods(income);
+  const filterOptions = getFilterOptions(income);
 
   const updateFilter = (key: keyof typeof filters, value: string) => {
     dispatch(setFilters({ [key]: value === 'all' ? '' : value }));
   };
 
   const clearFilters = () => {
-    dispatch(setFilters({
-      period: 'all',
-      category: '',
-      startDate: '',
-      endDate: '',
-      search: '',
-      isRecurring: undefined,
-      sortBy: 'date',
-      sortOrder: 'desc'
-    }));
+    dispatch(
+      setFilters({
+        period: 'all',
+        category: '',
+        startDate: '',
+        endDate: '',
+        search: '',
+        isRecurring: undefined,
+        sortBy: 'date',
+        sortOrder: 'desc',
+      })
+    );
   };
 
   const handleRefresh = () => {
     dispatch(fetchIncomes({ filters, page: currentPage, pageSize }));
   };
 
-  const activeFiltersCount = Object.values(filters).filter(v => v && v !== 'all').length;
+  const activeFiltersCount = Object.values(filters).filter(
+    (v) => v && v !== 'all'
+  ).length;
 
-  const SelectFilter = ({ label, value, onValueChange, options, placeholder }: {
+  const SelectFilter = ({
+    label,
+    value,
+    onValueChange,
+    options,
+    placeholder,
+  }: {
     label: string;
     value: string;
     onValueChange: (value: string) => void;
@@ -100,21 +145,38 @@ export function IncomeFilters() {
 
         {/* Controls */}
         <div className="flex sm:flex-row sm:justify-between gap-2 max-sm:flex-wrap">
-          <Button variant="ghost" size="sm" onClick={() => setShowAdvanced(!showAdvanced)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+          >
             <Filter className="w-4 h-4 sm:mr-2" />
-            <span className="max-sm:hidden">Advanced Filters</span>
-            {activeFiltersCount > 0 && <Badge variant="secondary" className="ml-1 sm:ml-2">{activeFiltersCount}</Badge>}
+            <span className="max-sm:hidden">
+              {income.advancedFilters || 'Advanced Filters'}
+            </span>
+            {activeFiltersCount > 0 && (
+              <Badge variant="secondary" className="ml-1 sm:ml-2">
+                {activeFiltersCount}
+              </Badge>
+            )}
           </Button>
-          
+
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
-              <RefreshCw className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={loading}
+            >
+              <RefreshCw
+                className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`}
+              />
+              {income.refresh || 'Refresh'}
             </Button>
             {activeFiltersCount > 0 && (
               <Button variant="ghost" size="sm" onClick={clearFilters}>
                 <X className="w-4 h-4 mr-1" />
-                Clear
+                {common.clear || 'Clear'}
               </Button>
             )}
           </div>
@@ -125,28 +187,35 @@ export function IncomeFilters() {
           <div className="space-y-4 pt-4 border-t">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <SelectFilter
-                label="Category"
+                label={common.category}
                 value={filters.category}
                 onValueChange={(value) => updateFilter('category', value)}
                 options={[
-                  { value: 'all', label: 'All Categories' },
-                  ...categories.map(cat => ({ value: cat, label: cat }))
+                  {
+                    value: 'all',
+                    label: income.allCategories || 'All Categories',
+                  },
+                  ...categories.map((cat) => ({ value: cat, label: cat })),
                 ]}
-                placeholder="All Categories"
+                placeholder={income.allCategories || 'All Categories'}
               />
 
               <SelectFilter
-                label="Recurring"
+                label={income.recurringIncome}
                 value={filters.isRecurring?.toString() || 'all'}
-                onValueChange={(value) => updateFilter('isRecurring', value === 'all' ? '' : value)}
+                onValueChange={(value) =>
+                  updateFilter('isRecurring', value === 'all' ? '' : value)
+                }
                 options={filterOptions.recurring}
-                placeholder="All Types"
+                placeholder={income.allTypes || 'All Types'}
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium">Start Date</Label>
+                <Label className="text-sm font-medium">
+                  {income.startDate || 'Start Date'}
+                </Label>
                 <Input
                   type="date"
                   value={filters.startDate}
@@ -155,7 +224,9 @@ export function IncomeFilters() {
                 />
               </div>
               <div>
-                <Label className="text-sm font-medium">End Date</Label>
+                <Label className="text-sm font-medium">
+                  {income.endDate || 'End Date'}
+                </Label>
                 <Input
                   type="date"
                   value={filters.endDate}

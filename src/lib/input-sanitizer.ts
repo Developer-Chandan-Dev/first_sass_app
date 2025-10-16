@@ -5,11 +5,11 @@ import DOMPurify from 'isomorphic-dompurify';
  */
 export function sanitizeString(input: string): string {
   if (typeof input !== 'string') return '';
-  
+
   // Remove HTML tags and dangerous characters
-  return DOMPurify.sanitize(input, { 
+  return DOMPurify.sanitize(input, {
     ALLOWED_TAGS: [],
-    ALLOWED_ATTR: []
+    ALLOWED_ATTR: [],
   }).trim();
 }
 

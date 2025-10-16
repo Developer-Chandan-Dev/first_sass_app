@@ -13,9 +13,13 @@ interface AdminHeaderProps {
   isCollapsed?: boolean;
 }
 
-export function AdminHeader({ onMenuClick, onToggleCollapse, isCollapsed }: AdminHeaderProps) {
+export function AdminHeader({
+  onMenuClick,
+  onToggleCollapse,
+  isCollapsed,
+}: AdminHeaderProps) {
   const { admin } = useDashboardTranslations();
-  
+
   return (
     <header className="bg-card border-b border-border h-16">
       <div className="flex items-center justify-between px-2 sm:px-4 lg:px-6 h-full">
@@ -46,7 +50,7 @@ export function AdminHeader({ onMenuClick, onToggleCollapse, isCollapsed }: Admi
             {admin.dashboard}
           </h1>
         </div>
-        
+
         <div className="flex items-center space-x-1 sm:space-x-3 flex-shrink-0">
           <DashboardNavButton />
           <ThemeToggle />

@@ -10,13 +10,13 @@ type Props = {
 
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
-  
+
   // Validate locale and provide fallback
   const validLocales = ['en', 'hi', 'pa', 'mr'];
   if (!validLocales.includes(locale)) {
     console.warn(`Invalid locale: ${locale}, falling back to 'en'`);
   }
-  
+
   let messages;
   try {
     messages = await getMessages();
@@ -27,9 +27,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <LocaleProvider>
-        {children}
-      </LocaleProvider>
+      <LocaleProvider>{children}</LocaleProvider>
     </NextIntlClientProvider>
   );
 }

@@ -1,8 +1,19 @@
 'use client';
 
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from 'react';
 import { useParams, useRouter, usePathname } from 'next/navigation';
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE, STORAGE_KEY, type SupportedLocale } from '@/lib/supported-locales';
+import {
+  SUPPORTED_LOCALES,
+  DEFAULT_LOCALE,
+  STORAGE_KEY,
+  type SupportedLocale,
+} from '@/lib/supported-locales';
 
 interface LocaleContextType {
   locale: SupportedLocale;
@@ -34,10 +45,10 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
 
   const setLocale = (newLocale: SupportedLocale) => {
     if (!SUPPORTED_LOCALES.includes(newLocale)) return;
-    
+
     localStorage.setItem(STORAGE_KEY, newLocale);
     setLocaleState(newLocale);
-    
+
     const currentPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
     const newPath = `/${newLocale}${currentPath}`;
     router.push(newPath);
@@ -51,12 +62,14 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   };
 
   return (
-    <LocaleContext.Provider value={{ 
-      locale, 
-      setLocale, 
-      availableLocales: SUPPORTED_LOCALES,
-      getLocalizedPath 
-    }}>
+    <LocaleContext.Provider
+      value={{
+        locale,
+        setLocale,
+        availableLocales: SUPPORTED_LOCALES,
+        getLocalizedPath,
+      }}
+    >
       {children}
     </LocaleContext.Provider>
   );

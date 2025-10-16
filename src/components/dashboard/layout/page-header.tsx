@@ -25,34 +25,36 @@ export function PageHeader({
   className,
   showBreadcrumbs = true,
   badge,
-  actions
+  actions,
 }: PageHeaderProps) {
   return (
     <div className={cn('space-y-4', className)}>
       {showBreadcrumbs && <BreadcrumbNavigation />}
-      
+
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="space-y-1 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{title}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+              {title}
+            </h1>
             {badge && (
-              <Badge variant={badge.variant || 'secondary'}>
-                {badge.text}
-              </Badge>
+              <Badge variant={badge.variant || 'secondary'}>{badge.text}</Badge>
             )}
           </div>
           {description && (
-            <p className="text-sm sm:text-base text-muted-foreground">{description}</p>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              {description}
+            </p>
           )}
         </div>
-        
+
         {actions && (
           <div className="flex items-center gap-2 sm:flex-shrink-0">
             {actions}
           </div>
         )}
       </div>
-      
+
       {children}
     </div>
   );

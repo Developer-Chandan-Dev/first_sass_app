@@ -45,6 +45,7 @@ Dashboard Layout
 ## 🔄 **Data Flow Between Components**
 
 ### **1. Page Load Flow**
+
 ```
 User visits /dashboard/expenses
          ↓
@@ -68,6 +69,7 @@ UI shows expense list, stats, charts
 ```
 
 ### **2. Add Expense Flow**
+
 ```
 User clicks "Add Expense"
          ↓
@@ -95,6 +97,7 @@ Stats cards update with new totals
 ```
 
 ### **3. Edit Expense Flow**
+
 ```
 User clicks Edit button on expense row
          ↓
@@ -141,7 +144,7 @@ Updated expense shows in table
     totalCount: 25,
     currentPage: 1
   },
-  
+
   overview: {
     // Dashboard statistics
     totalExpenses: 1250,
@@ -153,13 +156,13 @@ Updated expense shows in table
     },
     trends: [...]
   },
-  
+
   budgets: {
     // Budget-related expenses
     budgets: [...],
     budgetExpenses: [...]
   },
-  
+
   incomes: {
     // Connected income sources
     incomes: [
@@ -177,27 +180,28 @@ Updated expense shows in table
 ## 🎯 **Component Props Flow**
 
 ### **ExpensePage (Parent)**
+
 ```typescript
 function ExpensePage() {
   // State for modals
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
-  
+
   // Redux data
   const expenses = useSelector(state => state.expenses.expenses);
   const loading = useSelector(state => state.expenses.loading);
-  
+
   return (
     <>
       {/* Stats Cards */}
       <ExpenseStats expenses={expenses} />
-      
+
       {/* Filters */}
       <ExpenseFilters onFilterChange={handleFilterChange} />
-      
+
       {/* Table */}
-      <ExpenseTable 
+      <ExpenseTable
         expenses={expenses}
         loading={loading}
         onEdit={(expense) => {
@@ -206,14 +210,14 @@ function ExpensePage() {
         }}
         onDelete={handleDelete}
       />
-      
+
       {/* Add Button */}
       <Button onClick={() => setShowAddModal(true)}>
         Add Expense
       </Button>
-      
+
       {/* Modals */}
-      <AddExpenseModal 
+      <AddExpenseModal
         open={showAddModal}
         onOpenChange={setShowAddModal}
         onExpenseAdded={() => {
@@ -221,7 +225,7 @@ function ExpensePage() {
           dispatch(fetchExpenses());
         }}
       />
-      
+
       <EditExpenseModal
         open={showEditModal}
         expense={selectedExpense}
@@ -237,12 +241,13 @@ function ExpensePage() {
 ```
 
 ### **ExpenseTable (Child)**
+
 ```typescript
 function ExpenseTable({ expenses, loading, onEdit, onDelete }) {
   return (
     <Table>
       {expenses.map(expense => (
-        <ExpenseRow 
+        <ExpenseRow
           key={expense._id}
           expense={expense}
           onEdit={() => onEdit(expense)}
@@ -255,6 +260,7 @@ function ExpenseTable({ expenses, loading, onEdit, onDelete }) {
 ```
 
 ### **ExpenseRow (Grandchild)**
+
 ```typescript
 function ExpenseRow({ expense, onEdit, onDelete }) {
   return (
@@ -275,29 +281,33 @@ function ExpenseRow({ expense, onEdit, onDelete }) {
 ## 🔧 **Hook Connections**
 
 ### **Custom Hooks Used**
+
 ```typescript
 // Translation hook
 const { expenses, common, errors } = useAppTranslations();
 
 // Modal state hook
 const modalState = useModalState({
-  onSuccess: () => { /* close modal */ },
-  successMessage: expenses?.addSuccess
+  onSuccess: () => {
+    /* close modal */
+  },
+  successMessage: expenses?.addSuccess,
 });
 
 // Redux hooks
 const dispatch = useAppDispatch();
-const expenses = useAppSelector(state => state.expenses.expenses);
+const expenses = useAppSelector((state) => state.expenses.expenses);
 
 // Form hook
 const { register, handleSubmit, formState } = useForm({
-  resolver: zodResolver(expenseSchema)
+  resolver: zodResolver(expenseSchema),
 });
 ```
 
 ## 🌐 **API Integration Points**
 
 ### **API Routes**
+
 ```
 GET    /api/expenses          → Fetch all expenses
 POST   /api/expenses          → Create new expense
@@ -307,6 +317,7 @@ GET    /api/incomes/connected → Fetch connected incomes
 ```
 
 ### **API Call Flow**
+
 ```typescript
 // Component calls Redux action
 dispatch(addExpense(data))
@@ -326,6 +337,7 @@ export async function POST(request) {
 ## 🎨 **Styling & UI Integration**
 
 ### **Component Styling**
+
 ```typescript
 // Tailwind CSS classes
 <Dialog className="w-[95vw] max-w-md mx-auto">
@@ -334,6 +346,7 @@ export async function POST(request) {
 ```
 
 ### **Theme Integration**
+
 ```typescript
 // Dark/Light mode support
 <div className="bg-background text-foreground">
@@ -343,6 +356,7 @@ export async function POST(request) {
 ## 🔄 **State Synchronization**
 
 ### **Optimistic Updates**
+
 ```typescript
 // Update UI immediately
 dispatch(addExpenseOptimistic(newExpense));
@@ -354,6 +368,7 @@ dispatch(addExpense(newExpense));
 ```
 
 ### **Real-time Sync**
+
 ```typescript
 // After any expense operation
 useEffect(() => {

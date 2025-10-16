@@ -1,11 +1,13 @@
 # 🚀 Modal & Error Handling Improvements
 
 ## Overview
+
 Comprehensive improvements to all modals/popups with proper error handling, loading states, and internationalization support using Sonner components.
 
 ## ✅ Improvements Made
 
 ### 1. **Custom Modal State Hook** (`useModalState.ts`)
+
 - Centralized state management for all modals
 - Automatic error handling with toast notifications
 - Loading state management
@@ -14,6 +16,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - Async operation wrapper
 
 ### 2. **Enhanced Toast System** (`toast-utils.ts`)
+
 - Comprehensive toast utilities with icons
 - Specialized functions for CRUD operations
 - Bulk operation notifications
@@ -23,6 +26,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - Async operation wrapper with automatic toast handling
 
 ### 3. **Error Boundary Components** (`error-boundary.tsx`)
+
 - Application-wide error catching
 - Modal-specific error boundaries
 - Development error details
@@ -31,6 +35,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - Hook version for functional components
 
 ### 4. **Loading Components** (`loading.tsx`)
+
 - Multiple loading variants (spinner, dots, pulse, skeleton)
 - Size variations (sm, md, lg, xl)
 - Full-screen loading overlay
@@ -41,6 +46,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 ### 5. **Updated Modals**
 
 #### **Add Expense Modal** (`add-expense-modal-redux.tsx`)
+
 - ✅ Integrated `useModalState` hook
 - ✅ Proper error handling with translated messages
 - ✅ Loading states during data fetching
@@ -50,6 +56,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - ✅ Loading spinner on submit button
 
 #### **Edit Expense Modal** (`edit-expense-modal-redux.tsx`)
+
 - ✅ Enhanced error handling
 - ✅ Loading states for data operations
 - ✅ Internationalized form validation
@@ -57,18 +64,21 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - ✅ Proper loading indicators
 
 #### **Add Income Modal** (`add-income-modal.tsx`)
+
 - ✅ Complete error handling overhaul
 - ✅ Loading states and error alerts
 - ✅ Internationalized validation messages
 - ✅ Enhanced user feedback
 
 #### **Edit Income Modal** (`edit-income-modal.tsx`)
+
 - ✅ Integrated modal state management
 - ✅ Proper error boundaries
 - ✅ Loading indicators
 - ✅ Internationalized UI elements
 
 #### **Budget Modal** (`add-budget-modal-redux.tsx`)
+
 - ✅ Enhanced error handling
 - ✅ Loading states for async operations
 - ✅ Proper form validation
@@ -77,6 +87,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 ## 🎯 Key Features
 
 ### **Error Handling**
+
 - Network error detection and user-friendly messages
 - Validation error handling with field-specific messages
 - API error parsing and display
@@ -84,6 +95,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - Development vs production error details
 
 ### **Loading States**
+
 - Form submission loading indicators
 - Data fetching loading states
 - Button loading spinners
@@ -91,6 +103,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - Skeleton loading for better UX
 
 ### **Internationalization**
+
 - All error messages support translations
 - Form labels and placeholders are internationalized
 - Success messages in user's language
@@ -98,6 +111,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 - Dynamic schema validation with translated messages
 
 ### **User Experience**
+
 - Non-blocking error notifications
 - Clear visual feedback for all operations
 - Consistent loading patterns across modals
@@ -107,6 +121,7 @@ Comprehensive improvements to all modals/popups with proper error handling, load
 ## 🛠️ Technical Implementation
 
 ### **Modal State Pattern**
+
 ```typescript
 const modalState = useModalState({
   onSuccess: () => {
@@ -119,13 +134,18 @@ const modalState = useModalState({
 });
 
 // Usage
-await modalState.executeAsync(async () => {
-  // Async operation
-  return await apiCall();
-}, successMessage, errorMessage);
+await modalState.executeAsync(
+  async () => {
+    // Async operation
+    return await apiCall();
+  },
+  successMessage,
+  errorMessage
+);
 ```
 
 ### **Error Boundary Usage**
+
 ```typescript
 <ModalErrorBoundary onError={() => onClose()}>
   <YourModalContent />
@@ -133,6 +153,7 @@ await modalState.executeAsync(async () => {
 ```
 
 ### **Toast Notifications**
+
 ```typescript
 // Simple notifications
 toastUtils.success('Operation completed');
@@ -146,25 +167,28 @@ operationToasts.bulkDeleted(5, 'expense');
 toastUtils.promise(apiCall(), {
   loading: 'Saving...',
   success: 'Saved successfully',
-  error: 'Failed to save'
+  error: 'Failed to save',
 });
 ```
 
 ## 📱 User Interface Improvements
 
 ### **Visual Indicators**
+
 - Loading spinners on buttons during submission
 - Error alerts with warning icons
 - Success notifications with check icons
 - Progress indicators for long operations
 
 ### **Accessibility**
+
 - Screen reader friendly error messages
 - Keyboard navigation support
 - Focus management during loading states
 - ARIA labels for loading indicators
 
 ### **Responsive Design**
+
 - Mobile-optimized error messages
 - Touch-friendly loading indicators
 - Responsive modal layouts
@@ -173,6 +197,7 @@ toastUtils.promise(apiCall(), {
 ## 🔧 Usage Examples
 
 ### **Basic Modal with Error Handling**
+
 ```typescript
 export function MyModal({ open, onOpenChange }) {
   const { expenses, errors } = useAppTranslations();
@@ -187,12 +212,12 @@ export function MyModal({ open, onOpenChange }) {
         method: 'POST',
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || errors.generic);
       }
-      
+
       return response.json();
     });
   };
@@ -206,11 +231,11 @@ export function MyModal({ open, onOpenChange }) {
             <AlertDescription>{modalState.error}</AlertDescription>
           </Alert>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           {/* Form content */}
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={modalState.isSubmitting}
           >
             {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

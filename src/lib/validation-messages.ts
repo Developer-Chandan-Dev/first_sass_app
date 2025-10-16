@@ -7,10 +7,12 @@ export function useValidationMessages() {
     // Common validation messages
     required: (field: string) => t('common.validation.required', { field }),
     email: t('auth.validation.emailInvalid'),
-    minLength: (field: string, min: number) => t('common.validation.minLength', { field, min }),
-    maxLength: (field: string, max: number) => t('common.validation.maxLength', { field, max }),
+    minLength: (field: string, min: number) =>
+      t('common.validation.minLength', { field, min }),
+    maxLength: (field: string, max: number) =>
+      t('common.validation.maxLength', { field, max }),
     positive: (field: string) => t('common.validation.positive', { field }),
-    
+
     // Expense validation messages
     expense: {
       titleRequired: t('expenses.form.validation.titleRequired'),
@@ -20,7 +22,7 @@ export function useValidationMessages() {
       dateRequired: t('expenses.form.validation.dateRequired'),
       descriptionTooLong: t('expenses.form.validation.descriptionTooLong'),
     },
-    
+
     // Income validation messages
     income: {
       titleRequired: t('income.form.validation.titleRequired'),
@@ -29,7 +31,7 @@ export function useValidationMessages() {
       sourceRequired: t('income.form.validation.sourceRequired'),
       dateRequired: t('income.form.validation.dateRequired'),
     },
-    
+
     // Auth validation messages
     auth: {
       emailRequired: t('auth.validation.emailRequired'),
@@ -41,7 +43,7 @@ export function useValidationMessages() {
       lastNameRequired: t('auth.validation.lastNameRequired'),
       termsRequired: t('auth.validation.termsRequired'),
     },
-    
+
     // Contact form validation messages
     contact: {
       firstNameRequired: t('pages.contact.form.validation.firstNameRequired'),
@@ -58,7 +60,7 @@ export function useValidationMessages() {
 // Zod schema helpers with translations
 export function useTranslatedZodSchema() {
   const messages = useValidationMessages();
-  
+
   return {
     string: () => ({
       required_error: messages.required('field'),

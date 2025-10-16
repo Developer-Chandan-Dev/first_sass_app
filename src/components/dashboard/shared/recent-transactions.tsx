@@ -18,7 +18,10 @@ function TransactionsSkeleton() {
   return (
     <div className="space-y-4">
       {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex items-center justify-between animate-pulse">
+        <div
+          key={i}
+          className="flex items-center justify-between animate-pulse"
+        >
           <div className="flex items-center space-x-3">
             <div className="h-9 w-9 bg-muted rounded-full" />
             <div className="space-y-1">
@@ -55,44 +58,53 @@ const getCategoryIcon = (category: string) => {
   return icons[category] || '💳';
 };
 
-
-
 export function RecentTransactions() {
-  const { free, budget, loading, error } = useSelector((state: RootState) => state.overview);
+  const { free, budget, loading, error } = useSelector(
+    (state: RootState) => state.overview
+  );
   const { expenses, dashboard } = useDashboardTranslations();
   const { getLocalizedPath } = useLocale();
 
-  const formatTimeAgo = useCallback((dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInHours / 24);
+  const formatTimeAgo = useCallback(
+    (dateString: string) => {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInMs = now.getTime() - date.getTime();
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      const diffInDays = Math.floor(diffInHours / 24);
 
-    if (diffInHours < 1) return expenses?.justNow || 'Just now';
-    if (diffInHours < 24) return `${diffInHours} ${expenses?.hoursAgo || 'hours ago'}`;
-    if (diffInDays === 1) return expenses?.dayAgo || '1 day ago';
-    return `${diffInDays} ${expenses?.daysAgo || 'days ago'}`;
-  }, [expenses?.justNow, expenses?.hoursAgo, expenses?.dayAgo, expenses?.daysAgo]);
+      if (diffInHours < 1) return expenses?.justNow || 'Just now';
+      if (diffInHours < 24)
+        return `${diffInHours} ${expenses?.hoursAgo || 'hours ago'}`;
+      if (diffInDays === 1) return expenses?.dayAgo || '1 day ago';
+      return `${diffInDays} ${expenses?.daysAgo || 'days ago'}`;
+    },
+    [expenses?.justNow, expenses?.hoursAgo, expenses?.dayAgo, expenses?.daysAgo]
+  );
 
   // Memoized expense processing
   const allExpenses = useMemo(() => {
     return [...(free?.expenses || []), ...(budget?.expenses || [])]
-      .filter(expense => expense && expense.createdAt)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .filter((expense) => expense && expense.createdAt)
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
       .slice(0, 5);
   }, [free?.expenses, budget?.expenses]);
 
-  const transactions = useMemo(() => 
-    allExpenses.map((expense) => ({
-      id: expense._id,
-      merchant: expense.reason || 'Expense',
-      category: expense.category || 'Other',
-      amount: -Math.abs(expense.amount || 0),
-      date: formatTimeAgo(expense.createdAt),
-      icon: getCategoryIcon(expense.category || 'Other'),
-      type: expense.type || 'free',
-    })), [allExpenses, formatTimeAgo]
+  const transactions = useMemo(
+    () =>
+      allExpenses.map((expense) => ({
+        id: expense._id,
+        merchant: expense.reason || 'Expense',
+        category: expense.category || 'Other',
+        amount: -Math.abs(expense.amount || 0),
+        date: formatTimeAgo(expense.createdAt),
+        icon: getCategoryIcon(expense.category || 'Other'),
+        type: expense.type || 'free',
+      })),
+    [allExpenses, formatTimeAgo]
   );
 
   // Error state
@@ -100,7 +112,9 @@ export function RecentTransactions() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
+          <CardTitle>
+            {expenses?.recentTransactions || 'Recent Transactions'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
@@ -119,7 +133,9 @@ export function RecentTransactions() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
+          <CardTitle>
+            {expenses?.recentTransactions || 'Recent Transactions'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionsSkeleton />
@@ -131,7 +147,9 @@ export function RecentTransactions() {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-        <CardTitle>{expenses?.recentTransactions || 'Recent Transactions'}</CardTitle>
+        <CardTitle>
+          {expenses?.recentTransactions || 'Recent Transactions'}
+        </CardTitle>
         <div className="flex gap-2">
           <Button asChild size="sm" variant="outline">
             <Link href={getLocalizedPath('/dashboard/expenses')}>

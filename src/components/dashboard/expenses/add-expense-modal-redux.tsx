@@ -15,7 +15,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
@@ -30,16 +36,33 @@ import { CategorySelect } from '@/components/ui/category-select';
 import { getBackendCategoryKey } from '@/lib/categories';
 import { TranslationType } from '@/types/dashboard';
 
-const createExpenseSchema = (t: TranslationType) => z.object({
-  amount: z.number().min(0.01, t.expenses?.form?.validation?.amountGreaterThanZero || 'Amount must be greater than 0'),
-  category: z.string().min(1, t.expenses?.form?.validation?.categoryRequired || 'Category is required'),
-  reason: z.string().min(1, t.expenses?.form?.validation?.reasonRequired || 'Reason is required'),
-  date: z.string(),
-  isRecurring: z.boolean().default(false),
-  frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
-  affectsBalance: z.boolean().default(false),
-  incomeId: z.string().optional(),
-});
+const createExpenseSchema = (t: TranslationType) =>
+  z.object({
+    amount: z
+      .number()
+      .min(
+        0.01,
+        t.expenses?.form?.validation?.amountGreaterThanZero ||
+          'Amount must be greater than 0'
+      ),
+    category: z
+      .string()
+      .min(
+        1,
+        t.expenses?.form?.validation?.categoryRequired || 'Category is required'
+      ),
+    reason: z
+      .string()
+      .min(
+        1,
+        t.expenses?.form?.validation?.reasonRequired || 'Reason is required'
+      ),
+    date: z.string(),
+    isRecurring: z.boolean().default(false),
+    frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
+    affectsBalance: z.boolean().default(false),
+    incomeId: z.string().optional(),
+  });
 
 type ExpenseFormData = z.infer<ReturnType<typeof createExpenseSchema>>;
 
@@ -59,8 +82,10 @@ export function AddExpenseModal({
   const dispatch = useAppDispatch();
   const translations = useDashboardTranslations();
   const { expenses, common } = translations;
-  const [connectedIncomes, setConnectedIncomes] = useState<Array<{_id: string, source: string, description: string, amount: number}>>([]);
-  
+  const [connectedIncomes, setConnectedIncomes] = useState<
+    Array<{ _id: string; source: string; description: string; amount: number }>
+  >([]);
+
   const modalState = useModalState({
     onSuccess: () => {
       reset();
@@ -95,7 +120,7 @@ export function AddExpenseModal({
 
   useEffect(() => {
     if (!open) return;
-    
+
     const fetchData = async () => {
       try {
         const incomesRes = await fetch('/api/incomes/connected');
@@ -116,24 +141,49 @@ export function AddExpenseModal({
       // Input validation and sanitization
       const sanitizedAmount = parseFloat(String(data.amount));
       if (!sanitizedAmount || sanitizedAmount <= 0 || isNaN(sanitizedAmount)) {
-        throw new Error(expenses?.form?.validation?.amountGreaterThanZero || 'Please enter a valid amount');
+        throw new Error(
+          expenses?.form?.validation?.amountGreaterThanZero ||
+            'Please enter a valid amount'
+        );
       }
 
-      const sanitizedCategory = String(data.category || '').trim().replace(/[<>"'&]/g, '');
+      const sanitizedCategory = String(data.category || '')
+        .trim()
+        .replace(/[<>"'&]/g, '');
       if (!sanitizedCategory) {
-        throw new Error(expenses?.form?.validation?.categoryRequired || 'Please select a category');
+        throw new Error(
+          expenses?.form?.validation?.categoryRequired ||
+            'Please select a category'
+        );
       }
 
-      const sanitizedReason = String(data.reason || '').trim().replace(/[<>"'&]/g, '');
+      const sanitizedReason = String(data.reason || '')
+        .trim()
+        .replace(/[<>"'&]/g, '');
       if (!sanitizedReason) {
-        throw new Error(expenses?.form?.validation?.reasonRequired || 'Please enter a description');
+        throw new Error(
+          expenses?.form?.validation?.reasonRequired ||
+            'Please enter a description'
+        );
       }
 
       // Whitelist frequency values
-      const allowedFrequencies = ['daily', 'weekly', 'monthly', 'yearly'] as const;
-      let sanitizedFrequency: typeof allowedFrequencies[number] | undefined = undefined;
-      if (data.frequency && allowedFrequencies.includes(data.frequency as typeof allowedFrequencies[number])) {
-        sanitizedFrequency = data.frequency as typeof allowedFrequencies[number];
+      const allowedFrequencies = [
+        'daily',
+        'weekly',
+        'monthly',
+        'yearly',
+      ] as const;
+      let sanitizedFrequency: (typeof allowedFrequencies)[number] | undefined =
+        undefined;
+      if (
+        data.frequency &&
+        allowedFrequencies.includes(
+          data.frequency as (typeof allowedFrequencies)[number]
+        )
+      ) {
+        sanitizedFrequency =
+          data.frequency as (typeof allowedFrequencies)[number];
       }
 
       const requestData = {
@@ -170,7 +220,9 @@ export function AddExpenseModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[95vw] max-w-md mx-auto">
         <DialogHeader className="pb-3">
-          <DialogTitle className="text-lg">{expenses?.addNewExpense || 'Add New Expense'}</DialogTitle>
+          <DialogTitle className="text-lg">
+            {expenses?.addNewExpense || 'Add New Expense'}
+          </DialogTitle>
         </DialogHeader>
 
         {modalState.error && (
@@ -235,7 +287,9 @@ export function AddExpenseModal({
             <Textarea
               id="reason"
               {...register('reason')}
-              placeholder={expenses?.reasonPlaceholder || 'Enter expense description'}
+              placeholder={
+                expenses?.reasonPlaceholder || 'Enter expense description'
+              }
               className="mt-1 text-sm"
               rows={3}
             />
@@ -270,22 +324,32 @@ export function AddExpenseModal({
                   {expenses?.reduceFromBalance || 'Reduce from Balance'}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  {expenses?.deductFromConnectedIncome || 'Deduct from connected income'}
+                  {expenses?.deductFromConnectedIncome ||
+                    'Deduct from connected income'}
                 </p>
               </div>
               <Switch
                 id="affectsBalance"
                 checked={affectsBalance}
-                onCheckedChange={(checked) => setValue('affectsBalance', checked)}
+                onCheckedChange={(checked) =>
+                  setValue('affectsBalance', checked)
+                }
               />
             </div>
-            
+
             {affectsBalance && (
               <div>
-                <Label className="text-sm">{expenses?.selectIncomeSource || 'Select Income Source'}</Label>
+                <Label className="text-sm">
+                  {expenses?.selectIncomeSource || 'Select Income Source'}
+                </Label>
                 <Select onValueChange={(value) => setValue('incomeId', value)}>
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={expenses?.chooseIncomeToReduceFrom || 'Choose income to reduce from'} />
+                    <SelectValue
+                      placeholder={
+                        expenses?.chooseIncomeToReduceFrom ||
+                        'Choose income to reduce from'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {connectedIncomes.map((income) => (
@@ -313,19 +377,40 @@ export function AddExpenseModal({
                 onCheckedChange={(checked) => setValue('isRecurring', checked)}
               />
             </div>
-            
+
             {isRecurring && (
               <div>
-                <Label className="text-sm">{expenses?.frequency || 'Frequency'}</Label>
-                <Select onValueChange={(value) => setValue('frequency', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
+                <Label className="text-sm">
+                  {expenses?.frequency || 'Frequency'}
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    setValue(
+                      'frequency',
+                      value as 'daily' | 'weekly' | 'monthly' | 'yearly'
+                    )
+                  }
+                >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={expenses?.selectFrequency || 'Select frequency'} />
+                    <SelectValue
+                      placeholder={
+                        expenses?.selectFrequency || 'Select frequency'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="daily">{expenses?.frequencies?.daily || 'Daily'}</SelectItem>
-                    <SelectItem value="weekly">{expenses?.frequencies?.weekly || 'Weekly'}</SelectItem>
-                    <SelectItem value="monthly">{expenses?.frequencies?.monthly || 'Monthly'}</SelectItem>
-                    <SelectItem value="yearly">{expenses?.frequencies?.yearly || 'Yearly'}</SelectItem>
+                    <SelectItem value="daily">
+                      {expenses?.frequencies?.daily || 'Daily'}
+                    </SelectItem>
+                    <SelectItem value="weekly">
+                      {expenses?.frequencies?.weekly || 'Weekly'}
+                    </SelectItem>
+                    <SelectItem value="monthly">
+                      {expenses?.frequencies?.monthly || 'Monthly'}
+                    </SelectItem>
+                    <SelectItem value="yearly">
+                      {expenses?.frequencies?.yearly || 'Yearly'}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -338,8 +423,12 @@ export function AddExpenseModal({
               disabled={modalState.isSubmitting || modalState.isLoading}
               className="w-full sm:w-auto"
             >
-              {modalState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {modalState.isSubmitting ? (expenses?.adding || 'Adding...') : (expenses?.addExpense || 'Add Expense')}
+              {modalState.isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {modalState.isSubmitting
+                ? expenses?.adding || 'Adding...'
+                : expenses?.addExpense || 'Add Expense'}
             </Button>
             <Button
               type="button"

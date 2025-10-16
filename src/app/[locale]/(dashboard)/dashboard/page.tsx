@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect } from 'react';
 import { useDashboardTranslations } from '@/hooks/i18n';
@@ -9,40 +9,47 @@ import { ExpenseChart } from '@/components/dashboard/expenses/expense-chart';
 import { RecentTransactions } from '@/components/dashboard/shared/recent-transactions';
 import ErrorBoundary from '@/components/dashboard/shared/error-boundary';
 import { safeGet } from '@/lib/safe-access';
-import { Clock, TrendingUp, Target, PieChart, Calendar, Bell } from 'lucide-react';
+import {
+  Clock,
+  TrendingUp,
+  Target,
+  PieChart,
+  Calendar,
+  Bell,
+} from 'lucide-react';
 import { useAppDispatch } from '@/lib/redux/hooks';
 import { refreshStats } from '@/lib/redux/expense/overviewSlice';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 export default function Dashboard() {
-    const { dashboard, sidebar } = useDashboardTranslations();
-    const dispatch = useAppDispatch();
+  const { dashboard, sidebar } = useDashboardTranslations();
+  const dispatch = useAppDispatch();
 
-    useEffect(() => {
-      dispatch(refreshStats('free'));
-      dispatch(refreshStats('budget'));
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(refreshStats('free'));
+    dispatch(refreshStats('budget'));
+  }, [dispatch]);
 
   const comingSoonFeatures = [
-    { 
-      title: sidebar.budgets, 
-      icon: Target, 
-      description: dashboard.setBudgetTargets 
+    {
+      title: sidebar.budgets,
+      icon: Target,
+      description: dashboard.setBudgetTargets,
     },
-    { 
-      title: sidebar.analytics, 
-      icon: PieChart, 
-      description: dashboard.advancedSpendingAnalysis 
+    {
+      title: sidebar.analytics,
+      icon: PieChart,
+      description: dashboard.advancedSpendingAnalysis,
     },
-    { 
-      title: sidebar.notifications, 
-      icon: Bell, 
-      description: dashboard.neverMissPayment 
+    {
+      title: sidebar.notifications,
+      icon: Bell,
+      description: dashboard.neverMissPayment,
     },
-    { 
-      title: dashboard.financialCalendar, 
-      icon: Calendar, 
-      description: dashboard.planExpensesAhead 
+    {
+      title: dashboard.financialCalendar,
+      icon: Calendar,
+      description: dashboard.planExpensesAhead,
     },
   ];
 
@@ -50,15 +57,17 @@ export default function Dashboard() {
     <div className="space-y-6">
       <PageHeader
         title={safeGet(dashboard, 'overview', 'Dashboard Overview')}
-        description={safeGet(dashboard, 'description', 'Track your financial progress and manage expenses efficiently.')}
+        description={safeGet(
+          dashboard,
+          'description',
+          'Track your financial progress and manage expenses efficiently.'
+        )}
       />
-      
+
       <ErrorBoundary>
         <StatsCards />
       </ErrorBoundary>
-      
 
-      
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
         <ErrorBoundary>
           <Card className="overflow-hidden">
@@ -73,7 +82,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </ErrorBoundary>
-        
+
         <ErrorBoundary>
           <RecentTransactions />
         </ErrorBoundary>
@@ -92,10 +101,15 @@ export default function Dashboard() {
             {comingSoonFeatures.map((feature) => {
               const Icon = feature.icon;
               return (
-                <div key={feature.title} className="flex flex-col items-center text-center p-4 border rounded-lg bg-muted/30">
+                <div
+                  key={feature.title}
+                  className="flex flex-col items-center text-center p-4 border rounded-lg bg-muted/30"
+                >
                   <Icon className="h-8 w-8 text-muted-foreground mb-2" />
                   <h3 className="font-medium mb-1">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-2">{feature.description}</p>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {feature.description}
+                  </p>
                   <Badge variant="secondary" className="text-xs">
                     {dashboard?.comingSoon || 'Coming Soon'}
                   </Badge>

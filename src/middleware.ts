@@ -4,7 +4,7 @@ import createIntlMiddleware from 'next-intl/middleware';
 const intlMiddleware = createIntlMiddleware({
   locales: ['en', 'hi', 'pa', 'mr'],
   defaultLocale: 'en',
-  localePrefix: 'always'
+  localePrefix: 'always',
 });
 
 const isProtectedRoute = createRouteMatcher(['/(en|hi|pa|mr)/dashboard(.*)']);
@@ -29,31 +29,37 @@ const validateLocale = (locale: string): string => {
 
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
-  
+
   // Handle API routes separately - let them handle their own auth
   if (pathname.startsWith('/api')) {
     return;
   }
 
   const { userId, sessionClaims } = await auth();
-  
+
   const pathSegments = pathname.split('/');
   const locale = validateLocale(pathSegments[1] || 'en');
 
   // Check authentication first before applying internationalization
   if (isProtectedRoute(req) && !userId) {
-    return Response.redirect(createSafeRedirectUrl(`/${locale}/login`, req.url));
+    return Response.redirect(
+      createSafeRedirectUrl(`/${locale}/login`, req.url)
+    );
   }
-  
+
   if (isAdminRoute(req)) {
     if (!userId) {
-      return Response.redirect(createSafeRedirectUrl(`/${locale}/login`, req.url));
+      return Response.redirect(
+        createSafeRedirectUrl(`/${locale}/login`, req.url)
+      );
     }
     if (!(sessionClaims?.metadata as { isAdmin?: boolean })?.isAdmin) {
-      return Response.redirect(createSafeRedirectUrl(`/${locale}/dashboard`, req.url));
+      return Response.redirect(
+        createSafeRedirectUrl(`/${locale}/dashboard`, req.url)
+      );
     }
   }
-  
+
   // Apply internationalization after authentication checks
   const intlResponse = intlMiddleware(req);
   if (intlResponse) return intlResponse;

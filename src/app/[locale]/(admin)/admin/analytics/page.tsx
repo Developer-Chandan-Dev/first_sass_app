@@ -10,9 +10,9 @@ export default function AnalyticsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Analytics</h1>
       </div>
-      
+
       <AnalyticsOverview />
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         <RevenueAnalytics />
         <UserAnalytics />

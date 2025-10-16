@@ -11,15 +11,17 @@ export default function PlansPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handlePlanCreated = () => {
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
     <div className="space-y-4 lg:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Pricing Plans</h1>
-        <Button 
-          size="sm" 
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+          Pricing Plans
+        </h1>
+        <Button
+          size="sm"
           className="w-full sm:w-auto"
           onClick={() => setShowCreateModal(true)}
         >
@@ -27,9 +29,9 @@ export default function PlansPage() {
           Create Plan
         </Button>
       </div>
-      
+
       <PlansTable key={refreshKey} />
-      
+
       <PlanFormModal
         open={showCreateModal}
         onOpenChange={setShowCreateModal}

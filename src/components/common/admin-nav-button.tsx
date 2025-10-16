@@ -11,7 +11,11 @@ interface AdminNavButtonProps {
   className?: string;
 }
 
-export function AdminNavButton({ variant = 'outline', size = 'sm', className }: AdminNavButtonProps) {
+export function AdminNavButton({
+  variant = 'outline',
+  size = 'sm',
+  className,
+}: AdminNavButtonProps) {
   const { user } = useUser();
 
   if (!user?.publicMetadata?.isAdmin) {
@@ -22,9 +26,7 @@ export function AdminNavButton({ variant = 'outline', size = 'sm', className }: 
     <Button asChild variant={variant} size={size} className={className}>
       <Link href="/admin/dashboard">
         <Shield className="h-4 w-4 lg:mr-2" />
-        <span className="max-lg:hidden">
-          Admin Panel
-        </span>
+        <span className="max-lg:hidden">Admin Panel</span>
       </Link>
     </Button>
   );

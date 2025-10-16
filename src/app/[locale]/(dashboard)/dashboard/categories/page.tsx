@@ -4,7 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { PieChart, Plus, Edit, Trash2, Check, X } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { useCategories } from '@/hooks/useCategories';
@@ -15,7 +20,8 @@ import { PageHeader } from '@/components/dashboard/layout/page-header';
 
 export default function CategoriesPage() {
   const { pages } = useDashboardTranslations();
-  const { categoryOptions, addCustomCategory, loading, refetch } = useCategories();
+  const { categoryOptions, addCustomCategory, loading, refetch } =
+    useCategories();
   const [newCategory, setNewCategory] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
@@ -23,13 +29,13 @@ export default function CategoriesPage() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  
+
   const handleAddCategory = async () => {
     if (!newCategory.trim()) return;
-    
+
     setIsAdding(true);
     const result = await addCustomCategory(newCategory.trim());
-    
+
     if (result.success) {
       setNewCategory('');
       toast.success('Category added successfully!');
@@ -95,7 +101,7 @@ export default function CategoriesPage() {
     setDeleteConfirmOpen(false);
     setCategoryToDelete(null);
   };
-  
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -124,7 +130,7 @@ export default function CategoriesPage() {
                 }
               }}
             />
-            <Button 
+            <Button
               onClick={handleAddCategory}
               disabled={!newCategory.trim() || isAdding}
             >
@@ -147,9 +153,14 @@ export default function CategoriesPage() {
           <CardContent>
             <div className="space-y-2">
               {DEFAULT_CATEGORIES.map((category) => {
-                const option = categoryOptions.find(opt => opt.key === category.key);
+                const option = categoryOptions.find(
+                  (opt) => opt.key === category.key
+                );
                 return (
-                  <div key={category.key} className="flex items-center justify-between p-2 border rounded">
+                  <div
+                    key={category.key}
+                    className="flex items-center justify-between p-2 border rounded"
+                  >
                     <div className="flex items-center gap-2">
                       <span>{category.icon}</span>
                       <span>{option?.label || category.key}</span>
@@ -172,15 +183,19 @@ export default function CategoriesPage() {
               <div className="text-center py-4">Loading...</div>
             ) : (
               <div className="space-y-2">
-                {categoryOptions.filter(cat => !cat.isDefault).length === 0 ? (
+                {categoryOptions.filter((cat) => !cat.isDefault).length ===
+                0 ? (
                   <div className="text-center py-4 text-muted-foreground">
                     No custom categories yet
                   </div>
                 ) : (
                   categoryOptions
-                    .filter(cat => !cat.isDefault)
+                    .filter((cat) => !cat.isDefault)
                     .map((category) => (
-                      <div key={category.key} className="flex items-center justify-between p-2 border rounded">
+                      <div
+                        key={category.key}
+                        className="flex items-center justify-between p-2 border rounded"
+                      >
                         <div className="flex items-center gap-2 flex-1">
                           <span>{category.icon}</span>
                           {editingCategory === category.key ? (
@@ -201,7 +216,9 @@ export default function CategoriesPage() {
                               />
                               <Button
                                 size="sm"
-                                onClick={() => handleEditCategory(category.key, editValue)}
+                                onClick={() =>
+                                  handleEditCategory(category.key, editValue)
+                                }
                                 className="h-8 w-8 p-0"
                               >
                                 <Check className="h-3 w-3" />
@@ -237,7 +254,9 @@ export default function CategoriesPage() {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                onClick={() => handleDeleteCategory(category.key)}
+                                onClick={() =>
+                                  handleDeleteCategory(category.key)
+                                }
                                 className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
                               >
                                 <Trash2 className="h-3 w-3" />
@@ -262,7 +281,8 @@ export default function CategoriesPage() {
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Are you sure you want to delete the category &quot;{categoryToDelete}&quot;? This action cannot be undone.
+              Are you sure you want to delete the category &quot;
+              {categoryToDelete}&quot;? This action cannot be undone.
             </p>
             <div className="flex gap-2 justify-end">
               <Button

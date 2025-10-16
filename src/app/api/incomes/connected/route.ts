@@ -20,6 +20,9 @@ export async function GET() {
     return NextResponse.json(connectedIncomes);
   } catch (error) {
     console.error('Error fetching connected incomes:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

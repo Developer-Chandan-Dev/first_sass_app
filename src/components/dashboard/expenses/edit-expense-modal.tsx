@@ -4,14 +4,22 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { CategorySelect } from '@/components/ui/category-select';
-import { getBackendCategoryKey, getFrontendCategoryKey } from '@/lib/categories';
+import {
+  getBackendCategoryKey,
+  getFrontendCategoryKey,
+} from '@/lib/categories';
 
 const expenseSchema = z.object({
   amount: z.number().min(0.01, 'Amount must be greater than 0'),
@@ -38,8 +46,12 @@ interface EditExpenseModalProps {
   onExpenseUpdated?: () => void;
 }
 
-export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated }: EditExpenseModalProps) {
-
+export function EditExpenseModal({
+  open,
+  onOpenChange,
+  expense,
+  onExpenseUpdated,
+}: EditExpenseModalProps) {
   const {
     register,
     handleSubmit,
@@ -63,7 +75,7 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
   const onSubmit = async (data: ExpenseFormData) => {
     try {
       const loadingToast = toast.loading('Updating expense...');
-      
+
       const response = await fetch(`/api/expenses/${expense?._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -73,9 +85,9 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
           category: getBackendCategoryKey(data.category),
         }),
       });
-      
+
       toast.dismiss(loadingToast);
-      
+
       if (response.ok) {
         toast.success('Expense updated successfully!');
         reset();
@@ -98,8 +110,11 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
         <DialogHeader className="pb-3">
           <DialogTitle className="text-lg">Edit Expense</DialogTitle>
         </DialogHeader>
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4">
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-3 sm:space-y-4"
+        >
           <div>
             <Label htmlFor="amount">Amount</Label>
             <Input
@@ -141,18 +156,18 @@ export function EditExpenseModal({ open, onOpenChange, expense, onExpenseUpdated
 
           <div>
             <Label htmlFor="date">Date</Label>
-            <Input
-              id="date"
-              type="date"
-              {...register('date')}
-            />
+            <Input id="date" type="date" {...register('date')} />
             {errors.date && (
               <p className="text-sm text-red-500">{errors.date.message}</p>
             )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 pt-3 sm:pt-4">
-            <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full sm:w-auto"
+            >
               {isSubmitting ? 'Updating...' : 'Update Expense'}
             </Button>
             <Button

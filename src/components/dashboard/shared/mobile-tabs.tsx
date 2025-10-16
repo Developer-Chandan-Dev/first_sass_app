@@ -17,7 +17,11 @@ interface MobileTabsProps {
   className?: string;
 }
 
-export function MobileTabs({ items, defaultValue, className }: MobileTabsProps) {
+export function MobileTabs({
+  items,
+  defaultValue,
+  className,
+}: MobileTabsProps) {
   const { isMobile, mounted } = useMobile();
 
   if (!mounted) {
@@ -26,16 +30,16 @@ export function MobileTabs({ items, defaultValue, className }: MobileTabsProps) 
 
   return (
     <Tabs defaultValue={defaultValue} className={cn('space-y-4', className)}>
-      <TabsList className={cn(
-        'grid w-full h-auto p-1',
-        isMobile 
-          ? 'grid-cols-3 gap-1' 
-          : `grid-cols-${items.length}`
-      )}>
+      <TabsList
+        className={cn(
+          'grid w-full h-auto p-1',
+          isMobile ? 'grid-cols-3 gap-1' : `grid-cols-${items.length}`
+        )}
+      >
         {items.map((item) => (
-          <TabsTrigger 
+          <TabsTrigger
             key={item.value}
-            value={item.value} 
+            value={item.value}
             className={cn(
               'text-xs px-2 py-2',
               isMobile ? 'text-xs' : 'text-sm'
@@ -47,11 +51,7 @@ export function MobileTabs({ items, defaultValue, className }: MobileTabsProps) 
       </TabsList>
 
       {items.map((item) => (
-        <TabsContent 
-          key={item.value}
-          value={item.value} 
-          className="space-y-4"
-        >
+        <TabsContent key={item.value} value={item.value} className="space-y-4">
           {item.content}
         </TabsContent>
       ))}

@@ -28,14 +28,17 @@ const getBaseUrl = () => {
   if (process.env.NODE_ENV === 'development') {
     return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   }
-  throw new Error('Missing required environment variable: NEXT_PUBLIC_APP_URL or NEXT_PUBLIC_SITE_URL');
+  throw new Error(
+    'Missing required environment variable: NEXT_PUBLIC_APP_URL or NEXT_PUBLIC_SITE_URL'
+  );
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseUrl()),
   title: `${seoConfig.siteName} - Smart Expense Management & Budget Tracking`,
   description: `${seoConfig.siteDescription}. Track expenses, manage budgets, and gain insights with our powerful expense management platform.`,
-  keywords: 'expense tracker, budget management, personal finance, expense management, financial planning, money tracker, budget planner, expense app',
+  keywords:
+    'expense tracker, budget management, personal finance, expense management, financial planning, money tracker, budget planner, expense app',
   authors: [{ name: `${seoConfig.siteName} Team` }],
   creator: seoConfig.siteName,
   publisher: seoConfig.siteName,
@@ -77,9 +80,7 @@ export const metadata: Metadata = {
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
     ],
     apple: '/apple-touch-icon.png',
-    other: [
-      { rel: 'icon', url: '/favicon.ico' },
-    ],
+    other: [{ rel: 'icon', url: '/favicon.ico' }],
   },
 };
 

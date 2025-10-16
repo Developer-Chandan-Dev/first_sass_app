@@ -1,6 +1,7 @@
 # 🔧 Project Issues & Fixes Tracker
 
 ## 📊 **Summary Statistics**
+
 - **Total Issues Resolved**: 9
 - **Critical Issues**: 3
 - **Performance Issues**: 2
@@ -14,6 +15,7 @@
 ## 🚨 **Issues Resolved**
 
 ### **Issue #1: API Routes Internationalization Conflict**
+
 - **Date**: Current Session
 - **Severity**: Critical 🔴
 - **Problem**: API routes getting unwanted locale prefixes (`en/api/...`) causing 404 errors
@@ -24,12 +26,13 @@
 - **Time Saved**: ~3 hours
 
 ### **Issue #2: Monolithic Translation Hook Performance**
-- **Date**: Current Session  
+
+- **Date**: Current Session
 - **Severity**: High 🟠
 - **Problem**: Single `useAppTranslations` hook loading 21 namespaces causing performance issues and key-not-found errors
 - **Root Cause**: Eager loading of all translations regardless of page context
 - **Solution**: Refactored into 3 modular hooks with namespace separation
-- **Files Changed**: 
+- **Files Changed**:
   - Created `src/hooks/i18n/useBaseTranslations.ts`
   - Created `src/hooks/i18n/useDashboardTranslations.ts`
   - Created `src/hooks/i18n/usePublicPageTranslations.ts`
@@ -38,6 +41,7 @@
 - **Time Saved**: ~5 hours
 
 ### **Issue #3: Clerk Authentication 401 Errors**
+
 - **Date**: Current Session
 - **Severity**: Critical 🔴
 - **Problem**: Dashboard API routes returning 401 unauthorized errors
@@ -48,6 +52,7 @@
 - **Time Saved**: ~2 hours
 
 ### **Issue #4: Dashboard Access Without Authentication**
+
 - **Date**: Current Session
 - **Severity**: Critical 🔴
 - **Problem**: Unauthenticated users could access dashboard routes
@@ -58,6 +63,7 @@
 - **Time Saved**: ~1 hour
 
 ### **Issue #5: React Hydration Mismatch Error**
+
 - **Date**: Current Session
 - **Severity**: Medium 🟡
 - **Problem**: SmartNavigationButton causing hydration errors due to server/client auth state differences
@@ -68,6 +74,7 @@
 - **Time Saved**: ~1 hour
 
 ### **Issue #6: Content Security Policy Violations**
+
 - **Date**: Current Session
 - **Severity**: Medium 🟡
 - **Problem**: Clerk web workers and telemetry blocked by CSP
@@ -78,6 +85,7 @@
 - **Time Saved**: ~1 hour
 
 ### **Issue #7: Sidebar Translation Error**
+
 - **Date**: Current Session
 - **Severity**: Low 🟢
 - **Problem**: Sidebar trying to access `landing.title` from dashboard translations
@@ -88,6 +96,7 @@
 - **Time Saved**: ~30 minutes
 
 ### **Issue #8: Date Validation Schema Error**
+
 - **Date**: Current Session
 - **Severity**: Medium 🟡
 - **Problem**: Expense creation failing due to strict datetime validation expecting ISO format
@@ -98,12 +107,13 @@
 - **Time Saved**: ~2 hours
 
 ### **Issue #9: API Response Format Inconsistency**
+
 - **Date**: Current Session
 - **Severity**: Medium 🟡
-- **Problem**: Expense creation API returning nested response `{success: true, data: expense}` but frontend expecting direct expense object
+- **Problem**: Expense creation API returning neste\d response `{success: true, data: expense}` but frontend expecting direct expense object
 - **Root Cause**: API wrapper format conflicting with frontend Redux expectations
 - **Solution**: Modified POST `/api/expenses` to return expense object directly, updated budget modal for consistency
-- **Files Changed**: 
+- **Files Changed**:
   - `src/app/api/expenses/route.ts`
   - `src/components/dashboard/expenses/add-budget-expense-modal.tsx`
 - **Impact**: Fixed expense creation flow, improved API consistency
@@ -114,20 +124,24 @@
 ## 🎯 **Issue Categories Breakdown**
 
 ### **Authentication & Security** (4 issues)
+
 - API authentication conflicts
 - Dashboard access control
 - CSP violations
 - Date validation security
 
 ### **Performance & Architecture** (2 issues)
+
 - Translation hook optimization
 - Hydration performance
 
 ### **UI/UX** (2 issues)
+
 - Component rendering errors
 - User experience improvements
 
 ### **API & Integration** (2 issues)
+
 - Response format consistency
 - Frontend-backend integration
 
@@ -158,6 +172,7 @@
 ## 🆕 **Latest Session Fixes**
 
 ### **Issue #10: Navbar Hydration Mismatch**
+
 - **Date**: Latest Session
 - **Severity**: High 🟠
 - **Problem**: Server rendering login/register buttons while client renders dashboard button causing hydration errors
@@ -168,6 +183,7 @@
 - **Time Saved**: ~1 hour
 
 ### **Issue #11: Edit Modal Infinite Loop**
+
 - **Date**: Latest Session
 - **Severity**: Critical 🔴
 - **Problem**: Maximum update depth exceeded in EditExpenseModal causing app crashes
@@ -178,6 +194,7 @@
 - **Time Saved**: ~2 hours
 
 ### **Issue #12: Server-Side Hook Usage**
+
 - **Date**: Latest Session
 - **Severity**: Critical 🔴
 - **Problem**: Client-side hook called from server component causing runtime errors
@@ -188,6 +205,7 @@
 - **Time Saved**: ~30 minutes
 
 ### **Issue #13: Dashboard Layout Hydration**
+
 - **Date**: Latest Session
 - **Severity**: Medium 🟡
 - **Problem**: UserButton component causing hydration mismatch in dashboard layout
@@ -198,6 +216,7 @@
 - **Time Saved**: ~45 minutes
 
 ### **Issue #14: Pagination Bug in Advanced Expenses Table**
+
 - **Date**: Latest Session
 - **Severity**: High 🟠
 - **Problem**: "Items per page" functionality not working - always showing 20 items regardless of selection
@@ -208,6 +227,7 @@
 - **Time Saved**: ~1 hour
 
 ### **Issue #15: TypeScript Errors in FreeStats Component**
+
 - **Date**: Latest Session
 - **Severity**: Medium 🟡
 - **Problem**: TypeScript compilation errors due to non-existent translation keys
@@ -217,20 +237,34 @@
 - **Impact**: Fixed TypeScript compilation, component renders without errors
 - **Time Saved**: ~30 minutes
 
+### **Issue #16: TypeScript Property Access Error in Add Expense Modal**
+
+- **Date**: Latest Session
+- **Severity**: Medium 🟡
+- **Problem**: Property 'data' does not exist on type 'ExpenseItem' causing TypeScript compilation error
+- **Root Cause**: Redux action unwrap() returns expense object directly, not wrapped in data property
+- **Solution**: Changed `res?.data` to `res` since unwrapped result is the expense item itself
+- **Files Changed**: `src/components/dashboard/expenses/add-expense-modal-redux.tsx`
+- **Impact**: Fixed TypeScript error and expense creation flow
+- **Time Saved**: ~30 minutes
+
 ---
 
 ## 📊 **Updated Summary Statistics**
-- **Total Issues Resolved**: 15
+
+- **Total Issues Resolved**: 16
 - **Critical Issues**: 6
 - **Performance Issues**: 2
 - **Security Issues**: 1
 - **UI/UX Issues**: 5
 - **API Issues**: 2
-- **Development Time Saved**: ~22+ hours
+- **TypeScript Issues**: 1
+- **Development Time Saved**: ~22.5+ hours
 
 ---
 
 ## 📝 **Notes**
+
 - All issues were resolved across multiple development sessions
 - No breaking changes introduced during fixes
 - All solutions maintain backward compatibility

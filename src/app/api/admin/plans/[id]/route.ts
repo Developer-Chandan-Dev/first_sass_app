@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Plan from '@/models/Plan';
 
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -14,7 +17,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const { name, price, interval, features, isActive } = body;
 
     await connectDB();
-    
+
     const { id } = await params;
     const plan = await Plan.findByIdAndUpdate(
       id,
@@ -35,11 +38,17 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({ plan });
   } catch (error) {
     console.error('Plan update error:', error);
-    return NextResponse.json({ error: 'Failed to update plan' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update plan' },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -47,10 +56,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
 
     await connectDB();
-    
+
     const { id } = await params;
     const plan = await Plan.findByIdAndDelete(id);
-    
+
     if (!plan) {
       return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
     }
@@ -58,6 +67,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     return NextResponse.json({ message: 'Plan deleted successfully' });
   } catch (error) {
     console.error('Plan deletion error:', error);
-    return NextResponse.json({ error: 'Failed to delete plan' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete plan' },
+      { status: 500 }
+    );
   }
 }

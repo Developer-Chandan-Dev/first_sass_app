@@ -4,7 +4,13 @@ import { toast } from 'sonner';
 
 interface ToastOptions {
   duration?: number;
-  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  position?:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
   dismissible?: boolean;
 }
 
@@ -96,10 +102,12 @@ export const toastUtils = {
       duration: options?.duration || 4000,
       position: options?.position || 'top-right',
       dismissible: options?.dismissible ?? true,
-      action: action ? {
-        label: action.label,
-        onClick: action.onClick,
-      } : undefined,
+      action: action
+        ? {
+            label: action.label,
+            onClick: action.onClick,
+          }
+        : undefined,
     });
   },
 };
@@ -107,44 +115,61 @@ export const toastUtils = {
 // Specialized toast functions for common operations
 export const operationToasts = {
   // CRUD operations
-  created: (itemName: string, options?: ToastOptions) => 
+  created: (itemName: string, options?: ToastOptions) =>
     toastUtils.success(`${itemName} created successfully`, options),
-  
-  updated: (itemName: string, options?: ToastOptions) => 
+
+  updated: (itemName: string, options?: ToastOptions) =>
     toastUtils.success(`${itemName} updated successfully`, options),
-  
-  deleted: (itemName: string, options?: ToastOptions) => 
+
+  deleted: (itemName: string, options?: ToastOptions) =>
     toastUtils.success(`${itemName} deleted successfully`, options),
-  
+
   // Bulk operations
-  bulkDeleted: (count: number, itemName: string, options?: ToastOptions) => 
-    toastUtils.success(`${count} ${itemName}${count > 1 ? 's' : ''} deleted successfully`, options),
-  
-  // Export operations
-  exported: (format: string, count?: number, options?: ToastOptions) => 
+  bulkDeleted: (count: number, itemName: string, options?: ToastOptions) =>
     toastUtils.success(
-      count ? `${count} items exported to ${format.toUpperCase()}` : `Data exported to ${format.toUpperCase()}`,
+      `${count} ${itemName}${count > 1 ? 's' : ''} deleted successfully`,
       options
     ),
-  
+
+  // Export operations
+  exported: (format: string, count?: number, options?: ToastOptions) =>
+    toastUtils.success(
+      count
+        ? `${count} items exported to ${format.toUpperCase()}`
+        : `Data exported to ${format.toUpperCase()}`,
+      options
+    ),
+
   // Import operations
-  imported: (count: number, itemName: string, options?: ToastOptions) => 
-    toastUtils.success(`${count} ${itemName}${count > 1 ? 's' : ''} imported successfully`, options),
-  
+  imported: (count: number, itemName: string, options?: ToastOptions) =>
+    toastUtils.success(
+      `${count} ${itemName}${count > 1 ? 's' : ''} imported successfully`,
+      options
+    ),
+
   // Network errors
-  networkError: (options?: ToastOptions) => 
-    toastUtils.error('Network error. Please check your connection and try again.', options),
-  
+  networkError: (options?: ToastOptions) =>
+    toastUtils.error(
+      'Network error. Please check your connection and try again.',
+      options
+    ),
+
   // Validation errors
-  validationError: (message?: string, options?: ToastOptions) => 
-    toastUtils.error(message || 'Please check your input and try again.', options),
-  
+  validationError: (message?: string, options?: ToastOptions) =>
+    toastUtils.error(
+      message || 'Please check your input and try again.',
+      options
+    ),
+
   // Permission errors
-  permissionError: (options?: ToastOptions) => 
-    toastUtils.error('You do not have permission to perform this action.', options),
-  
+  permissionError: (options?: ToastOptions) =>
+    toastUtils.error(
+      'You do not have permission to perform this action.',
+      options
+    ),
+
   // Generic errors
-  genericError: (options?: ToastOptions) => 
+  genericError: (options?: ToastOptions) =>
     toastUtils.error('Something went wrong. Please try again.', options),
 };
 
@@ -160,25 +185,28 @@ export const withToast = {
     options?: ToastOptions
   ): Promise<T> => {
     const loadingToast = toastUtils.loading(messages.loading, options);
-    
+
     try {
       const result = await operation();
       toastUtils.dismiss(loadingToast);
-      
-      const successMessage = typeof messages.success === 'function' 
-        ? messages.success(result) 
-        : messages.success;
+
+      const successMessage =
+        typeof messages.success === 'function'
+          ? messages.success(result)
+          : messages.success;
       toastUtils.success(successMessage, options);
-      
+
       return result;
     } catch (error) {
       toastUtils.dismiss(loadingToast);
-      
-      const errorMessage = messages.error 
-        ? (typeof messages.error === 'function' ? messages.error(error) : messages.error)
+
+      const errorMessage = messages.error
+        ? typeof messages.error === 'function'
+          ? messages.error(error)
+          : messages.error
         : 'Operation failed';
       toastUtils.error(errorMessage, options);
-      
+
       throw error;
     }
   },

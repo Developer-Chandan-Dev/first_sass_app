@@ -2,7 +2,12 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { useLocale as useNextIntlLocale } from 'next-intl';
-import { useDashboardTranslations, formatCurrency, formatDate, formatNumber } from '@/hooks/i18n';
+import {
+  useDashboardTranslations,
+  formatCurrency,
+  formatDate,
+  formatNumber,
+} from '@/hooks/i18n';
 
 type Locale = 'en' | 'hi' | 'pa' | 'mr';
 
@@ -10,7 +15,10 @@ interface TranslationContextType {
   locale: Locale;
   translations: ReturnType<typeof useDashboardTranslations>;
   formatCurrency: (amount: number, currency?: string) => string;
-  formatDate: (date: Date | string, options?: Intl.DateTimeFormatOptions) => string;
+  formatDate: (
+    date: Date | string,
+    options?: Intl.DateTimeFormatOptions
+  ) => string;
   formatNumber: (number: number) => string;
   getLocaleConfig: () => {
     currency: string;
@@ -19,7 +27,9 @@ interface TranslationContextType {
   };
 }
 
-const TranslationContext = createContext<TranslationContextType | undefined>(undefined);
+const TranslationContext = createContext<TranslationContextType | undefined>(
+  undefined
+);
 
 interface TranslationProviderProps {
   children: ReactNode;
@@ -56,12 +66,11 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
   const contextValue: TranslationContextType = {
     locale,
     translations,
-    formatCurrency: (amount: number, currency?: string) => 
+    formatCurrency: (amount: number, currency?: string) =>
       formatCurrency(amount, currency || config.currency, config.numberFormat),
-    formatDate: (date: Date | string, options?: Intl.DateTimeFormatOptions) => 
+    formatDate: (date: Date | string, options?: Intl.DateTimeFormatOptions) =>
       formatDate(date, config.numberFormat, options),
-    formatNumber: (number: number) => 
-      formatNumber(number, config.numberFormat),
+    formatNumber: (number: number) => formatNumber(number, config.numberFormat),
     getLocaleConfig: () => config,
   };
 
@@ -75,7 +84,9 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
 export function useTranslationContext() {
   const context = useContext(TranslationContext);
   if (context === undefined) {
-    throw new Error('useTranslationContext must be used within a TranslationProvider');
+    throw new Error(
+      'useTranslationContext must be used within a TranslationProvider'
+    );
   }
   return context;
 }

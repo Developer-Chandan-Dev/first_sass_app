@@ -46,7 +46,8 @@ export default function NotFound() {
               Page Not Found
             </h1>
             <p className="text-muted-foreground">
-              The page you&apos;re looking for doesn&apos;t exist or has been moved.
+              The page you&apos;re looking for doesn&apos;t exist or has been
+              moved.
             </p>
           </div>
 
@@ -85,11 +86,11 @@ export default function NotFound() {
                 </Button>
               </>
             )}
-            
+
             {/* Go Back Button */}
-            <Button 
-              variant="ghost" 
-              className="w-full" 
+            <Button
+              variant="ghost"
+              className="w-full"
               onClick={() => window.history.back()}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -105,19 +106,39 @@ export default function NotFound() {
             <div className="flex flex-wrap gap-2 justify-center">
               {isSignedIn ? (
                 <>
-                  <Button asChild variant="link" size="sm" className="h-auto p-1 text-xs">
+                  <Button
+                    asChild
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-1 text-xs"
+                  >
                     <Link href="/dashboard/expenses">Expenses</Link>
                   </Button>
-                  <Button asChild variant="link" size="sm" className="h-auto p-1 text-xs">
+                  <Button
+                    asChild
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-1 text-xs"
+                  >
                     <Link href="/dashboard/expenses/budget">Budgets</Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button asChild variant="link" size="sm" className="h-auto p-1 text-xs">
+                  <Button
+                    asChild
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-1 text-xs"
+                  >
                     <Link href="/about">About</Link>
                   </Button>
-                  <Button asChild variant="link" size="sm" className="h-auto p-1 text-xs">
+                  <Button
+                    asChild
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-1 text-xs"
+                  >
                     <Link href="/contact">Contact</Link>
                   </Button>
                 </>

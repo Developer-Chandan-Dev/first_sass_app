@@ -14,22 +14,28 @@ export async function DELETE(request: NextRequest) {
     const { ids } = body;
 
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return NextResponse.json({ error: 'Invalid expense IDs' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid expense IDs' },
+        { status: 400 }
+      );
     }
 
     await connectDB();
 
     const result = await Expense.deleteMany({
       _id: { $in: ids },
-      userId
+      userId,
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: `${result.deletedCount} expenses deleted successfully`,
-      deletedCount: result.deletedCount
+      deletedCount: result.deletedCount,
     });
   } catch (error) {
     console.error('Error bulk deleting expenses:', error);
-    return NextResponse.json({ error: 'Failed to delete expenses' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to delete expenses' },
+      { status: 500 }
+    );
   }
 }

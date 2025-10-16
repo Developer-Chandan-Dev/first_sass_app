@@ -26,23 +26,27 @@ const textSizeClasses = {
   xl: 'text-xl',
 };
 
-export function Loading({ 
-  size = 'md', 
-  variant = 'spinner', 
-  text, 
+export function Loading({
+  size = 'md',
+  variant = 'spinner',
+  text,
   className,
-  fullScreen = false 
+  fullScreen = false,
 }: LoadingProps) {
   const content = (
-    <div className={cn(
-      'flex flex-col items-center justify-center gap-2',
-      fullScreen && 'min-h-screen',
-      className
-    )}>
-      {variant === 'spinner' && (
-        <Loader2 className={cn('animate-spin text-primary', sizeClasses[size])} />
+    <div
+      className={cn(
+        'flex flex-col items-center justify-center gap-2',
+        fullScreen && 'min-h-screen',
+        className
       )}
-      
+    >
+      {variant === 'spinner' && (
+        <Loader2
+          className={cn('animate-spin text-primary', sizeClasses[size])}
+        />
+      )}
+
       {variant === 'dots' && (
         <div className="flex space-x-1">
           {[0, 1, 2].map((i) => (
@@ -63,14 +67,16 @@ export function Loading({
           ))}
         </div>
       )}
-      
+
       {variant === 'pulse' && (
-        <div className={cn(
-          'animate-pulse rounded-full bg-primary/20',
-          sizeClasses[size]
-        )} />
+        <div
+          className={cn(
+            'animate-pulse rounded-full bg-primary/20',
+            sizeClasses[size]
+          )}
+        />
       )}
-      
+
       {variant === 'skeleton' && (
         <div className="space-y-2">
           <div className="h-4 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
@@ -78,12 +84,9 @@ export function Loading({
           <div className="h-4 w-28 animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
         </div>
       )}
-      
+
       {text && (
-        <p className={cn(
-          'text-muted-foreground',
-          textSizeClasses[size]
-        )}>
+        <p className={cn('text-muted-foreground', textSizeClasses[size])}>
           {text}
         </p>
       )}
@@ -102,28 +105,30 @@ export function Loading({
 }
 
 // Inline loading for buttons
-export function ButtonLoading({ 
-  size = 'sm', 
-  className 
-}: { 
-  size?: 'sm' | 'md'; 
-  className?: string; 
+export function ButtonLoading({
+  size = 'sm',
+  className,
+}: {
+  size?: 'sm' | 'md';
+  className?: string;
 }) {
   return (
-    <Loader2 className={cn(
-      'animate-spin',
-      size === 'sm' ? 'h-4 w-4' : 'h-5 w-5',
-      className
-    )} />
+    <Loader2
+      className={cn(
+        'animate-spin',
+        size === 'sm' ? 'h-4 w-4' : 'h-5 w-5',
+        className
+      )}
+    />
   );
 }
 
 // Loading overlay for containers
-export function LoadingOverlay({ 
-  children, 
-  isLoading, 
+export function LoadingOverlay({
+  children,
+  isLoading,
   text,
-  className 
+  className,
 }: {
   children: React.ReactNode;
   isLoading: boolean;
@@ -153,7 +158,13 @@ export function SkeletonCard() {
   );
 }
 
-export function SkeletonTable({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) {
+export function SkeletonTable({
+  rows = 5,
+  cols = 4,
+}: {
+  rows?: number;
+  cols?: number;
+}) {
   return (
     <div className="space-y-2">
       {/* Header */}
@@ -165,7 +176,7 @@ export function SkeletonTable({ rows = 5, cols = 4 }: { rows?: number; cols?: nu
           />
         ))}
       </div>
-      
+
       {/* Rows */}
       {Array.from({ length: rows }).map((_, rowIndex) => (
         <div key={rowIndex} className="flex space-x-4">
