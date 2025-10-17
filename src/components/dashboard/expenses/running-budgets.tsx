@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Clock, Target, TrendingUp, CheckCircle, Pause, Play, Edit, Trash2 } from 'lucide-react';
+import { Clock, Target, TrendingUp, CheckCircle, Pause, Edit, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 import { type Budget } from '@/lib/redux/expense/budgetSlice';
 

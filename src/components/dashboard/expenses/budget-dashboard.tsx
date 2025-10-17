@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -9,7 +9,6 @@ import {
   ChevronDown, 
   ChevronRight, 
   Target, 
-  TrendingUp, 
   AlertTriangle, 
   Settings,
   BarChart3,
@@ -46,7 +45,7 @@ export function BudgetDashboard({
   const runningBudgets = budgets.filter(b => b.status === 'running');
   const completedBudgets = budgets.filter(b => b.status === 'completed');
   const exceededBudgets = budgets.filter(b => b.percentage >= 100);
-  const totalSavings = completedBudgets.reduce((sum, b) => sum + Math.max(0, b.remaining), 0);
+
   const totalBudgeted = budgets.reduce((sum, b) => sum + b.amount, 0);
   const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);
 
@@ -59,7 +58,7 @@ export function BudgetDashboard({
   }: { 
     id: string; 
     title: string; 
-    icon: any; 
+    icon: React.ComponentType<{ className?: string }>; 
     count?: number; 
     variant?: 'default' | 'warning' | 'success' 
   }) => (

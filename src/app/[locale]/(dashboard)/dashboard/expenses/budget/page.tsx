@@ -3,21 +3,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BudgetStats } from '@/components/dashboard/expenses/budget-stats';
 
 import { AddBudgetExpenseModal } from '@/components/dashboard/expenses/add-budget-expense-modal';
 import { AddBudgetModal } from '@/components/dashboard/expenses/add-budget-modal-redux';
 import { AdvancedExpensesTable } from '@/components/dashboard/expenses/advanced-expenses-table-redux';
-import { ExpenseCategoryChart } from '@/components/dashboard/expenses/expense-category-chart';
 import { ExpenseReportChart } from '@/components/dashboard/expenses/expense-report-chart';
-import { RecentActivity } from '@/components/dashboard/expenses/recent-activity';
 import { ExpenseFilters } from '@/components/dashboard/expenses/expense-filters-redux';
-import { BudgetAlerts } from '@/components/dashboard/expenses/budget-alerts';
-import { BudgetTemplates } from '@/components/dashboard/expenses/budget-templates';
 import { BudgetAnalytics } from '@/components/dashboard/expenses/budget-analytics';
-import { BudgetExceededActions } from '@/components/dashboard/expenses/budget-exceeded-actions';
 import { BudgetManagementHub } from '@/components/dashboard/expenses/budget-management-hub';
 import { BudgetDashboard } from '@/components/dashboard/expenses/budget-dashboard';
 import { Plus } from 'lucide-react';
@@ -32,7 +25,7 @@ interface BudgetTemplate {
   category: string;
   suggestedAmount: number;
   description: string;
-  icon?: string | React.ComponentType<{ className?: string }>;
+  icon?: string;
 }
 
 export default function BudgetExpensesPage() {
@@ -181,7 +174,7 @@ export default function BudgetExpensesPage() {
           }
         }, [])}
         budget={editingBudget}
-        selectedTemplate={selectedTemplate}
+        selectedTemplate={selectedTemplate || undefined}
         onBudgetSaved={useCallback(() => {
           refreshBudgets();
         }, [refreshBudgets])}

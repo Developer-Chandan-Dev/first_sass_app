@@ -1,5 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongoose';
 import Budget from '@/models/Budget';
 import Expense from '@/models/Expense';

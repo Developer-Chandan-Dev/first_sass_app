@@ -67,7 +67,13 @@ interface AddBudgetModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   budget?: Budget | null;
-  selectedTemplate?: any;
+  selectedTemplate?: {
+    name: string;
+    category: string;
+    suggestedAmount: number;
+    description: string;
+    icon?: string;
+  };
   onBudgetSaved?: () => void;
 }
 
@@ -176,6 +182,9 @@ export function AddBudgetModal({
               ? getBackendCategoryKey(data.category)
               : undefined,
             isActive: true,
+            status: 'running' as const,
+            savings: 0,
+            daysLeft: 0,
           };
           const res = await dispatch(addBudget(budgetData)).unwrap();
 

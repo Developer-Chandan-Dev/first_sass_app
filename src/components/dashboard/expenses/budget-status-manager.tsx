@@ -12,10 +12,9 @@ import { type Budget } from '@/lib/redux/expense/budgetSlice';
 interface BudgetStatusManagerProps {
   budgets: Budget[];
   onStatusChange: (budgetId: string, status: Budget['status']) => void;
-  onEditBudget: (budget: Budget) => void;
 }
 
-export function BudgetStatusManager({ budgets, onStatusChange, onEditBudget }: BudgetStatusManagerProps) {
+export function BudgetStatusManager({ budgets, onStatusChange }: BudgetStatusManagerProps) {
   const getBudgetsByStatus = (status: Budget['status']) => {
     return budgets.filter(b => b.status === status);
   };

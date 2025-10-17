@@ -53,7 +53,7 @@ export default function Dashboard() {
     },
   ];
 
-  const availableFeatures = [];
+
 
   return (
     <div className="space-y-6">

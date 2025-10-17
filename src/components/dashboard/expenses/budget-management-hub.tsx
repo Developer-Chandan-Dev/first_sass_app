@@ -1,14 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { 
   Settings, 
   Plus, 
-  Archive, 
   BarChart3, 
   FileText,
   Users,
@@ -20,17 +18,25 @@ import { BudgetAnalytics } from './budget-analytics';
 import { RunningBudgets } from './running-budgets';
 import { type Budget } from '@/lib/redux/expense/budgetSlice';
 
+interface BudgetTemplate {
+  name: string;
+  category: string;
+  suggestedAmount: number;
+  description: string;
+  icon?: string;
+}
+
 interface BudgetManagementHubProps {
   budgets: Budget[];
   onCreateBudget: () => void;
   onEditBudget: (budget: Budget) => void;
   onStatusChange: (budgetId: string, status: Budget['status']) => void;
-  onSelectTemplate: (template: any) => void;
+  onSelectTemplate: (template: BudgetTemplate) => void;
 }
 
 export function BudgetManagementHub({ 
   budgets, 
-  onCreateBudget, 
+ 
   onEditBudget, 
   onStatusChange,
   onSelectTemplate 
@@ -55,7 +61,6 @@ export function BudgetManagementHub({
           <BudgetStatusManager 
             budgets={budgets}
             onStatusChange={onStatusChange}
-            onEditBudget={onEditBudget}
           />
           <RunningBudgets 
             budgets={budgets}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { TrendingUp, Target } from 'lucide-react';
 
 interface CategoryData {
@@ -29,7 +29,7 @@ export function BudgetAnalytics() {
         const budgets = await response.json();
         
         // Process category data
-        const categoryStats = budgets.reduce((acc: any, budget: any) => {
+        const categoryStats = budgets.reduce((acc: Record<string, { totalBudgeted: number; count: number }>, budget: { category?: string; amount: number }) => {
           const category = budget.category || 'Uncategorized';
           if (!acc[category]) {
             acc[category] = { totalBudgeted: 0, count: 0 };
@@ -39,10 +39,10 @@ export function BudgetAnalytics() {
           return acc;
         }, {});
 
-        const categoryArray = Object.entries(categoryStats).map(([category, data]: [string, any]) => ({
+        const categoryArray = Object.entries(categoryStats).map(([category, data]) => ({
           category,
-          totalBudgeted: data.totalBudgeted,
-          count: data.count,
+          totalBudgeted: (data as { totalBudgeted: number; count: number }).totalBudgeted,
+          count: (data as { totalBudgeted: number; count: number }).count,
         }));
 
         // Process monthly data (mock for now)
@@ -103,7 +103,6 @@ export function BudgetAnalytics() {
               <YAxis 
                 fontSize={12} 
                 tick={{ fill: 'hsl(var(--foreground))' }}
-                tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip 
                 formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Budget Amount']}
@@ -114,14 +113,7 @@ export function BudgetAnalytics() {
                   borderRadius: '6px'
                 }}
               />
-              <Bar dataKey="totalBudgeted" fill="#3b82f6" radius={[4, 4, 0, 0]}>
-                <LabelList 
-                  dataKey="totalBudgeted" 
-                  position="top" 
-                  fontSize={10}
-                  formatter={(value: number) => `₹${(value / 1000).toFixed(0)}k`}
-                />
-              </Bar>
+              <Bar dataKey="totalBudgeted" fill="#3b82f6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -153,7 +145,7 @@ export function BudgetAnalytics() {
                     innerRadius={40}
                     outerRadius={80}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+
                     labelLine={false}
                   >
                     {pieData.map((entry, index) => (
@@ -174,7 +166,7 @@ export function BudgetAnalytics() {
               {/* Category Legend */}
               <div className="grid grid-cols-2 gap-2">
                 {pieData.map((entry, index) => (
-                  <div key={entry.name} className="flex items-center gap-2">
+                  <div key={index} className="flex items-center gap-2">
                     <div 
                       className="w-3 h-3 rounded-full" 
                       style={{ backgroundColor: entry.color }}

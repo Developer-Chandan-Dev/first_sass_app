@@ -26,8 +26,8 @@ export function BudgetAlerts() {
         const budgets = await response.json();
         
         const alertsData = budgets
-          .filter((budget: any) => budget.percentage >= 80)
-          .map((budget: any) => ({
+          .filter((budget: { percentage: number }) => budget.percentage >= 80)
+          .map((budget: { _id: string; name: string; percentage: number; spent: number; amount: number }) => ({
             budgetId: budget._id,
             budgetName: budget.name,
             type: budget.percentage >= 100 ? 'exceeded' : 'warning',

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Car, Home, Utensils, Gamepad2, Heart } from 'lucide-react';
+
 import { useState } from 'react';
 import { formatCurrency } from '@/lib/currency';
 import { CustomTemplateModal } from './custom-template-modal';
@@ -13,7 +13,7 @@ interface BudgetTemplate {
   name: string;
   category: string;
   suggestedAmount: number;
-  icon: React.ComponentType<{ className?: string }> | string;
+  icon: string;
   description: string;
 }
 
@@ -29,47 +29,47 @@ export function BudgetTemplates({ onSelectTemplate }: BudgetTemplatesProps) {
       name: 'Groceries',
       category: 'Food',
       suggestedAmount: 8000,
-      icon: ShoppingCart,
+      icon: '🛒',
       description: 'Monthly grocery shopping budget',
     },
     {
       name: 'Transportation',
       category: 'Transport',
       suggestedAmount: 4000,
-      icon: Car,
+      icon: '🚗',
       description: 'Fuel, public transport, parking',
     },
     {
       name: 'Rent & Utilities',
       category: 'Housing',
       suggestedAmount: 25000,
-      icon: Home,
+      icon: '🏠',
       description: 'Monthly housing expenses',
     },
     {
       name: 'Dining Out',
       category: 'Food',
       suggestedAmount: 3000,
-      icon: Utensils,
+      icon: '🍕',
       description: 'Restaurants and takeout',
     },
     {
       name: 'Entertainment',
       category: 'Leisure',
       suggestedAmount: 2000,
-      icon: Gamepad2,
+      icon: '🎮',
       description: 'Movies, games, subscriptions',
     },
     {
       name: 'Healthcare',
       category: 'Health',
       suggestedAmount: 5000,
-      icon: Heart,
+      icon: '❤️',
       description: 'Medical expenses and insurance',
     },
   ];
 
-  const allTemplates = [...templates, ...customTemplates];
+  const allTemplates: BudgetTemplate[] = [...templates, ...customTemplates];
 
   return (
     <>
@@ -95,7 +95,6 @@ export function BudgetTemplates({ onSelectTemplate }: BudgetTemplatesProps) {
       <CardContent>
         <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
           {allTemplates.map((template) => {
-            const Icon = template.icon;
             return (
               <div
                 key={template.name}
@@ -104,11 +103,7 @@ export function BudgetTemplates({ onSelectTemplate }: BudgetTemplatesProps) {
               >
                 <div className="flex items-start gap-2 sm:gap-3">
                   <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg flex-shrink-0">
-                    {typeof template.icon === 'string' ? (
-                      <span className="text-sm">{template.icon}</span>
-                    ) : (
-                      <Icon className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                    )}
+                    <span className="text-sm">{template.icon}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
