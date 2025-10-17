@@ -13,9 +13,9 @@ import {
   Calendar
 } from 'lucide-react';
 import { BudgetTemplates } from './budget-templates';
-import { BudgetStatusManager } from './budget-status-manager';
 import { BudgetAnalytics } from './budget-analytics';
-import { RunningBudgets } from './running-budgets';
+import { BudgetManagementTabs } from './budget-management-tabs';
+import { ComingSoonFeatures } from './coming-soon-features';
 import { type Budget } from '@/lib/redux/expense/budgetSlice';
 
 interface BudgetTemplate {
@@ -57,25 +57,11 @@ export function BudgetManagementHub({
       icon: Settings,
       description: 'Manage all budget statuses',
       component: (
-        <div className="space-y-6">
-          <BudgetStatusManager 
-            budgets={budgets}
-            onStatusChange={onStatusChange}
-          />
-          <RunningBudgets 
-            budgets={budgets}
-            onToggleBudget={(budgetId, action) => {
-              const status = action === 'pause' ? 'paused' : action === 'complete' ? 'completed' : 'running';
-              onStatusChange(budgetId, status);
-            }}
-            onEditBudget={onEditBudget}
-            onDeleteBudget={(budgetId) => {
-              if (confirm('Delete this budget?')) {
-                fetch(`/api/expenses/budget/${budgetId}`, { method: 'DELETE' });
-              }
-            }}
-          />
-        </div>
+        <BudgetManagementTabs 
+          budgets={budgets}
+          onEditBudget={onEditBudget}
+          onStatusChange={onStatusChange}
+        />
       )
     },
     {
@@ -86,65 +72,18 @@ export function BudgetManagementHub({
       component: <BudgetAnalytics />
     },
     {
-      id: 'reports',
-      title: 'Budget Reports',
-      icon: FileText,
-      description: 'Generate budget reports',
-      component: (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Budget Reports</h3>
-            <p className="text-muted-foreground mb-4">
-              Generate detailed reports for your budgets
-            </p>
-            <Button variant="outline">Coming Soon</Button>
-          </CardContent>
-        </Card>
-      )
-    },
-    {
-      id: 'collaboration',
-      title: 'Team Budgets',
-      icon: Users,
-      description: 'Shared budget management',
-      component: (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Team Collaboration</h3>
-            <p className="text-muted-foreground mb-4">
-              Share and collaborate on budgets with your team
-            </p>
-            <Button variant="outline">Coming Soon</Button>
-          </CardContent>
-        </Card>
-      )
-    },
-    {
-      id: 'automation',
-      title: 'Budget Automation',
+      id: 'features',
+      title: 'Coming Soon',
       icon: Calendar,
-      description: 'Automated budget rules',
-      component: (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">Budget Automation</h3>
-            <p className="text-muted-foreground mb-4">
-              Set up automated budget creation and management
-            </p>
-            <Button variant="outline">Coming Soon</Button>
-          </CardContent>
-        </Card>
-      )
+      description: 'Upcoming features',
+      component: <ComingSoonFeatures />
     }
   ];
 
   return (
     <div className="space-y-6">
       {/* Section Navigation */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {sections.map((section) => {
           const Icon = section.icon;
           const isActive = activeSection === section.id;
