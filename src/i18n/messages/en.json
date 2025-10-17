@@ -120,7 +120,54 @@
     "uptime": "Uptime",
     "countries": "Countries"
   },
-
+  "pricing": {
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "save": "Save",
+    "mostPopular": "Most Popular",
+    "getStarted": "Get Started",
+    "currentPlan": "Current Plan",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+     "plans": {
+        "free": {
+          "name": "Free",
+          "features": [
+            "Basic expense tracking",
+            "5 categories",
+            "Mobile app",
+            "Email support"
+          ]
+        },
+        "pro": {
+          "name": "Pro",
+          "features": [
+            "Unlimited tracking",
+            "AI insights",
+            "Advanced analytics",
+            "Priority support"
+          ]
+        },
+        "premium": {
+          "name": "Premium",
+          "features": [
+            "Team collaboration",
+            "Custom categories",
+            "API access",
+            "White-label options"
+          ]
+        },
+        "ultra": {
+          "name": "Ultra",
+          "features": [
+            "Enterprise features",
+            "Dedicated support",
+            "Custom integrations",
+            "SLA guarantee"
+          ]
+        }
+      }
+  },
   "testimonials": {
     "sarah": {
       "name": "Sarah Chen",
@@ -373,43 +420,43 @@
         }
       },
       "plans": {
-      "free": {
-        "name": "Free",
-        "features": [
-          "Basic expense tracking",
-          "5 categories",
-          "Mobile app",
-          "Email support"
-        ]
-      },
-      "pro": {
-        "name": "Pro",
-        "features": [
-          "Unlimited tracking",
-          "AI insights",
-          "Advanced analytics",
-          "Priority support"
-        ]
-      },
-      "premium": {
-        "name": "Premium",
-        "features": [
-          "Team collaboration",
-          "Custom categories",
-          "API access",
-          "White-label options"
-        ]
-      },
-      "ultra": {
-        "name": "Ultra",
-        "features": [
-          "Enterprise features",
-          "Dedicated support",
-          "Custom integrations",
-          "SLA guarantee"
-        ]
+        "free": {
+          "name": "Free",
+          "features": [
+            "Basic expense tracking",
+            "5 categories",
+            "Mobile app",
+            "Email support"
+          ]
+        },
+        "pro": {
+          "name": "Pro",
+          "features": [
+            "Unlimited tracking",
+            "AI insights",
+            "Advanced analytics",
+            "Priority support"
+          ]
+        },
+        "premium": {
+          "name": "Premium",
+          "features": [
+            "Team collaboration",
+            "Custom categories",
+            "API access",
+            "White-label options"
+          ]
+        },
+        "ultra": {
+          "name": "Ultra",
+          "features": [
+            "Enterprise features",
+            "Dedicated support",
+            "Custom integrations",
+            "SLA guarantee"
+          ]
+        }
       }
-    }
     }
   },
   "expenses": {
