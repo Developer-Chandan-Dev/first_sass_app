@@ -13,6 +13,9 @@ export interface Budget {
   spent: number;
   remaining: number;
   percentage: number;
+  status: 'running' | 'completed' | 'expired' | 'paused';
+  savings: number;
+  daysLeft: number;
   createdAt: string;
   updatedAt?: string;
 }

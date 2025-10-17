@@ -30,6 +30,11 @@ const BudgetSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   isActive: { type: Boolean, default: true },
+  status: {
+    type: String,
+    enum: ['running', 'completed', 'expired', 'paused'],
+    default: 'running',
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

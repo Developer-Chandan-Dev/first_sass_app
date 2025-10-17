@@ -34,7 +34,7 @@ export default function Dashboard() {
     {
       title: sidebar.budgets,
       icon: Target,
-      description: dashboard.setBudgetTargets,
+      description: dashboard.setBudgetTargets + ' (Available in Expenses → Budget)',
     },
     {
       title: sidebar.analytics,
@@ -52,6 +52,8 @@ export default function Dashboard() {
       description: dashboard.planExpensesAhead,
     },
   ];
+
+  const availableFeatures = [];
 
   return (
     <div className="space-y-6">
@@ -88,6 +90,8 @@ export default function Dashboard() {
         </ErrorBoundary>
       </div>
 
+
+
       {/* Coming Soon Section */}
       <Card>
         <CardHeader>
@@ -100,20 +104,28 @@ export default function Dashboard() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {comingSoonFeatures.map((feature) => {
               const Icon = feature.icon;
+              const isBudgets = feature.title === sidebar.budgets;
+              const Component = isBudgets ? 'a' : 'div';
+              
               return (
-                <div
+                <Component
                   key={feature.title}
-                  className="flex flex-col items-center text-center p-4 border rounded-lg bg-muted/30"
+                  {...(isBudgets ? { href: '/dashboard/expenses/budget' } : {})}
+                  className={`flex flex-col items-center text-center p-4 border rounded-lg bg-muted/30 ${
+                    isBudgets ? 'hover:bg-muted/50 transition-colors cursor-pointer' : ''
+                  }`}
                 >
-                  <Icon className="h-8 w-8 text-muted-foreground mb-2" />
+                  <Icon className={`h-8 w-8 mb-2 ${
+                    isBudgets ? 'text-primary' : 'text-muted-foreground'
+                  }`} />
                   <h3 className="font-medium mb-1">{feature.title}</h3>
                   <p className="text-sm text-muted-foreground mb-2">
                     {feature.description}
                   </p>
-                  <Badge variant="secondary" className="text-xs">
-                    {dashboard?.comingSoon || 'Coming Soon'}
+                  <Badge variant={isBudgets ? 'default' : 'secondary'} className="text-xs">
+                    {isBudgets ? 'Available Now' : (dashboard?.comingSoon || 'Coming Soon')}
                   </Badge>
-                </div>
+                </Component>
               );
             })}
           </div>

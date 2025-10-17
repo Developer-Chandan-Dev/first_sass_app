@@ -67,6 +67,7 @@ interface AddBudgetModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   budget?: Budget | null;
+  selectedTemplate?: any;
   onBudgetSaved?: () => void;
 }
 
@@ -74,6 +75,7 @@ export function AddBudgetModal({
   open,
   onOpenChange,
   budget,
+  selectedTemplate,
   onBudgetSaved,
 }: AddBudgetModalProps) {
   const dispatch = useAppDispatch();
@@ -119,10 +121,15 @@ export function AddBudgetModal({
       setValue('duration', budget.duration);
       setValue('startDate', budget.startDate.split('T')[0]);
       setValue('endDate', budget.endDate.split('T')[0]);
+    } else if (selectedTemplate && open) {
+      setValue('name', selectedTemplate.name);
+      setValue('amount', selectedTemplate.suggestedAmount);
+      setValue('category', selectedTemplate.category);
+      setValue('duration', 'monthly');
     } else if (open && !budget) {
       reset();
     }
-  }, [budget, open, setValue, reset]);
+  }, [budget, selectedTemplate, open, setValue, reset]);
 
   useEffect(() => {
     const startDate = new Date();

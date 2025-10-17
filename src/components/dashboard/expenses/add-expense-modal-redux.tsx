@@ -62,6 +62,7 @@ const createExpenseSchema = (t: TranslationType) =>
     frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
     affectsBalance: z.boolean().default(false),
     incomeId: z.string().optional(),
+    budgetId: z.string().optional(),
   });
 
 type ExpenseFormData = z.infer<ReturnType<typeof createExpenseSchema>>;
@@ -85,11 +86,15 @@ export function AddExpenseModal({
   const [connectedIncomes, setConnectedIncomes] = useState<
     Array<{ _id: string; source: string; description: string; amount: number }>
   >([]);
+  const [availableBudgets, setAvailableBudgets] = useState<
+    Array<{ _id: string; name: string; remaining: number }>
+  >([]);
 
   const modalState = useModalState({
     onSuccess: () => {
       reset();
       setValue('incomeId', '');
+      setValue('budgetId', '');
       onOpenChange(false);
       onExpenseAdded?.();
     },
@@ -112,6 +117,7 @@ export function AddExpenseModal({
       isRecurring: false,
       affectsBalance: false,
       incomeId: '',
+      budgetId: '',
     },
   });
 
@@ -123,10 +129,19 @@ export function AddExpenseModal({
 
     const fetchData = async () => {
       try {
-        const incomesRes = await fetch('/api/incomes/connected');
+        const [incomesRes, budgetsRes] = await Promise.all([
+          fetch('/api/incomes/connected'),
+          fetch('/api/expenses/budget?active=true')
+        ]);
+        
         if (incomesRes.ok) {
           const incomes = await incomesRes.json();
           setConnectedIncomes(Array.isArray(incomes) ? incomes : []);
+        }
+        
+        if (budgetsRes.ok) {
+          const budgets = await budgetsRes.json();
+          setAvailableBudgets(Array.isArray(budgets) ? budgets : []);
         }
       } catch {
         setConnectedIncomes([]);
@@ -194,6 +209,7 @@ export function AddExpenseModal({
         frequency: sanitizedFrequency,
         type: expenseType,
         incomeId: data.affectsBalance ? data.incomeId : undefined,
+        budgetId: expenseType === 'budget' ? data.budgetId : undefined,
       };
 
       const res = await dispatch(addExpense(requestData)).unwrap();
@@ -316,6 +332,26 @@ export function AddExpenseModal({
               </p>
             )}
           </div>
+
+          {expenseType === 'budget' && (
+            <div>
+              <Label className="text-sm">
+                Select Budget
+              </Label>
+              <Select onValueChange={(value) => setValue('budgetId', value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Choose budget to deduct from" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableBudgets.map((budget) => (
+                    <SelectItem key={budget._id} value={budget._id}>
+                      {budget.name} - ₹{budget.remaining?.toLocaleString() || 0} remaining
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">

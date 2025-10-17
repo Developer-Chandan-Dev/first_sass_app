@@ -19,7 +19,11 @@ import {
   type Budget,
 } from '@/lib/redux/expense/budgetSlice';
 
-export function BudgetManager() {
+interface BudgetManagerProps {
+  onBudgetChange?: () => void;
+}
+
+export function BudgetManager({ onBudgetChange }: BudgetManagerProps = {}) {
   const dispatch = useAppDispatch();
   const { budgets, loading } = useAppSelector((state) => state.budgets);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +39,7 @@ export function BudgetManager() {
       await dispatch(
         updateBudget({ id: budgetId, updates: { isActive } })
       ).unwrap();
+      onBudgetChange?.();
     } catch {
       toast.error('Failed to update budget');
       // Revert optimistic update
@@ -57,6 +62,7 @@ export function BudgetManager() {
     // API call in background
     try {
       await dispatch(deleteBudget(budgetId)).unwrap();
+      onBudgetChange?.();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to delete budget';
@@ -204,7 +210,10 @@ export function BudgetManager() {
           if (!open) setEditingBudget(null);
         }}
         budget={editingBudget}
-        onBudgetSaved={() => {}} // Redux handles updates automatically
+
+        onBudgetSaved={() => {
+          onBudgetChange?.();
+        }}
       />
     </>
   );
