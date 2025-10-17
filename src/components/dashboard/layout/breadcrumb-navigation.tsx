@@ -42,6 +42,30 @@ export function BreadcrumbNavigation({
   const { getLocalizedPath } = useLocaleContext();
 
   const breadcrumbs = useMemo(() => {
+    function getSegmentLabel(
+      segment: string,
+      segments: string[],
+      index: number
+    ): string {
+    // Handle dynamic segments first
+    if (isDynamicSegment(segment)) {
+      return getDynamicSegmentLabel(segment, segments.slice(0, index));
+    }
+
+      // Get configuration for the segment
+      const config = getBreadcrumbConfig(segment);
+
+      // Override with translations where available
+      const translationMap: Record<string, string> = {
+        dashboard: dashboard.overview || config.label,
+        expenses: expenses.title || config.label,
+        free: expenses.freeExpenses || config.label,
+        budget: expenses.budgetExpenses || config.label,
+      };
+
+      return translationMap[segment] || config.label;
+    }
+
     // Remove locale prefix and split path
     const pathWithoutLocale =
       pathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, '') || '/';
@@ -86,31 +110,7 @@ export function BreadcrumbNavigation({
     }
 
     return items;
-  }, [pathname, dashboard, showHome, maxItems]);
-
-  function getSegmentLabel(
-    segment: string,
-    segments: string[],
-    index: number
-  ): string {
-    // Handle dynamic segments first
-    if (isDynamicSegment(segment)) {
-      return getDynamicSegmentLabel(segment, segments.slice(0, index));
-    }
-
-    // Get configuration for the segment
-    const config = getBreadcrumbConfig(segment);
-
-    // Override with translations where available
-    const translationMap: Record<string, string> = {
-      dashboard: dashboard.overview || config.label,
-      expenses: expenses.title || config.label,
-      free: expenses.freeExpenses || config.label,
-      budget: expenses.budgetExpenses || config.label,
-    };
-
-    return translationMap[segment] || config.label;
-  }
+  }, [pathname, dashboard, expenses, showHome, maxItems]);
 
   if (breadcrumbs.length <= 1) {
     return null;

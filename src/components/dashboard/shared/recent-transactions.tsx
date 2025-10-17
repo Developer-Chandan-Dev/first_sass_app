@@ -62,7 +62,7 @@ export function RecentTransactions() {
   const { free, budget, loading, error } = useSelector(
     (state: RootState) => state.overview
   );
-  const { expenses, dashboard } = useDashboardTranslations();
+  const { expenses } = useDashboardTranslations();
   const { getLocalizedPath } = useLocale();
 
   const formatTimeAgo = useCallback(

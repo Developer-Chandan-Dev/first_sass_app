@@ -23,7 +23,7 @@ interface QuickAction {
 export function FloatingActionButton({ className }: FloatingActionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { getLocalizedPath } = useLocale();
-  const { dashboard, expenses } = useDashboardTranslations();
+  const { dashboard } = useDashboardTranslations();
 
   const quickActions: QuickAction[] = [
     {

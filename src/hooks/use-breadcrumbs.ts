@@ -23,58 +23,12 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
   const { dashboard, expenses } = useDashboardTranslations();
 
   const breadcrumbs = useMemo(() => {
-    // Remove locale prefix and split path
-    const pathWithoutLocale =
-      pathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, '') || '/';
-    const segments = pathWithoutLocale.split('/').filter(Boolean);
-
-    const items: BreadcrumbItem[] = [];
-
-    // Add home if requested
-    if (showHome) {
-      items.push({
-        label: dashboard.overview || 'Home',
-        href: '/',
-        isActive: segments.length === 0,
-      });
-    }
-
-    // Build breadcrumb items from path segments
-    let currentPath = '';
-    segments.forEach((segment, index) => {
-      currentPath += `/${segment}`;
-      const isLast = index === segments.length - 1;
-
-      // Get localized label for segment
-      const label = getSegmentLabel(segment, segments, index, customLabels);
-
-      items.push({
-        label,
-        href: currentPath,
-        isActive: isLast,
-      });
-    });
-
-    // Limit items if maxItems is specified
-    if (maxItems && items.length > maxItems) {
-      const firstItem = items[0];
-      const lastItems = items.slice(-maxItems + 1);
-      return [
-        firstItem,
-        { label: '...', href: '', isActive: false },
-        ...lastItems,
-      ];
-    }
-
-    return items;
-  }, [pathname, dashboard, expenses, showHome, maxItems, customLabels]);
-
-  function getSegmentLabel(
-    segment: string,
-    segments: string[],
-    index: number,
-    customLabels: Record<string, string>
-  ): string {
+    function getSegmentLabel(
+      segment: string,
+      segments: string[],
+      index: number,
+      customLabels: Record<string, string>
+    ): string {
     // Check custom labels first
     if (customLabels[segment]) {
       return customLabels[segment];
@@ -125,10 +79,56 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
       return 'Edit';
     }
 
-    return (
-      segmentMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
-    );
-  }
+      return (
+        segmentMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
+      );
+    }
+
+    // Remove locale prefix and split path
+    const pathWithoutLocale =
+      pathname.replace(/^\/[a-z]{2}(-[A-Z]{2})?/, '') || '/';
+    const segments = pathWithoutLocale.split('/').filter(Boolean);
+
+    const items: BreadcrumbItem[] = [];
+
+    // Add home if requested
+    if (showHome) {
+      items.push({
+        label: dashboard.overview || 'Home',
+        href: '/',
+        isActive: segments.length === 0,
+      });
+    }
+
+    // Build breadcrumb items from path segments
+    let currentPath = '';
+    segments.forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      const isLast = index === segments.length - 1;
+
+      // Get localized label for segment
+      const label = getSegmentLabel(segment, segments, index, customLabels);
+
+      items.push({
+        label,
+        href: currentPath,
+        isActive: isLast,
+      });
+    });
+
+    // Limit items if maxItems is specified
+    if (maxItems && items.length > maxItems) {
+      const firstItem = items[0];
+      const lastItems = items.slice(-maxItems + 1);
+      return [
+        firstItem,
+        { label: '...', href: '', isActive: false },
+        ...lastItems,
+      ];
+    }
+
+    return items;
+  }, [pathname, dashboard, expenses, showHome, maxItems, customLabels]);
 
   return {
     breadcrumbs,

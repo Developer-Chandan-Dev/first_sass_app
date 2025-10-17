@@ -1,24 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Target, DollarSign, Wallet, BarChart3, Plus, Eye } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useAppSelector } from '@/lib/redux/hooks';
 import { useDashboardTranslations, formatCurrency } from '@/hooks/i18n';
 import { useLocale } from 'next-intl';
 import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { UniversalStatCard } from '../shared/universal-stat-card';
 
 export function BudgetStats() {
-  const dispatch = useAppDispatch();
   const { budget, loading } = useAppSelector((state) => state.overview);
   const { expenses, dashboard } = useDashboardTranslations();
   const locale = useLocale();
   const { getLocalizedPath } = useLocaleContext();
 
-  useEffect(() => {
-    dispatch(refreshStats('budget'));
-  }, [dispatch]);
+  // Removed unnecessary API call - data comes from parent component
 
   const remaining = budget.totalBudget - budget.totalSpent;
   const budgetUsagePercent =

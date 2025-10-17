@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import {
   DollarSign,
   Wallet,
@@ -9,23 +8,18 @@ import {
   Eye,
   TrendingUp,
 } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useAppSelector } from '@/lib/redux/hooks';
 import { useDashboardTranslations, formatCurrency } from '@/hooks/i18n';
 import { useLocale } from 'next-intl';
 import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { UniversalStatCard } from '../shared/universal-stat-card';
 
 export function FreeStats() {
-  const dispatch = useAppDispatch();
+
   const { free, loading } = useAppSelector((state) => state.overview);
   const { dashboard } = useDashboardTranslations();
   const locale = useLocale();
   const { getLocalizedPath } = useLocaleContext();
-
-  useEffect(() => {
-    dispatch(refreshStats('free'));
-  }, [dispatch]);
 
   const avgExpenseAmount =
     free.totalExpenses > 0 ? free.totalSpent / free.totalExpenses : 0;

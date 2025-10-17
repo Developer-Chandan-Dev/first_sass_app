@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useAppSelector } from '@/lib/redux/hooks';
 
 const categoryIcons: { [key: string]: string } = {
   'Food & Dining': '🍽️',
@@ -24,14 +22,11 @@ interface RecentActivityProps {
 }
 
 export function RecentActivity({ expenseType = 'free' }: RecentActivityProps) {
-  const dispatch = useAppDispatch();
   const { free, budget, loading } = useAppSelector((state) => state.overview);
 
   const expenses = expenseType === 'free' ? free.expenses : budget.expenses;
 
-  useEffect(() => {
-    dispatch(refreshStats(expenseType));
-  }, [dispatch, expenseType]);
+  // Removed unnecessary API call - data comes from parent component
 
   const getTimeAgo = (dateString: string) => {
     const now = new Date();

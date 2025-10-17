@@ -10,7 +10,6 @@ export const store = configureStore({
     expenses: expenseReducer,
     budgets: budgetReducer,
     incomes: incomeReducer,
-    stats: overviewReducer,
   },
 });
 

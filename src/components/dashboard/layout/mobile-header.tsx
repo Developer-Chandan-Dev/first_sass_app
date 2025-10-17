@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Menu, ArrowLeft } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useDashboardTranslations } from '@/hooks/i18n';
+
 import { cn } from '@/lib/utils';
 
 interface MobileHeaderProps {
@@ -21,7 +21,6 @@ export function MobileHeader({
 }: MobileHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { dashboard } = useDashboardTranslations();
 
   const handleBack = () => {
     if (

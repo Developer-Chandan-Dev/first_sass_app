@@ -20,6 +20,7 @@ interface FreeStats {
   monthlyChange: number;
   expenseChange: number;
   expenses: ExpenseDocument[];
+  lastFetch?: number;
 }
 
 interface BudgetStats {
@@ -32,6 +33,7 @@ interface BudgetStats {
   monthlyChange: number;
   expenseChange: number;
   expenses: ExpenseDocument[];
+  lastFetch?: number;
 }
 
 interface StatsState {
@@ -68,28 +70,56 @@ const initialState: StatsState = {
   error: null,
 };
 
+// Request deduplication cache
+const pendingRequests = new Map<string, Promise<{ type: 'free' | 'budget'; stats: Partial<FreeStats | BudgetStats>; expenses: ExpenseDocument[] }>>();
+
 export const refreshStats = createAsyncThunk(
   'stats/refreshStats',
-  async (expenseType: 'free' | 'budget', { rejectWithValue }) => {
-    try {
-      const response = await fetch(
-        `/api/expenses/dashboard?type=${expenseType}`
-      );
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.error || `HTTP ${response.status}: Failed to fetch stats`
-        );
-      }
-      const data = await response.json();
+  async (expenseType: 'free' | 'budget', { rejectWithValue, getState }) => {
+    const state = getState() as { overview: StatsState };
+    const requestKey = `stats-${expenseType}`;
+    
+    // Check if request is already pending
+    if (pendingRequests.has(requestKey)) {
+      return pendingRequests.get(requestKey);
+    }
+    
+    // Check if data is fresh (less than 30 seconds old)
+    const lastFetch = state.overview[expenseType].lastFetch;
+    if (lastFetch && Date.now() - lastFetch < 30000) {
       return {
         type: expenseType,
-        stats: data.stats || {},
-        expenses: data.expenses || [],
+        stats: state.overview[expenseType],
+        expenses: state.overview[expenseType].expenses,
+        cached: true
       };
+    }
+    
+    try {
+      const requestPromise = fetch(`/api/expenses/dashboard?type=${expenseType}`)
+        .then(async (response) => {
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(
+              errorData.error || `HTTP ${response.status}: Failed to fetch stats`
+            );
+          }
+          return response.json();
+        })
+        .then((data) => ({
+          type: expenseType,
+          stats: { ...data.stats, lastFetch: Date.now() },
+          expenses: data.expenses || [],
+        }))
+        .finally(() => {
+          pendingRequests.delete(requestKey);
+        });
+      
+      pendingRequests.set(requestKey, requestPromise);
+      return await requestPromise;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Failed to fetch stats';
+      pendingRequests.delete(requestKey);
+      const message = error instanceof Error ? error.message : 'Failed to fetch stats';
       return rejectWithValue(message);
     }
   }
@@ -256,8 +286,14 @@ const statsSlice = createSlice({
       .addCase(refreshStats.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        const { type, stats, expenses } = action.payload;
-        state[type] = { ...state[type], ...stats, expenses };
+        if (action.payload) {
+          const { type, stats, expenses } = action.payload;
+          if (type === 'free') {
+            state.free = { ...state.free, ...stats, expenses };
+          } else {
+            state.budget = { ...state.budget, ...stats, expenses };
+          }
+        }
       })
       .addCase(refreshStats.rejected, (state, action) => {
         state.loading = false;

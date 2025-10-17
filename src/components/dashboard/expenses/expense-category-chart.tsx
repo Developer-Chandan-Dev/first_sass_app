@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import {
   PieChart,
@@ -10,8 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
-import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useAppSelector } from '@/lib/redux/hooks';
 
 interface CategoryData {
   name: string;
@@ -38,14 +36,10 @@ export function ExpenseCategoryChart({
   expenseType = 'free',
 }: ExpenseCategoryChartProps) {
   const { theme } = useTheme();
-  const dispatch = useAppDispatch();
+
   const { free, budget, loading } = useAppSelector((state) => state.overview);
 
   const isDark = theme === 'dark';
-
-  useEffect(() => {
-    dispatch(refreshStats(expenseType));
-  }, [dispatch, expenseType]);
 
   const categoryBreakdown =
     expenseType === 'free' ? free.categoryBreakdown : budget.categoryBreakdown;

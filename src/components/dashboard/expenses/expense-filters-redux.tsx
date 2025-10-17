@@ -26,7 +26,6 @@ interface ExpenseFiltersProps {
 }
 
 export function ExpenseFilters({
-  categories = [],
   expenseType = 'free',
   budgets = [],
 }: ExpenseFiltersProps) {
