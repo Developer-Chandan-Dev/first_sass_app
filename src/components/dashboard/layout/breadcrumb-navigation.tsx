@@ -47,10 +47,10 @@ export function BreadcrumbNavigation({
       segments: string[],
       index: number
     ): string {
-    // Handle dynamic segments first
-    if (isDynamicSegment(segment)) {
-      return getDynamicSegmentLabel(segment, segments.slice(0, index));
-    }
+      // Handle dynamic segments first
+      if (isDynamicSegment(segment)) {
+        return getDynamicSegmentLabel(segment, segments.slice(0, index));
+      }
 
       // Get configuration for the segment
       const config = getBreadcrumbConfig(segment);

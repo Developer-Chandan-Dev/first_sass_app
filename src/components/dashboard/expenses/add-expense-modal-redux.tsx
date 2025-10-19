@@ -131,14 +131,14 @@ export function AddExpenseModal({
       try {
         const [incomesRes, budgetsRes] = await Promise.all([
           fetch('/api/incomes/connected'),
-          fetch('/api/expenses/budget?active=true')
+          fetch('/api/expenses/budget?active=true'),
         ]);
-        
+
         if (incomesRes.ok) {
           const incomes = await incomesRes.json();
           setConnectedIncomes(Array.isArray(incomes) ? incomes : []);
         }
-        
+
         if (budgetsRes.ok) {
           const budgets = await budgetsRes.json();
           setAvailableBudgets(Array.isArray(budgets) ? budgets : []);
@@ -335,9 +335,7 @@ export function AddExpenseModal({
 
           {expenseType === 'budget' && (
             <div>
-              <Label className="text-sm">
-                Select Budget
-              </Label>
+              <Label className="text-sm">Select Budget</Label>
               <Select onValueChange={(value) => setValue('budgetId', value)}>
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Choose budget to deduct from" />
@@ -345,7 +343,8 @@ export function AddExpenseModal({
                 <SelectContent>
                   {availableBudgets.map((budget) => (
                     <SelectItem key={budget._id} value={budget._id}>
-                      {budget.name} - ₹{budget.remaining?.toLocaleString() || 0} remaining
+                      {budget.name} - ₹{budget.remaining?.toLocaleString() || 0}{' '}
+                      remaining
                     </SelectItem>
                   ))}
                 </SelectContent>

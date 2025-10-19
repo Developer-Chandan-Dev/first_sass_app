@@ -14,33 +14,44 @@ interface BudgetStatusManagerProps {
   onStatusChange: (budgetId: string, status: Budget['status']) => void;
 }
 
-export function BudgetStatusManager({ budgets, onStatusChange }: BudgetStatusManagerProps) {
+export function BudgetStatusManager({
+  budgets,
+  onStatusChange,
+}: BudgetStatusManagerProps) {
   const getBudgetsByStatus = (status: Budget['status']) => {
-    return budgets.filter(b => b.status === status);
+    return budgets.filter((b) => b.status === status);
   };
 
   const getStatusIcon = (status: Budget['status']) => {
     switch (status) {
-      case 'running': return <Clock className="h-4 w-4" />;
-      case 'completed': return <CheckCircle className="h-4 w-4" />;
-      case 'paused': return <Pause className="h-4 w-4" />;
-      case 'expired': return <Archive className="h-4 w-4" />;
+      case 'running':
+        return <Clock className="h-4 w-4" />;
+      case 'completed':
+        return <CheckCircle className="h-4 w-4" />;
+      case 'paused':
+        return <Pause className="h-4 w-4" />;
+      case 'expired':
+        return <Archive className="h-4 w-4" />;
     }
   };
 
   const getStatusColor = (status: Budget['status']) => {
     switch (status) {
-      case 'running': return 'default';
-      case 'completed': return 'default';
-      case 'paused': return 'secondary';
-      case 'expired': return 'destructive';
+      case 'running':
+        return 'default';
+      case 'completed':
+        return 'default';
+      case 'paused':
+        return 'secondary';
+      case 'expired':
+        return 'destructive';
     }
   };
 
   const BudgetCard = ({ budget }: { budget: Budget }) => {
     const savings = Math.max(0, budget.remaining);
     const isOverBudget = budget.percentage > 100;
-    
+
     return (
       <div className="border rounded-lg p-3 space-y-3">
         <div className="flex justify-between items-start">
@@ -93,7 +104,10 @@ export function BudgetStatusManager({ budgets, onStatusChange }: BudgetStatusMan
             <span>{formatCurrency(budget.spent)} spent</span>
             <span>{formatCurrency(budget.amount)} budget</span>
           </div>
-          <Progress value={Math.min(budget.percentage, 100)} className="h-1.5" />
+          <Progress
+            value={Math.min(budget.percentage, 100)}
+            className="h-1.5"
+          />
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>{budget.daysLeft || 0} days left</span>
             <span>{budget.percentage.toFixed(0)}% used</span>
@@ -142,38 +156,46 @@ export function BudgetStatusManager({ budgets, onStatusChange }: BudgetStatusMan
           </TabsList>
 
           <TabsContent value="running" className="space-y-3">
-            {getBudgetsByStatus('running').map(budget => (
+            {getBudgetsByStatus('running').map((budget) => (
               <BudgetCard key={budget._id} budget={budget} />
             ))}
             {getBudgetsByStatus('running').length === 0 && (
-              <p className="text-center text-muted-foreground py-4">No running budgets</p>
+              <p className="text-center text-muted-foreground py-4">
+                No running budgets
+              </p>
             )}
           </TabsContent>
 
           <TabsContent value="completed" className="space-y-3">
-            {getBudgetsByStatus('completed').map(budget => (
+            {getBudgetsByStatus('completed').map((budget) => (
               <BudgetCard key={budget._id} budget={budget} />
             ))}
             {getBudgetsByStatus('completed').length === 0 && (
-              <p className="text-center text-muted-foreground py-4">No completed budgets</p>
+              <p className="text-center text-muted-foreground py-4">
+                No completed budgets
+              </p>
             )}
           </TabsContent>
 
           <TabsContent value="paused" className="space-y-3">
-            {getBudgetsByStatus('paused').map(budget => (
+            {getBudgetsByStatus('paused').map((budget) => (
               <BudgetCard key={budget._id} budget={budget} />
             ))}
             {getBudgetsByStatus('paused').length === 0 && (
-              <p className="text-center text-muted-foreground py-4">No paused budgets</p>
+              <p className="text-center text-muted-foreground py-4">
+                No paused budgets
+              </p>
             )}
           </TabsContent>
 
           <TabsContent value="expired" className="space-y-3">
-            {getBudgetsByStatus('expired').map(budget => (
+            {getBudgetsByStatus('expired').map((budget) => (
               <BudgetCard key={budget._id} budget={budget} />
             ))}
             {getBudgetsByStatus('expired').length === 0 && (
-              <p className="text-center text-muted-foreground py-4">No expired budgets</p>
+              <p className="text-center text-muted-foreground py-4">
+                No expired budgets
+              </p>
             )}
           </TabsContent>
         </Tabs>

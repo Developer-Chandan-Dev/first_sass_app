@@ -111,7 +111,7 @@ export function useBaseTranslations() {
         warning: safeTCommon('warning', 'Warning'),
         info: safeTCommon('info', 'Info'),
         export: safeTCommon('export', 'Export'),
-        clear: safeTCommon('clear', 'Clear')
+        clear: safeTCommon('clear', 'Clear'),
       },
       errors: {
         generic: safeTErrors(

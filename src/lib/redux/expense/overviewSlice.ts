@@ -71,19 +71,26 @@ const initialState: StatsState = {
 };
 
 // Request deduplication cache
-const pendingRequests = new Map<string, Promise<{ type: 'free' | 'budget'; stats: Partial<FreeStats | BudgetStats>; expenses: ExpenseDocument[] }>>();
+const pendingRequests = new Map<
+  string,
+  Promise<{
+    type: 'free' | 'budget';
+    stats: Partial<FreeStats | BudgetStats>;
+    expenses: ExpenseDocument[];
+  }>
+>();
 
 export const refreshStats = createAsyncThunk(
   'stats/refreshStats',
   async (expenseType: 'free' | 'budget', { rejectWithValue, getState }) => {
     const state = getState() as { overview: StatsState };
     const requestKey = `stats-${expenseType}`;
-    
+
     // Check if request is already pending
     if (pendingRequests.has(requestKey)) {
       return pendingRequests.get(requestKey);
     }
-    
+
     // Check if data is fresh (less than 30 seconds old)
     const lastFetch = state.overview[expenseType].lastFetch;
     if (lastFetch && Date.now() - lastFetch < 30000) {
@@ -91,17 +98,20 @@ export const refreshStats = createAsyncThunk(
         type: expenseType,
         stats: state.overview[expenseType],
         expenses: state.overview[expenseType].expenses,
-        cached: true
+        cached: true,
       };
     }
-    
+
     try {
-      const requestPromise = fetch(`/api/expenses/dashboard?type=${expenseType}`)
+      const requestPromise = fetch(
+        `/api/expenses/dashboard?type=${expenseType}`
+      )
         .then(async (response) => {
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(
-              errorData.error || `HTTP ${response.status}: Failed to fetch stats`
+              errorData.error ||
+                `HTTP ${response.status}: Failed to fetch stats`
             );
           }
           return response.json();
@@ -114,12 +124,13 @@ export const refreshStats = createAsyncThunk(
         .finally(() => {
           pendingRequests.delete(requestKey);
         });
-      
+
       pendingRequests.set(requestKey, requestPromise);
       return await requestPromise;
     } catch (error) {
       pendingRequests.delete(requestKey);
-      const message = error instanceof Error ? error.message : 'Failed to fetch stats';
+      const message =
+        error instanceof Error ? error.message : 'Failed to fetch stats';
       return rejectWithValue(message);
     }
   }

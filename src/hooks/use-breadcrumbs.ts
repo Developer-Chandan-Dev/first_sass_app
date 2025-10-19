@@ -29,58 +29,59 @@ export function useBreadcrumbs(options: UseBreadcrumbsOptions = {}) {
       index: number,
       customLabels: Record<string, string>
     ): string {
-    // Check custom labels first
-    if (customLabels[segment]) {
-      return customLabels[segment];
-    }
+      // Check custom labels first
+      if (customLabels[segment]) {
+        return customLabels[segment];
+      }
 
-    // Handle dynamic segments and provide localized labels
-    const segmentMap: Record<string, string> = {
-      dashboard: dashboard.overview || 'Dashboard',
-      expenses: expenses.title || 'Expenses',
-      income: 'Income',
-      budgets: 'Budgets',
-      categories: 'Categories',
-      analytics: 'Analytics',
-      settings: 'Settings',
-      profile: 'Profile',
-      free: expenses.freeExpenses || 'Free Expenses',
-      budget: expenses.budgetExpenses || 'Budget Expenses',
-      reports: 'Reports',
-      export: 'Export',
-      import: 'Import',
-      add: 'Add',
-      edit: 'Edit',
-      view: 'View',
-      new: 'New',
-    };
+      // Handle dynamic segments and provide localized labels
+      const segmentMap: Record<string, string> = {
+        dashboard: dashboard.overview || 'Dashboard',
+        expenses: expenses.title || 'Expenses',
+        income: 'Income',
+        budgets: 'Budgets',
+        categories: 'Categories',
+        analytics: 'Analytics',
+        settings: 'Settings',
+        profile: 'Profile',
+        free: expenses.freeExpenses || 'Free Expenses',
+        budget: expenses.budgetExpenses || 'Budget Expenses',
+        reports: 'Reports',
+        export: 'Export',
+        import: 'Import',
+        add: 'Add',
+        edit: 'Edit',
+        view: 'View',
+        new: 'New',
+      };
 
-    // Check if it's a dynamic ID (UUID pattern or number)
-    if (
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-        segment
-      ) ||
-      /^\d+$/.test(segment)
-    ) {
-      // Get context from previous segment
-      const prevSegment = segments[index - 1];
-      if (prevSegment === 'expenses') {
-        return 'Edit Expense';
+      // Check if it's a dynamic ID (UUID pattern or number)
+      if (
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          segment
+        ) ||
+        /^\d+$/.test(segment)
+      ) {
+        // Get context from previous segment
+        const prevSegment = segments[index - 1];
+        if (prevSegment === 'expenses') {
+          return 'Edit Expense';
+        }
+        if (prevSegment === 'income') {
+          return 'Edit Income';
+        }
+        if (prevSegment === 'budgets') {
+          return 'Edit Budget';
+        }
+        if (prevSegment === 'categories') {
+          return 'Edit Category';
+        }
+        return 'Edit';
       }
-      if (prevSegment === 'income') {
-        return 'Edit Income';
-      }
-      if (prevSegment === 'budgets') {
-        return 'Edit Budget';
-      }
-      if (prevSegment === 'categories') {
-        return 'Edit Category';
-      }
-      return 'Edit';
-    }
 
       return (
-        segmentMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1)
+        segmentMap[segment] ||
+        segment.charAt(0).toUpperCase() + segment.slice(1)
       );
     }
 

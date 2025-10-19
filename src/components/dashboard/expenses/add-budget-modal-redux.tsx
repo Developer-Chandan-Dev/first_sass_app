@@ -92,6 +92,7 @@ export function AddBudgetModal({
     onSuccess: () => {
       reset();
       onOpenChange(false);
+      // Call the callback to refresh budgets
       onBudgetSaved?.();
     },
     successMessage: isEditing ? t.success.updated : t.success.created,
@@ -186,21 +187,36 @@ export function AddBudgetModal({
             savings: 0,
             daysLeft: 0,
           };
-          const res = await dispatch(addBudget(budgetData)).unwrap();
 
-          // Update UI after successful API response
-          dispatch(addBudgetOptimistic(res));
+          // Create optimistic budget for immediate UI update
+          const optimisticBudget = {
+            _id: `temp-${Date.now()}`,
+            userId: 'temp-user',
+            ...budgetData,
+            amount: Number(budgetData.amount),
+            spent: 0,
+            remaining: Number(budgetData.amount),
+            percentage: 0,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
 
-          // Update overview stats after successful API response
+          // Add optimistic update first for immediate UI feedback
+          dispatch(addBudgetOptimistic(optimisticBudget));
+
+          // Update overview stats optimistically
           dispatch(
             updateStatsOptimistic({
               type: 'budget',
-              amount: Number(res.amount),
-              category: res.category || 'Other',
+              amount: Number(budgetData.amount),
+              category: budgetData.category || 'Other',
               operation: 'add',
               isExpense: false,
             })
           );
+
+          // Make API call and get real budget data
+          const res = await dispatch(addBudget(budgetData)).unwrap();
 
           return res;
         }

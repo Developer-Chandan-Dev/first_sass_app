@@ -23,11 +23,11 @@ interface BudgetExceededActionsProps {
   onCreateNewBudget: () => void;
 }
 
-export function BudgetExceededActions({ 
-  exceededBudgets, 
-  onIncreaseBudget, 
+export function BudgetExceededActions({
+  exceededBudgets,
+  onIncreaseBudget,
   onReduceExpenses,
-  onCreateNewBudget 
+  onCreateNewBudget,
 }: BudgetExceededActionsProps) {
   if (exceededBudgets.length === 0) {
     return null;
@@ -46,19 +46,24 @@ export function BudgetExceededActions({
       </CardHeader>
       <CardContent className="space-y-3">
         {exceededBudgets.map((budget) => (
-          <div key={budget._id} className="p-3 border rounded-lg bg-red-50 dark:bg-red-950/20">
+          <div
+            key={budget._id}
+            className="p-3 border rounded-lg bg-red-50 dark:bg-red-950/20"
+          >
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h4 className="font-medium text-sm">{budget.name}</h4>
                 {budget.category && (
-                  <p className="text-xs text-muted-foreground">{budget.category}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {budget.category}
+                  </p>
                 )}
               </div>
               <Badge variant="destructive" className="text-xs">
                 {budget.percentage.toFixed(0)}% used
               </Badge>
             </div>
-            
+
             <div className="text-xs text-muted-foreground mb-3">
               <span className="text-red-600 font-medium">
                 {formatCurrency(budget.spent)} spent
@@ -66,13 +71,14 @@ export function BudgetExceededActions({
               {' of '}
               <span>{formatCurrency(budget.amount)} budget</span>
               <span className="text-red-600 font-medium">
-                {' (+'}{formatCurrency(budget.spent - budget.amount)} over)
+                {' (+'}
+                {formatCurrency(budget.spent - budget.amount)} over)
               </span>
             </div>
 
             <div className="flex flex-wrap gap-2">
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 variant="outline"
                 onClick={() => onIncreaseBudget(budget._id)}
                 className="text-xs h-7"
@@ -80,8 +86,8 @@ export function BudgetExceededActions({
                 <Edit className="h-3 w-3 mr-1" />
                 Increase Budget
               </Button>
-              <Button 
-                size="sm" 
+              <Button
+                size="sm"
                 variant="outline"
                 onClick={() => onReduceExpenses(budget._id)}
                 className="text-xs h-7"
@@ -92,10 +98,10 @@ export function BudgetExceededActions({
             </div>
           </div>
         ))}
-        
+
         <div className="pt-2 border-t">
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             onClick={onCreateNewBudget}
             className="w-full text-xs h-8"
           >

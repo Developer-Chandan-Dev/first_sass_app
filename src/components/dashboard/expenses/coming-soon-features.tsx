@@ -2,12 +2,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BarChart3, 
-  FileText,
-  Users,
-  Calendar
-} from 'lucide-react';
+import { BarChart3, FileText, Users, Calendar } from 'lucide-react';
 
 export function ComingSoonFeatures() {
   const features = [
@@ -34,7 +29,7 @@ export function ComingSoonFeatures() {
       title: 'Advanced Analytics',
       icon: BarChart3,
       description: 'AI-powered insights',
-    }
+    },
   ];
 
   return (
@@ -53,7 +48,9 @@ export function ComingSoonFeatures() {
                   <Icon className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-xs truncate">{feature.title}</h4>
+                  <h4 className="font-medium text-xs truncate">
+                    {feature.title}
+                  </h4>
                   <p className="text-xs text-muted-foreground truncate">
                     {feature.description}
                   </p>

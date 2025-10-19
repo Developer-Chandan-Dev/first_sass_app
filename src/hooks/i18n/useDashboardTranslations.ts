@@ -332,21 +332,169 @@ export function useDashboardTranslations() {
           monthly: safeTExpenses('frequencies.monthly', 'Monthly'),
           yearly: safeTExpenses('frequencies.yearly', 'Yearly'),
         },
-        // Missing keys for budget expenses
+        // Budget-related keys
         remaining: safeTExpenses('remaining', 'Remaining'),
-        spent: safeTExpenses('spent', 'Spent'),
+        spent: safeTExpenses('spent', 'spent'),
         available: safeTExpenses('available', 'Available'),
         exceeded: safeTExpenses('exceeded', 'Exceeded'),
         totalBudget: safeTExpenses('totalBudget', 'Total Budget'),
-        activeBudgets: safeTExpenses('activeBudgets', 'Active Budgets'),
+        activeBudgets: safeTExpenses('activeBudgets', 'active budgets'),
         budgetSpent: safeTExpenses('budgetSpent', 'Budget Spent'),
-        budgetLeft: safeTExpenses('budgetLeft', 'Budget Left'),
+        budgetLeft: safeTExpenses('budgetLeft', 'budget left'),
         budgetExpensesCount: safeTExpenses(
           'budgetExpensesCount',
-          'Budget Expenses Count'
+          'Budget Expenses'
         ),
-        // Missing keys for table
+        budgetAlerts: safeTExpenses('budgetAlerts', 'Budget Alerts'),
+        overBy: safeTExpenses('overBy', 'Over by'),
+        fixBudget: safeTExpenses('fixBudget', 'Fix Budget'),
+        noActiveBudgets: safeTExpenses('noActiveBudgets', 'No active budgets'),
+        createBudget: safeTExpenses('createBudget', 'Create Budget'),
+        completedBudgets: safeTExpenses(
+          'completedBudgets',
+          'Completed Budgets'
+        ),
+        budgetAnalytics: safeTExpenses('budgetAnalytics', 'Budget Analytics'),
+        spendingRate: safeTExpenses('spendingRate', 'Spending Rate'),
+        ofTotalBudgetUsed: safeTExpenses(
+          'ofTotalBudgetUsed',
+          'of total budget used'
+        ),
+        savingsRate: safeTExpenses('savingsRate', 'Savings Rate'),
+        ofBudgetSaved: safeTExpenses('ofBudgetSaved', 'of budget saved'),
+        daysLeft: safeTExpenses('daysLeft', 'days left'),
+        used: safeTExpenses('used', 'used'),
+        pause: safeTExpenses('pause', 'Pause'),
+        complete: safeTExpenses('complete', 'Complete'),
+        quickStart: safeTExpenses('quickStart', 'Quick Start'),
+        createBudgetsFromTemplates: safeTExpenses(
+          'createBudgetsFromTemplates',
+          'Create budgets from templates'
+        ),
+        budgetManagement: safeTExpenses(
+          'budgetManagement',
+          'Budget Management'
+        ),
+        manageAllBudgetStatuses: safeTExpenses(
+          'manageAllBudgetStatuses',
+          'Manage all budget statuses'
+        ),
+        advancedAnalytics: safeTExpenses(
+          'advancedAnalytics',
+          'Advanced Analytics'
+        ),
+        detailedBudgetInsights: safeTExpenses(
+          'detailedBudgetInsights',
+          'Detailed budget insights'
+        ),
+        comingSoon: safeTExpenses('comingSoon', 'Coming Soon'),
+        upcomingFeatures: safeTExpenses(
+          'upcomingFeatures',
+          'Upcoming features'
+        ),
+        active: safeTExpenses('active', 'Active'),
+        budgetManager: {
+          title: safeTExpenses('budgetManager.title', 'Budget Manager'),
+          running: safeTExpenses('budgetManager.running', 'Running'),
+          completed: safeTExpenses('budgetManager.completed', 'Completed'),
+          paused: safeTExpenses('budgetManager.paused', 'Paused'),
+          expired: safeTExpenses('budgetManager.expired', 'Expired'),
+          resume: safeTExpenses('budgetManager.resume', 'Resume'),
+          saved: safeTExpenses('budgetManager.saved', 'Saved'),
+          noRunningBudgets: safeTExpenses(
+            'budgetManager.noRunningBudgets',
+            'No running budgets'
+          ),
+          noCompletedBudgets: safeTExpenses(
+            'budgetManager.noCompletedBudgets',
+            'No completed budgets'
+          ),
+          noPausedBudgets: safeTExpenses(
+            'budgetManager.noPausedBudgets',
+            'No paused budgets'
+          ),
+          noExpiredBudgets: safeTExpenses(
+            'budgetManager.noExpiredBudgets',
+            'No expired budgets'
+          ),
+          noBudgetsFound: safeTExpenses(
+            'budgetManager.noBudgetsFound',
+            'No budgets found'
+          ),
+        },
+        budgetTemplates: {
+          title: safeTExpenses('budgetTemplates.title', 'Budget Templates'),
+          description: safeTExpenses(
+            'budgetTemplates.description',
+            'Quick start with common budget categories'
+          ),
+          customize: safeTExpenses('budgetTemplates.customize', 'Customize'),
+          templates: {
+            groceries: {
+              name: safeTExpenses(
+                'budgetTemplates.templates.groceries.name',
+                'Groceries'
+              ),
+              description: safeTExpenses(
+                'budgetTemplates.templates.groceries.description',
+                'Monthly grocery shopping budget'
+              ),
+            },
+            transportation: {
+              name: safeTExpenses(
+                'budgetTemplates.templates.transportation.name',
+                'Transportation'
+              ),
+              description: safeTExpenses(
+                'budgetTemplates.templates.transportation.description',
+                'Fuel, public transport, parking'
+              ),
+            },
+            rentUtilities: {
+              name: safeTExpenses(
+                'budgetTemplates.templates.rentUtilities.name',
+                'Rent & Utilities'
+              ),
+              description: safeTExpenses(
+                'budgetTemplates.templates.rentUtilities.description',
+                'Monthly housing expenses'
+              ),
+            },
+            diningOut: {
+              name: safeTExpenses(
+                'budgetTemplates.templates.diningOut.name',
+                'Dining Out'
+              ),
+              description: safeTExpenses(
+                'budgetTemplates.templates.diningOut.description',
+                'Restaurants and takeout'
+              ),
+            },
+            entertainment: {
+              name: safeTExpenses(
+                'budgetTemplates.templates.entertainment.name',
+                'Entertainment'
+              ),
+              description: safeTExpenses(
+                'budgetTemplates.templates.entertainment.description',
+                'Movies, games, subscriptions'
+              ),
+            },
+            healthcare: {
+              name: safeTExpenses(
+                'budgetTemplates.templates.healthcare.name',
+                'Healthcare'
+              ),
+              description: safeTExpenses(
+                'budgetTemplates.templates.healthcare.description',
+                'Medical expenses and insurance'
+              ),
+            },
+          },
+        },
+        // Export and table keys
         exportAll: safeTExpenses('exportAll', 'Export All'),
+        exportSelected: safeTExpenses('exportSelected', 'Export Selected'),
         exportSelectedCSV: safeTExpenses(
           'exportSelectedCSV',
           'Export Selected CSV'
@@ -357,11 +505,48 @@ export function useDashboardTranslations() {
         ),
         exportAllCSV: safeTExpenses('exportAllCSV', 'Export All CSV'),
         exportAllPDF: safeTExpenses('exportAllPDF', 'Export All PDF'),
-        oneTime: safeTExpenses('oneTime', 'One Time'),
+        oneTime: safeTExpenses('oneTime', 'One-time'),
         showing: safeTExpenses('showing', 'Showing'),
         entries: safeTExpenses('entries', 'entries'),
         perPage: safeTExpenses('perPage', 'per page'),
         lastMonth: safeTExpenses('lastMonth', 'Last Month'),
+        date: safeTExpenses('date', 'Date'),
+        description: safeTExpenses('description', 'Description'),
+        amount: safeTExpenses('amount', 'Amount'),
+        edit: safeTExpenses('edit', 'Edit'),
+        delete: safeTExpenses('delete', 'Delete'),
+        of: safeTExpenses('of', 'of'),
+        noDataToExport: safeTExpenses('noDataToExport', 'No data to export'),
+        expensesExportedToCSV: safeTExpenses(
+          'expensesExportedToCSV',
+          'Expenses exported to CSV!'
+        ),
+        areYouSureDeleteExpense: safeTExpenses(
+          'areYouSureDeleteExpense',
+          'Are you sure you want to delete this expense?'
+        ),
+        areYouSureDeleteExpenses: safeTExpenses(
+          'areYouSureDeleteExpenses',
+          'Are you sure you want to delete these expenses?'
+        ),
+        confirmBulkDelete: (count: number) => {
+          try {
+            return tExpenses('confirmBulkDelete', { count });
+          } catch {
+            return `Are you sure you want to delete ${count} expenses?`;
+          }
+        },
+        expensesDeletedSuccessfully: safeTExpenses(
+          'expensesDeletedSuccessfully',
+          'Expenses deleted successfully!'
+        ),
+        failedToDeleteExpenses: safeTExpenses(
+          'failedToDeleteExpenses',
+          'Failed to delete expenses'
+        ),
+        updateError: safeTExpenses('updateError', 'Failed to update expense'),
+        updating: safeTExpenses('updating', 'Updating...'),
+        updateExpense: safeTExpenses('updateExpense', 'Update Expense'),
         categories: {
           food: safeTExpenses('categories.food', 'Food & Dining'),
           transport: safeTExpenses('categories.transport', 'Transportation'),
@@ -430,6 +615,18 @@ export function useDashboardTranslations() {
             amountGreaterThanZero: safeTExpenses(
               'form.validation.amountGreaterThanZero',
               'Amount must be greater than 0'
+            ),
+            pleaseEnterValidAmount: safeTExpenses(
+              'form.validation.pleaseEnterValidAmount',
+              'Please enter a valid amount'
+            ),
+            pleaseSelectCategory: safeTExpenses(
+              'form.validation.pleaseSelectCategory',
+              'Please select a category'
+            ),
+            pleaseEnterDescription: safeTExpenses(
+              'form.validation.pleaseEnterDescription',
+              'Please enter a description'
             ),
           },
         },
@@ -503,7 +700,10 @@ export function useDashboardTranslations() {
         updating: safeTIncome('updating', 'Updating...'),
         selectFrequency: safeTIncome('selectFrequency', 'Select frequency'),
         addError: safeTIncome('addError', 'Failed to add income'),
-        sourcePlaceholder: safeTIncome('sourcePlaceholder', 'e.g., Company Name, Client Name'),
+        sourcePlaceholder: safeTIncome(
+          'sourcePlaceholder',
+          'e.g., Company Name, Client Name'
+        ),
         frequencies: {
           daily: safeTIncome('frequencies.daily', 'Daily'),
           weekly: safeTIncome('frequencies.weekly', 'Weekly'),
@@ -552,8 +752,14 @@ export function useDashboardTranslations() {
             ),
           },
         },
-        exportSelectedCSV: safeTIncome('exportSelectedCSV', 'Export Selected CSV'),
-        exportSelectedPDF: safeTIncome('exportSelectedPDF', 'Export Selected PDF'),
+        exportSelectedCSV: safeTIncome(
+          'exportSelectedCSV',
+          'Export Selected CSV'
+        ),
+        exportSelectedPDF: safeTIncome(
+          'exportSelectedPDF',
+          'Export Selected PDF'
+        ),
         exportAll: safeTIncome('exportAll', 'Export All'),
         exportAllCSV: safeTIncome('exportAllCSV', 'Export All CSV'),
         exportAllPDF: safeTIncome('exportAllPDF', 'Export All PDF'),
@@ -567,7 +773,10 @@ export function useDashboardTranslations() {
         addRecurring: safeTIncome('addRecurring', 'Add Recurring'),
         weeklyIncome: safeTIncome('weeklyIncome', 'Weekly Income'),
         thisWeek: safeTIncome('thisWeek', 'This week'),
-        topIncomeCategory: safeTIncome('topIncomeCategory', 'Top Income Category'),
+        topIncomeCategory: safeTIncome(
+          'topIncomeCategory',
+          'Top Income Category'
+        ),
         ofTotalIncome: safeTIncome('ofTotalIncome', 'of total income'),
         noIncomeData: safeTIncome('noIncomeData', 'No income data available'),
         quickInsights: safeTIncome('quickInsights', 'Quick Insights'),
@@ -598,7 +807,7 @@ export function useDashboardTranslations() {
         sixMonthTrend: safeTIncome('sixMonthTrend', '6-Month Trend'),
         incomeSummary: safeTIncome('incomeSummary', 'Income Summary'),
         avgPerEntry: safeTIncome('avgPerEntry', 'Avg per Entry'),
-        topCategories: safeTIncome('topCategories', 'Top Categories')
+        topCategories: safeTIncome('topCategories', 'Top Categories'),
       },
 
       table: {

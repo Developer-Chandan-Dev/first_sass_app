@@ -35,7 +35,8 @@ export default function BudgetExpensesPage() {
 
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<BudgetTemplate | null>(null);
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<BudgetTemplate | null>(null);
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
   const { budgets } = useAppSelector((state) => state.budgets);
 
@@ -45,7 +46,8 @@ export default function BudgetExpensesPage() {
     } catch (error) {
       console.error('Auto-completion check failed:', error);
     }
-    dispatch(fetchBudgets());
+    // Force refresh budgets from API
+    await dispatch(fetchBudgets()).unwrap();
   }, [dispatch]);
 
   useEffect(() => {
@@ -107,13 +109,16 @@ export default function BudgetExpensesPage() {
               setEditingBudget(budget);
               setIsBudgetModalOpen(true);
             }, [])}
-            onStatusChange={useCallback((budgetId: string, status: Budget['status']) => {
-              fetch(`/api/expenses/budget/${budgetId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status })
-              }).then(() => refreshBudgets());
-            }, [refreshBudgets])}
+            onStatusChange={useCallback(
+              (budgetId: string, status: Budget['status']) => {
+                fetch(`/api/expenses/budget/${budgetId}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ status }),
+                }).then(() => refreshBudgets());
+              },
+              [refreshBudgets]
+            )}
             onCreateBudget={() => setIsBudgetModalOpen(true)}
           />
         </TabsContent>
@@ -126,13 +131,16 @@ export default function BudgetExpensesPage() {
               setEditingBudget(budget);
               setIsBudgetModalOpen(true);
             }, [])}
-            onStatusChange={useCallback((budgetId: string, status: Budget['status']) => {
-              fetch(`/api/expenses/budget/${budgetId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status })
-              }).then(() => refreshBudgets());
-            }, [refreshBudgets])}
+            onStatusChange={useCallback(
+              (budgetId: string, status: Budget['status']) => {
+                fetch(`/api/expenses/budget/${budgetId}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ status }),
+                }).then(() => refreshBudgets());
+              },
+              [refreshBudgets]
+            )}
             onSelectTemplate={useCallback((template: BudgetTemplate) => {
               setSelectedTemplate(template);
               setIsBudgetModalOpen(true);
@@ -158,24 +166,33 @@ export default function BudgetExpensesPage() {
 
       <AddBudgetExpenseModal
         open={isExpenseModalOpen}
-        onOpenChange={useCallback((open: boolean) => setIsExpenseModalOpen(open), [])}
+        onOpenChange={useCallback(
+          (open: boolean) => setIsExpenseModalOpen(open),
+          []
+        )}
         onExpenseAdded={useCallback(() => {
           refreshBudgets();
         }, [refreshBudgets])}
       />
-      
+
       <AddBudgetModal
         open={isBudgetModalOpen}
-        onOpenChange={useCallback((open: boolean) => {
-          setIsBudgetModalOpen(open);
-          if (!open) {
-            setSelectedTemplate(null);
-            setEditingBudget(null);
-          }
-        }, [])}
+        onOpenChange={useCallback(
+          (open: boolean) => {
+            setIsBudgetModalOpen(open);
+            if (!open) {
+              setSelectedTemplate(null);
+              setEditingBudget(null);
+              // Refresh budgets when modal closes after saving
+              refreshBudgets();
+            }
+          },
+          [refreshBudgets]
+        )}
         budget={editingBudget}
         selectedTemplate={selectedTemplate || undefined}
         onBudgetSaved={useCallback(() => {
+          // Force immediate refresh
           refreshBudgets();
         }, [refreshBudgets])}
       />

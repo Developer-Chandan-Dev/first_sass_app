@@ -7,6 +7,7 @@ import { Settings, Clock } from 'lucide-react';
 import { BudgetStatusManager } from './budget-status-manager';
 import { RunningBudgets } from './running-budgets';
 import { type Budget } from '@/lib/redux/expense/budgetSlice';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 interface BudgetManagementTabsProps {
   budgets: Budget[];
@@ -14,14 +15,17 @@ interface BudgetManagementTabsProps {
   onStatusChange: (budgetId: string, status: Budget['status']) => void;
 }
 
-export function BudgetManagementTabs({ 
-  budgets, 
-  onEditBudget, 
-  onStatusChange 
+export function BudgetManagementTabs({
+  budgets,
+  onEditBudget,
+  onStatusChange,
 }: BudgetManagementTabsProps) {
+  const { expenses } = useDashboardTranslations();
   const [activeTab, setActiveTab] = useState('status');
-  
-  const runningBudgetsCount = budgets.filter(b => b.status === 'running').length;
+
+  const runningBudgetsCount = budgets.filter(
+    (b) => b.status === 'running'
+  ).length;
 
   return (
     <div className="flex flex-col lg:flex-row gap-6">
@@ -36,7 +40,7 @@ export function BudgetManagementTabs({
                 onClick={() => setActiveTab('status')}
               >
                 <Settings className="h-4 w-4 mr-2" />
-                Budget Status Manager
+                {expenses.budgetStatusManager || 'Budget Status Manager'}
               </Button>
               <Button
                 variant={activeTab === 'running' ? 'default' : 'ghost'}
@@ -44,7 +48,8 @@ export function BudgetManagementTabs({
                 onClick={() => setActiveTab('running')}
               >
                 <Clock className="h-4 w-4 mr-2" />
-                Running Budgets ({runningBudgetsCount})
+                {expenses.runningBudgets || 'Running Budgets'} (
+                {runningBudgetsCount})
               </Button>
             </div>
           </CardContent>
@@ -54,21 +59,26 @@ export function BudgetManagementTabs({
       {/* Right Content Area */}
       <div className="flex-1">
         {activeTab === 'status' && (
-          <BudgetStatusManager 
+          <BudgetStatusManager
             budgets={budgets}
             onStatusChange={onStatusChange}
           />
         )}
         {activeTab === 'running' && (
-          <RunningBudgets 
+          <RunningBudgets
             budgets={budgets}
             onToggleBudget={(budgetId, action) => {
-              const status = action === 'pause' ? 'paused' : action === 'complete' ? 'completed' : 'running';
+              const status =
+                action === 'pause'
+                  ? 'paused'
+                  : action === 'complete'
+                    ? 'completed'
+                    : 'running';
               onStatusChange(budgetId, status);
             }}
             onEditBudget={onEditBudget}
             onDeleteBudget={(budgetId) => {
-              if (confirm('Delete this budget?')) {
+              if (confirm(expenses.deleteThisBudget || 'Delete this budget?')) {
                 fetch(`/api/expenses/budget/${budgetId}`, { method: 'DELETE' });
               }
             }}

@@ -14,13 +14,13 @@ export async function POST() {
     await connectDB();
 
     const now = new Date();
-    
+
     // Find all running budgets that have passed their end date
     const expiredBudgets = await Budget.find({
       userId,
       status: 'running',
       endDate: { $lte: now },
-      isActive: true
+      isActive: true,
     });
 
     const completedBudgets = [];
@@ -49,7 +49,7 @@ export async function POST() {
       // Update budget status to completed
       await Budget.findByIdAndUpdate(budget._id, {
         status: 'completed',
-        updatedAt: now
+        updatedAt: now,
       });
 
       completedBudgets.push({
@@ -60,16 +60,15 @@ export async function POST() {
         remaining,
         savings: remaining,
         endDate: budget.endDate,
-        category: budget.category
+        category: budget.category,
       });
     }
 
     return NextResponse.json({
       success: true,
       message: `${completedBudgets.length} budgets auto-completed`,
-      completedBudgets
+      completedBudgets,
     });
-
   } catch (error) {
     console.error('Error auto-completing budgets:', error);
     return NextResponse.json(

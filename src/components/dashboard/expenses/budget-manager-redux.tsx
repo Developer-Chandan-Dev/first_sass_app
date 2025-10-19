@@ -210,7 +210,6 @@ export function BudgetManager({ onBudgetChange }: BudgetManagerProps = {}) {
           if (!open) setEditingBudget(null);
         }}
         budget={editingBudget}
-
         onBudgetSaved={() => {
           onBudgetChange?.();
         }}

@@ -129,44 +129,44 @@
     "currentPlan": "Current Plan",
     "upgrade": "Upgrade",
     "downgrade": "Downgrade",
-     "plans": {
-        "free": {
-          "name": "Free",
-          "features": [
-            "Basic expense tracking",
-            "5 categories",
-            "Mobile app",
-            "Email support"
-          ]
-        },
-        "pro": {
-          "name": "Pro",
-          "features": [
-            "Unlimited tracking",
-            "AI insights",
-            "Advanced analytics",
-            "Priority support"
-          ]
-        },
-        "premium": {
-          "name": "Premium",
-          "features": [
-            "Team collaboration",
-            "Custom categories",
-            "API access",
-            "White-label options"
-          ]
-        },
-        "ultra": {
-          "name": "Ultra",
-          "features": [
-            "Enterprise features",
-            "Dedicated support",
-            "Custom integrations",
-            "SLA guarantee"
-          ]
-        }
+    "plans": {
+      "free": {
+        "name": "Free",
+        "features": [
+          "Basic expense tracking",
+          "5 categories",
+          "Mobile app",
+          "Email support"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "features": [
+          "Unlimited tracking",
+          "AI insights",
+          "Advanced analytics",
+          "Priority support"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "features": [
+          "Team collaboration",
+          "Custom categories",
+          "API access",
+          "White-label options"
+        ]
+      },
+      "ultra": {
+        "name": "Ultra",
+        "features": [
+          "Enterprise features",
+          "Dedicated support",
+          "Custom integrations",
+          "SLA guarantee"
+        ]
       }
+    }
   },
   "testimonials": {
     "sarah": {
@@ -636,6 +636,102 @@
     "exceeded": "Exceeded",
     "budgetLeft": "budget left",
     "lastMonth": "Last Month",
+    "budgetAlerts": "Budget Alerts",
+    "overBy": "Over by",
+    "fixBudget": "Fix Budget",
+    "noActiveBudgets": "No active budgets",
+    "createBudget": "Create Budget",
+    "completedBudgets": "Completed Budgets",
+    "budgetAnalytics": "Budget Analytics",
+    "spendingRate": "Spending Rate",
+    "ofTotalBudgetUsed": "of total budget used",
+    "savingsRate": "Savings Rate",
+    "ofBudgetSaved": "of budget saved",
+    "daysLeft": "days left",
+    "used": "used",
+    "pause": "Pause",
+    "complete": "Complete",
+    "quickStart": "Quick Start",
+    "createBudgetsFromTemplates": "Create budgets from templates",
+    "budgetManagement": "Budget Management",
+    "manageAllBudgetStatuses": "Manage all budget statuses",
+    "advancedAnalytics": "Advanced Analytics",
+    "detailedBudgetInsights": "Detailed budget insights",
+    "comingSoon": "Coming Soon",
+    "upcomingFeatures": "Upcoming features",
+    "active": "Active",
+    "uncategorized": "Uncategorized",
+    "monthlyBudgetTrends": "Monthly Budget Trends",
+    "budgetAmount": "Budget Amount",
+    "budgetByCategory": "Budget by Category",
+    "noBudgetCategoriesFound": "No budget categories found",
+    "quickStartCommonCategories": "Quick start with common budget categories",
+    "customize": "Customize",
+    "groceries": "Groceries",
+    "food": "Food",
+    "monthlyGroceryBudget": "Monthly grocery shopping budget",
+    "transportation": "Transportation",
+    "transport": "Transport",
+    "fuelTransportParking": "Fuel, public transport, parking",
+    "rentUtilities": "Rent & Utilities",
+    "housing": "Housing",
+    "monthlyHousingExpenses": "Monthly housing expenses",
+    "diningOut": "Dining Out",
+    "restaurantsTakeout": "Restaurants and takeout",
+    "entertainment": "Entertainment",
+    "leisure": "Leisure",
+    "moviesGamesSubscriptions": "Movies, games, subscriptions",
+    "healthcare": "Healthcare",
+    "health": "Health",
+    "medicalExpensesInsurance": "Medical expenses and insurance",
+    "budgetManager": {
+      "title": "Budget Manager",
+      "running": "Running",
+      "completed": "Completed",
+      "paused": "Paused",
+      "expired": "Expired",
+      "resume": "Resume",
+      "saved": "Saved",
+      "noRunningBudgets": "No running budgets",
+      "noCompletedBudgets": "No completed budgets",
+      "noPausedBudgets": "No paused budgets",
+      "noExpiredBudgets": "No expired budgets",
+      "noBudgetsFound": "No budgets found"
+    },
+    "budgetTemplates": {
+      "title": "Budget Templates",
+      "description": "Quick start with common budget categories",
+      "customize": "Customize",
+      "templates": {
+        "groceries": {
+          "name": "Groceries",
+          "description": "Monthly grocery shopping budget"
+        },
+        "transportation": {
+          "name": "Transportation",
+          "description": "Fuel, public transport, parking"
+        },
+        "rentUtilities": {
+          "name": "Rent & Utilities",
+          "description": "Monthly housing expenses"
+        },
+        "diningOut": {
+          "name": "Dining Out",
+          "description": "Restaurants and takeout"
+        },
+        "entertainment": {
+          "name": "Entertainment",
+          "description": "Movies, games, subscriptions"
+        },
+        "healthcare": {
+          "name": "Healthcare",
+          "description": "Medical expenses and insurance"
+        }
+      }
+    },
+    "budgetStatusManager": "Budget Status Manager",
+    "runningBudgets": "Running Budgets",
+    "deleteThisBudget": "Delete this budget?",
     "form": {
       "title": "Title",
       "titlePlaceholder": "Enter expense title",

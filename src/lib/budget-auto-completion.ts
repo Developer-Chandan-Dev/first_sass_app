@@ -4,9 +4,9 @@ export const checkAndAutoCompleteBudgets = async (userId: string) => {
     const response = await fetch('/api/expenses/budget/auto-complete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId })
+      body: JSON.stringify({ userId }),
     });
-    
+
     if (response.ok) {
       const result = await response.json();
       return result.completedBudgets || [];

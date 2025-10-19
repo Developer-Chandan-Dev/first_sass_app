@@ -4,19 +4,20 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Settings, 
-  Plus, 
-  BarChart3, 
+import {
+  Settings,
+  Plus,
+  BarChart3,
   FileText,
   Users,
-  Calendar
+  Calendar,
 } from 'lucide-react';
 import { BudgetTemplates } from './budget-templates';
 import { BudgetAnalytics } from './budget-analytics';
-import { BudgetManagementTabs } from './budget-management-tabs';
+import { BudgetManager } from './budget-manager';
 import { ComingSoonFeatures } from './coming-soon-features';
 import { type Budget } from '@/lib/redux/expense/budgetSlice';
+import { useDashboardTranslations } from '@/hooks/i18n';
 
 interface BudgetTemplate {
   name: string;
@@ -34,50 +35,55 @@ interface BudgetManagementHubProps {
   onSelectTemplate: (template: BudgetTemplate) => void;
 }
 
-export function BudgetManagementHub({ 
-  budgets, 
- 
-  onEditBudget, 
+export function BudgetManagementHub({
+  budgets,
+  onCreateBudget,
+  onEditBudget,
   onStatusChange,
-  onSelectTemplate 
+  onSelectTemplate,
 }: BudgetManagementHubProps) {
+  const { expenses } = useDashboardTranslations();
   const [activeSection, setActiveSection] = useState('templates');
 
   const sections = [
     {
       id: 'templates',
-      title: 'Quick Start',
+      title: expenses.quickStart || 'Quick Start',
       icon: Plus,
-      description: 'Create budgets from templates',
-      component: <BudgetTemplates onSelectTemplate={onSelectTemplate} />
+      description:
+        expenses.createBudgetsFromTemplates || 'Create budgets from templates',
+      component: <BudgetTemplates onSelectTemplate={onSelectTemplate} />,
     },
     {
       id: 'management',
-      title: 'Budget Management',
+      title: expenses.budgetManagement || 'Budget Management',
       icon: Settings,
-      description: 'Manage all budget statuses',
+      description:
+        expenses.manageAllBudgetStatuses || 'Manage all budget statuses',
       component: (
-        <BudgetManagementTabs 
+        <BudgetManager
           budgets={budgets}
           onEditBudget={onEditBudget}
           onStatusChange={onStatusChange}
+          onCreateBudget={onCreateBudget}
         />
-      )
+      ),
     },
     {
       id: 'analytics',
-      title: 'Advanced Analytics',
+      title: expenses.advancedAnalytics || 'Advanced Analytics',
       icon: BarChart3,
-      description: 'Detailed budget insights',
-      component: <BudgetAnalytics />
+      description:
+        expenses.detailedBudgetInsights || 'Detailed budget insights',
+      component: <BudgetAnalytics />,
     },
     {
       id: 'features',
-      title: 'Coming Soon',
+      title: expenses.comingSoon || 'Coming Soon',
       icon: Calendar,
-      description: 'Upcoming features',
-      component: <ComingSoonFeatures />
-    }
+      description: expenses.upcomingFeatures || 'Upcoming features',
+      component: <ComingSoonFeatures />,
+    },
   ];
 
   return (
@@ -87,9 +93,9 @@ export function BudgetManagementHub({
         {sections.map((section) => {
           const Icon = section.icon;
           const isActive = activeSection === section.id;
-          
+
           return (
-            <Card 
+            <Card
               key={section.id}
               className={`cursor-pointer transition-all hover:shadow-md ${
                 isActive ? 'ring-2 ring-primary' : ''
@@ -98,9 +104,13 @@ export function BudgetManagementHub({
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-lg ${
-                    isActive ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                  }`}>
+                  <div
+                    className={`p-2 rounded-lg ${
+                      isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                    }`}
+                  >
                     <Icon className="h-4 w-4" />
                   </div>
                   <div className="flex-1">
@@ -110,7 +120,7 @@ export function BudgetManagementHub({
                     </p>
                     {isActive && (
                       <Badge variant="default" className="mt-2 text-xs">
-                        Active
+                        {expenses.active || 'Active'}
                       </Badge>
                     )}
                   </div>
@@ -123,7 +133,7 @@ export function BudgetManagementHub({
 
       {/* Active Section Content */}
       <div className="min-h-[400px]">
-        {sections.find(s => s.id === activeSection)?.component}
+        {sections.find((s) => s.id === activeSection)?.component}
       </div>
     </div>
   );

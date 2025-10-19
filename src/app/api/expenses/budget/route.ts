@@ -234,26 +234,31 @@ export async function GET(request: NextRequest) {
     const budgetsWithStats = budgets.map((budget) => {
       const spentAmount = spentMap[budget._id.toString()] || 0;
       const remaining = Math.max(0, budget.amount - spentAmount);
-      const percentage = budget.amount > 0 ? (spentAmount / budget.amount) * 100 : 0;
-      
+      const percentage =
+        budget.amount > 0 ? (spentAmount / budget.amount) * 100 : 0;
+
       // Calculate status and days left
       const now = new Date();
       const endDate = new Date(budget.endDate);
-      const daysLeft = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysLeft = Math.ceil(
+        (endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
       let status = budget.status || 'running';
       let savings = 0;
-      
+
       // Auto-complete budget if end date reached and still running
       if (daysLeft <= 0 && status === 'running') {
         status = 'completed';
         savings = remaining;
-        
+
         // Update budget status in database
-        Budget.findByIdAndUpdate(budget._id, { 
+        Budget.findByIdAndUpdate(budget._id, {
           status: 'completed',
-          updatedAt: new Date()
-        }).catch(err => console.error('Failed to auto-complete budget:', err));
+          updatedAt: new Date(),
+        }).catch((err) =>
+          console.error('Failed to auto-complete budget:', err)
+        );
       } else if (status === 'completed') {
         savings = remaining;
       }

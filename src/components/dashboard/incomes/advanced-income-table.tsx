@@ -317,7 +317,9 @@ export function AdvancedIncomeTable() {
                       <TableCell className="py-2">
                         <Checkbox
                           checked={selectedRows.includes(incomeItem._id)}
-                          onCheckedChange={() => toggleRowSelection(incomeItem._id)}
+                          onCheckedChange={() =>
+                            toggleRowSelection(incomeItem._id)
+                          }
                         />
                       </TableCell>
                       <TableCell className="py-2 text-xs sm:text-sm">
@@ -349,7 +351,9 @@ export function AdvancedIncomeTable() {
                       <TableCell className="hidden md:table-cell py-2">
                         {incomeItem.isRecurring ? (
                           <Badge variant="outline" className="text-xs">
-                            {sanitizeString(incomeItem.frequency || 'Recurring')}
+                            {sanitizeString(
+                              incomeItem.frequency || 'Recurring'
+                            )}
                           </Badge>
                         ) : (
                           <span className="text-xs text-muted-foreground">

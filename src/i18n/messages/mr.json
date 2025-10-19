@@ -644,6 +644,102 @@
     "exceeded": "ओलांडले",
     "budgetLeft": "बजेट उरले",
     "lastMonth": "मागील महिना",
+    "budgetAlerts": "बजेट अलर्ट",
+    "overBy": "जास्त",
+    "fixBudget": "बजेट दुरुस्त करा",
+    "noActiveBudgets": "कोणतेही सक्रिय बजेट नाहीत",
+    "createBudget": "बजेट तयार करा",
+    "completedBudgets": "पूर्ण झालेले बजेट",
+    "budgetAnalytics": "बजेट विश्लेषण",
+    "spendingRate": "खर्चाचा दर",
+    "ofTotalBudgetUsed": "एकूण बजेटचा वापर",
+    "savingsRate": "बचतीचा दर",
+    "ofBudgetSaved": "बजेटची बचत",
+    "daysLeft": "दिवस उरले",
+    "used": "वापरले",
+    "pause": "थांबवा",
+    "complete": "पूर्ण करा",
+    "quickStart": "द्रुत सुरुवात",
+    "createBudgetsFromTemplates": "टेम्प्लेटमधून बजेट तयार करा",
+    "budgetManagement": "बजेट व्यवस्थापन",
+    "manageAllBudgetStatuses": "सर्व बजेट स्थिती व्यवस्थापित करा",
+    "advancedAnalytics": "प्रगत विश्लेषण",
+    "detailedBudgetInsights": "तपशीलवार बजेट अंतर्दृष्टी",
+    "comingSoon": "लवकरच येत आहे",
+    "upcomingFeatures": "आगामी वैशिष्ट्ये",
+    "active": "सक्रिय",
+    "uncategorized": "अवर्गीकृत",
+    "monthlyBudgetTrends": "मासिक बजेट ट्रेंड",
+    "budgetAmount": "बजेट रक्कम",
+    "budgetByCategory": "श्रेणीनुसार बजेट",
+    "noBudgetCategoriesFound": "कोणत्याही बजेट श्रेणी सापडल्या नाहीत",
+    "quickStartCommonCategories": "सामान्य श्रेणींसह द्रुत सुरुवात",
+    "customize": "सानुकूलित करा",
+    "groceries": "किराणा",
+    "food": "अन्न",
+    "monthlyGroceryBudget": "मासिक किराणा खरेदी बजेट",
+    "transportation": "वाहतूक",
+    "transport": "वाहतूक",
+    "fuelTransportParking": "इंधन, सार्वजनिक वाहतूक, पार्किंग",
+    "rentUtilities": "भाडे आणि उपयोगिता",
+    "housing": "निवास",
+    "monthlyHousingExpenses": "मासिक निवास खर्च",
+    "diningOut": "बाहेर जेवण",
+    "restaurantsTakeout": "रेस्टॉरंट आणि टेकआउट",
+    "entertainment": "मनोरंजन",
+    "leisure": "विश्रांती",
+    "moviesGamesSubscriptions": "चित्रपट, गेम, सबस्क्रिप्शन",
+    "healthcare": "आरोग्य सेवा",
+    "health": "आरोग्य",
+    "medicalExpensesInsurance": "वैद्यकीय खर्च आणि विमा",
+    "budgetManager": {
+      "title": "बजेट व्यवस्थापक",
+      "running": "चालू",
+      "completed": "पूर्ण",
+      "paused": "थांबवले",
+      "expired": "कालबाह्य",
+      "resume": "पुन्हा सुरू करा",
+      "saved": "जतन केले",
+      "noRunningBudgets": "कोणतेही चालू बजेट नाहीत",
+      "noCompletedBudgets": "कोणतेही पूर्ण बजेट नाहीत",
+      "noPausedBudgets": "कोणतेही थांबवलेले बजेट नाहीत",
+      "noExpiredBudgets": "कोणतेही कालबाह्य बजेट नाहीत",
+      "noBudgetsFound": "कोणतेही बजेट सापडले नाहीत"
+    },
+    "budgetTemplates": {
+      "title": "बजेट टेम्पलेट",
+      "description": "सामान्य श्रेणींसह द्रुत सुरुवात",
+      "customize": "सानुकूलित करा",
+      "templates": {
+        "groceries": {
+          "name": "किराणा",
+          "description": "मासिक किराणा खरेदी बजेट"
+        },
+        "transportation": {
+          "name": "वाहतूक",
+          "description": "इंधन, सार्वजनिक वाहतूक, पार्किंग"
+        },
+        "rentUtilities": {
+          "name": "भाडे आणि उपयोगिता",
+          "description": "मासिक निवास खर्च"
+        },
+        "diningOut": {
+          "name": "बाहेर जेवण",
+          "description": "रेस्टॉरंट आणि टेकआउट"
+        },
+        "entertainment": {
+          "name": "मनोरंजन",
+          "description": "चित्रपट, गेम, सब्सक्रिप्शन"
+        },
+        "healthcare": {
+          "name": "आरोग्य सेवा",
+          "description": "वैद्यकीय खर्च आणि विमा"
+        }
+      }
+    },
+    "budgetStatusManager": "बजेट स्थिती व्यवस्थापक",
+    "runningBudgets": "चालू बजेट",
+    "deleteThisBudget": "हे बजेट हटवायचे?",
     "addBudgetExpense": "बजेट खर्च जोडा",
     "form": {
       "title": "शीर्षक",

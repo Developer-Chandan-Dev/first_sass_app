@@ -15,7 +15,6 @@ import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { UniversalStatCard } from '../shared/universal-stat-card';
 
 export function FreeStats() {
-
   const { free, loading } = useAppSelector((state) => state.overview);
   const { dashboard } = useDashboardTranslations();
   const locale = useLocale();

@@ -1,12 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
@@ -26,22 +37,34 @@ interface CustomTemplateModalProps {
   existingTemplates: CustomTemplate[];
 }
 
-export function CustomTemplateModal({ 
-  open, 
-  onClose, 
+export function CustomTemplateModal({
+  open,
+  onClose,
   onSaveTemplate,
-  existingTemplates 
+  existingTemplates,
 }: CustomTemplateModalProps) {
-  const [templates, setTemplates] = useState<CustomTemplate[]>(existingTemplates);
+  const [templates, setTemplates] =
+    useState<CustomTemplate[]>(existingTemplates);
   const [newTemplate, setNewTemplate] = useState<CustomTemplate>({
     name: '',
     category: '',
     suggestedAmount: 0,
     description: '',
-    icon: '💰'
+    icon: '💰',
   });
 
-  const iconOptions = ['💰', '🏠', '🚗', '🍕', '🎮', '💊', '👕', '📚', '✈️', '🎬'];
+  const iconOptions = [
+    '💰',
+    '🏠',
+    '🚗',
+    '🍕',
+    '🎮',
+    '💊',
+    '👕',
+    '📚',
+    '✈️',
+    '🎬',
+  ];
 
   const handleAddTemplate = () => {
     if (newTemplate.name && newTemplate.suggestedAmount > 0) {
@@ -52,7 +75,7 @@ export function CustomTemplateModal({
         category: '',
         suggestedAmount: 0,
         description: '',
-        icon: '💰'
+        icon: '💰',
       });
     }
   };
@@ -63,7 +86,7 @@ export function CustomTemplateModal({
   };
 
   const handleSave = () => {
-    templates.forEach(template => onSaveTemplate(template));
+    templates.forEach((template) => onSaveTemplate(template));
     onClose();
   };
 
@@ -79,13 +102,15 @@ export function CustomTemplateModal({
           <Card>
             <CardContent className="p-4 space-y-4">
               <h3 className="font-medium">Add New Template</h3>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label>Template Name</Label>
                   <Input
                     value={newTemplate.name}
-                    onChange={(e) => setNewTemplate({...newTemplate, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewTemplate({ ...newTemplate, name: e.target.value })
+                    }
                     placeholder="e.g., Monthly Groceries"
                   />
                 </div>
@@ -93,7 +118,12 @@ export function CustomTemplateModal({
                   <Label>Category</Label>
                   <Input
                     value={newTemplate.category}
-                    onChange={(e) => setNewTemplate({...newTemplate, category: e.target.value})}
+                    onChange={(e) =>
+                      setNewTemplate({
+                        ...newTemplate,
+                        category: e.target.value,
+                      })
+                    }
                     placeholder="e.g., Food"
                   />
                 </div>
@@ -105,19 +135,31 @@ export function CustomTemplateModal({
                   <Input
                     type="number"
                     value={newTemplate.suggestedAmount || ''}
-                    onChange={(e) => setNewTemplate({...newTemplate, suggestedAmount: Number(e.target.value)})}
+                    onChange={(e) =>
+                      setNewTemplate({
+                        ...newTemplate,
+                        suggestedAmount: Number(e.target.value),
+                      })
+                    }
                     placeholder="5000"
                   />
                 </div>
                 <div>
                   <Label>Icon</Label>
-                  <Select value={newTemplate.icon} onValueChange={(value) => setNewTemplate({...newTemplate, icon: value})}>
+                  <Select
+                    value={newTemplate.icon}
+                    onValueChange={(value) =>
+                      setNewTemplate({ ...newTemplate, icon: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {iconOptions.map(icon => (
-                        <SelectItem key={icon} value={icon}>{icon} {icon}</SelectItem>
+                      {iconOptions.map((icon) => (
+                        <SelectItem key={icon} value={icon}>
+                          {icon} {icon}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -128,7 +170,12 @@ export function CustomTemplateModal({
                 <Label>Description</Label>
                 <Textarea
                   value={newTemplate.description}
-                  onChange={(e) => setNewTemplate({...newTemplate, description: e.target.value})}
+                  onChange={(e) =>
+                    setNewTemplate({
+                      ...newTemplate,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder="Brief description of this budget category"
                   rows={2}
                 />
@@ -145,7 +192,9 @@ export function CustomTemplateModal({
           <div className="space-y-3">
             <h3 className="font-medium">Your Custom Templates</h3>
             {templates.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No custom templates yet</p>
+              <p className="text-muted-foreground text-sm">
+                No custom templates yet
+              </p>
             ) : (
               templates.map((template, index) => (
                 <Card key={index}>
@@ -154,16 +203,24 @@ export function CustomTemplateModal({
                       <div className="flex items-start gap-3">
                         <span className="text-lg">{template.icon}</span>
                         <div>
-                          <h4 className="font-medium text-sm">{template.name}</h4>
-                          <p className="text-xs text-muted-foreground">{template.category}</p>
-                          <p className="text-xs text-muted-foreground">{template.description}</p>
+                          <h4 className="font-medium text-sm">
+                            {template.name}
+                          </h4>
+                          <p className="text-xs text-muted-foreground">
+                            {template.category}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {template.description}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{formatCurrency(template.suggestedAmount)}</span>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
+                        <span className="text-sm font-medium">
+                          {formatCurrency(template.suggestedAmount)}
+                        </span>
+                        <Button
+                          size="sm"
+                          variant="ghost"
                           onClick={() => handleRemoveTemplate(index)}
                           className="h-6 w-6 p-0"
                         >
