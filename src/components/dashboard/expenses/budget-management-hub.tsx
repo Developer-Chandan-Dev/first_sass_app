@@ -33,10 +33,8 @@ interface BudgetManagementHubProps {
 }
 
 export function BudgetManagementHub({
-  budgets,
   onCreateBudget,
   onEditBudget,
-  onStatusChange,
   onSelectTemplate,
 }: BudgetManagementHubProps) {
   const { expenses } = useDashboardTranslations();
@@ -59,9 +57,7 @@ export function BudgetManagementHub({
         expenses.manageAllBudgetStatuses || 'Manage all budget statuses',
       component: (
         <BudgetManager
-          budgets={budgets}
           onEditBudget={onEditBudget}
-          onStatusChange={onStatusChange}
           onCreateBudget={onCreateBudget}
         />
       ),

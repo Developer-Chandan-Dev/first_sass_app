@@ -8,17 +8,26 @@ import {
   Eye,
   TrendingUp,
 } from 'lucide-react';
-import { useAppSelector } from '@/lib/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
 import { useDashboardTranslations, formatCurrency } from '@/hooks/i18n';
 import { useLocale } from 'next-intl';
 import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { UniversalStatCard } from '../shared/universal-stat-card';
+import { refreshStats } from '@/lib/redux/expense/overviewSlice';
+import { useEffect } from 'react';
 
 export function FreeStats() {
+  const dispatch = useAppDispatch();
   const { free, loading } = useAppSelector((state) => state.overview);
   const { dashboard } = useDashboardTranslations();
   const locale = useLocale();
   const { getLocalizedPath } = useLocaleContext();
+
+  useEffect(() => {
+    if (free.totalSpent === 0 && free.totalExpenses === 0 && !loading) {
+      dispatch(refreshStats('free'));
+    }
+  }, [dispatch, free.totalSpent, free.totalExpenses, loading]);
 
   const avgExpenseAmount =
     free.totalExpenses > 0 ? free.totalSpent / free.totalExpenses : 0;

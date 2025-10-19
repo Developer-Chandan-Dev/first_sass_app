@@ -14,25 +14,71 @@ import {
   Plus,
   Settings,
   Edit,
+  Trash2,
 } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 import { type Budget } from '@/lib/redux/expense/budgetSlice';
 import { useDashboardTranslations } from '@/hooks/i18n';
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import { fetchBudgets, deleteBudget, updateBudget } from '@/lib/redux/expense/budgetSlice';
+import { toast } from 'sonner';
+import { useState, useEffect } from 'react';
 
 interface BudgetManagerProps {
-  budgets: Budget[];
-  onStatusChange: (budgetId: string, status: Budget['status']) => void;
   onEditBudget: (budget: Budget) => void;
   onCreateBudget: () => void;
 }
 
 export function BudgetManager({
-  budgets,
-  onStatusChange,
   onEditBudget,
   onCreateBudget,
 }: BudgetManagerProps) {
   const { expenses } = useDashboardTranslations();
+  const dispatch = useAppDispatch();
+  const { budgets, loading } = useAppSelector((state) => state.budgets);
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (budgets.length === 0 && !loading) {
+      dispatch(fetchBudgets());
+    }
+  }, [dispatch, budgets.length, loading]);
+
+  const handleStatusChange = async (budgetId: string, status: Budget['status']) => {
+    setProcessingIds(prev => new Set(prev).add(budgetId));
+    try {
+      await dispatch(updateBudget({ id: budgetId, updates: { status } })).unwrap();
+      await dispatch(fetchBudgets());
+      toast.success('Budget status updated');
+    } catch {
+      toast.error('Failed to update budget status');
+    } finally {
+      setProcessingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(budgetId);
+        return newSet;
+      });
+    }
+  };
+
+  const handleDelete = async (budgetId: string) => {
+    if (!confirm('Are you sure you want to delete this budget?')) return;
+    
+    setProcessingIds(prev => new Set(prev).add(budgetId));
+    try {
+      await dispatch(deleteBudget(budgetId)).unwrap();
+      await dispatch(fetchBudgets());
+      toast.success('Budget deleted successfully');
+    } catch {
+      toast.error('Failed to delete budget');
+    } finally {
+      setProcessingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(budgetId);
+        return newSet;
+      });
+    }
+  };
 
   const getBudgetsByStatus = (status: Budget['status']) => {
     return budgets.filter((b) => b.status === status);
@@ -67,9 +113,10 @@ export function BudgetManager({
   const BudgetCard = ({ budget }: { budget: Budget }) => {
     const savings = Math.max(0, budget.remaining);
     const isOverBudget = budget.percentage > 100;
+    const isProcessing = processingIds.has(budget._id);
 
     return (
-      <div className="border rounded-lg p-4 space-y-3">
+      <div className={`border rounded-lg p-4 space-y-3 ${isProcessing ? 'opacity-50 pointer-events-none' : ''}`}>
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <h4 className="font-medium">{budget.name}</h4>
@@ -95,8 +142,20 @@ export function BudgetManager({
               variant="ghost"
               onClick={() => onEditBudget(budget)}
               className="h-8 w-8 p-0"
+              title="Edit Budget"
+              disabled={isProcessing}
             >
               <Edit className="h-3 w-3" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => handleDelete(budget._id)}
+              className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+              title="Delete Budget"
+              disabled={isProcessing}
+            >
+              <Trash2 className="h-3 w-3" />
             </Button>
           </div>
         </div>
@@ -126,7 +185,8 @@ export function BudgetManager({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => onStatusChange(budget._id, 'paused')}
+              onClick={() => handleStatusChange(budget._id, 'paused')}
+              disabled={isProcessing}
             >
               <Pause className="h-3 w-3 mr-1" />
               {expenses.pause || 'Pause'}
@@ -134,7 +194,8 @@ export function BudgetManager({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => onStatusChange(budget._id, 'completed')}
+              onClick={() => handleStatusChange(budget._id, 'completed')}
+              disabled={isProcessing}
             >
               <CheckCircle className="h-3 w-3 mr-1" />
               {expenses.complete || 'Complete'}
@@ -146,7 +207,8 @@ export function BudgetManager({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => onStatusChange(budget._id, 'running')}
+            onClick={() => handleStatusChange(budget._id, 'running')}
+            disabled={isProcessing}
           >
             <Play className="h-3 w-3 mr-1" />
             {expenses.budgetManager.resume}
@@ -192,6 +254,20 @@ export function BudgetManager({
       </Button>
     </div>
   );
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 bg-muted rounded"></div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

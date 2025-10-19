@@ -37,7 +37,7 @@ export function BudgetDashboard({
   onStatusChange,
   onCreateBudget,
 }: BudgetDashboardProps) {
-  const { expenses, common } = useDashboardTranslations();
+  const { expenses } = useDashboardTranslations();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     'active-budgets': true,
     'budget-alerts': true,

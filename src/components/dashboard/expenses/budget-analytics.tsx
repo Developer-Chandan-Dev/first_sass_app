@@ -85,7 +85,7 @@ export function BudgetAnalytics() {
     };
 
     fetchAnalytics();
-  }, []);
+  }, [expenses.uncategorized]);
 
   const pieData = categoryData.map((item, index) => ({
     name: item.category,
