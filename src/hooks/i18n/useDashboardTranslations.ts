@@ -393,6 +393,30 @@ export function useDashboardTranslations() {
           'Upcoming features'
         ),
         active: safeTExpenses('active', 'Active'),
+        uncategorized: safeTExpenses('uncategorized', 'Uncategorized'),
+        monthlyBudgetTrends: safeTExpenses('monthlyBudgetTrends', 'Monthly Budget Trends'),
+        budgetAmount: safeTExpenses('budgetAmount', 'Budget Amount'),
+        budgetByCategory: safeTExpenses('budgetByCategory', 'Budget by category'),
+        noBudgetCategoriesFound: safeTExpenses('noBudgetCategoriesFound', 'No Budget Category Found'),
+        quickStartCommonCategories: safeTExpenses('quickStartCommonCategories', 'Quick start with common budget categories'),
+        customize: safeTExpenses('customize', 'Customize'),
+        groceries: safeTExpenses('groceries', 'Groceries'),
+        food: safeTExpenses('food', 'Food'),
+        monthlyGroceryBudget: safeTExpenses('monthlyGroceryBudget', 'Monthly grocery shopping budget'),
+        transportation: safeTExpenses('transportation', 'Transportation'),
+        transport: safeTExpenses('transport', 'Transport'),
+        fuelTransportParking: safeTExpenses('fuelTransportParking', 'Fuel, public transport, parking'),
+        rentUtilities: safeTExpenses('rentUtilities', 'Rent & Utilities'),
+        housing: safeTExpenses('housing', 'Housing'),
+        monthlyHousingExpenses: safeTExpenses('monthlyHousingExpenses', 'Monthly housing expenses'),
+        diningOut: safeTExpenses('diningOut', 'Dining Out'),
+        restaurantsTakeout: safeTExpenses('restaurantsTakeout', 'Restaurants and takeout'),
+        entertainment: safeTExpenses('entertainment', 'Entertainment'),
+        leisure: safeTExpenses('leisure', 'Leisure'),
+        moviesGamesSubscriptions: safeTExpenses('moviesGamesSubscriptions', 'Movies, games, subscriptions'),
+        healthcare: safeTExpenses('healthcare', 'Healthcare'),
+        health: safeTExpenses('health', 'Health'),
+        medicalExpensesInsurance: safeTExpenses('medicalExpensesInsurance', 'Medical expenses and insurance'),
         budgetManager: {
           title: safeTExpenses('budgetManager.title', 'Budget Manager'),
           running: safeTExpenses('budgetManager.running', 'Running'),
@@ -492,6 +516,9 @@ export function useDashboardTranslations() {
             },
           },
         },
+        budgetStatusManager: safeTExpenses('budgetStatusManager', 'Budget Status Manager'),
+        runningBudgets: safeTExpenses('runningBudgets', 'Running Budgets'),
+        deleteThisBudget: safeTExpenses('deleteThisBudget', 'Delete this budget?'),
         // Export and table keys
         exportAll: safeTExpenses('exportAll', 'Export All'),
         exportSelected: safeTExpenses('exportSelected', 'Export Selected'),
@@ -924,51 +951,27 @@ export function useDashboardTranslations() {
             'Manage your budgets'
           ),
           comingSoon: safeTDashboard('pages.budgets.comingSoon', 'Coming Soon'),
-          workingOnFeatures: safeTDashboard(
-            'pages.budgets.workingOnFeatures',
-            "We're working on advanced features"
-          ),
+          workingOnFeatures: safeTDashboard('pages.budgets.workingOnFeatures', "We're working on advanced features"),
         },
         cards: {
           title: safeTDashboard('pages.cards.title', 'Cards'),
-          description: safeTDashboard(
-            'pages.cards.description',
-            'Manage your cards'
-          ),
+          description: safeTDashboard('pages.cards.description', 'Manage your cards'),
           comingSoon: safeTDashboard('pages.cards.comingSoon', 'Coming Soon'),
         },
         categories: {
           title: safeTDashboard('pages.categories.title', 'Categories'),
-          description: safeTDashboard(
-            'pages.categories.description',
-            'Manage expense categories'
-          ),
+          description: safeTDashboard('pages.categories.description', 'Manage expense categories'),
         },
         notifications: {
           title: safeTDashboard('pages.notifications.title', 'Notifications'),
-          description: safeTDashboard(
-            'pages.notifications.description',
-            'Manage your notifications'
-          ),
-          comingSoon: safeTDashboard(
-            'pages.notifications.comingSoon',
-            'Coming Soon'
-          ),
+          description: safeTDashboard('pages.notifications.description', 'Manage your notifications'),
+          comingSoon: safeTDashboard('pages.notifications.comingSoon', 'Coming Soon'),
         },
         settings: {
           title: safeTDashboard('pages.settings.title', 'Settings'),
-          description: safeTDashboard(
-            'pages.settings.description',
-            'Application settings'
-          ),
-          comingSoon: safeTDashboard(
-            'pages.settings.comingSoon',
-            'Coming Soon'
-          ),
-          workingOnFeatures: safeTDashboard(
-            'pages.settings.workingOnFeatures',
-            "We're working on advanced features"
-          ),
+          description: safeTDashboard('pages.settings.description', 'Application settings'),
+          comingSoon: safeTDashboard('pages.settings.comingSoon', 'Coming Soon'),
+          workingOnFeatures: safeTDashboard('pages.settings.workingOnFeatures', "We're working on advanced features"),
         },
       },
 
@@ -978,6 +981,7 @@ export function useDashboardTranslations() {
     [
       baseTranslations,
       t,
+      tExpenses,
       safeTDashboard,
       safeTSidebar,
       safeTExpenses,
