@@ -82,6 +82,9 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
     other: [{ rel: 'icon', url: '/favicon.ico' }],
   },
+  verification: {
+    google: 'ZE905zpXogtFLmcHsSjH_sweGVm5h5W7TWp-h0BzYCM',
+  },
 };
 
 export default async function RootLayout({
