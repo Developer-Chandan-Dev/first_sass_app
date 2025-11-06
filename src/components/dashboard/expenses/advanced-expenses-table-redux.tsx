@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -46,8 +47,8 @@ import {
 import { sanitizeString } from '@/lib/input-sanitizer';
 import { ExpenseItem } from '@/lib/redux/expense/expenseSlice';
 
-// Table skeleton component
-function ExpenseTableSkeleton({
+// Table skeleton component - memoized for performance
+const ExpenseTableSkeleton = React.memo(function ExpenseTableSkeleton({
   expenseType,
 }: {
   expenseType: 'free' | 'budget';
@@ -80,13 +81,13 @@ function ExpenseTableSkeleton({
       ))}
     </>
   );
-}
+});
 
 interface AdvancedExpensesTableProps {
   expenseType?: 'free' | 'budget';
 }
 
-export function AdvancedExpensesTable({
+export const AdvancedExpensesTable = React.memo(function AdvancedExpensesTable({
   expenseType = 'free',
 }: AdvancedExpensesTableProps) {
   const { expenses: expensesData, common, table } = useDashboardTranslations();
@@ -554,4 +555,4 @@ export function AdvancedExpensesTable({
       />
     </Card>
   );
-}
+});

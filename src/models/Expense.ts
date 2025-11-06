@@ -43,6 +43,14 @@ const ExpenseSchema = new mongoose.Schema<IExpense>({
   updatedAt: { type: Date, default: Date.now },
 });
 
+// Performance indexes for frequently queried fields
+ExpenseSchema.index({ userId: 1, date: -1 }); // Most common query pattern
+ExpenseSchema.index({ userId: 1, type: 1, date: -1 }); // Filter by type and date
+ExpenseSchema.index({ userId: 1, category: 1 }); // Category filtering
+ExpenseSchema.index({ userId: 1, budgetId: 1 }); // Budget expenses
+ExpenseSchema.index({ date: -1 }); // Date sorting
+ExpenseSchema.index({ createdAt: -1 }); // Recent expenses
+
 // Clear existing model to ensure schema updates
 if (mongoose.models.Expense) {
   delete mongoose.models.Expense;
