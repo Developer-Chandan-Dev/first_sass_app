@@ -67,11 +67,11 @@ export const DEFAULT_CATEGORIES: Category[] = [
 
 // Backend mapping for consistent data storage
 export const BACKEND_CATEGORY_MAP: Record<string, string> = {
-  food: 'Food & Dining',
+  food: 'Food and Dining',
   transport: 'Transportation',
   shopping: 'Shopping',
   entertainment: 'Entertainment',
-  bills: 'Bills & Utilities',
+  bills: 'Bills and Utilities',
   healthcare: 'Healthcare',
   education: 'Education',
   travel: 'Travel',
@@ -107,6 +107,18 @@ export function getFrontendCategoryKey(backendKey: string): string {
   return entry ? entry[0] : backendKey;
 }
 
+// Normalize category name to handle encoding issues
+export function normalizeCategoryName(category: string): string {
+  if (!category) return '';
+  
+  // Handle common HTML entity issues
+  return category
+    .replace(/&amp;/g, 'and')
+    .replace(/&/g, 'and')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 // Create category options for UI
 export function createCategoryOptions(
   t: ReturnType<typeof import('@/hooks/i18n').useDashboardTranslations>,
@@ -120,13 +132,16 @@ export function createCategoryOptions(
     isDefault: true,
   }));
 
-  const customOptions = customCategories.map((cat) => ({
-    key: cat,
-    label: cat,
-    backendKey: cat,
-    icon: '📁',
-    isDefault: false,
-  }));
+  const customOptions = customCategories.map((cat) => {
+    const normalizedCat = normalizeCategoryName(cat);
+    return {
+      key: normalizedCat,
+      label: normalizedCat,
+      backendKey: normalizedCat,
+      icon: '📁',
+      isDefault: false,
+    };
+  });
 
   return [...defaultOptions, ...customOptions];
 }

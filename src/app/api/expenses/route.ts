@@ -6,6 +6,7 @@ import User from '@/models/User';
 import Income from '@/models/Income';
 import {
   sanitizeString,
+  sanitizeCategoryName,
   isValidObjectId,
   sanitizeForLog,
 } from '@/lib/input-sanitizer';
@@ -255,7 +256,7 @@ export async function GET(request: NextRequest) {
 
     // Category filter - sanitize category input
     if (category) {
-      query.category = sanitizeString(category);
+      query.category = sanitizeCategoryName(category);
     }
 
     // Budget filter - validate ObjectId
@@ -409,7 +410,7 @@ export async function GET(request: NextRequest) {
       _id: expense._id,
       userId: expense.userId,
       amount: Number(expense.amount),
-      category: sanitizeString(expense.category || ''),
+      category: sanitizeCategoryName(expense.category || ''),
       reason: sanitizeString(expense.reason || ''),
       type: expense.type,
       date: expense.date,

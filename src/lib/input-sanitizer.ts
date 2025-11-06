@@ -7,10 +7,31 @@ export function sanitizeString(input: string): string {
   if (typeof input !== 'string') return '';
 
   // Remove HTML tags and dangerous characters
-  return DOMPurify.sanitize(input, {
+  const sanitized = DOMPurify.sanitize(input, {
     ALLOWED_TAGS: [],
     ALLOWED_ATTR: [],
   }).trim();
+  
+  // Handle HTML entities that might cause issues
+  return sanitized
+    .replace(/&amp;/g, 'and')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'");
+}
+
+/**
+ * Sanitize category name specifically
+ */
+export function sanitizeCategoryName(input: string): string {
+  if (typeof input !== 'string') return '';
+  
+  return input
+    .replace(/&amp;/g, 'and')
+    .replace(/&/g, 'and')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**
