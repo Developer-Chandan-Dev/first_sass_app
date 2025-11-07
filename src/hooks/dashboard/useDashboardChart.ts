@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface ChartData {
   period: string;
@@ -30,7 +30,7 @@ export function useDashboardChart(period: string = 'monthly', year?: number) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -52,11 +52,11 @@ export function useDashboardChart(period: string = 'monthly', year?: number) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [period, year]);
 
   useEffect(() => {
     fetchData();
-  }, [period, year]);
+  }, [fetchData]);
 
   return {
     data,

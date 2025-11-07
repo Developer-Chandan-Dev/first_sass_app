@@ -1,20 +1,15 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Calendar, TrendingUp, TrendingDown, BarChart3, LineChart as LineChartIcon, Activity, RefreshCw } from 'lucide-react';
-import { useDashboardTranslations } from '@/hooks/i18n';
+
 import { useDashboardChart } from '@/hooks/dashboard/useDashboardChart';
 
-interface ChartData {
-  period: string;
-  income: number;
-  expenses: number;
-  net: number;
-}
+
 
 type ChartType = 'bar' | 'line' | 'area';
 type TimePeriod = 'daily' | 'weekly' | 'monthly' | 'yearly';
@@ -35,7 +30,7 @@ const TIME_PERIODS = [
 export function AdvancedDashboardChart() {
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('monthly');
-  const { common } = useDashboardTranslations();
+
   const { data: chartData, summary, loading, error, refetch } = useDashboardChart(timePeriod);
 
   if (error) {

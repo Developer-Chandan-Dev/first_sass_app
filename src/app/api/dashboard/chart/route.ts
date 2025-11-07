@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     await connectDB();
 
-    let groupBy: Record<string, any>;
+    let groupBy: Record<string, unknown>;
     let periods: string[];
     let startDate: Date;
     let endDate: Date;
