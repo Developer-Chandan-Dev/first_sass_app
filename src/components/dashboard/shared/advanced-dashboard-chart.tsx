@@ -52,7 +52,7 @@ export function AdvancedDashboardChart() {
   const renderChart = () => {
     const commonProps = {
       data: chartData,
-      margin: { top: 5, right: 5, left: 5, bottom: 5 }
+      margin: { top: 2, right: 2, left: 2, bottom: 2 }
     };
 
     switch (chartType) {
@@ -60,13 +60,13 @@ export function AdvancedDashboardChart() {
         return (
           <LineChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="period" />
-            <YAxis />
-            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
-            <Legend />
-            <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={3} name="Income" />
-            <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={3} name="Expenses" />
-            <Line type="monotone" dataKey="net" stroke="#6366f1" strokeWidth={2} strokeDasharray="5 5" name="Net" />
+            <XAxis dataKey="period" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} />
+            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} contentStyle={{ fontSize: '10px' }} />
+            <Legend wrapperStyle={{ fontSize: '10px' }} />
+            <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} name="Income" />
+            <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} name="Expenses" />
+            <Line type="monotone" dataKey="net" stroke="#6366f1" strokeWidth={1} strokeDasharray="3 3" name="Net" />
           </LineChart>
         );
       
@@ -74,10 +74,10 @@ export function AdvancedDashboardChart() {
         return (
           <AreaChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="period" />
-            <YAxis />
-            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
-            <Legend />
+            <XAxis dataKey="period" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} />
+            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} contentStyle={{ fontSize: '10px' }} />
+            <Legend wrapperStyle={{ fontSize: '10px' }} />
             <Area type="monotone" dataKey="income" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} name="Income" />
             <Area type="monotone" dataKey="expenses" stackId="2" stroke="#ef4444" fill="#ef4444" fillOpacity={0.6} name="Expenses" />
           </AreaChart>
@@ -87,12 +87,12 @@ export function AdvancedDashboardChart() {
         return (
           <BarChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="period" />
-            <YAxis />
-            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
-            <Legend />
-            <Bar dataKey="income" fill="#10b981" name="Income" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="expenses" fill="#ef4444" name="Expenses" radius={[4, 4, 0, 0]} />
+            <XAxis dataKey="period" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} />
+            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} contentStyle={{ fontSize: '10px' }} />
+            <Legend wrapperStyle={{ fontSize: '10px' }} />
+            <Bar dataKey="income" fill="#10b981" name="Income" radius={[2, 2, 0, 0]} />
+            <Bar dataKey="expenses" fill="#ef4444" name="Expenses" radius={[2, 2, 0, 0]} />
           </BarChart>
         );
     }
@@ -113,106 +113,100 @@ export function AdvancedDashboardChart() {
 
   return (
     <Card>
-      <CardHeader className="pb-2 sm:pb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-          <CardTitle className="flex items-center gap-1 sm:gap-2 text-sm sm:text-lg">
-            <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="sm:hidden">Income vs Expenses</span>
-            <span className="hidden sm:inline">Income vs Expenses Analysis</span>
+      <CardHeader className="p-1 sm:p-6">
+        <div className="space-y-1 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+          <CardTitle className="flex items-center gap-1 text-xs sm:text-lg">
+            <Calendar className="h-3 w-3 sm:h-5 sm:w-5" />
+            <span className="sm:hidden">Chart</span>
+            <span className="hidden sm:inline">Income vs Expenses</span>
           </CardTitle>
-          <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
+          <div className="flex gap-0.5 sm:gap-2">
             <Select value={timePeriod} onValueChange={(value: TimePeriod) => setTimePeriod(value)}>
-              <SelectTrigger className="w-full sm:w-32 h-8 sm:h-10 text-xs sm:text-sm">
+              <SelectTrigger className="flex-1 sm:w-32 h-5 sm:h-10 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {TIME_PERIODS.map((period) => (
-                  <SelectItem key={period.value} value={period.value} className="text-xs sm:text-sm">
+                  <SelectItem key={period.value} value={period.value} className="text-xs">
                     {period.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Select value={chartType} onValueChange={(value: ChartType) => setChartType(value)}>
-              <SelectTrigger className="w-full sm:w-36 h-8 sm:h-10 text-xs sm:text-sm">
+              <SelectTrigger className="w-8 sm:w-36 h-5 sm:h-10 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {CHART_TYPES.map((type) => {
                   const Icon = type.icon;
                   return (
-                    <SelectItem key={type.value} value={type.value} className="text-xs sm:text-sm">
-                      <div className="flex items-center gap-1 sm:gap-2">
-                        <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
-                        <span className="hidden sm:inline">{type.label}</span>
-                        <span className="sm:hidden">{type.value}</span>
-                      </div>
+                    <SelectItem key={type.value} value={type.value} className="text-xs">
+                      <Icon className="h-3 w-3" />
+                      <span className="hidden sm:inline ml-1">{type.label}</span>
                     </SelectItem>
                   );
                 })}
               </SelectContent>
             </Select>
-            <Button onClick={refetch} variant="outline" size="sm" disabled={loading} className="h-8 sm:h-10 px-2 sm:px-3">
-              <RefreshCw className={`h-3 w-3 sm:h-4 sm:w-4 ${loading ? 'animate-spin' : ''}`} />
+            <Button onClick={refetch} variant="ghost" size="sm" disabled={loading} className="h-5 sm:h-10 w-5 sm:w-auto px-0 sm:px-3">
+              <RefreshCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
             </Button>
           </div>
         </div>
         
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-1 sm:gap-4 mt-2 sm:mt-4">
-          <div className="bg-green-50 dark:bg-green-950 p-1 sm:p-4 rounded sm:rounded-lg">
-            <div className="flex items-center gap-1 sm:gap-2">
-              <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
-              <span className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-300">
-                <span className="sm:hidden">Income</span>
-                <span className="hidden sm:inline">Total Income</span>
-              </span>
-            </div>
-            <p className="text-xs sm:text-2xl font-bold text-green-800 dark:text-green-200">
-              ₹{summary.totalIncome.toLocaleString()}
+        <div className="flex justify-between gap-px sm:grid sm:grid-cols-3 sm:gap-4 mt-1 sm:mt-4">
+          <div className="flex-1 bg-green-50 dark:bg-green-950 px-1 py-0.5 sm:p-4 rounded-sm sm:rounded-lg">
+            <TrendingUp className="h-2 w-2 sm:h-4 sm:w-4 text-green-600 mx-auto sm:mx-0 block sm:inline" />
+            <span className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-300 hidden sm:block">
+              Total Income
+            </span>
+            <p className="text-xs sm:text-2xl font-bold text-green-800 dark:text-green-200 text-center sm:text-left leading-tight">
+              ₹{summary.totalIncome > 999 ? `${(summary.totalIncome / 1000).toFixed(0)}k` : summary.totalIncome}
             </p>
           </div>
           
-          <div className="bg-red-50 dark:bg-red-950 p-4 rounded-lg">
-            <div className="flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-red-600" />
-              <span className="text-sm font-medium text-red-700 dark:text-red-300">Total Expenses</span>
-            </div>
-            <p className="text-2xl font-bold text-red-800 dark:text-red-200">
-              ₹{summary.totalExpenses.toLocaleString()}
+          <div className="flex-1 bg-red-50 dark:bg-red-950 px-1 py-0.5 sm:p-4 rounded-sm sm:rounded-lg">
+            <TrendingDown className="h-2 w-2 sm:h-4 sm:w-4 text-red-600 mx-auto sm:mx-0 block sm:inline" />
+            <span className="text-xs sm:text-sm font-medium text-red-700 dark:text-red-300 hidden sm:block">
+              Total Expenses
+            </span>
+            <p className="text-xs sm:text-2xl font-bold text-red-800 dark:text-red-200 text-center sm:text-left leading-tight">
+              ₹{summary.totalExpenses > 999 ? `${(summary.totalExpenses / 1000).toFixed(0)}k` : summary.totalExpenses}
             </p>
           </div>
           
-          <div className={`${summary.netTotal >= 0 ? 'bg-blue-50 dark:bg-blue-950' : 'bg-orange-50 dark:bg-orange-950'} p-4 rounded-lg`}>
-            <div className="flex items-center gap-2">
-              {summary.netTotal >= 0 ? (
-                <TrendingUp className="h-4 w-4 text-blue-600" />
-              ) : (
-                <TrendingDown className="h-4 w-4 text-orange-600" />
-              )}
-              <span className={`text-sm font-medium ${summary.netTotal >= 0 ? 'text-blue-700 dark:text-blue-300' : 'text-orange-700 dark:text-orange-300'}`}>
-                Net {summary.netTotal >= 0 ? 'Savings' : 'Deficit'}
-              </span>
-            </div>
-            <p className={`text-2xl font-bold ${summary.netTotal >= 0 ? 'text-blue-800 dark:text-blue-200' : 'text-orange-800 dark:text-orange-200'}`}>
-              ₹{Math.abs(summary.netTotal).toLocaleString()}
+          <div className={`flex-1 ${summary.netTotal >= 0 ? 'bg-blue-50 dark:bg-blue-950' : 'bg-orange-50 dark:bg-orange-950'} px-1 py-0.5 sm:p-4 rounded-sm sm:rounded-lg`}>
+            {summary.netTotal >= 0 ? (
+              <TrendingUp className="h-2 w-2 sm:h-4 sm:w-4 text-blue-600 mx-auto sm:mx-0 block sm:inline" />
+            ) : (
+              <TrendingDown className="h-2 w-2 sm:h-4 sm:w-4 text-orange-600 mx-auto sm:mx-0 block sm:inline" />
+            )}
+            <span className={`text-xs sm:text-sm font-medium ${summary.netTotal >= 0 ? 'text-blue-700 dark:text-blue-300' : 'text-orange-700 dark:text-orange-300'} hidden sm:block`}>
+              Net {summary.netTotal >= 0 ? 'Savings' : 'Deficit'}
+            </span>
+            <p className={`text-xs sm:text-2xl font-bold ${summary.netTotal >= 0 ? 'text-blue-800 dark:text-blue-200' : 'text-orange-800 dark:text-orange-200'} text-center sm:text-left leading-tight`}>
+              ₹{Math.abs(summary.netTotal) > 999 ? `${(Math.abs(summary.netTotal) / 1000).toFixed(0)}k` : Math.abs(summary.netTotal)}
             </p>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="pt-2 sm:pt-6">
-        <div className="h-48 sm:h-80">
+      <CardContent className="p-0 sm:p-6 sm:pt-0">
+        <div className="h-24 sm:h-80 mx-1 sm:mx-0">
           <ResponsiveContainer width="100%" height="100%">
             {renderChart()}
           </ResponsiveContainer>
         </div>
         
         {/* Period Summary */}
-        <div className="mt-4 text-center text-sm text-muted-foreground">
-          Showing {timePeriod} data • {chartData.length} periods • 
+        <div className="px-1 py-0.5 sm:mt-4 text-center text-xs sm:text-sm text-muted-foreground">
+          <span className="hidden sm:inline">
+            Showing {timePeriod} data • {chartData.length} periods • 
+          </span>
           <span className={summary.netTotal >= 0 ? 'text-green-600' : 'text-red-600'}>
-            {summary.netTotal >= 0 ? 'Positive' : 'Negative'} cash flow
+            {summary.netTotal >= 0 ? '↗' : '↘'}
           </span>
         </div>
       </CardContent>
