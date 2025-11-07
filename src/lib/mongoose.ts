@@ -88,7 +88,7 @@ async function connectDB() {
       retryWrites: true,
       w: 'majority',
       readPreference: 'primary',
-      compressors: ['zlib'], // Enable compression
+      compressors: ['zlib' as const], // Enable compression
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then(() => {
