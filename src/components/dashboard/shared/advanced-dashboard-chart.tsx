@@ -52,7 +52,7 @@ export function AdvancedDashboardChart() {
   const renderChart = () => {
     const commonProps = {
       data: chartData,
-      margin: { top: 10, right: 5, left: -10, bottom: 0 }
+      margin: { top: 10, right: 10, left: 20, bottom: 0 }
     };
 
     switch (chartType) {
@@ -61,7 +61,7 @@ export function AdvancedDashboardChart() {
           <LineChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="period" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} className="text-xs sm:text-sm" />
-            <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={25} className="text-xs" />
+            <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={50} className="text-xs" tickFormatter={(value) => `₹${value}`} />
             <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
             <Legend />
             <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} name="Income" />
@@ -75,7 +75,7 @@ export function AdvancedDashboardChart() {
           <AreaChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="period" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} className="text-xs sm:text-sm" />
-            <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={25} className="text-xs" />
+            <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={50} className="text-xs" tickFormatter={(value) => `₹${value}`} />
             <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
             <Legend />
             <Area type="monotone" dataKey="income" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} name="Income" />
@@ -88,7 +88,7 @@ export function AdvancedDashboardChart() {
           <BarChart {...commonProps}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="period" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} className="text-xs sm:text-sm" />
-            <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={25} className="text-xs" />
+            <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={50} className="text-xs" tickFormatter={(value) => `₹${value}`} />
             <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
             <Legend />
             <Bar dataKey="income" fill="#10b981" name="Income" radius={[2, 2, 0, 0]} maxBarSize={35} />
@@ -202,7 +202,7 @@ export function AdvancedDashboardChart() {
       
       <CardContent className="p-3 sm:p-6">
         <div className="w-full overflow-hidden">
-          <ResponsiveContainer width="100%" height={180} className="sm:!h-[280px]">
+          <ResponsiveContainer width="100%" height={180} className="sm:!h-[400px]">
             {renderChart()}
           </ResponsiveContainer>
         </div>
