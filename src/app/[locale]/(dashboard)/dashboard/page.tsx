@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { StatsCards } from '@/components/dashboard/shared/stats-cards';
 import { ExpenseChart } from '@/components/dashboard/expenses/expense-chart';
 import { RecentTransactions } from '@/components/dashboard/shared/recent-transactions';
+import { AdvancedDashboardChart } from '@/components/dashboard/shared/advanced-dashboard-chart';
 import ErrorBoundary from '@/components/dashboard/shared/error-boundary';
 import { safeGet } from '@/lib/safe-access';
 import {
@@ -67,6 +68,11 @@ export default function Dashboard() {
 
       <ErrorBoundary>
         <StatsCards />
+      </ErrorBoundary>
+
+      {/* Advanced Income vs Expenses Chart */}
+      <ErrorBoundary>
+        <AdvancedDashboardChart />
       </ErrorBoundary>
 
       <div className="grid gap-4 md:gap-6 lg:grid-cols-2">
