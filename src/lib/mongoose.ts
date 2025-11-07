@@ -86,8 +86,8 @@ async function connectDB() {
       socketTimeoutMS: 45000,
       heartbeatFrequencyMS: 10000, // Check connection health
       retryWrites: true,
-      w: 'majority',
-      readPreference: 'primary',
+      w: 'majority' as const,
+      readPreference: 'primary' as const,
       compressors: ['zlib' as const], // Enable compression
     };
 

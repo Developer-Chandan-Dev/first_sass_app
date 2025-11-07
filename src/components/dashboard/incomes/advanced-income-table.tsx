@@ -35,10 +35,12 @@ import {
   ArrowUp,
   ArrowDown,
   Eye,
+  Plus,
 } from 'lucide-react';
 import { EditIncomeModal } from './edit-income-modal';
 import { PDFExportModal } from './pdf-export-modal';
 import { IncomeExpensesModal } from './income-expenses-modal';
+import { BulkAddIncomeModal } from './bulk-add-income-modal';
 import {
   useIncomeTable,
   type PDFExportOptions,
@@ -46,10 +48,12 @@ import {
 import { getIncomeAmountColor, getIncomeTooltip } from '@/lib/financial-styles';
 import { sanitizeString } from '@/lib/input-sanitizer';
 import { useBaseTranslations, useDashboardTranslations } from '@/hooks/i18n';
+import React from 'react';
 
 export function AdvancedIncomeTable() {
   const { income, table, expenses } = useDashboardTranslations();
   const { common } = useBaseTranslations();
+  const [isBulkAddOpen, setIsBulkAddOpen] = React.useState(false);
   const {
     incomes,
     loading,
@@ -167,6 +171,15 @@ export function AdvancedIncomeTable() {
                   </Button>
                 </>
               )}
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setIsBulkAddOpen(true)}
+                className="w-auto"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Bulk Add
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="w-auto">
@@ -530,6 +543,12 @@ export function AdvancedIncomeTable() {
           incomeAmount={viewingExpenses.amount}
         />
       )}
+
+      <BulkAddIncomeModal
+        open={isBulkAddOpen}
+        onOpenChange={setIsBulkAddOpen}
+        onSuccess={() => window.location.reload()}
+      />
     </Card>
   );
 }

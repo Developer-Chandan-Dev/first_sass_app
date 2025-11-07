@@ -35,9 +35,11 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Plus,
 } from 'lucide-react';
 import { EditExpenseModal } from './edit-expense-modal-redux';
 import { ExpensePDFExportModal } from './expense-pdf-export-modal';
+import { BulkAddExpenseModal } from './bulk-add-expense-modal';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { useExpenseTable } from '@/hooks/dashboard/useExpenseTable';
 import {
@@ -91,6 +93,7 @@ export const AdvancedExpensesTable = React.memo(function AdvancedExpensesTable({
   expenseType = 'free',
 }: AdvancedExpensesTableProps) {
   const { expenses: expensesData, common, table } = useDashboardTranslations();
+  const [isBulkAddOpen, setIsBulkAddOpen] = React.useState(false);
   const {
     expenses,
     loading,
@@ -121,6 +124,7 @@ export const AdvancedExpensesTable = React.memo(function AdvancedExpensesTable({
     handleCSVExport,
     setCurrentPage,
     setPageSize,
+    refetch,
   } = useExpenseTable(expenseType);
 
   const getSortIcon = (column: string) => {
@@ -215,6 +219,15 @@ export const AdvancedExpensesTable = React.memo(function AdvancedExpensesTable({
                   </Button>
                 </>
               )}
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setIsBulkAddOpen(true)}
+                className="w-auto"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Bulk Add
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="w-auto">
@@ -552,6 +565,13 @@ export const AdvancedExpensesTable = React.memo(function AdvancedExpensesTable({
         }
         isSelectedExport={isSelectedExport}
         selectedCount={selectedRows.length}
+      />
+
+      <BulkAddExpenseModal
+        open={isBulkAddOpen}
+        onOpenChange={setIsBulkAddOpen}
+        onSuccess={() => refetch?.()}
+        expenseType={expenseType}
       />
     </Card>
   );

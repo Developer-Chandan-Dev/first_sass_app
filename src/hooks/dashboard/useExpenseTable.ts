@@ -152,7 +152,7 @@ export function useExpenseTable(expenseType: 'free' | 'budget' = 'free') {
       const response = await fetch('/api/expenses/bulk', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: selectedRows }),
+        body: JSON.stringify({ expenseIds: selectedRows }),
       });
 
       if (!response.ok) {
@@ -319,5 +319,16 @@ export function useExpenseTable(expenseType: 'free' | 'budget' = 'free') {
     dispatch,
     setCurrentPage: (page: number) => dispatch(setCurrentPage(page)),
     setPageSize: (size: number) => dispatch(setPageSize(size)),
+    refetch: () => {
+      const filtersWithSearch = { ...filters, search: activeSearchTerm };
+      return dispatch(
+        fetchExpenses({
+          expenseType,
+          filters: filtersWithSearch,
+          page: currentPage,
+          pageSize,
+        })
+      );
+    },
   };
 }
