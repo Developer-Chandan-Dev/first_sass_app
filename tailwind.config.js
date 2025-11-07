@@ -1,4 +1,4 @@
-import tailwindcssAnimate from 'tailwindcss-animate';
+import twAnimateCss from 'tw-animate-css';
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -78,7 +78,7 @@ const config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [twAnimateCss],
 };
 
 export default config;
