@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Calendar, TrendingUp, TrendingDown, BarChart3, LineChart as LineChartIcon, Activity, RefreshCw } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 import { useDashboardChart } from '@/hooks/dashboard/useDashboardChart';
 
@@ -30,8 +31,20 @@ const TIME_PERIODS = [
 export function AdvancedDashboardChart() {
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('monthly');
+  const { theme } = useTheme();
 
   const { data: chartData, summary, loading, error, refetch } = useDashboardChart(timePeriod);
+
+  const isDark = theme === 'dark';
+
+  const tooltipStyle = {
+    backgroundColor: isDark ? '#1f2937' : 'white',
+    border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
+    borderRadius: '6px',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    color: isDark ? '#f9fafb' : '#111827',
+    fontSize: '12px'
+  };
 
   if (error) {
     return (
@@ -62,7 +75,7 @@ export function AdvancedDashboardChart() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="period" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} className="text-xs sm:text-sm" />
             <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={50} className="text-xs" tickFormatter={(value) => `₹${value}`} />
-            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} contentStyle={tooltipStyle} />
             <Legend />
             <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} name="Income" />
             <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} name="Expenses" />
@@ -76,7 +89,7 @@ export function AdvancedDashboardChart() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="period" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} className="text-xs sm:text-sm" />
             <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={50} className="text-xs" tickFormatter={(value) => `₹${value}`} />
-            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} contentStyle={tooltipStyle} />
             <Legend />
             <Area type="monotone" dataKey="income" stackId="1" stroke="#10b981" fill="#10b981" fillOpacity={0.6} name="Income" />
             <Area type="monotone" dataKey="expenses" stackId="2" stroke="#ef4444" fill="#ef4444" fillOpacity={0.6} name="Expenses" />
@@ -89,7 +102,7 @@ export function AdvancedDashboardChart() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="period" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} className="text-xs sm:text-sm" />
             <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} width={50} className="text-xs" tickFormatter={(value) => `₹${value}`} />
-            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} />
+            <Tooltip formatter={(value: number) => [`₹${value.toLocaleString()}`, '']} contentStyle={tooltipStyle} />
             <Legend />
             <Bar dataKey="income" fill="#10b981" name="Income" radius={[2, 2, 0, 0]} maxBarSize={35} />
             <Bar dataKey="expenses" fill="#ef4444" name="Expenses" radius={[2, 2, 0, 0]} maxBarSize={35} />
@@ -119,7 +132,7 @@ export function AdvancedDashboardChart() {
             <Calendar className="h-4 w-4 sm:h-5 sm:w-5" />
             Income vs Expenses Analysis
           </CardTitle>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Select value={timePeriod} onValueChange={(value: TimePeriod) => setTimePeriod(value)}>
               <SelectTrigger className="w-32 h-9">
                 <SelectValue />
@@ -202,7 +215,7 @@ export function AdvancedDashboardChart() {
       
       <CardContent className="p-3 sm:p-6">
         <div className="w-full overflow-hidden">
-          <ResponsiveContainer width="100%" height={180} className="sm:!h-[400px]">
+          <ResponsiveContainer width="100%" height={300}>
             {renderChart()}
           </ResponsiveContainer>
         </div>
