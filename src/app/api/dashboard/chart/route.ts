@@ -71,12 +71,15 @@ export async function GET(request: NextRequest) {
         endDate = new Date(now);
         endDate.setHours(23, 59, 59, 999);
         
-        periods = Array.from({ length: 4 }, (_, i) => `Week ${i + 1}`);
+        periods = Array.from({ length: 4 }, (_, i) => {
+          const weekStart = new Date(startDate);
+          weekStart.setDate(weekStart.getDate() + (i * 7));
+          const year = weekStart.getFullYear();
+          const weekNum = Math.ceil((weekStart.getTime() - new Date(year, 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
+          return `Week ${weekNum}`;
+        });
         groupBy = {
-          $concat: [
-            'Week ',
-            { $toString: { $week: '$date' } }
-          ]
+          $dateToString: { format: '%Y-%U', date: '$date' }
         };
         break;
       }
@@ -160,8 +163,11 @@ export async function GET(request: NextRequest) {
           periodKey = periods[index];
           break;
         case 'weekly': {
-          const weekNum = index + 1;
-          periodKey = `Week ${weekNum}`;
+          const weekStart = new Date(startDate);
+          weekStart.setDate(weekStart.getDate() + (index * 7));
+          const year = weekStart.getFullYear();
+          const weekNum = Math.ceil((weekStart.getTime() - new Date(year, 0, 1).getTime()) / (7 * 24 * 60 * 60 * 1000));
+          periodKey = `${year}-${String(weekNum).padStart(2, '0')}`;
           break;
         }
         case 'monthly':
