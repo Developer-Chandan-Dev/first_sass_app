@@ -33,13 +33,25 @@ export function BottomNavigation() {
   const { sidebar } = useDashboardTranslations();
   const { getLocalizedPath } = useLocale();
 
+  // Function to check if a navigation item is active
+  const isNavItemActive = (itemHref: string) => {
+    // Create the localized version of the item href
+    const localizedItemHref = getLocalizedPath(itemHref);
+    
+    // Check if current pathname matches the localized item href exactly
+    if (pathname === localizedItemHref) {
+      return true;
+    }
+    
+    return false;
+  };
+
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border">
       <div className="grid grid-cols-5 h-16">
         {bottomNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive =
-            pathname === item.href || pathname.startsWith(item.href + '/');
+          const isActive = isNavItemActive(item.href);
 
           return (
             <Link
