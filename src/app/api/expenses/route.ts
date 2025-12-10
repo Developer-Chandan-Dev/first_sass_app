@@ -118,12 +118,11 @@ export async function POST(request: NextRequest) {
     if (expenseCount >= user.limits.maxExpenses) {
       return NextResponse.json(
         {
-          error: `Expense limit reached. Upgrade to add more than ${user.limits.maxExpenses} expenses.`,
+          error: `Expense limit reached. You can only add up to ${user.limits.maxExpenses} expenses.`,
           code: 'EXPENSE_LIMIT_REACHED',
           details: {
             currentCount: expenseCount,
             maxAllowed: user.limits.maxExpenses,
-            userPlan: user.plan,
           },
         },
         { status: 403 }

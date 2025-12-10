@@ -29,6 +29,7 @@ export function UserFilters() {
         />
       </div>
 
+
       {/* Plan Filter */}
       <Select value={plan} onValueChange={setPlan}>
         <SelectTrigger className="w-full sm:w-40">
@@ -39,6 +40,7 @@ export function UserFilters() {
           <SelectItem value="free">Free</SelectItem>
           <SelectItem value="pro">Pro</SelectItem>
           <SelectItem value="premium">Premium</SelectItem>
+          <SelectItem value="enterprise">Enterprise</SelectItem>
         </SelectContent>
       </Select>
 

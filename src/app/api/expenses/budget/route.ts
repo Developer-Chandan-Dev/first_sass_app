@@ -113,12 +113,11 @@ export async function POST(request: NextRequest) {
     if (budgetCount >= user.limits.maxBudgets) {
       return NextResponse.json(
         {
-          error: `Budget limit reached. Upgrade to create more than ${user.limits.maxBudgets} budgets.`,
+          error: `Budget limit reached. You can only create up to ${user.limits.maxBudgets} budgets.`,
           code: 'BUDGET_LIMIT_REACHED',
           details: {
             currentCount: budgetCount,
             maxAllowed: user.limits.maxBudgets,
-            userPlan: user.plan,
           },
         },
         { status: 403 }

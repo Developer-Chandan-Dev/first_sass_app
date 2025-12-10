@@ -1,40 +1,65 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
-const planSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    price: {
+export interface IPlan extends Document {
+  name: string;
+  price: number;
+  currency: string;
+  interval: 'month' | 'year';
+  features: string[];
+  limits: {
+    maxExpenses: number;
+    maxBudgets: number;
+  };
+  stripePriceId?: string;
+  razorpayPlanId?: string;
+  isActive: boolean;
+}
+
+const PlanSchema: Schema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  currency: {
+    type: String,
+    required: true,
+    default: 'USD',
+  },
+  interval: {
+    type: String,
+    enum: ['month', 'year'],
+    required: true,
+  },
+  features: [{
+    type: String,
+  }],
+  limits: {
+    maxExpenses: {
       type: Number,
       required: true,
     },
-    interval: {
-      type: String,
-      enum: ['monthly', 'yearly'],
-      default: 'monthly',
-    },
-    features: {
-      maxExpenses: { type: Number, default: 500 },
-      maxBudgets: { type: Number, default: 5 },
-      analytics: { type: Boolean, default: false },
-      export: { type: Boolean, default: false },
-      priority: { type: Boolean, default: false },
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    stripePriceId: {
-      type: String,
-      default: null,
+    maxBudgets: {
+      type: Number,
+      required: true,
     },
   },
-  {
-    timestamps: true,
-  }
-);
+  stripePriceId: {
+    type: String,
+  },
+  razorpayPlanId: {
+    type: String,
+  },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
+}, {
+  timestamps: true,
+});
 
-export default mongoose.models.Plan || mongoose.model('Plan', planSchema);
+export default mongoose.models.Plan || mongoose.model<IPlan>('Plan', PlanSchema);

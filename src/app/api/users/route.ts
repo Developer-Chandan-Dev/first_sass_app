@@ -24,10 +24,10 @@ export async function POST() {
     const newUser = await User.create({
       clerkId: userId,
       email: clerkUser.emailAddresses[0]?.emailAddress,
-      plan: 'free',
+      plan: clerkUser.publicMetadata?.plan || 'free',
       limits: {
-        maxExpenses: 50,
-        maxBudgets: 3,
+        maxExpenses: 10000,
+        maxBudgets: 100,
       },
     });
 

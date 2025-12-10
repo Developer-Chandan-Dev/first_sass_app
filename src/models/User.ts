@@ -13,20 +13,8 @@ const userSchema = new mongoose.Schema(
     },
     plan: {
       type: String,
-      enum: ['free', 'pro', 'premium', 'ultra'],
+      enum: ['free', 'pro', 'premium', 'enterprise'],
       default: 'free',
-    },
-    planExpiry: {
-      type: Date,
-      default: null,
-    },
-    stripeCustomerId: {
-      type: String,
-      default: null,
-    },
-    stripeSubscriptionId: {
-      type: String,
-      default: null,
     },
     role: {
       type: String,
@@ -36,11 +24,11 @@ const userSchema = new mongoose.Schema(
     limits: {
       maxExpenses: {
         type: Number,
-        default: 500, // Free plan limit
+        default: 10000, // Unlimited for all users
       },
       maxBudgets: {
         type: Number,
-        default: 5, // Free plan limit
+        default: 100, // Unlimited for all users
       },
     },
   },
