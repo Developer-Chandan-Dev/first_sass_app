@@ -30,6 +30,7 @@ import { ProgressRing } from './progress-ring';
 
 export function StatsCards() {
   const { dashboard, common } = useDashboardTranslations();
+
   const locale = useLocale();
   const { getLocalizedPath } = useLocaleContext();
   const { free, budget, loading, error } = useSelector(

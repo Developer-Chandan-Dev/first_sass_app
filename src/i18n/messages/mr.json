@@ -233,6 +233,27 @@
     "expectedRelease": "अपेक्षित रिलीज: पुढील अपडेट",
     "workingOnFeatures": "आम्ही प्रगत वैशिष्ट्यांवर काम करत आहोत",
     "nextUpdate": "पुढील अपडेट",
+    "chart": {
+      "incomeVsExpenses": "उत्पन्न बनाम खर्च विश्लेषण",
+      "totalIncome": "एकूण उत्पन्न",
+      "totalExpenses": "एकूण खर्च",
+      "netSavings": "निव्वळ बचत",
+      "netDeficit": "निव्वळ तोटा",
+      "positive": "सकारात्मक",
+      "negative": "नकारात्मक",
+      "cashFlow": "रोख प्रवाह",
+      "showingData": "{timePeriod} डेटा दाखवत आहे",
+      "periods": "कालावधी",
+      "failedToLoad": "चार्ट डेटा लोड करण्यात अयशस्वी",
+      "retry": "पुन्हा प्रयत्न करा",
+      "barChart": "बार चार्ट",
+      "lineChart": "लाइन चार्ट",
+      "areaChart": "क्षेत्र चार्ट",
+      "daily": "दैनिक",
+      "weekly": "साप्ताहिक",
+      "monthly": "मासिक",
+      "yearly": "वार्षिक"
+    },
     "pages": {
       "analytics": {
         "title": "विश्लेषण",

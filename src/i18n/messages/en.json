@@ -233,6 +233,27 @@
     "expectedRelease": "Expected release: Next update",
     "workingOnFeatures": "We're working on advanced features",
     "nextUpdate": "Next update",
+    "chart": {
+      "incomeVsExpenses": "Income vs Expenses Analysis",
+      "totalIncome": "Total Income",
+      "totalExpenses": "Total Expenses",
+      "netSavings": "Net Savings",
+      "netDeficit": "Net Deficit",
+      "positive": "Positive",
+      "negative": "Negative",
+      "cashFlow": "cash flow",
+      "showingData": "Showing {timePeriod} data",
+      "periods": "periods",
+      "failedToLoad": "Failed to load chart data",
+      "retry": "Retry",
+      "barChart": "Bar Chart",
+      "lineChart": "Line Chart",
+      "areaChart": "Area Chart",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
     "pages": {
       "analytics": {
         "title": "Analytics",

@@ -233,6 +233,27 @@
     "expectedRelease": "अपेक्षित रिलीज: अगला अपडेट",
     "workingOnFeatures": "हम उन्नत सुविधाओं पर काम कर रहे हैं",
     "nextUpdate": "अगला अपडेट",
+    "chart": {
+      "incomeVsExpenses": "आय बनाम खर्च विश्लेषण",
+      "totalIncome": "कुल आय",
+      "totalExpenses": "कुल खर्च",
+      "netSavings": "शुद्ध बचत",
+      "netDeficit": "शुद्ध घाटा",
+      "positive": "सकारात्मक",
+      "negative": "नकारात्मक",
+      "cashFlow": "नकद प्रवाह",
+      "showingData": "{timePeriod} डेटा दिखा रहा है",
+      "periods": "अवधियां",
+      "failedToLoad": "चार्ट डेटा लोड करने में विफल",
+      "retry": "पुनः प्रयास करें",
+      "barChart": "बार चार्ट",
+      "lineChart": "लाइन चार्ट",
+      "areaChart": "एरिया चार्ट",
+      "daily": "दैनिक",
+      "weekly": "साप्ताहिक",
+      "monthly": "मासिक",
+      "yearly": "वार्षिक"
+    },
     "pages": {
       "analytics": {
         "title": "विश्लेषण",

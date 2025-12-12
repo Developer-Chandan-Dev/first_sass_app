@@ -927,6 +927,34 @@ export function useDashboardTranslations() {
         },
       },
 
+      chart: {
+        incomeVsExpenses: safeTDashboard('chart.incomeVsExpenses', 'Income vs Expenses Analysis'),
+        totalIncome: safeTDashboard('chart.totalIncome', 'Total Income'),
+        totalExpenses: safeTDashboard('chart.totalExpenses', 'Total Expenses'),
+        netSavings: safeTDashboard('chart.netSavings', 'Net Savings'),
+        netDeficit: safeTDashboard('chart.netDeficit', 'Net Deficit'),
+        positive: safeTDashboard('chart.positive', 'Positive'),
+        negative: safeTDashboard('chart.negative', 'Negative'),
+        cashFlow: safeTDashboard('chart.cashFlow', 'cash flow'),
+        showingData: (timePeriod: string) => {
+          try {
+            return tChart('showingData', { timePeriod });
+          } catch {
+            return `Showing ${timePeriod} data`;
+          }
+        },
+        periods: safeTDashboard('chart.periods', 'periods'),
+        failedToLoad: safeTDashboard('chart.failedToLoad', 'Failed to load chart data'),
+        retry: safeTDashboard('chart.retry', 'Retry'),
+        barChart: safeTDashboard('chart.barChart', 'Bar Chart'),
+        lineChart: safeTDashboard('chart.lineChart', 'Line Chart'),
+        areaChart: safeTDashboard('chart.areaChart', 'Area Chart'),
+        daily: safeTDashboard('chart.daily', 'Daily'),
+        weekly: safeTDashboard('chart.weekly', 'Weekly'),
+        monthly: safeTDashboard('chart.monthly', 'Monthly'),
+        yearly: safeTDashboard('chart.yearly', 'Yearly'),
+      },
+
       // Add pages namespace for page components
       pages: {
         analytics: {

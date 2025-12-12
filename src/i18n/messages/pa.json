@@ -222,6 +222,27 @@
     "expectedRelease": "ਅਪੇਖਿਤ ਰਿਲੀਜ਼: ਅਗਲਾ ਅਪਡੇਟ",
     "workingOnFeatures": "ਅਸੀਂ ਉੱਨਤ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ 'ਤੇ ਕੰਮ ਕਰ ਰਹੇ ਹਾਂ",
     "nextUpdate": "ਅਗਲਾ ਅਪਡੇਟ",
+    "chart": {
+      "incomeVsExpenses": "ਆਮਦਨ ਬਨਾਮ ਖਰਚ ਵਿਸ਼ਲੇਸ਼ਣ",
+      "totalIncome": "ਕੁੱਲ ਆਮਦਨ",
+      "totalExpenses": "ਕੁੱਲ ਖਰਚੇ",
+      "netSavings": "ਸ਼ੁੱਧ ਬਚਤ",
+      "netDeficit": "ਸ਼ੁੱਧ ਘਾਟਾ",
+      "positive": "ਸਕਾਰਾਤਮਕ",
+      "negative": "ਨਕਾਰਾਤਮਕ",
+      "cashFlow": "ਨਕਦ ਪ੍ਰਵਾਹ",
+      "showingData": "{timePeriod} ਡੇਟਾ ਦਿਖਾ ਰਿਹਾ ਹੈ",
+      "periods": "ਅਵਧੀਆਂ",
+      "failedToLoad": "ਚਾਰਟ ਡੇਟਾ ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ",
+      "retry": "ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
+      "barChart": "ਬਾਰ ਚਾਰਟ",
+      "lineChart": "ਲਾਈਨ ਚਾਰਟ",
+      "areaChart": "ਖੇਤਰ ਚਾਰਟ",
+      "daily": "ਰੋਜ਼ਾਨਾ",
+      "weekly": "ਸਾਪਤਾਹਿਕ",
+      "monthly": "ਮਾਸਿਕ",
+      "yearly": "ਸਾਲਾਨਾ"
+    },
     "pages": {
       "analytics": {
         "title": "ਵਿਸ਼ਲੇਸ਼ਣ",

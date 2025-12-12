@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   BarChart,
@@ -29,10 +30,13 @@ interface MonthlyData {
 }
 
 export function BudgetAnalytics() {
+  const { theme } = useTheme();
   const { expenses } = useDashboardTranslations();
   const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -67,13 +71,33 @@ export function BudgetAnalytics() {
           })
         );
 
-        // Process monthly data (mock for now)
-        const monthlyArray = [
-          { month: 'Jan', totalBudgeted: 45000, count: 5 },
-          { month: 'Feb', totalBudgeted: 42000, count: 4 },
-          { month: 'Mar', totalBudgeted: 48000, count: 6 },
-          { month: 'Apr', totalBudgeted: 50000, count: 5 },
-        ];
+        // Process monthly data
+        const monthlyStats = budgets.reduce(
+          (
+            acc: Record<string, { totalBudgeted: number; count: number }>,
+            budget: { createdAt: string; amount: number }
+          ) => {
+            const month = new Date(budget.createdAt).toLocaleString('default', {
+              month: 'short',
+            });
+            if (!acc[month]) {
+              acc[month] = { totalBudgeted: 0, count: 0 };
+            }
+            acc[month].totalBudgeted += budget.amount;
+            acc[month].count += 1;
+            return acc;
+          },
+          {}
+        );
+
+        const monthlyArray = Object.entries(monthlyStats).map(
+          ([month, data]) => ({
+            month,
+            totalBudgeted: (data as { totalBudgeted: number; count: number })
+              .totalBudgeted,
+            count: (data as { totalBudgeted: number; count: number }).count,
+          })
+        );
 
         setCategoryData(categoryArray);
         setMonthlyData(monthlyArray);
@@ -124,10 +148,13 @@ export function BudgetAnalytics() {
             >
               <XAxis
                 dataKey="month"
-                fontSize={12}
-                tick={{ fill: 'hsl(var(--foreground))' }}
+                tick={{ fill: isDark ? '#d1d5db' : '#6b7280' }}
               />
-              <YAxis fontSize={12} tick={{ fill: 'hsl(var(--foreground))' }} />
+              <YAxis
+                fontSize={12}
+                tick={{ fill: isDark ? '#d1d5db' : '#6b7280' }}
+                tickFormatter={(value) => `₹${value.toLocaleString()}`}
+              />
               <Tooltip
                 formatter={(value: number) => [
                   `₹${value.toLocaleString()}`,
@@ -135,9 +162,12 @@ export function BudgetAnalytics() {
                 ]}
                 labelStyle={{ color: 'hsl(var(--foreground))' }}
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
+                  backgroundColor: isDark ? '#1f2937' : 'white',
+                  border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
                   borderRadius: '6px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  color: isDark ? '#f9fafb' : '#111827',
+                  fontSize: '12px',
                 }}
               />
               <Bar
@@ -180,6 +210,7 @@ export function BudgetAnalytics() {
                     outerRadius={80}
                     dataKey="value"
                     labelLine={false}
+                    stroke={isDark ? '#374151' : '#e5e7eb'}
                   >
                     {pieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -190,10 +221,17 @@ export function BudgetAnalytics() {
                       `₹${value.toLocaleString()}`,
                       expenses.budgetAmount || 'Budget Amount',
                     ]}
+                    labelStyle={{
+                      color: isDark ? '#f9fafb' : '#111827',
+                      fontWeight: 'bold'
+                    }}
                     contentStyle={{
-                      backgroundColor: 'hsl(var(--background))',
-                      border: '1px solid hsl(var(--border))',
+                      backgroundColor: isDark ? '#1f2937' : 'white',
+                      border: `1px solid ${isDark ? '#374151' : '#e2e8f0'}`,
                       borderRadius: '6px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      color: isDark ? '#f9fafb' : '#111827',
+                      fontSize: '12px',
                     }}
                   />
                 </PieChart>
