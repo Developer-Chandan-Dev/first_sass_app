@@ -938,7 +938,7 @@ export function useDashboardTranslations() {
         cashFlow: safeTDashboard('chart.cashFlow', 'cash flow'),
         showingData: (timePeriod: string) => {
           try {
-            return tChart('showingData', { timePeriod });
+            return tDashboard('chart.showingData', { timePeriod });
           } catch {
             return `Showing ${timePeriod} data`;
           }
