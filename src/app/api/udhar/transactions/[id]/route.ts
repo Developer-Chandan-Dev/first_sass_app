@@ -28,7 +28,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     await transaction.deleteOne();
     return NextResponse.json({ message: 'Transaction deleted' });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to delete transaction' }, { status: 500 });
   }
 }
