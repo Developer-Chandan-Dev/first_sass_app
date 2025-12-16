@@ -17,7 +17,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const transactions = await UdharTransaction.find({ customerId: id, userId }).sort({ date: -1 });
     return NextResponse.json({ customer, transactions });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch customer' }, { status: 500 });
   }
 }
@@ -39,7 +39,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     if (!customer) return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
     return NextResponse.json(customer);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update customer' }, { status: 500 });
   }
 }
@@ -57,7 +57,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     await UdharTransaction.deleteMany({ customerId: id, userId });
     return NextResponse.json({ message: 'Customer deleted' });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to delete customer' }, { status: 500 });
   }
 }
