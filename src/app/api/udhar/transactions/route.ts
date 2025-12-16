@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(transaction, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 });
   }
 }
@@ -52,12 +52,12 @@ export async function GET(req: NextRequest) {
     const customerId = searchParams.get('customerId');
 
     await connectDB();
-    const query: any = { userId };
+    const query: { userId: string; customerId?: string } = { userId };
     if (customerId) query.customerId = customerId;
 
     const transactions = await UdharTransaction.find(query).sort({ date: -1 }).populate('customerId');
     return NextResponse.json(transactions);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
   }
 }
