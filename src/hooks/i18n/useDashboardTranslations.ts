@@ -1010,6 +1010,7 @@ export function useDashboardTranslations() {
       baseTranslations,
       t,
       tExpenses,
+      tDashboard,
       safeTDashboard,
       safeTSidebar,
       safeTExpenses,

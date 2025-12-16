@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, Edit, Trash2, Phone, MapPin, Search, ArrowUpDown, Users, CreditCard } from 'lucide-react';
+import { Eye, Edit, Trash2, Phone, MapPin, Search, ArrowUpDown, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface Customer {
@@ -29,7 +29,7 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
   const [sortBy, setSortBy] = useState('name-asc');
 
   const filteredAndSortedCustomers = useMemo(() => {
-    let filtered = customers.filter(customer => 
+    const filtered = customers.filter(customer => 
       customer.name.toLowerCase().includes(search.toLowerCase()) ||
       customer.phone.includes(search)
     );

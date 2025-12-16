@@ -45,7 +45,7 @@ export function AdvancedDashboardChart() {
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [timePeriod, setTimePeriod] = useState<TimePeriod>('monthly');
   const { theme } = useTheme();
-  const { chart, dashboard } = useDashboardTranslations();
+  const { chart } = useDashboardTranslations();
 
   const CHART_TYPES = [
     { value: 'bar' as ChartType, label: chart.barChart || "Bar Chart", icon: BarChart3 },
