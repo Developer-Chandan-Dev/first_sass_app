@@ -18,7 +18,7 @@ interface CustomerFormModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  customer?: Customer;
+  customer?: Customer | null;
 }
 
 export function CustomerFormModal({ open, onClose, onSuccess, customer }: CustomerFormModalProps) {
