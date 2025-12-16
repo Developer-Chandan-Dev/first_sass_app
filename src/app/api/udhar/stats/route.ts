@@ -4,7 +4,7 @@ import connectDB from '@/lib/mongoose';
 import UdharCustomer from '@/models/UdharCustomer';
 import UdharTransaction from '@/models/UdharTransaction';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
       monthPurchases,
       monthCollections,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch stats' }, { status: 500 });
   }
 }
