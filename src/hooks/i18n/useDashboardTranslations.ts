@@ -44,6 +44,7 @@ export function useDashboardTranslations() {
         analytics: safeTSidebar('analytics', 'Analytics'),
         categories: safeTSidebar('categories', 'Categories'),
         budgets: safeTSidebar('budgets', 'Budgets'),
+        udhar: safeTSidebar('udhar', 'Udhar'),
         cards: safeTSidebar('cards', 'Cards'),
         notifications: safeTSidebar('notifications', 'Notifications'),
         settings: safeTSidebar('settings', 'Settings'),

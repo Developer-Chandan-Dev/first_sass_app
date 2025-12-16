@@ -34,7 +34,7 @@ const sidebarItems: SidebarItem[] = [
   { icon: DollarSign, labelKey: 'income', href: '/dashboard/income' },
   { icon: TrendingUp, labelKey: 'analytics', href: '/dashboard/analytics' },
   { icon: PieChart, labelKey: 'categories', href: '/dashboard/categories' },
-  { icon: Target, labelKey: 'budgets', href: '/dashboard/udhar' },
+  { icon: Target, labelKey: 'udhar', href: '/dashboard/udhar' },
   { icon: CreditCard, labelKey: 'cards', href: '/dashboard/cards' },
   { icon: Bell, labelKey: 'notifications', href: '/dashboard/notifications' },
   { icon: Settings, labelKey: 'settings', href: '/dashboard/settings' },
