@@ -7,11 +7,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
+interface Customer {
+  _id: string;
+  name: string;
+  phone: string;
+  address?: string;
+}
+
 interface CustomerFormModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  customer?: any;
+  customer?: Customer;
 }
 
 export function CustomerFormModal({ open, onClose, onSuccess, customer }: CustomerFormModalProps) {
