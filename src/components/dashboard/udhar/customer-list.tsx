@@ -61,9 +61,9 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Search and Filter Bar */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -96,37 +96,37 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
           <p className="text-muted-foreground">No customers found.</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {filteredAndSortedCustomers.map((customer) => (
             <Card 
               key={customer._id} 
-              className="border-0 shadow-sm hover:shadow-md transition-all duration-200 bg-gradient-to-r from-card to-card/50"
+              className="border-0 py-2 sm:py-3 shadow-sm hover:shadow-md transition-all duration-200 bg-gradient-to-r from-card to-card/50"
             >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between gap-3">
+              <CardContent className="px-2 py-1">
+                <div className="flex items-center justify-between gap-2">
                   {/* Left: Avatar + Info */}
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
                     <div className="relative">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 ring-2 ring-primary/10">
-                        <span className="text-lg font-bold text-primary">
+                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center flex-shrink-0 ring-2 ring-primary/10">
+                        <span className="text-sm font-bold text-primary">
                           {customer.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       {customer.totalOutstanding > 0 && (
-                        <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 border-2 border-background" />
+                        <div className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-red-500 border-2 border-background" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-base truncate mb-1">{customer.name}</h3>
+                      <h3 className="font-semibold text-sm sm:text-base truncate mb-0.5">{customer.name}</h3>
                       {/* Hide phone/address on mobile, show on md+ */}
-                      <div className="hidden md:flex md:flex-col lg:flex-row lg:items-center gap-1 lg:gap-3 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                          <Phone className="h-3.5 w-3.5" />
+                      <div className="hidden md:flex md:flex-col lg:flex-row lg:items-center gap-0.5 lg:gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Phone className="h-3 w-3" />
                           {customer.phone}
                         </span>
                         {customer.address && (
-                          <span className="flex items-center gap-1.5 truncate">
-                            <MapPin className="h-3.5 w-3.5" />
+                          <span className="flex items-center gap-1 truncate">
+                            <MapPin className="h-3 w-3" />
                             {customer.address}
                           </span>
                         )}
@@ -135,10 +135,10 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
                   </div>
 
                   {/* Right: Badge + Actions */}
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <Badge 
                       variant={customer.totalOutstanding > 0 ? 'destructive' : 'secondary'}
-                      className="text-sm px-3 py-1.5 font-semibold shadow-sm"
+                      className="text-xs sm:text-sm px-2 py-0.5 font-semibold shadow-sm"
                     >
                       ₹{customer.totalOutstanding}
                     </Badge>
@@ -148,27 +148,27 @@ export function CustomerList({ customers, onEdit, onDelete }: CustomerListProps)
                         variant="ghost"
                         onClick={() => router.push(`/dashboard/udhar/shopkeeper/${customer._id}`)}
                         title="View Details"
-                        className="hover:bg-primary/10"
+                        className="hover:bg-primary/10 h-7 w-7 p-0"
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-3.5 w-3.5" />
                       </Button>
                       <Button 
                         size="sm" 
                         variant="ghost" 
                         onClick={() => onEdit(customer)}
                         title="Edit Customer"
-                        className="hover:bg-blue-500/10"
+                        className="hover:bg-blue-500/10 h-7 w-7 p-0"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-3.5 w-3.5" />
                       </Button>
                       <Button 
                         size="sm" 
                         variant="ghost" 
                         onClick={() => onDelete(customer._id)}
                         title="Delete Customer"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10 h-7 w-7 p-0"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   </div>

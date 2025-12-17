@@ -155,7 +155,7 @@ export default function ShopkeeperUdharPage() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className=" px-2 py-3 sm:p-6">
           {loading ? (
             <p className="text-center py-8 text-muted-foreground">Loading...</p>
           ) : (
