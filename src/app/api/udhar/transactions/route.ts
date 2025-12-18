@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { customerId, type, amount, paidAmount, description } = await req.json();
+    const { customerId, type, amount, paidAmount, description, items, paymentMethod } = await req.json();
     
     if (!customerId || !type || !amount || !description) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -17,13 +17,21 @@ export async function POST(req: NextRequest) {
 
     await connectDB();
 
+    const finalPaidAmount = paidAmount || 0;
+    const remaining = type === 'purchase' ? amount - finalPaidAmount : 0;
+    const status = type === 'purchase' ? (remaining === 0 ? 'completed' : 'pending') : 'completed';
+
     const transaction = await UdharTransaction.create({
       userId,
       customerId,
       type,
       amount,
-      paidAmount: paidAmount || 0,
+      paidAmount: finalPaidAmount,
       description,
+      items: items || undefined,
+      paymentMethod: paymentMethod || undefined,
+      status,
+      remainingAmount: remaining,
     });
 
     // Update customer's total outstanding

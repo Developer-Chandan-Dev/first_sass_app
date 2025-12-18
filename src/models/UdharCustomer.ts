@@ -6,6 +6,8 @@ export interface IUdharCustomer extends Document {
   phone: string;
   address?: string;
   totalOutstanding: number;
+  creditLimit?: number;
+  lastTransactionDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,6 +19,8 @@ const UdharCustomerSchema = new Schema<IUdharCustomer>(
     phone: { type: String, required: true },
     address: { type: String },
     totalOutstanding: { type: Number, default: 0 },
+    creditLimit: { type: Number },
+    lastTransactionDate: { type: Date },
   },
   { timestamps: true }
 );

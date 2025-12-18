@@ -12,6 +12,7 @@ interface Customer {
   name: string;
   phone: string;
   address?: string;
+  creditLimit?: number;
 }
 
 interface CustomerFormModalProps {
@@ -27,6 +28,7 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
     name: '',
     phone: '',
     address: '',
+    creditLimit: '',
   });
 
   useEffect(() => {
@@ -35,9 +37,10 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
         name: customer.name || '',
         phone: customer.phone || '',
         address: customer.address || '',
+        creditLimit: customer.creditLimit?.toString() || '',
       });
     } else {
-      setFormData({ name: '', phone: '', address: '' });
+      setFormData({ name: '', phone: '', address: '', creditLimit: '' });
     }
   }, [customer, open]);
 
@@ -52,7 +55,10 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          creditLimit: formData.creditLimit ? parseFloat(formData.creditLimit) : undefined,
+        }),
       });
 
       if (!res.ok) {
@@ -109,6 +115,17 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               placeholder="Enter address (optional)"
+              className="text-base"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Credit Limit (₹)</Label>
+            <Input
+              type="number"
+              step="0.01"
+              value={formData.creditLimit}
+              onChange={(e) => setFormData({ ...formData, creditLimit: e.target.value })}
+              placeholder="Set credit limit (optional)"
               className="text-base"
             />
           </div>

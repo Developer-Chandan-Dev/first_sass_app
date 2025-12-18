@@ -7,6 +7,10 @@ export interface IUdharTransaction extends Document {
   amount: number;
   paidAmount: number;
   description: string;
+  items?: { name: string; quantity: number; price: number }[];
+  paymentMethod?: 'cash' | 'upi' | 'card' | 'other';
+  status?: 'completed' | 'pending';
+  remainingAmount?: number;
   date: Date;
   createdAt: Date;
 }
@@ -19,6 +23,10 @@ const UdharTransactionSchema = new Schema<IUdharTransaction>(
     amount: { type: Number, required: true },
     paidAmount: { type: Number, default: 0 },
     description: { type: String, required: true },
+    items: [{ name: String, quantity: Number, price: Number }],
+    paymentMethod: { type: String, enum: ['cash', 'upi', 'card', 'other'] },
+    status: { type: String, enum: ['completed', 'pending'], default: 'pending' },
+    remainingAmount: { type: Number, default: 0 },
     date: { type: Date, default: Date.now },
   },
   { timestamps: true }

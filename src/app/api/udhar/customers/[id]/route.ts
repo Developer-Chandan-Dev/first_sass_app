@@ -28,12 +28,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { id } = await params;
-    const { name, phone, address } = await req.json();
+    const { name, phone, address, creditLimit } = await req.json();
 
     await connectDB();
     const customer = await UdharCustomer.findOneAndUpdate(
       { _id: id, userId },
-      { name, phone, address },
+      { name, phone, address, creditLimit },
       { new: true }
     );
 
