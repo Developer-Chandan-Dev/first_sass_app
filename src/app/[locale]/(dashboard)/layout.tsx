@@ -29,7 +29,8 @@ export default function DashboardLayout({
   // Hide global FAB on expense pages that have their own MobileFAB
   const hideGlobalFAB =
     pathname?.includes('/expenses/free') ||
-    pathname?.includes('/expenses/budget');
+    pathname?.includes('/expenses/budget') ||
+    pathname.includes('/udhar/shopkeeper/');
 
   // Create user in database on first visit
   useEffect(() => {
