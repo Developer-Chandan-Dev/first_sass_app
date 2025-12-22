@@ -1,0 +1,87 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs/server';
+import connectDB from '@/lib/mongoose';
+import UdharTransaction from '@/models/UdharTransaction';
+import UdharCustomer from '@/models/UdharCustomer';
+
+export async function POST(req: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { customerId, type, amount, paidAmount, description, items, paymentMethod, dueDate } = await req.json();
+    
+    if (!customerId || !type || !amount || !description) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    await connectDB();
+
+    const finalPaidAmount = paidAmount || 0;
+    const remaining = type === 'purchase' ? amount - finalPaidAmount : 0;
+    const status = type === 'purchase' ? (remaining === 0 ? 'completed' : 'pending') : 'completed';
+
+    const transaction = await UdharTransaction.create({
+      userId,
+      customerId,
+      type,
+      amount,
+      paidAmount: finalPaidAmount,
+      description,
+      items: items || undefined,
+      paymentMethod: paymentMethod || undefined,
+      status,
+      remainingAmount: remaining,
+      dueDate: dueDate || undefined,
+    });
+
+    // If purchase with partial payment, create automatic payment entry
+    if (type === 'purchase' && finalPaidAmount > 0) {
+      await UdharTransaction.create({
+        userId,
+        customerId,
+        type: 'payment',
+        amount: finalPaidAmount,
+        paidAmount: 0,
+        description: `Payment for: ${description}`,
+        paymentMethod: paymentMethod || 'cash',
+        status: 'completed',
+        remainingAmount: 0,
+      });
+    }
+
+    // Update customer's total outstanding
+    const customer = await UdharCustomer.findById(customerId);
+    if (customer) {
+      if (type === 'purchase') {
+        customer.totalOutstanding += (amount - (paidAmount || 0));
+      } else if (type === 'payment') {
+        customer.totalOutstanding -= amount;
+      }
+      await customer.save();
+    }
+
+    return NextResponse.json(transaction, { status: 201 });
+  } catch {
+    return NextResponse.json({ error: 'Failed to create transaction' }, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { searchParams } = new URL(req.url);
+    const customerId = searchParams.get('customerId');
+
+    await connectDB();
+    const query: { userId: string; customerId?: string } = { userId };
+    if (customerId) query.customerId = customerId;
+
+    const transactions = await UdharTransaction.find(query).sort({ date: -1 }).populate('customerId');
+    return NextResponse.json(transactions);
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
+  }
+}

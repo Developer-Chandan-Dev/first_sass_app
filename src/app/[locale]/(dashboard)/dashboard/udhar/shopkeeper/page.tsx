@@ -11,7 +11,7 @@ import { TopDebtors } from '@/components/dashboard/udhar/top-debtors';
 import { RecentTransactionsFeed } from '@/components/dashboard/udhar/recent-transactions-feed';
 import { AnalyticsSkeleton, InsightsSkeleton, CustomerListSkeleton } from '@/components/dashboard/udhar/skeletons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Plus, BarChart3, CreditCard } from 'lucide-react';
+import { Users, Plus, BarChart3, CreditCard, Store, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Customer {
@@ -62,8 +62,8 @@ export default function ShopkeeperUdharPage() {
   const fetchData = async () => {
     try {
       const [customersRes, statsRes] = await Promise.all([
-        fetch('/api/udhar/customers'),
-        fetch('/api/udhar/stats')
+        fetch('/api/udhar/shopkeeper/customers'),
+        fetch('/api/udhar/shopkeeper/stats')
       ]);
       
       if (!customersRes.ok || !statsRes.ok) {
@@ -89,7 +89,7 @@ export default function ShopkeeperUdharPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this customer and all transactions?')) return;
     try {
-      const res = await fetch(`/api/udhar/customers/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/udhar/shopkeeper/customers/${id}`, { method: 'DELETE' });
       if (!res.ok) {
         throw new Error('Failed to delete customer');
       }
@@ -105,15 +105,22 @@ export default function ShopkeeperUdharPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <PageHeader
           title="Shopkeeper Udhar Management"
           description="Manage your shop's udhar records, customers, and payments efficiently"
         />
-        <Button onClick={() => { setEditCustomer(null); setModalOpen(true); }} className="shadow-sm">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Customer
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => window.location.href = '/dashboard/udhar/shopkeeper/vendor'} variant="outline" className="shadow-sm">
+            <Store className="h-4 w-4 mr-2" />
+            Vendors
+            <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+          <Button onClick={() => { setEditCustomer(null); setModalOpen(true); }} className="shadow-sm">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Customer
+          </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="dashboard" className="space-y-4">

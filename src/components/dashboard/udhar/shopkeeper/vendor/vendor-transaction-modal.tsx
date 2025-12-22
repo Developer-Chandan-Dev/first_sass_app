@@ -10,15 +10,15 @@ import { Plus, X, Calculator } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
-interface TransactionModalProps {
+interface VendorTransactionModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  customerId: string;
+  vendorId: string;
   type: 'purchase' | 'payment';
 }
 
-export function TransactionModal({ open, onClose, onSuccess, customerId, type }: TransactionModalProps) {
+export function VendorTransactionModal({ open, onClose, onSuccess, vendorId, type }: VendorTransactionModalProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     amount: '',
@@ -53,15 +53,15 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
         return {
           name: i.name,
           quantity: qty,
-          price: qty * rate // Store total price (qty × rate)
+          price: qty * rate
         };
       });
 
-      const res = await fetch('/api/udhar/shopkeeper/transactions', {
+      const res = await fetch('/api/udhar/vendor/transactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customerId,
+          vendorId,
           type,
           amount,
           paidAmount,
@@ -99,11 +99,11 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className={`p-2 rounded-lg ${
               type === 'purchase' 
-                ? 'bg-red-100 dark:bg-red-900/20' 
+                ? 'bg-orange-100 dark:bg-orange-900/20' 
                 : 'bg-green-100 dark:bg-green-900/20'
             }`}>
               {type === 'purchase' ? (
-                <span className="text-red-600 dark:text-red-400">🛒</span>
+                <span className="text-orange-600 dark:text-orange-400">🛒</span>
               ) : (
                 <span className="text-green-600 dark:text-green-400">💰</span>
               )}
@@ -144,7 +144,7 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
             <Input
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder={type === 'purchase' ? 'e.g., Biscuits, Oil' : 'Payment received'}
+              placeholder={type === 'purchase' ? 'e.g., Stock purchase' : 'Payment made'}
               required
             />
           </div>

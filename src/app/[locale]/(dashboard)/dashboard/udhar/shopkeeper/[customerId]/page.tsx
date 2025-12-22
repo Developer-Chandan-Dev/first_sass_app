@@ -55,7 +55,7 @@ export default function CustomerDetailPage() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch(`/api/udhar/customers/${customerId}`);
+      const res = await fetch(`/api/udhar/shopkeeper/customers/${customerId}`);
       if (!res.ok) {
         throw new Error('Failed to fetch customer');
       }
@@ -82,7 +82,7 @@ export default function CustomerDetailPage() {
 
   const handleDeleteTransaction = async (id: string) => {
     try {
-      const res = await fetch(`/api/udhar/transactions/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/udhar/shopkeeper/transactions/${id}`, { method: 'DELETE' });
       if (!res.ok) {
         throw new Error('Failed to delete transaction');
       }

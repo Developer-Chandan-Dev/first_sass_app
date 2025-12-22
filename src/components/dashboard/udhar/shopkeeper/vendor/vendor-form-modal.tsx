@@ -7,71 +7,65 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
-interface Customer {
+interface Vendor {
   _id: string;
   name: string;
   phone: string;
   address?: string;
-  creditLimit?: number;
 }
 
-interface CustomerFormModalProps {
+interface VendorFormModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  customer?: Customer | null;
+  vendor?: Vendor | null;
 }
 
-export function CustomerFormModal({ open, onClose, onSuccess, customer }: CustomerFormModalProps) {
+export function VendorFormModal({ open, onClose, onSuccess, vendor }: VendorFormModalProps) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     address: '',
-    creditLimit: '',
   });
 
   useEffect(() => {
-    if (customer) {
+    if (vendor) {
       setFormData({
-        name: customer.name || '',
-        phone: customer.phone || '',
-        address: customer.address || '',
-        creditLimit: customer.creditLimit?.toString() || '',
+        name: vendor.name || '',
+        phone: vendor.phone || '',
+        address: vendor.address || '',
       });
     } else {
-      setFormData({ name: '', phone: '', address: '', creditLimit: '' });
+      setFormData({ name: '', phone: '', address: '' });
     }
-  }, [customer, open]);
+  }, [vendor, open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const url = customer ? `/api/udhar/shopkeeper/customers/${customer._id}` : '/api/udhar/shopkeeper/customers';
-      const method = customer ? 'PUT' : 'POST';
+      const url = vendor ? `/api/udhar/vendor/vendors/${vendor._id}` : '/api/udhar/vendor/vendors';
+      const method = vendor ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          creditLimit: formData.creditLimit ? parseFloat(formData.creditLimit) : undefined,
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to save customer');
+        throw new Error(errorData.error || 'Failed to save vendor');
       }
 
-      toast.success(customer ? 'Customer updated' : 'Customer added');
+      toast.success(vendor ? 'Vendor updated' : 'Vendor added');
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error saving customer:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to save customer');
+      console.error('Error saving vendor:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to save vendor');
     } finally {
       setLoading(false);
     }
@@ -82,10 +76,10 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <span className="text-primary">👤</span>
+            <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
+              <span className="text-orange-600 dark:text-orange-400">🏪</span>
             </div>
-            {customer ? 'Edit Customer' : 'Add New Customer'}
+            {vendor ? 'Edit Vendor' : 'Add New Vendor'}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -95,7 +89,7 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
-              placeholder="Enter customer name"
+              placeholder="Enter vendor name"
               className="text-base"
             />
           </div>
@@ -118,17 +112,6 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
               className="text-base"
             />
           </div>
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Credit Limit (₹)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={formData.creditLimit}
-              onChange={(e) => setFormData({ ...formData, creditLimit: e.target.value })}
-              placeholder="Set credit limit (optional)"
-              className="text-base"
-            />
-          </div>
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
               Cancel
@@ -138,7 +121,7 @@ export function CustomerFormModal({ open, onClose, onSuccess, customer }: Custom
               disabled={loading}
               className="flex-1 shadow-sm"
             >
-              {loading ? 'Saving...' : customer ? 'Update' : 'Add'}
+              {loading ? 'Saving...' : vendor ? 'Update' : 'Add'}
             </Button>
           </DialogFooter>
         </form>

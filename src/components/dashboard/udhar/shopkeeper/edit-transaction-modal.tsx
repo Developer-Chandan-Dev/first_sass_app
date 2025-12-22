@@ -53,7 +53,7 @@ export function EditTransactionModal({ open, onClose, onSuccess, transaction }: 
         throw new Error('Please enter a valid amount');
       }
 
-      const res = await fetch(`/api/udhar/transactions/${transaction._id}`, {
+      const res = await fetch(`/api/udhar/shopkeeper/transactions/${transaction._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

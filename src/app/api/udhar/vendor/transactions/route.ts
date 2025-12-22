@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import connectDB from '@/lib/mongoose';
-import UdharTransaction from '@/models/UdharTransaction';
-import UdharCustomer from '@/models/UdharCustomer';
+import VendorTransaction from '@/models/VendorTransaction';
+import UdharVendor from '@/models/UdharVendor';
 
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { customerId, type, amount, paidAmount, description, items, paymentMethod, dueDate } = await req.json();
+    const { vendorId, type, amount, paidAmount, description, items, paymentMethod, dueDate } = await req.json();
     
-    if (!customerId || !type || !amount || !description) {
+    if (!vendorId || !type || !amount || !description) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -21,9 +21,9 @@ export async function POST(req: NextRequest) {
     const remaining = type === 'purchase' ? amount - finalPaidAmount : 0;
     const status = type === 'purchase' ? (remaining === 0 ? 'completed' : 'pending') : 'completed';
 
-    const transaction = await UdharTransaction.create({
+    const transaction = await VendorTransaction.create({
       userId,
-      customerId,
+      vendorId,
       type,
       amount,
       paidAmount: finalPaidAmount,
@@ -35,15 +35,29 @@ export async function POST(req: NextRequest) {
       dueDate: dueDate || undefined,
     });
 
-    // Update customer's total outstanding
-    const customer = await UdharCustomer.findById(customerId);
-    if (customer) {
+    // If purchase with partial payment, create automatic payment entry
+    if (type === 'purchase' && finalPaidAmount > 0) {
+      await VendorTransaction.create({
+        userId,
+        vendorId,
+        type: 'payment',
+        amount: finalPaidAmount,
+        paidAmount: 0,
+        description: `Payment for: ${description}`,
+        paymentMethod: paymentMethod || 'cash',
+        status: 'completed',
+        remainingAmount: 0,
+      });
+    }
+
+    const vendor = await UdharVendor.findById(vendorId);
+    if (vendor) {
       if (type === 'purchase') {
-        customer.totalOutstanding += (amount - (paidAmount || 0));
+        vendor.totalOwed += (amount - (paidAmount || 0));
       } else if (type === 'payment') {
-        customer.totalOutstanding -= amount;
+        vendor.totalOwed -= amount;
       }
-      await customer.save();
+      await vendor.save();
     }
 
     return NextResponse.json(transaction, { status: 201 });
@@ -58,13 +72,13 @@ export async function GET(req: NextRequest) {
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
-    const customerId = searchParams.get('customerId');
+    const vendorId = searchParams.get('vendorId');
 
     await connectDB();
-    const query: { userId: string; customerId?: string } = { userId };
-    if (customerId) query.customerId = customerId;
+    const query: { userId: string; vendorId?: string } = { userId };
+    if (vendorId) query.vendorId = vendorId;
 
-    const transactions = await UdharTransaction.find(query).sort({ date: -1 }).populate('customerId');
+    const transactions = await VendorTransaction.find(query).sort({ date: -1 }).populate('vendorId');
     return NextResponse.json(transactions);
   } catch {
     return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
