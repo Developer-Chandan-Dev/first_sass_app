@@ -30,7 +30,6 @@ export function MobileExpenseList({
   className,
 }: MobileExpenseListProps) {
   const isMobile = useIsMobile();
-  const mounted = true; // useIsMobile handles SSR internally
   const { expenses, loading } = useAppSelector((state) => state.expenses);
   const dispatch = useAppDispatch();
   const locale = useLocale();

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { customerId, type, amount, paidAmount, description, items, paymentMethod } = await req.json();
+    const { customerId, type, amount, paidAmount, description, items, paymentMethod, dueDate } = await req.json();
     
     if (!customerId || !type || !amount || !description) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       paymentMethod: paymentMethod || undefined,
       status,
       remainingAmount: remaining,
+      dueDate: dueDate || undefined,
     });
 
     // Update customer's total outstanding

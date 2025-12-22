@@ -4,6 +4,23 @@ import connectDB from '@/lib/mongoose';
 import UdharTransaction from '@/models/UdharTransaction';
 import UdharCustomer from '@/models/UdharCustomer';
 
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { id } = await params;
+    await connectDB();
+
+    const transaction = await UdharTransaction.findOne({ _id: id, userId }).populate('customerId');
+    if (!transaction) return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
+
+    return NextResponse.json(transaction);
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch transaction' }, { status: 500 });
+  }
+}
+
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await auth();
@@ -26,11 +43,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       customer.totalOutstanding += transaction.amount;
     }
 
-    // Update transaction
+    // Update transaction fields
     transaction.amount = body.amount;
     transaction.paidAmount = body.paidAmount || 0;
     transaction.description = body.description;
+    if (body.items) transaction.items = body.items;
     if (body.paymentMethod) transaction.paymentMethod = body.paymentMethod;
+    if (body.dueDate !== undefined) transaction.dueDate = body.dueDate || undefined;
     
     // Recalculate status and remaining amount
     if (transaction.type === 'purchase') {

@@ -25,6 +25,7 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
     paidAmount: '',
     description: '',
     paymentMethod: 'cash' as 'cash' | 'upi' | 'card' | 'other',
+    dueDate: '',
   });
   const [items, setItems] = useState<{ name: string; quantity: string; price: string }[]>([]);
   const [showItems, setShowItems] = useState(false);
@@ -67,6 +68,7 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
           description: formData.description,
           items: itemsData.length > 0 ? itemsData : undefined,
           paymentMethod: type === 'payment' ? formData.paymentMethod : undefined,
+          dueDate: type === 'purchase' && formData.dueDate ? formData.dueDate : undefined,
         }),
       });
 
@@ -76,7 +78,7 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
       }
 
       toast.success(type === 'purchase' ? 'Purchase added' : 'Payment recorded');
-      setFormData({ amount: '', paidAmount: '', description: '', paymentMethod: 'cash' });
+      setFormData({ amount: '', paidAmount: '', description: '', paymentMethod: 'cash', dueDate: '' });
       setItems([]);
       setShowItems(false);
       setAutoCalculate(true);
@@ -146,6 +148,17 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
               required
             />
           </div>
+          {type === 'purchase' && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Due Date (Optional)</Label>
+              <Input
+                type="date"
+                value={formData.dueDate}
+                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+          )}
           {type === 'payment' && (
             <div className="space-y-2">
               <Label className="text-sm font-medium">Payment Method</Label>

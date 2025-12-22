@@ -20,6 +20,7 @@ interface Transaction {
   items?: { name: string; quantity: number; price: number }[];
   paymentMethod?: 'cash' | 'upi' | 'card' | 'other';
   date: string;
+  dueDate?: string;
 }
 
 interface TransactionListProps {
@@ -68,6 +69,11 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
               </div>
               <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
                 <span>{format(new Date(transaction.date), 'MMM dd, yyyy')}</span>
+                {transaction.dueDate && transaction.type === 'purchase' && (
+                  <Badge variant="outline" className="text-xs">
+                    📅 Due: {format(new Date(transaction.dueDate), 'MMM dd')}
+                  </Badge>
+                )}
                 {transaction.paymentMethod && (
                   <Badge variant="outline" className="text-xs">
                     {transaction.paymentMethod === 'cash' && '💵'}

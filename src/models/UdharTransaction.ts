@@ -11,6 +11,7 @@ export interface IUdharTransaction extends Document {
   paymentMethod?: 'cash' | 'upi' | 'card' | 'other';
   status?: 'completed' | 'pending';
   remainingAmount?: number;
+  dueDate?: Date;
   date: Date;
   createdAt: Date;
 }
@@ -27,6 +28,7 @@ const UdharTransactionSchema = new Schema<IUdharTransaction>(
     paymentMethod: { type: String, enum: ['cash', 'upi', 'card', 'other'] },
     status: { type: String, enum: ['completed', 'pending'], default: 'pending' },
     remainingAmount: { type: Number, default: 0 },
+    dueDate: { type: Date },
     date: { type: Date, default: Date.now },
   },
   { timestamps: true }
