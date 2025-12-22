@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MobileFABProps {
   onClick: () => void;
@@ -16,9 +16,9 @@ export function MobileFAB({
   label = 'Add',
   className,
 }: MobileFABProps) {
-  const { isMobile, mounted } = useMobile();
+  const isMobile = useIsMobile();
 
-  if (!mounted || !isMobile) {
+  if (!isMobile) {
     return null;
   }
 

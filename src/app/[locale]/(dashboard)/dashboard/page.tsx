@@ -37,11 +37,15 @@ export default function Dashboard() {
       icon: Target,
       description:
         dashboard.setBudgetTargets + ' (Available in Expenses → Budget)',
+      available: true,
+      href: '/dashboard/expenses/budget'
     },
     {
       title: sidebar.analytics,
       icon: PieChart,
       description: dashboard.advancedSpendingAnalysis,
+      available: true,
+      href: '/dashboard/analytics'
     },
     {
       title: sidebar.notifications,
@@ -107,22 +111,22 @@ export default function Dashboard() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {comingSoonFeatures.map((feature) => {
               const Icon = feature.icon;
-              const isBudgets = feature.title === sidebar.budgets;
-              const Component = isBudgets ? 'a' : 'div';
+              const isAvailable = feature.available;
+              const Component = isAvailable ? 'a' : 'div';
 
               return (
                 <Component
                   key={feature.title}
-                  {...(isBudgets ? { href: '/dashboard/expenses/budget' } : {})}
+                  {...(isAvailable && feature.href ? { href: feature.href } : {})}
                   className={`flex flex-col items-center text-center p-4 border rounded-lg bg-muted/30 ${
-                    isBudgets
+                    isAvailable
                       ? 'hover:bg-muted/50 transition-colors cursor-pointer'
                       : ''
                   }`}
                 >
                   <Icon
                     className={`h-8 w-8 mb-2 ${
-                      isBudgets ? 'text-primary' : 'text-muted-foreground'
+                      isAvailable ? 'text-primary' : 'text-muted-foreground'
                     }`}
                   />
                   <h3 className="font-medium mb-1">{feature.title}</h3>
@@ -130,10 +134,10 @@ export default function Dashboard() {
                     {feature.description}
                   </p>
                   <Badge
-                    variant={isBudgets ? 'default' : 'secondary'}
+                    variant={isAvailable ? 'default' : 'secondary'}
                     className="text-xs"
                   >
-                    {isBudgets
+                    {isAvailable
                       ? 'Available Now'
                       : dashboard?.comingSoon || 'Coming Soon'}
                   </Badge>

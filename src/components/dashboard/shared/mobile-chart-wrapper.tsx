@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 interface MobileChartWrapperProps {
@@ -20,7 +20,8 @@ export function MobileChartWrapper({
   mobileHeight = 'h-64',
   desktopHeight = 'h-80',
 }: MobileChartWrapperProps) {
-  const { isMobile, mounted } = useMobile();
+  const isMobile = useIsMobile();
+  const mounted = true;
 
   if (!mounted) {
     return (

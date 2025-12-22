@@ -18,7 +18,7 @@ import { useDashboardTranslations } from '@/hooks/i18n';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
 import { MobileFAB } from '@/components/dashboard/shared/mobile-fab';
 import { fetchBudgets, type Budget } from '@/lib/redux/expense/budgetSlice';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BudgetTemplate {
   name: string;
@@ -31,7 +31,7 @@ interface BudgetTemplate {
 export default function BudgetExpensesPage() {
   const dispatch = useAppDispatch();
   const { expenses } = useDashboardTranslations();
-  const { isMobile } = useMobile();
+  const isMobile = useIsMobile();
 
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);

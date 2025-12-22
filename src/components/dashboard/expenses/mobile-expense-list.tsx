@@ -14,7 +14,7 @@ import { useAppSelector, useAppDispatch } from '@/lib/redux/hooks';
 import { deleteExpense } from '@/lib/redux/expense/expenseSlice';
 import { formatCurrency } from '@/hooks/i18n/useBaseTranslations';
 import { useLocale } from 'next-intl';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { ExpenseItem } from '@/lib/redux/expense/expenseSlice';
 
@@ -29,12 +29,13 @@ export function MobileExpenseList({
   onEdit,
   className,
 }: MobileExpenseListProps) {
-  const { isMobile, mounted } = useMobile();
+  const isMobile = useIsMobile();
+  const mounted = true; // useIsMobile handles SSR internally
   const { expenses, loading } = useAppSelector((state) => state.expenses);
   const dispatch = useAppDispatch();
   const locale = useLocale();
 
-  if (!mounted || !isMobile) {
+  if (!isMobile) {
     return null;
   }
 

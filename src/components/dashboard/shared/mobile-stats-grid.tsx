@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MobileStatsGridProps {
   children: ReactNode;
@@ -10,7 +10,8 @@ interface MobileStatsGridProps {
 }
 
 export function MobileStatsGrid({ children, className }: MobileStatsGridProps) {
-  const { isMobile, mounted } = useMobile();
+  const isMobile = useIsMobile();
+  const mounted = true;
 
   if (!mounted) {
     return (

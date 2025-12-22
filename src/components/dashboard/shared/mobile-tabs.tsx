@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 interface MobileTabItem {
@@ -22,7 +22,8 @@ export function MobileTabs({
   defaultValue,
   className,
 }: MobileTabsProps) {
-  const { isMobile, mounted } = useMobile();
+  const isMobile = useIsMobile();
+  const mounted = true;
 
   if (!mounted) {
     return <div className="animate-pulse h-32 bg-muted rounded" />;

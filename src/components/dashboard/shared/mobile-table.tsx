@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MobileTableItem {
   id: string;
@@ -39,7 +39,8 @@ export function MobileTable({
   className,
   emptyMessage = 'No items found',
 }: MobileTableProps) {
-  const { isMobile, mounted } = useMobile();
+  const isMobile = useIsMobile();
+  const mounted = true;
 
   if (!mounted) {
     return <div className="animate-pulse h-32 bg-muted rounded-lg" />;

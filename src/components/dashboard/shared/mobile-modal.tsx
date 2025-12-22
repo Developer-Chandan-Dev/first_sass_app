@@ -13,7 +13,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface MobileModalProps {
   open: boolean;
@@ -30,7 +30,8 @@ export function MobileModal({
   children,
   className,
 }: MobileModalProps) {
-  const { isMobile, mounted } = useMobile();
+  const isMobile = useIsMobile();
+  const mounted = true;
 
   if (!mounted) {
     return null;

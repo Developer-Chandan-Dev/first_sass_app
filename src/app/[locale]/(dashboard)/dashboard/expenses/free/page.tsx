@@ -15,12 +15,12 @@ import { Plus } from 'lucide-react';
 import { useDashboardTranslations } from '@/hooks/i18n';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
 import { MobileFAB } from '@/components/dashboard/shared/mobile-fab';
-import { useMobile } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ExpensesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { expenses } = useDashboardTranslations();
-  const { isMobile } = useMobile();
+  const isMobile = useIsMobile();
 
   return (
     <div className="space-y-4 md:space-y-6">
