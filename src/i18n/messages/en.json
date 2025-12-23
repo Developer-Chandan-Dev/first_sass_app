@@ -1043,5 +1043,102 @@
     "selectedReport": "Selected {type} Report ({count} items)",
     "expenseReport": "Expense Report",
     "incomeReport": "Income Report"
+  },
+  "udhar": {
+    "title": "Udhar Management",
+    "shopkeeper": {
+      "title": "Shopkeeper Udhar",
+      "description": "Manage your shop's udhar records, customers, and payments efficiently",
+      "customers": "Customers",
+      "vendors": "Vendors",
+      "addCustomer": "Add Customer",
+      "totalCustomers": "Total Customers",
+      "totalOutstanding": "Total Outstanding",
+      "highRisk": "High Risk",
+      "weekCollections": "Week Collections",
+      "todayCollections": "Today Collections",
+      "monthCollections": "Month Collections",
+      "topDebtors": "Top Debtors",
+      "recentActivity": "Recent Activity",
+      "noOutstanding": "No outstanding balances",
+      "noRecentTransactions": "No recent transactions"
+    },
+    "vendor": {
+      "title": "Vendor Management",
+      "description": "Track purchases and payments to your suppliers",
+      "addVendor": "Add Vendor",
+      "totalVendors": "Total Vendors",
+      "totalOwed": "Total Owed",
+      "activeVendors": "Active Vendors",
+      "weekPayments": "Week Payments",
+      "topCreditors": "Top Creditors",
+      "noVendors": "No vendors found"
+    },
+    "customer": {
+      "name": "Name",
+      "phone": "Phone",
+      "address": "Address",
+      "creditLimit": "Credit Limit",
+      "outstanding": "Outstanding",
+      "details": "Customer details",
+      "notFound": "Customer not found"
+    },
+    "vendorDetails": {
+      "title": "Vendor details",
+      "notFound": "Vendor not found"
+    },
+    "transaction": {
+      "purchase": "Purchase",
+      "payment": "Payment",
+      "newPurchase": "New Purchase",
+      "recordPayment": "Record Payment",
+      "purchases": "Purchases",
+      "payments": "Payments",
+      "total": "Total",
+      "noPurchases": "No purchases yet",
+      "noPayments": "No payments yet",
+      "deleteConfirm": "Delete Transaction?",
+      "deleteMessage": "This action cannot be undone. This will permanently delete the transaction and update the outstanding balance.",
+      "deleted": "Transaction deleted",
+      "updated": "Transaction updated",
+      "edit": "Edit Transaction"
+    },
+    "stats": {
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "collections": "Collections",
+      "net": "Net",
+      "sevenDayTrend": "7-Day Trend",
+      "paymentMethods": "Payment Methods",
+      "noPaymentData": "No payment data available"
+    },
+    "actions": {
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "edit": "Edit",
+      "delete": "Delete",
+      "viewDetails": "View Details"
+    },
+    "tabs": {
+      "dashboard": "Dashboard",
+      "customers": "Customers",
+      "vendors": "Vendors",
+      "insights": "Insights"
+    },
+    "form": {
+      "amount": "Amount",
+      "description": "Description",
+      "paymentMethod": "Payment Method",
+      "cash": "Cash",
+      "upi": "UPI",
+      "card": "Card",
+      "other": "Other",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "required": "Required",
+      "enterValidAmount": "Please enter a valid amount"
+    }
   }
 }
