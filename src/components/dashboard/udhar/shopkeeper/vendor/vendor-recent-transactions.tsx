@@ -1,0 +1,73 @@
+'use client';
+
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Clock, ShoppingCart, Wallet } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+
+interface Transaction {
+  _id: string;
+  type: 'purchase' | 'payment';
+  amount: number;
+  description: string;
+  date: string;
+}
+
+interface VendorRecentTransactionsProps {
+  transactions: Transaction[];
+}
+
+export function VendorRecentTransactions({ transactions }: VendorRecentTransactionsProps) {
+  if (transactions.length === 0) {
+    return (
+      <Card className="border-0 shadow-md">
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Clock className="h-5 w-5 text-blue-600" />
+            Recent Activity
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center text-muted-foreground py-8">No recent transactions</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-0 shadow-md">
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <Clock className="h-5 w-5 text-blue-600" />
+          Recent Activity
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {transactions.map((transaction) => (
+          <div key={transaction._id} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+            <div className={`p-2 rounded-lg ${
+              transaction.type === 'purchase' 
+                ? 'bg-orange-100 dark:bg-orange-900/20' 
+                : 'bg-green-100 dark:bg-green-900/20'
+            }`}>
+              {transaction.type === 'purchase' ? (
+                <ShoppingCart className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+              ) : (
+                <Wallet className="h-4 w-4 text-green-600 dark:text-green-400" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm truncate">{transaction.description}</p>
+              <p className="text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(transaction.date), { addSuffix: true })}
+              </p>
+            </div>
+            <Badge variant={transaction.type === 'purchase' ? 'destructive' : 'default'} className="font-bold">
+              {transaction.type === 'purchase' ? '+' : '-'}₹{transaction.amount.toLocaleString()}
+            </Badge>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}

@@ -6,9 +6,13 @@ import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
 import { VendorList } from '@/components/dashboard/udhar/shopkeeper/vendor/vendor-list';
 import { VendorFormModal } from '@/components/dashboard/udhar/shopkeeper/vendor/vendor-form-modal';
-import { Plus, Store, TrendingUp, AlertCircle } from 'lucide-react';
+import { VendorAnalyticsDashboard } from '@/components/dashboard/udhar/shopkeeper/vendor/vendor-analytics-dashboard';
+import { VendorTopCreditors } from '@/components/dashboard/udhar/shopkeeper/vendor/vendor-top-creditors';
+import { VendorRecentTransactions } from '@/components/dashboard/udhar/shopkeeper/vendor/vendor-recent-transactions';
+import { AnalyticsSkeleton, InsightsSkeleton, CustomerListSkeleton } from '@/components/dashboard/udhar/skeletons';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Store, Plus, BarChart3, CreditCard, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
-import { Skeleton } from '@/components/ui/skeleton';
 
 interface Vendor {
   _id: string;
@@ -18,28 +22,68 @@ interface Vendor {
   totalOwed: number;
 }
 
+interface Stats {
+  totalVendors: number;
+  totalOwed: number;
+  activeVendors: number;
+  todayPayments: number;
+  weekPayments: number;
+  monthPayments: number;
+  todayPurchases: number;
+  weekPurchases: number;
+  monthPurchases: number;
+  topCreditors: { _id: string; name: string; phone: string; owed: number }[];
+  recentTransactions: { _id: string; type: 'purchase' | 'payment'; amount: number; description: string; date: string }[];
+  chartData: { date: string; purchases: number; payments: number }[];
+  paymentMethods: Record<string, number>;
+}
+
 export default function VendorManagementPage() {
   const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [stats, setStats] = useState<Stats>({
+    totalVendors: 0,
+    totalOwed: 0,
+    activeVendors: 0,
+    todayPayments: 0,
+    weekPayments: 0,
+    monthPayments: 0,
+    todayPurchases: 0,
+    weekPurchases: 0,
+    monthPurchases: 0,
+    topCreditors: [],
+    recentTransactions: [],
+    chartData: [],
+    paymentMethods: {},
+  });
   const [modalOpen, setModalOpen] = useState(false);
   const [editVendor, setEditVendor] = useState<Vendor | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchVendors = async () => {
+  const fetchData = async () => {
     try {
-      const res = await fetch('/api/udhar/vendor/vendors');
-      if (!res.ok) throw new Error('Failed to fetch vendors');
-      const data = await res.json();
-      setVendors(data);
+      const [vendorsRes, statsRes] = await Promise.all([
+        fetch('/api/udhar/vendor/vendors'),
+        fetch('/api/udhar/vendor/stats')
+      ]);
+      
+      if (!vendorsRes.ok || !statsRes.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      
+      const vendorsData = await vendorsRes.json();
+      const statsData = await statsRes.json();
+      setVendors(vendorsData);
+      setStats(statsData);
     } catch (error) {
-      console.error('Error fetching vendors:', error);
-      toast.error('Failed to load vendors');
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load data');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchVendors();
+    fetchData();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -48,120 +92,114 @@ export default function VendorManagementPage() {
       const res = await fetch(`/api/udhar/vendor/vendors/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete vendor');
       toast.success('Vendor deleted');
-      fetchVendors();
+      fetchData();
     } catch (error) {
       console.error('Error deleting vendor:', error);
       toast.error('Failed to delete vendor');
     }
   };
 
-  const totalOwed = vendors.reduce((sum, v) => sum + v.totalOwed, 0);
-  const activeVendors = vendors.filter(v => v.totalOwed > 0).length;
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <PageHeader
           title="Vendor Management"
           description="Track purchases and payments to your suppliers"
         />
-        <Button onClick={() => { setEditVendor(null); setModalOpen(true); }} className="shadow-sm">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Vendor
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => window.location.href = '/dashboard/udhar/shopkeeper'} variant="outline" className="shadow-sm">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Customers
+          </Button>
+          <Button onClick={() => { setEditVendor(null); setModalOpen(true); }} className="shadow-sm">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Vendor
+          </Button>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Vendors</p>
-                <p className="text-2xl font-bold">{vendors.length}</p>
-              </div>
-              <div className="p-3 rounded-full bg-orange-100 dark:bg-orange-900/20">
-                <Store className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="dashboard" className="space-y-4">
+        {loading ? (
+          <>
+            <TabsList className="grid w-full grid-cols-3 lg:w-auto">
+              <TabsTrigger value="dashboard" disabled>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Dashboard
+              </TabsTrigger>
+              <TabsTrigger value="vendors" disabled>
+                <Store className="h-4 w-4 mr-2" />
+                Vendors
+              </TabsTrigger>
+              <TabsTrigger value="insights" disabled>
+                <CreditCard className="h-4 w-4 mr-2" />
+                Insights
+              </TabsTrigger>
+            </TabsList>
+            <AnalyticsSkeleton />
+          </>
+        ) : (
+          <>
+          <TabsList className="grid w-full grid-cols-3 lg:w-auto">
+            <TabsTrigger value="dashboard">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="vendors">
+              <Store className="h-4 w-4 mr-2" />
+              Vendors
+            </TabsTrigger>
+            <TabsTrigger value="insights">
+              <CreditCard className="h-4 w-4 mr-2" />
+              Insights
+            </TabsTrigger>
+          </TabsList>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Owed</p>
-                <p className="text-2xl font-bold text-destructive">₹{totalOwed.toLocaleString()}</p>
-              </div>
-              <div className="p-3 rounded-full bg-red-100 dark:bg-red-900/20">
-                <TrendingUp className="h-6 w-6 text-red-600 dark:text-red-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <TabsContent value="dashboard" className="space-y-4">
+            <VendorAnalyticsDashboard stats={stats} />
+          </TabsContent>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Active Vendors</p>
-                <p className="text-2xl font-bold">{activeVendors}</p>
-              </div>
-              <div className="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/20">
-                <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          <TabsContent value="vendors">
+            <Card className="border-0 shadow-md">
+              <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-orange-900/10 dark:to-orange-950/5 border-b">
+                <CardTitle className="flex items-center gap-2">
+                  <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
+                    <Store className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <span>All Vendors</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-2 py-3 sm:p-6">
+                {loading ? (
+                  <CustomerListSkeleton />
+                ) : (
+                  <VendorList 
+                    vendors={vendors} 
+                    onEdit={(vendor) => { setEditVendor(vendor); setModalOpen(true); }}
+                    onDelete={handleDelete}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-      {/* Vendors List */}
-      <Card className="border-0 shadow-md">
-        <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-100/50 dark:from-orange-900/10 dark:to-orange-950/5 border-b">
-          <CardTitle className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
-              <Store className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-            </div>
-            <span>All Vendors</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          {loading ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="border-2">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Skeleton className="h-12 w-12 rounded-full" />
-                      <div className="flex-1 space-y-2">
-                        <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-3 w-24" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-4 w-full mb-4" />
-                    <div className="flex justify-between items-center pt-4 border-t">
-                      <Skeleton className="h-3 w-20" />
-                      <Skeleton className="h-6 w-16" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <VendorList 
-              vendors={vendors} 
-              onEdit={(vendor) => { setEditVendor(vendor); setModalOpen(true); }}
-              onDelete={handleDelete}
-            />
-          )}
-        </CardContent>
-      </Card>
+          <TabsContent value="insights" className="space-y-4">
+            {loading ? (
+              <InsightsSkeleton />
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                <VendorTopCreditors creditors={stats.topCreditors} />
+                <VendorRecentTransactions transactions={stats.recentTransactions} />
+              </div>
+            )}
+          </TabsContent>
+          </>
+        )}
+      </Tabs>
 
       <VendorFormModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSuccess={fetchVendors}
+        onSuccess={fetchData}
         vendor={editVendor}
       />
     </div>

@@ -228,3 +228,87 @@ export function CustomerDetailSkeleton() {
     </div>
   );
 }
+
+export function VendorDetailSkeleton() {
+  return (
+    <div className="space-y-3 sm:space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-2 sm:gap-4">
+        <Skeleton className="h-8 w-8 sm:h-10 sm:w-10" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+      </div>
+
+      {/* Vendor Info Card */}
+      <Card className="border-0 shadow-md">
+        <div className="h-1 sm:h-2 bg-gradient-to-r from-orange-500 to-orange-400" />
+        <CardContent className="p-3 sm:p-4 md:p-6">
+          <div className="flex items-center gap-2 sm:gap-4 mb-4">
+            <Skeleton className="h-10 w-10 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+          </div>
+          <div className="space-y-2 pt-2 border-t">
+            <div className="flex justify-between">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-6 w-20" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-9 flex-1" />
+              <Skeleton className="h-9 flex-1" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i} className="border-0 shadow-sm">
+            <CardContent className="p-3 sm:p-4">
+              <Skeleton className="h-8 w-full" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <Skeleton className="h-9 sm:h-11" />
+        <Skeleton className="h-9 sm:h-11" />
+      </div>
+
+      {/* Transactions */}
+      <Card className="border-0 shadow-md">
+        <CardHeader className="p-3 sm:p-6">
+          <Skeleton className="h-5 w-32" />
+        </CardHeader>
+        <CardContent className="p-2 sm:p-3 md:p-6 space-y-3">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="border-0 shadow-sm">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-10 w-10 rounded-xl" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                  <Skeleton className="h-6 w-16" />
+                  <div className="flex gap-1">
+                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
