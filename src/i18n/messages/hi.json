@@ -1054,5 +1054,102 @@
     "selectedReport": "चयनित {type} रिपोर्ट ({count} आइटम)",
     "expenseReport": "खर्च रिपोर्ट",
     "incomeReport": "आय रिपोर्ट"
+  },
+  "udhar": {
+    "title": "उधार प्रबंधन",
+    "shopkeeper": {
+      "title": "दुकानदार उधार",
+      "description": "अपनी दुकान के उधार रिकॉर्ड, ग्राहकों और भुगतान को कुशलता से प्रबंधित करें",
+      "customers": "ग्राहक",
+      "vendors": "विक्रेता",
+      "addCustomer": "ग्राहक जोड़ें",
+      "totalCustomers": "कुल ग्राहक",
+      "totalOutstanding": "कुल बकाया",
+      "highRisk": "उच्च जोखिम",
+      "weekCollections": "सप्ताह की वसूली",
+      "todayCollections": "आज की वसूली",
+      "monthCollections": "महीने की वसूली",
+      "topDebtors": "शीर्ष देनदार",
+      "recentActivity": "हाल की गतिविधि",
+      "noOutstanding": "कोई बकाया शेष नहीं",
+      "noRecentTransactions": "कोई हाल के लेन-देन नहीं"
+    },
+    "vendor": {
+      "title": "विक्रेता प्रबंधन",
+      "description": "अपने आपूर्तिकर्ताओं से खरीद और भुगतान ट्रैक करें",
+      "addVendor": "विक्रेता जोड़ें",
+      "totalVendors": "कुल विक्रेता",
+      "totalOwed": "कुल देय",
+      "activeVendors": "सक्रिय विक्रेता",
+      "weekPayments": "सप्ताह के भुगतान",
+      "topCreditors": "शीर्ष लेनदार",
+      "noVendors": "कोई विक्रेता नहीं मिला"
+    },
+    "customer": {
+      "name": "नाम",
+      "phone": "फोन",
+      "address": "पता",
+      "creditLimit": "क्रेडिट सीमा",
+      "outstanding": "बकाया",
+      "details": "ग्राहक विवरण",
+      "notFound": "ग्राहक नहीं मिला"
+    },
+    "vendorDetails": {
+      "title": "विक्रेता विवरण",
+      "notFound": "विक्रेता नहीं मिला"
+    },
+    "transaction": {
+      "purchase": "खरीद",
+      "payment": "भुगतान",
+      "newPurchase": "नई खरीद",
+      "recordPayment": "भुगतान रिकॉर्ड करें",
+      "purchases": "खरीद",
+      "payments": "भुगतान",
+      "total": "कुल",
+      "noPurchases": "अभी तक कोई खरीद नहीं",
+      "noPayments": "अभी तक कोई भुगतान नहीं",
+      "deleteConfirm": "लेन-देन हटाएं?",
+      "deleteMessage": "यह कार्रवाई पूर्ववत नहीं की जा सकती। यह लेन-देन को स्थायी रूप से हटा देगा और बकाया शेष को अपडेट करेगा।",
+      "deleted": "लेन-देन हटा दिया गया",
+      "updated": "लेन-देन अपडेट किया गया",
+      "edit": "लेन-देन संपादित करें"
+    },
+    "stats": {
+      "today": "आज",
+      "thisWeek": "इस सप्ताह",
+      "thisMonth": "इस महीने",
+      "collections": "वसूली",
+      "net": "शुद्ध",
+      "sevenDayTrend": "7-दिन का रुझान",
+      "paymentMethods": "भुगतान के तरीके",
+      "noPaymentData": "कोई भुगतान डेटा उपलब्ध नहीं"
+    },
+    "actions": {
+      "call": "कॉल करें",
+      "whatsapp": "व्हाट्सएप",
+      "edit": "संपादित करें",
+      "delete": "हटाएं",
+      "viewDetails": "विवरण देखें"
+    },
+    "tabs": {
+      "dashboard": "डैशबोर्ड",
+      "customers": "ग्राहक",
+      "vendors": "विक्रेता",
+      "insights": "अंतर्दृष्टि"
+    },
+    "form": {
+      "amount": "राशि",
+      "description": "विवरण",
+      "paymentMethod": "भुगतान का तरीका",
+      "cash": "नकद",
+      "upi": "UPI",
+      "card": "कार्ड",
+      "other": "अन्य",
+      "save": "सहेजें",
+      "saving": "सहेजा जा रहा है...",
+      "cancel": "रद्द करें",
+      "required": "आवश्यक",
+      "enterValidAmount": "कृपया एक वैध राशि दर्ज करें"
+    }
   }
 }
