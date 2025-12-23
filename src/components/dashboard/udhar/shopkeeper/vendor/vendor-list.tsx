@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Edit, Trash2, Eye, Store } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Vendor {
   _id: string;
@@ -22,6 +23,7 @@ interface VendorListProps {
 }
 
 export function VendorList({ vendors, onEdit, onDelete }: VendorListProps) {
+  const { udhar } = useDashboardTranslations();
   const router = useRouter();
 
   if (vendors.length === 0) {
@@ -30,7 +32,7 @@ export function VendorList({ vendors, onEdit, onDelete }: VendorListProps) {
         <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
           <Store className="h-8 w-8 text-muted-foreground" />
         </div>
-        <p className="text-muted-foreground">No vendors yet</p>
+        <p className="text-muted-foreground">{udhar.vendor.noVendors}</p>
         <p className="text-sm text-muted-foreground">Add your first vendor to start tracking</p>
       </div>
     );
@@ -70,15 +72,15 @@ export function VendorList({ vendors, onEdit, onDelete }: VendorListProps) {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/udhar/shopkeeper/vendor/${vendor._id}`); }}>
                       <Eye className="h-4 w-4 mr-2" />
-                      View Details
+                      {udhar.actions.viewDetails}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(vendor); }}>
                       <Edit className="h-4 w-4 mr-2" />
-                      Edit
+                      {udhar.actions.edit}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onDelete(vendor._id); }} className="text-destructive">
                       <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
+                      {udhar.actions.delete}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

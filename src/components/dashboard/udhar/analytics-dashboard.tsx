@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Users, AlertTriangle, Calendar, Wallet } from 'lucide-react';
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface AnalyticsDashboardProps {
   stats: {
@@ -24,15 +25,17 @@ interface AnalyticsDashboardProps {
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
 
 export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
+  const { udhar } = useDashboardTranslations();
+  
   const paymentMethodData = Object.entries(stats.paymentMethods).map(([name, value]) => ({
     name: name.toUpperCase(),
     value
   }));
 
   const periodStats = [
-    { period: 'Today', collections: stats.todayCollections, purchases: stats.todayPurchases, icon: Calendar, color: 'text-blue-600' },
-    { period: 'This Week', collections: stats.weekCollections, purchases: stats.weekPurchases, icon: TrendingUp, color: 'text-green-600' },
-    { period: 'This Month', collections: stats.monthCollections, purchases: stats.monthPurchases, icon: Wallet, color: 'text-purple-600' }
+    { period: udhar.stats.today, collections: stats.todayCollections, purchases: stats.todayPurchases, icon: Calendar, color: 'text-blue-600' },
+    { period: udhar.stats.thisWeek, collections: stats.weekCollections, purchases: stats.weekPurchases, icon: TrendingUp, color: 'text-green-600' },
+    { period: udhar.stats.thisMonth, collections: stats.monthCollections, purchases: stats.monthPurchases, icon: Wallet, color: 'text-purple-600' }
   ];
 
   return (
@@ -46,7 +49,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
                 <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Customers</p>
+                <p className="text-xs text-muted-foreground">{udhar.shopkeeper.totalCustomers}</p>
                 <p className="text-xl font-bold">{stats.totalCustomers}</p>
               </div>
             </div>
@@ -60,7 +63,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
                 <TrendingDown className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Outstanding</p>
+                <p className="text-xs text-muted-foreground">{udhar.customer.outstanding}</p>
                 <p className="text-xl font-bold">₹{stats.totalOutstanding.toLocaleString()}</p>
               </div>
             </div>
@@ -74,7 +77,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
                 <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Week Collection</p>
+                <p className="text-xs text-muted-foreground">{udhar.shopkeeper.weekCollections}</p>
                 <p className="text-xl font-bold">₹{stats.weekCollections.toLocaleString()}</p>
               </div>
             </div>
@@ -88,7 +91,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
                 <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">High Risk</p>
+                <p className="text-xs text-muted-foreground">{udhar.shopkeeper.highRisk}</p>
                 <p className="text-xl font-bold">{stats.highRiskCustomers}</p>
               </div>
             </div>
@@ -110,15 +113,15 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">Collections</span>
+                  <span className="text-xs text-muted-foreground">{udhar.stats.collections}</span>
                   <Badge variant="default" className="bg-green-600">₹{stat.collections.toLocaleString()}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">Purchases</span>
+                  <span className="text-xs text-muted-foreground">{udhar.transaction.purchases}</span>
                   <Badge variant="destructive">₹{stat.purchases.toLocaleString()}</Badge>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t">
-                  <span className="text-xs font-semibold">Net</span>
+                  <span className="text-xs font-semibold">{udhar.stats.net}</span>
                   <span className={`text-sm font-bold ${stat.collections - stat.purchases >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     ₹{(stat.collections - stat.purchases).toLocaleString()}
                   </span>
@@ -133,7 +136,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="border-0 shadow-md">
           <CardHeader>
-            <CardTitle className="text-base">7-Day Trend</CardTitle>
+            <CardTitle className="text-base">{udhar.stats.sevenDayTrend}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -143,8 +146,8 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="purchases" stroke="#ef4444" name="Purchases" />
-                <Line type="monotone" dataKey="payments" stroke="#10b981" name="Payments" />
+                <Line type="monotone" dataKey="purchases" stroke="#ef4444" name={udhar.transaction.purchases} />
+                <Line type="monotone" dataKey="payments" stroke="#10b981" name={udhar.transaction.payments} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -152,7 +155,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
 
         <Card className="border-0 shadow-md">
           <CardHeader>
-            <CardTitle className="text-base">Payment Methods</CardTitle>
+            <CardTitle className="text-base">{udhar.stats.paymentMethods}</CardTitle>
           </CardHeader>
           <CardContent>
             {paymentMethodData.length > 0 ? (
@@ -168,7 +171,7 @@ export function AnalyticsDashboard({ stats }: AnalyticsDashboardProps) {
               </ResponsiveContainer>
             ) : (
               <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                No payment data available
+                {udhar.stats.noPaymentData}
               </div>
             )}
           </CardContent>

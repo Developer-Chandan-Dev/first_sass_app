@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Trash2, ShoppingCart, Wallet, Edit, Eye, Package, MoreVertical } from 'lucide-react';
 import { format } from 'date-fns';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Transaction {
   _id: string;
@@ -30,6 +31,7 @@ interface TransactionListProps {
 }
 
 export function TransactionList({ transactions, onDelete, onEdit }: TransactionListProps) {
+  const { udhar, common } = useDashboardTranslations();
   const [viewItems, setViewItems] = useState<{ name: string; quantity: number; price: number }[] | null>(null);
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; transactionId: string | null }>({ open: false, transactionId: null });
 
@@ -63,7 +65,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
                     className="hidden sm:flex h-6 px-2 text-xs hover:bg-primary/10"
                   >
                     <Eye className="h-3 w-3 mr-1" />
-                    Items
+                    View Items
                   </Button>
                 )}
               </div>
@@ -154,12 +156,12 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="purchases" className="gap-2">
             <ShoppingCart className="h-4 w-4" />
-            Purchases
+            {udhar.transaction.purchases}
             <Badge variant="secondary" className="ml-1">{purchases.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="payments" className="gap-2">
             <Wallet className="h-4 w-4" />
-            Payments
+            {udhar.transaction.payments}
             <Badge variant="secondary" className="ml-1">{payments.length}</Badge>
           </TabsTrigger>
         </TabsList>
@@ -168,7 +170,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
           {purchases.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground bg-muted/30 rounded-lg">
               <ShoppingCart className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No purchases yet</p>
+              <p>{udhar.transaction.noPurchases}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -181,7 +183,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
           {payments.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground bg-muted/30 rounded-lg">
               <Wallet className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No payments yet</p>
+              <p>{udhar.transaction.noPayments}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -197,7 +199,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />
-              Purchase Items
+              {udhar.transaction.purchase} Items
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
@@ -213,7 +215,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-sm">₹{item.price.toFixed(2)}</p>
-                      <p className="text-xs text-muted-foreground">Total</p>
+                      <p className="text-xs text-muted-foreground">{udhar.transaction.total}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -222,7 +224,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
             {viewItems && (
               <div className="pt-2 border-t mt-3">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold">Total Amount:</span>
+                  <span className="font-semibold">{udhar.transaction.total}:</span>
                   <span className="font-bold text-lg">₹{viewItems.reduce((sum, item) => sum + item.price, 0)}</span>
                 </div>
               </div>
@@ -235,13 +237,13 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
       <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ open, transactionId: null })}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Transaction?</AlertDialogTitle>
+            <AlertDialogTitle>{udhar.transaction.deleteConfirm}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the transaction and update the outstanding balance.
+              {udhar.transaction.deleteMessage}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{common.cancel}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => {
                 if (deleteDialog.transactionId) {
@@ -251,7 +253,7 @@ export function TransactionList({ transactions, onDelete, onEdit }: TransactionL
               }}
               className="bg-destructive hover:bg-destructive/90"
             >
-              Delete
+              {common.delete}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

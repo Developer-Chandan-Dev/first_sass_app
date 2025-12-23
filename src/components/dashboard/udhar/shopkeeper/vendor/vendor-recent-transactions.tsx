@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Clock, ShoppingCart, Wallet } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Transaction {
   _id: string;
@@ -18,17 +19,19 @@ interface VendorRecentTransactionsProps {
 }
 
 export function VendorRecentTransactions({ transactions }: VendorRecentTransactionsProps) {
+  const { udhar } = useDashboardTranslations();
+
   if (transactions.length === 0) {
     return (
       <Card className="border-0 shadow-md">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Clock className="h-5 w-5 text-blue-600" />
-            Recent Activity
+            {udhar.shopkeeper.recentActivity}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-center text-muted-foreground py-8">No recent transactions</p>
+          <p className="text-center text-muted-foreground py-8">{udhar.shopkeeper.noRecentTransactions}</p>
         </CardContent>
       </Card>
     );
@@ -39,7 +42,7 @@ export function VendorRecentTransactions({ transactions }: VendorRecentTransacti
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <Clock className="h-5 w-5 text-blue-600" />
-          Recent Activity
+          {udhar.shopkeeper.recentActivity}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

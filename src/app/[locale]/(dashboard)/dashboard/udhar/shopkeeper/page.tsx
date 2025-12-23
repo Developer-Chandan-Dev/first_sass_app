@@ -13,6 +13,7 @@ import { AnalyticsSkeleton, InsightsSkeleton, CustomerListSkeleton } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Plus, BarChart3, CreditCard, Store, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Customer {
   _id: string;
@@ -39,6 +40,7 @@ interface Stats {
 }
 
 export default function ShopkeeperUdharPage() {
+  const { udhar } = useDashboardTranslations();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalCustomers: 0,
@@ -93,7 +95,7 @@ export default function ShopkeeperUdharPage() {
       if (!res.ok) {
         throw new Error('Failed to delete customer');
       }
-      toast.success('Customer deleted');
+      toast.success(udhar.transaction.deleted);
       fetchData();
     } catch (error) {
       console.error('Error deleting customer:', error);
@@ -107,18 +109,18 @@ export default function ShopkeeperUdharPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <PageHeader
-          title="Shopkeeper Udhar Management"
-          description="Manage your shop's udhar records, customers, and payments efficiently"
+          title={udhar.shopkeeper.title}
+          description={udhar.shopkeeper.description}
         />
         <div className="flex gap-2">
           <Button onClick={() => window.location.href = '/dashboard/udhar/shopkeeper/vendor'} variant="outline" className="shadow-sm">
             <Store className="h-4 w-4 mr-2" />
-            Vendors
+            {udhar.shopkeeper.vendors}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
           <Button onClick={() => { setEditCustomer(null); setModalOpen(true); }} className="shadow-sm">
             <Plus className="h-4 w-4 mr-2" />
-            Add Customer
+            {udhar.shopkeeper.addCustomer}
           </Button>
         </div>
       </div>
@@ -129,15 +131,15 @@ export default function ShopkeeperUdharPage() {
             <TabsList className="grid w-full grid-cols-3 lg:w-auto">
               <TabsTrigger value="dashboard" disabled>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Dashboard
+                {udhar.tabs.dashboard}
               </TabsTrigger>
               <TabsTrigger value="customers" disabled>
                 <Users className="h-4 w-4 mr-2" />
-                Customers
+                {udhar.tabs.customers}
               </TabsTrigger>
               <TabsTrigger value="insights" disabled>
                 <CreditCard className="h-4 w-4 mr-2" />
-                Insights
+                {udhar.tabs.insights}
               </TabsTrigger>
             </TabsList>
             <AnalyticsSkeleton />
@@ -147,15 +149,15 @@ export default function ShopkeeperUdharPage() {
           <TabsList className="grid w-full grid-cols-3 lg:w-auto">
             <TabsTrigger value="dashboard">
               <BarChart3 className="h-4 w-4 mr-2" />
-              Dashboard
+              {udhar.tabs.dashboard}
             </TabsTrigger>
             <TabsTrigger value="customers">
               <Users className="h-4 w-4 mr-2" />
-              Customers
+              {udhar.tabs.customers}
             </TabsTrigger>
             <TabsTrigger value="insights">
               <CreditCard className="h-4 w-4 mr-2" />
-              Insights
+              {udhar.tabs.insights}
             </TabsTrigger>
           </TabsList>
 
@@ -170,7 +172,7 @@ export default function ShopkeeperUdharPage() {
                   <div className="p-2 rounded-lg bg-primary/10">
                     <Users className="h-5 w-5 text-primary" />
                   </div>
-                  <span>All Customers</span>
+                  <span>{udhar.shopkeeper.customers}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="px-2 py-3 sm:p-6">

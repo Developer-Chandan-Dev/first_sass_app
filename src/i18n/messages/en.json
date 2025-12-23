@@ -1109,6 +1109,7 @@
       "thisMonth": "This Month",
       "collections": "Collections",
       "net": "Net",
+      "netOwed": "Net Owed",
       "sevenDayTrend": "7-Day Trend",
       "paymentMethods": "Payment Methods",
       "noPaymentData": "No payment data available"

@@ -1052,5 +1052,104 @@
     "selectedReport": "निवडलेला {type} अहवाल ({count} आयटम)",
     "expenseReport": "खर्च अहवाल",
     "incomeReport": "उत्पन्न अहवाल"
+  },
+  "udhar": {
+    "title": "उधार व्यवस्थापन",
+    "shopkeeper": {
+      "title": "दुकानदार उधार",
+      "description": "तुमच्या दुकानाचे उधार रेकॉर्ड, ग्राहक आणि पेमेंट कार्यक्षमतेने व्यवस्थापित करा",
+      "customers": "ग्राहक",
+      "vendors": "विक्रेते",
+      "addCustomer": "ग्राहक जोडा",
+      "totalCustomers": "एकूण ग्राहक",
+      "totalOutstanding": "एकूण थकबाकी",
+      "highRisk": "उच्च जोखीम",
+      "weekCollections": "आठवड्याची वसुली",
+      "todayCollections": "आजची वसुली",
+      "monthCollections": "महिन्याची वसुली",
+      "topDebtors": "शीर्ष कर्जदार",
+      "recentActivity": "अलीकडील क्रियाकलाप",
+      "noOutstanding": "कोणतीही थकबाकी शिल्लक नाही",
+      "noRecentTransactions": "कोणतेही अलीकडील व्यवहार नाहीत"
+    },
+    "vendor": {
+      "title": "विक्रेता व्यवस्थापन",
+      "description": "तुमच्या पुरवठादारांकडून खरेदी आणि पेमेंट ट्रॅक करा",
+      "addVendor": "विक्रेता जोडा",
+      "totalVendors": "एकूण विक्रेते",
+      "totalOwed": "एकूण देय",
+      "activeVendors": "सक्रिय विक्रेते",
+      "weekPayments": "आठवड्याची पेमेंट",
+      "topCreditors": "शीर्ष कर्जदाते",
+      "noVendors": "कोणतेही विक्रेते आढळले नाहीत"
+    },
+    "customer": {
+      "name": "नाव",
+      "phone": "फोन",
+      "address": "पत्ता",
+      "creditLimit": "क्रेडिट मर्यादा",
+      "outstanding": "थकबाकी",
+      "details": "ग्राहक तपशील",
+      "notFound": "ग्राहक आढळला नाही"
+    },
+    "vendorDetails": {
+      "title": "विक्रेता तपशील",
+      "notFound": "विक्रेता आढळला नाही"
+    },
+    "transaction": {
+      "purchase": "खरेदी",
+      "payment": "पेमेंट",
+      "newPurchase": "नवीन खरेदी",
+      "recordPayment": "पेमेंट रेकॉर्ड करा",
+      "purchases": "खरेदी",
+      "payments": "पेमेंट",
+      "total": "एकूण",
+      "noPurchases": "अद्याप कोणतीही खरेदी नाही",
+      "noPayments": "अद्याप कोणतीही पेमेंट नाही",
+      "deleteConfirm": "व्यवहार हटवायचा?",
+      "deleteMessage": "ही क्रिया पूर्ववत केली जाऊ शकत नाही. हे व्यवहार कायमचे हटवेल आणि थकबाकी शिल्लक अपडेट करेल.",
+      "deleted": "व्यवहार हटवला गेला",
+      "updated": "व्यवहार अपडेट केला गेला",
+      "edit": "व्यवहार संपादित करा"
+    },
+    "stats": {
+      "today": "आज",
+      "thisWeek": "या आठवड्यात",
+      "thisMonth": "या महिन्यात",
+      "collections": "वसुली",
+      "net": "निव्वळ",
+      "netOwed": "निव्वळ देय",
+      "sevenDayTrend": "7-दिवसांचा ट्रेंड",
+      "paymentMethods": "पेमेंट पद्धती",
+      "noPaymentData": "कोणताही पेमेंट डेटा उपलब्ध नाही"
+    },
+    "actions": {
+      "call": "कॉल करा",
+      "whatsapp": "व्हाट्सअॅप",
+      "edit": "संपादित करा",
+      "delete": "हटवा",
+      "viewDetails": "तपशील पहा"
+    },
+    "tabs": {
+      "dashboard": "डॅशबोर्ड",
+      "customers": "ग्राहक",
+      "vendors": "विक्रेते",
+      "insights": "अंतर्दृष्टी"
+    },
+    "form": {
+      "amount": "रक्कम",
+      "description": "वर्णन",
+      "paymentMethod": "पेमेंट पद्धत",
+      "cash": "रोख",
+      "upi": "UPI",
+      "card": "कार्ड",
+      "other": "इतर",
+      "save": "जतन करा",
+      "saving": "जतन करत आहे...",
+      "cancel": "रद्द करा",
+      "required": "आवश्यक",
+      "enterValidAmount": "कृपया वैध रक्कम प्रविष्ट करा"
+    }
   }
 }
+

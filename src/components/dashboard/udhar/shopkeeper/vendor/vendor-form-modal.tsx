@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Vendor {
   _id: string;
@@ -22,6 +23,7 @@ interface VendorFormModalProps {
 }
 
 export function VendorFormModal({ open, onClose, onSuccess, vendor }: VendorFormModalProps) {
+  const { udhar, common } = useDashboardTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -60,12 +62,12 @@ export function VendorFormModal({ open, onClose, onSuccess, vendor }: VendorForm
         throw new Error(errorData.error || 'Failed to save vendor');
       }
 
-      toast.success(vendor ? 'Vendor updated' : 'Vendor added');
+      toast.success(vendor ? udhar.transaction.updated : udhar.vendor.addVendor);
       onSuccess();
       onClose();
     } catch (error) {
       console.error('Error saving vendor:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to save vendor');
+      toast.error(error instanceof Error ? error.message : udhar.vendorDetails.notFound);
     } finally {
       setLoading(false);
     }
@@ -79,49 +81,49 @@ export function VendorFormModal({ open, onClose, onSuccess, vendor }: VendorForm
             <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
               <span className="text-orange-600 dark:text-orange-400">🏪</span>
             </div>
-            {vendor ? 'Edit Vendor' : 'Add New Vendor'}
+            {vendor ? udhar.actions.edit : udhar.vendor.addVendor}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Name *</Label>
+            <Label className="text-sm font-medium">{udhar.customer.name} *</Label>
             <Input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
-              placeholder="Enter vendor name"
+              placeholder={udhar.customer.name}
               className="text-base"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Phone *</Label>
+            <Label className="text-sm font-medium">{udhar.customer.phone} *</Label>
             <Input
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               required
-              placeholder="Enter phone number"
+              placeholder={udhar.customer.phone}
               className="text-base"
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Address</Label>
+            <Label className="text-sm font-medium">{udhar.customer.address}</Label>
             <Input
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              placeholder="Enter address (optional)"
+              placeholder={`${udhar.customer.address} (optional)`}
               className="text-base"
             />
           </div>
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              {common.cancel}
             </Button>
             <Button 
               type="submit" 
               disabled={loading}
               className="flex-1 shadow-sm"
             >
-              {loading ? 'Saving...' : vendor ? 'Update' : 'Add'}
+              {loading ? udhar.form.saving : vendor ? common.update : common.add}
             </Button>
           </DialogFooter>
         </form>

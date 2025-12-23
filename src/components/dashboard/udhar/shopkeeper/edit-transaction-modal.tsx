@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Transaction {
   _id: string;
@@ -24,6 +25,7 @@ interface EditTransactionModalProps {
 }
 
 export function EditTransactionModal({ open, onClose, onSuccess, transaction }: EditTransactionModalProps) {
+  const { udhar, common } = useDashboardTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     amount: '',
@@ -50,7 +52,7 @@ export function EditTransactionModal({ open, onClose, onSuccess, transaction }: 
       const amount = parseFloat(formData.amount);
 
       if (isNaN(amount) || amount <= 0) {
-        throw new Error('Please enter a valid amount');
+        throw new Error(udhar.form.enterValidAmount);
       }
 
       const res = await fetch(`/api/udhar/shopkeeper/transactions/${transaction._id}`, {
@@ -65,11 +67,11 @@ export function EditTransactionModal({ open, onClose, onSuccess, transaction }: 
 
       if (!res.ok) throw new Error('Failed to update transaction');
 
-      toast.success('Transaction updated');
+      toast.success(udhar.transaction.updated);
       onSuccess();
       onClose();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to update');
+      toast.error(error instanceof Error ? error.message : udhar.transaction.updated);
     } finally {
       setLoading(false);
     }
@@ -81,11 +83,11 @@ export function EditTransactionModal({ open, onClose, onSuccess, transaction }: 
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Transaction</DialogTitle>
+          <DialogTitle>{udhar.transaction.edit}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label>Amount *</Label>
+            <Label>{udhar.form.amount} *</Label>
             <Input
               type="number"
               step="0.01"
@@ -95,7 +97,7 @@ export function EditTransactionModal({ open, onClose, onSuccess, transaction }: 
             />
           </div>
           <div className="space-y-2">
-            <Label>Description *</Label>
+            <Label>{udhar.form.description} *</Label>
             <Input
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -104,23 +106,23 @@ export function EditTransactionModal({ open, onClose, onSuccess, transaction }: 
           </div>
           {transaction.type === 'payment' && (
             <div className="space-y-2">
-              <Label>Payment Method</Label>
+              <Label>{udhar.form.paymentMethod}</Label>
               <Select value={formData.paymentMethod} onValueChange={(v: 'cash' | 'upi' | 'card' | 'other') => setFormData({ ...formData, paymentMethod: v })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">💵 Cash</SelectItem>
-                  <SelectItem value="upi">📱 UPI</SelectItem>
-                  <SelectItem value="card">💳 Card</SelectItem>
-                  <SelectItem value="other">🔄 Other</SelectItem>
+                  <SelectItem value="cash">💵 {udhar.form.cash}</SelectItem>
+                  <SelectItem value="upi">📱 {udhar.form.upi}</SelectItem>
+                  <SelectItem value="card">💳 {udhar.form.card}</SelectItem>
+                  <SelectItem value="other">🔄 {udhar.form.other}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           )}
           <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-            <Button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</Button>
+            <Button type="button" variant="outline" onClick={onClose}>{common.cancel}</Button>
+            <Button type="submit" disabled={loading}>{loading ? udhar.form.saving : common.save}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

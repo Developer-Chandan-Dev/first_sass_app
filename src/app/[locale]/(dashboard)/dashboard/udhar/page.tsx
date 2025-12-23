@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 import { 
   User, 
   Store, 
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function UdharManagementPage() {
+  const { udhar } = useDashboardTranslations();
   const udharTypes = [
     {
       title: 'Personal',
@@ -74,8 +76,8 @@ export default function UdharManagementPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Udhar Management System"
-        description="Choose the perfect solution for your udhar tracking and debt management needs"
+        title={udhar.title}
+        description={udhar.shopkeeper.description}
       />
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

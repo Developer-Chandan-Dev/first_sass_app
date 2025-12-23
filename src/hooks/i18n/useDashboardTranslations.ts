@@ -21,6 +21,7 @@ export function useDashboardTranslations() {
   const tCurrency = useTranslations('currency');
   const tDateFormat = useTranslations('dateFormat');
   const tExpenseCards = useTranslations('expenseCards');
+  const tUdhar = useTranslations('udhar');
 
   const safeTDashboard = createSafeTranslator(tDashboard);
   const safeTSidebar = createSafeTranslator(tSidebar);
@@ -32,6 +33,7 @@ export function useDashboardTranslations() {
   const safeTCurrency = createSafeTranslator(tCurrency);
   const safeTDateFormat = createSafeTranslator(tDateFormat);
   const safeTExpenseCards = createSafeTranslator(tExpenseCards);
+  const safeTUdhar = createSafeTranslator(tUdhar);
 
   return useMemo(
     () => ({
@@ -1004,6 +1006,105 @@ export function useDashboardTranslations() {
         },
       },
 
+      udhar: {
+        title: safeTUdhar('title', 'Udhar Management'),
+        shopkeeper: {
+          title: safeTUdhar('shopkeeper.title', 'Shopkeeper Udhar'),
+          description: safeTUdhar('shopkeeper.description', 'Manage your shop\'s udhar records, customers, and payments efficiently'),
+          customers: safeTUdhar('shopkeeper.customers', 'Customers'),
+          vendors: safeTUdhar('shopkeeper.vendors', 'Vendors'),
+          addCustomer: safeTUdhar('shopkeeper.addCustomer', 'Add Customer'),
+          totalCustomers: safeTUdhar('shopkeeper.totalCustomers', 'Total Customers'),
+          totalOutstanding: safeTUdhar('shopkeeper.totalOutstanding', 'Total Outstanding'),
+          highRisk: safeTUdhar('shopkeeper.highRisk', 'High Risk'),
+          weekCollections: safeTUdhar('shopkeeper.weekCollections', 'Week Collections'),
+          todayCollections: safeTUdhar('shopkeeper.todayCollections', 'Today Collections'),
+          monthCollections: safeTUdhar('shopkeeper.monthCollections', 'Month Collections'),
+          topDebtors: safeTUdhar('shopkeeper.topDebtors', 'Top Debtors'),
+          recentActivity: safeTUdhar('shopkeeper.recentActivity', 'Recent Activity'),
+          noOutstanding: safeTUdhar('shopkeeper.noOutstanding', 'No outstanding balances'),
+          noRecentTransactions: safeTUdhar('shopkeeper.noRecentTransactions', 'No recent transactions'),
+        },
+        vendor: {
+          title: safeTUdhar('vendor.title', 'Vendor Management'),
+          description: safeTUdhar('vendor.description', 'Track purchases and payments to your suppliers'),
+          addVendor: safeTUdhar('vendor.addVendor', 'Add Vendor'),
+          totalVendors: safeTUdhar('vendor.totalVendors', 'Total Vendors'),
+          totalOwed: safeTUdhar('vendor.totalOwed', 'Total Owed'),
+          activeVendors: safeTUdhar('vendor.activeVendors', 'Active Vendors'),
+          weekPayments: safeTUdhar('vendor.weekPayments', 'Week Payments'),
+          topCreditors: safeTUdhar('vendor.topCreditors', 'Top Creditors'),
+          noVendors: safeTUdhar('vendor.noVendors', 'No vendors found'),
+        },
+        customer: {
+          name: safeTUdhar('customer.name', 'Name'),
+          phone: safeTUdhar('customer.phone', 'Phone'),
+          address: safeTUdhar('customer.address', 'Address'),
+          creditLimit: safeTUdhar('customer.creditLimit', 'Credit Limit'),
+          outstanding: safeTUdhar('customer.outstanding', 'Outstanding'),
+          details: safeTUdhar('customer.details', 'Customer details'),
+          notFound: safeTUdhar('customer.notFound', 'Customer not found'),
+        },
+        vendorDetails: {
+          title: safeTUdhar('vendorDetails.title', 'Vendor details'),
+          notFound: safeTUdhar('vendorDetails.notFound', 'Vendor not found'),
+        },
+        transaction: {
+          purchase: safeTUdhar('transaction.purchase', 'Purchase'),
+          payment: safeTUdhar('transaction.payment', 'Payment'),
+          newPurchase: safeTUdhar('transaction.newPurchase', 'New Purchase'),
+          recordPayment: safeTUdhar('transaction.recordPayment', 'Record Payment'),
+          purchases: safeTUdhar('transaction.purchases', 'Purchases'),
+          payments: safeTUdhar('transaction.payments', 'Payments'),
+          total: safeTUdhar('transaction.total', 'Total'),
+          noPurchases: safeTUdhar('transaction.noPurchases', 'No purchases yet'),
+          noPayments: safeTUdhar('transaction.noPayments', 'No payments yet'),
+          deleteConfirm: safeTUdhar('transaction.deleteConfirm', 'Delete Transaction?'),
+          deleteMessage: safeTUdhar('transaction.deleteMessage', 'This action cannot be undone. This will permanently delete the transaction and update the outstanding balance.'),
+          deleted: safeTUdhar('transaction.deleted', 'Transaction deleted'),
+          updated: safeTUdhar('transaction.updated', 'Transaction updated'),
+          edit: safeTUdhar('transaction.edit', 'Edit Transaction'),
+        },
+        stats: {
+          today: safeTUdhar('stats.today', 'Today'),
+          thisWeek: safeTUdhar('stats.thisWeek', 'This Week'),
+          thisMonth: safeTUdhar('stats.thisMonth', 'This Month'),
+          collections: safeTUdhar('stats.collections', 'Collections'),
+          net: safeTUdhar('stats.net', 'Net'),
+          netOwed: safeTUdhar('stats.netOwed', 'Net Owed'),
+          sevenDayTrend: safeTUdhar('stats.sevenDayTrend', '7-Day Trend'),
+          paymentMethods: safeTUdhar('stats.paymentMethods', 'Payment Methods'),
+          noPaymentData: safeTUdhar('stats.noPaymentData', 'No payment data available'),
+        },
+        actions: {
+          call: safeTUdhar('actions.call', 'Call'),
+          whatsapp: safeTUdhar('actions.whatsapp', 'WhatsApp'),
+          edit: safeTUdhar('actions.edit', 'Edit'),
+          delete: safeTUdhar('actions.delete', 'Delete'),
+          viewDetails: safeTUdhar('actions.viewDetails', 'View Details'),
+        },
+        tabs: {
+          dashboard: safeTUdhar('tabs.dashboard', 'Dashboard'),
+          customers: safeTUdhar('tabs.customers', 'Customers'),
+          vendors: safeTUdhar('tabs.vendors', 'Vendors'),
+          insights: safeTUdhar('tabs.insights', 'Insights'),
+        },
+        form: {
+          amount: safeTUdhar('form.amount', 'Amount'),
+          description: safeTUdhar('form.description', 'Description'),
+          paymentMethod: safeTUdhar('form.paymentMethod', 'Payment Method'),
+          cash: safeTUdhar('form.cash', 'Cash'),
+          upi: safeTUdhar('form.upi', 'UPI'),
+          card: safeTUdhar('form.card', 'Card'),
+          other: safeTUdhar('form.other', 'Other'),
+          save: safeTUdhar('form.save', 'Save'),
+          saving: safeTUdhar('form.saving', 'Saving...'),
+          cancel: safeTUdhar('form.cancel', 'Cancel'),
+          required: safeTUdhar('form.required', 'Required'),
+          enterValidAmount: safeTUdhar('form.enterValidAmount', 'Please enter a valid amount'),
+        },
+      },
+
       // Raw translator for dynamic keys
       t,
     }),
@@ -1022,6 +1123,7 @@ export function useDashboardTranslations() {
       safeTCurrency,
       safeTDateFormat,
       safeTExpenseCards,
+      safeTUdhar,
     ]
   );
 }

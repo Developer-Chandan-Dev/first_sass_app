@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Store, AlertTriangle, Calendar, Wallet } from 'lucide-react';
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface VendorAnalyticsDashboardProps {
   stats: {
@@ -24,15 +25,17 @@ interface VendorAnalyticsDashboardProps {
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
 
 export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProps) {
+  const { udhar } = useDashboardTranslations();
+  
   const paymentMethodData = Object.entries(stats.paymentMethods).map(([name, value]) => ({
     name: name.toUpperCase(),
     value
   }));
 
   const periodStats = [
-    { period: 'Today', payments: stats.todayPayments, purchases: stats.todayPurchases, icon: Calendar, color: 'text-blue-600' },
-    { period: 'This Week', payments: stats.weekPayments, purchases: stats.weekPurchases, icon: TrendingUp, color: 'text-green-600' },
-    { period: 'This Month', payments: stats.monthPayments, purchases: stats.monthPurchases, icon: Wallet, color: 'text-purple-600' }
+    { period: udhar.stats.today, payments: stats.todayPayments, purchases: stats.todayPurchases, icon: Calendar, color: 'text-blue-600' },
+    { period: udhar.stats.thisWeek, payments: stats.weekPayments, purchases: stats.weekPurchases, icon: TrendingUp, color: 'text-green-600' },
+    { period: udhar.stats.thisMonth, payments: stats.monthPayments, purchases: stats.monthPurchases, icon: Wallet, color: 'text-purple-600' }
   ];
 
   return (
@@ -46,7 +49,7 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
                 <Store className="h-5 w-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Vendors</p>
+                <p className="text-xs text-muted-foreground">{udhar.shopkeeper.vendors}</p>
                 <p className="text-xl font-bold">{stats.totalVendors}</p>
               </div>
             </div>
@@ -60,7 +63,7 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
                 <TrendingUp className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Total Owed</p>
+                <p className="text-xs text-muted-foreground">{udhar.vendor.totalOwed}</p>
                 <p className="text-xl font-bold">₹{stats.totalOwed.toLocaleString()}</p>
               </div>
             </div>
@@ -74,7 +77,7 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
                 <TrendingDown className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Week Payments</p>
+                <p className="text-xs text-muted-foreground">{udhar.vendor.weekPayments}</p>
                 <p className="text-xl font-bold">₹{stats.weekPayments.toLocaleString()}</p>
               </div>
             </div>
@@ -88,7 +91,7 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
                 <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Active</p>
+                <p className="text-xs text-muted-foreground">{udhar.vendor.activeVendors}</p>
                 <p className="text-xl font-bold">{stats.activeVendors}</p>
               </div>
             </div>
@@ -110,15 +113,15 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">Purchases</span>
+                  <span className="text-xs text-muted-foreground">{udhar.transaction.purchases}</span>
                   <Badge variant="destructive">₹{stat.purchases.toLocaleString()}</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">Payments</span>
+                  <span className="text-xs text-muted-foreground">{udhar.transaction.payments}</span>
                   <Badge variant="default" className="bg-green-600">₹{stat.payments.toLocaleString()}</Badge>
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t">
-                  <span className="text-xs font-semibold">Net Owed</span>
+                  <span className="text-xs font-semibold">{udhar.stats.netOwed}</span>
                   <span className={`text-sm font-bold ${stat.purchases - stat.payments >= 0 ? 'text-red-600' : 'text-green-600'}`}>
                     ₹{(stat.purchases - stat.payments).toLocaleString()}
                   </span>
@@ -133,7 +136,7 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="border-0 shadow-md">
           <CardHeader>
-            <CardTitle className="text-base">7-Day Trend</CardTitle>
+            <CardTitle className="text-base">{udhar.stats.sevenDayTrend}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250}>
@@ -143,8 +146,8 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="purchases" stroke="#f97316" name="Purchases" />
-                <Line type="monotone" dataKey="payments" stroke="#10b981" name="Payments" />
+                <Line type="monotone" dataKey="purchases" stroke="#f97316" name={udhar.transaction.purchases} />
+                <Line type="monotone" dataKey="payments" stroke="#10b981" name={udhar.transaction.payments} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -152,7 +155,7 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
 
         <Card className="border-0 shadow-md">
           <CardHeader>
-            <CardTitle className="text-base">Payment Methods</CardTitle>
+            <CardTitle className="text-base">{udhar.stats.paymentMethods}</CardTitle>
           </CardHeader>
           <CardContent>
             {paymentMethodData.length > 0 ? (
@@ -168,7 +171,7 @@ export function VendorAnalyticsDashboard({ stats }: VendorAnalyticsDashboardProp
               </ResponsiveContainer>
             ) : (
               <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                No payment data available
+                {udhar.stats.noPaymentData}
               </div>
             )}
           </CardContent>

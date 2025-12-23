@@ -1045,5 +1045,103 @@
     "selectedReport": "ਚੁਣੀ ਗਈ {type} ਰਿਪੋਰਟ ({count} ਆਇਟਮ)",
     "expenseReport": "ਖਰਚ ਰਿਪੋਰਟ",
     "incomeReport": "ਆਮਦਨ ਰਿਪੋਰਟ"
+  },
+  "udhar": {
+    "title": "ਉਧਾਰ ਪ੍ਰਬੰਧਨ",
+    "shopkeeper": {
+      "title": "ਦੁਕਾਨਦਾਰ ਉਧਾਰ",
+      "description": "ਆਪਣੀ ਦੁਕਾਨ ਦੇ ਉਧਾਰ ਰਿਕਾਰਡ, ਗਾਹਕਾਂ ਅਤੇ ਭੁਗਤਾਨਾਂ ਨੂੰ ਕੁਸ਼ਲਤਾ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ",
+      "customers": "ਗਾਹਕ",
+      "vendors": "ਵਿਕਰੇਤਾ",
+      "addCustomer": "ਗਾਹਕ ਜੋੜੋ",
+      "totalCustomers": "ਕੁੱਲ ਗਾਹਕ",
+      "totalOutstanding": "ਕੁੱਲ ਬਕਾਇਆ",
+      "highRisk": "ਉੱਚ ਜੋਖਮ",
+      "weekCollections": "ਹਫਤੇ ਦੀ ਵਸੂਲੀ",
+      "todayCollections": "ਅੱਜ ਦੀ ਵਸੂਲੀ",
+      "monthCollections": "ਮਹੀਨੇ ਦੀ ਵਸੂਲੀ",
+      "topDebtors": "ਸਿਖਰ ਕਰਜ਼ਦਾਰ",
+      "recentActivity": "ਹਾਲੀਆ ਗਤੀਵਿਧੀ",
+      "noOutstanding": "ਕੋਈ ਬਕਾਇਆ ਸ਼ੇਸ਼ ਨਹੀਂ",
+      "noRecentTransactions": "ਕੋਈ ਹਾਲੀਆ ਲੈਣ-ਦੇਣ ਨਹੀਂ"
+    },
+    "vendor": {
+      "title": "ਵਿਕਰੇਤਾ ਪ੍ਰਬੰਧਨ",
+      "description": "ਆਪਣੇ ਸਪਲਾਇਰਾਂ ਤੋਂ ਖਰੀਦ ਅਤੇ ਭੁਗਤਾਨ ਟਰੈਕ ਕਰੋ",
+      "addVendor": "ਵਿਕਰੇਤਾ ਜੋੜੋ",
+      "totalVendors": "ਕੁੱਲ ਵਿਕਰੇਤਾ",
+      "totalOwed": "ਕੁੱਲ ਦੇਣਦਾਰ",
+      "activeVendors": "ਸਰਗਰਮ ਵਿਕਰੇਤਾ",
+      "weekPayments": "ਹਫਤੇ ਦੇ ਭੁਗਤਾਨ",
+      "topCreditors": "ਸਿਖਰ ਲੈਣਦਾਰ",
+      "noVendors": "ਕੋਈ ਵਿਕਰੇਤਾ ਨਹੀਂ ਮਿਲਿਆ"
+    },
+    "customer": {
+      "name": "ਨਾਮ",
+      "phone": "ਫੋਨ",
+      "address": "ਪਤਾ",
+      "creditLimit": "ਕ੍ਰੈਡਿਟ ਸੀਮਾ",
+      "outstanding": "ਬਕਾਇਆ",
+      "details": "ਗਾਹਕ ਵੇਰਵੇ",
+      "notFound": "ਗਾਹਕ ਨਹੀਂ ਮਿਲਿਆ"
+    },
+    "vendorDetails": {
+      "title": "ਵਿਕਰੇਤਾ ਵੇਰਵੇ",
+      "notFound": "ਵਿਕਰੇਤਾ ਨਹੀਂ ਮਿਲਿਆ"
+    },
+    "transaction": {
+      "purchase": "ਖਰੀਦ",
+      "payment": "ਭੁਗਤਾਨ",
+      "newPurchase": "ਨਵੀਂ ਖਰੀਦ",
+      "recordPayment": "ਭੁਗਤਾਨ ਰਿਕਾਰਡ ਕਰੋ",
+      "purchases": "ਖਰੀਦਾਂ",
+      "payments": "ਭੁਗਤਾਨ",
+      "total": "ਕੁੱਲ",
+      "noPurchases": "ਅਜੇ ਤੱਕ ਕੋਈ ਖਰੀਦ ਨਹੀਂ",
+      "noPayments": "ਅਜੇ ਤੱਕ ਕੋਈ ਭੁਗਤਾਨ ਨਹੀਂ",
+      "deleteConfirm": "ਲੈਣ-ਦੇਣ ਮਿਟਾਓ?",
+      "deleteMessage": "ਇਸ ਕਾਰਵਾਈ ਨੂੰ ਵਾਪਸ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ। ਇਹ ਲੈਣ-ਦੇਣ ਨੂੰ ਸਥਾਈ ਤੌਰ 'ਤੇ ਮਿਟਾ ਦੇਵੇਗਾ ਅਤੇ ਬਕਾਇਆ ਸ਼ੇਸ਼ ਨੂੰ ਅਪਡੇਟ ਕਰੇਗਾ।",
+      "deleted": "ਲੈਣ-ਦੇਣ ਮਿਟਾਇਆ ਗਿਆ",
+      "updated": "ਲੈਣ-ਦੇਣ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ",
+      "edit": "ਲੈਣ-ਦੇਣ ਸੰਪਾਦਿਤ ਕਰੋ"
+    },
+    "stats": {
+      "today": "ਅੱਜ",
+      "thisWeek": "ਇਸ ਹਫਤੇ",
+      "thisMonth": "ਇਸ ਮਹੀਨੇ",
+      "collections": "ਵਸੂਲੀ",
+      "net": "ਸ਼ੁੱਧ",
+      "netOwed": "ਸ਼ੁੱਧ ਦੇਣਦਾਰ",
+      "sevenDayTrend": "7-ਦਿਨ ਦਾ ਰੁਝਾਨ",
+      "paymentMethods": "ਭੁਗਤਾਨ ਦੇ ਤਰੀਕੇ",
+      "noPaymentData": "ਕੋਈ ਭੁਗਤਾਨ ਡੇਟਾ ਉਪਲਬਧ ਨਹੀਂ"
+    },
+    "actions": {
+      "call": "ਕਾਲ ਕਰੋ",
+      "whatsapp": "ਵਟਸਐਪ",
+      "edit": "ਸੰਪਾਦਿਤ ਕਰੋ",
+      "delete": "ਮਿਟਾਓ",
+      "viewDetails": "ਵੇਰਵੇ ਵੇਖੋ"
+    },
+    "tabs": {
+      "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+      "customers": "ਗਾਹਕ",
+      "vendors": "ਵਿਕਰੇਤਾ",
+      "insights": "ਸਮਝ"
+    },
+    "form": {
+      "amount": "ਰਕਮ",
+      "description": "ਵਰਣਨ",
+      "paymentMethod": "ਭੁਗਤਾਨ ਦਾ ਤਰੀਕਾ",
+      "cash": "ਨਕਦ",
+      "upi": "UPI",
+      "card": "ਕਾਰਡ",
+      "other": "ਹੋਰ",
+      "save": "ਸੇਵ ਕਰੋ",
+      "saving": "ਸੇਵ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...",
+      "cancel": "ਰੱਦ ਕਰੋ",
+      "required": "ਲੋੜੀਂਦਾ",
+      "enterValidAmount": "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਰਕਮ ਦਰਜ ਕਰੋ"
+    }
   }
 }

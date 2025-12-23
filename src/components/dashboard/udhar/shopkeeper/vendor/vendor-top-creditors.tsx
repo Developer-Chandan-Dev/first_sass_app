@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Phone, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Creditor {
   _id: string;
@@ -19,6 +20,7 @@ interface VendorTopCreditorsProps {
 
 export function VendorTopCreditors({ creditors }: VendorTopCreditorsProps) {
   const router = useRouter();
+  const { udhar } = useDashboardTranslations();
 
   if (creditors.length === 0) {
     return (
@@ -26,11 +28,11 @@ export function VendorTopCreditors({ creditors }: VendorTopCreditorsProps) {
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <AlertCircle className="h-5 w-5 text-orange-600" />
-            Top Creditors
+            {udhar.vendor.topCreditors}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-center text-muted-foreground py-8">No outstanding balances</p>
+          <p className="text-center text-muted-foreground py-8">{udhar.shopkeeper.noOutstanding}</p>
         </CardContent>
       </Card>
     );
@@ -41,7 +43,7 @@ export function VendorTopCreditors({ creditors }: VendorTopCreditorsProps) {
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <AlertCircle className="h-5 w-5 text-orange-600" />
-          Top Creditors
+          {udhar.vendor.topCreditors}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

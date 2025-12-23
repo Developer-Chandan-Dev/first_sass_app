@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, X, Calculator } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface TransactionModalProps {
   open: boolean;
@@ -19,6 +20,7 @@ interface TransactionModalProps {
 }
 
 export function TransactionModal({ open, onClose, onSuccess, customerId, type }: TransactionModalProps) {
+  const { udhar, common } = useDashboardTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     amount: '',
@@ -40,7 +42,7 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
       const paidAmount = type === 'purchase' ? parseFloat(formData.paidAmount || '0') : 0;
 
       if (isNaN(amount) || amount <= 0) {
-        throw new Error('Please enter a valid amount');
+        throw new Error(udhar.form.enterValidAmount);
       }
 
       if (type === 'purchase' && paidAmount > amount) {
@@ -77,7 +79,7 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
         throw new Error(errorData.error || 'Failed to save transaction');
       }
 
-      toast.success(type === 'purchase' ? 'Purchase added' : 'Payment recorded');
+      toast.success(type === 'purchase' ? 'Purchase added successfully' : udhar.transaction.payment);
       setFormData({ amount: '', paidAmount: '', description: '', paymentMethod: 'cash', dueDate: '' });
       setItems([]);
       setShowItems(false);
@@ -108,13 +110,13 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
                 <span className="text-green-600 dark:text-green-400">💰</span>
               )}
             </div>
-            {type === 'purchase' ? 'New Purchase' : 'Record Payment'}
+            {type === 'purchase' ? udhar.transaction.newPurchase : udhar.transaction.recordPayment}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              {type === 'purchase' ? 'Total Amount' : 'Payment Amount'} *
+              {type === 'purchase' ? udhar.transaction.total : udhar.transaction.payment} *
             </Label>
             <Input
               type="number"
@@ -140,11 +142,11 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
             </div>
           )}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Description *</Label>
+            <Label className="text-sm font-medium">{udhar.form.description} *</Label>
             <Input
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder={type === 'purchase' ? 'e.g., Biscuits, Oil' : 'Payment received'}
+              placeholder={type === 'purchase' ? 'e.g., Biscuits, Oil' : udhar.transaction.payment}
               required
             />
           </div>
@@ -161,16 +163,16 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
           )}
           {type === 'payment' && (
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Payment Method</Label>
+              <Label className="text-sm font-medium">{udhar.form.paymentMethod}</Label>
               <Select value={formData.paymentMethod} onValueChange={(v: 'cash' | 'upi' | 'card' | 'other') => setFormData({ ...formData, paymentMethod: v })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">💵 Cash</SelectItem>
-                  <SelectItem value="upi">📱 UPI</SelectItem>
-                  <SelectItem value="card">💳 Card</SelectItem>
-                  <SelectItem value="other">🔄 Other</SelectItem>
+                  <SelectItem value="cash">💵 {udhar.form.cash}</SelectItem>
+                  <SelectItem value="upi">📱 {udhar.form.upi}</SelectItem>
+                  <SelectItem value="card">💳 {udhar.form.card}</SelectItem>
+                  <SelectItem value="other">🔄 {udhar.form.other}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -245,14 +247,14 @@ export function TransactionModal({ open, onClose, onSuccess, customerId, type }:
           )}
           <DialogFooter className="gap-2">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              Cancel
+              {common.cancel}
             </Button>
             <Button 
               type="submit" 
               disabled={loading}
               className="flex-1 shadow-sm"
             >
-              {loading ? 'Saving...' : 'Save'}
+              {loading ? udhar.form.saving : common.save}
             </Button>
           </DialogFooter>
         </form>

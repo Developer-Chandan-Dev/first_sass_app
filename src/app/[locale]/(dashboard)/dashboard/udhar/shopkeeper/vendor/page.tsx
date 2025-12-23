@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/dashboard/layout/page-header';
@@ -13,6 +13,7 @@ import { AnalyticsSkeleton, InsightsSkeleton, CustomerListSkeleton } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Store, Plus, BarChart3, CreditCard, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { useDashboardTranslations } from '@/hooks/i18n/useDashboardTranslations';
 
 interface Vendor {
   _id: string;
@@ -39,6 +40,7 @@ interface Stats {
 }
 
 export default function VendorManagementPage() {
+  const { udhar } = useDashboardTranslations();
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalVendors: 0,
@@ -59,7 +61,7 @@ export default function VendorManagementPage() {
   const [editVendor, setEditVendor] = useState<Vendor | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [vendorsRes, statsRes] = await Promise.all([
         fetch('/api/udhar/vendor/vendors'),
@@ -76,26 +78,26 @@ export default function VendorManagementPage() {
       setStats(statsData);
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error('Failed to load data');
+      toast.error(udhar.vendor.noVendors);
     } finally {
       setLoading(false);
     }
-  };
+  }, [udhar.vendor.noVendors]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this vendor and all transactions?')) return;
     try {
       const res = await fetch(`/api/udhar/vendor/vendors/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete vendor');
-      toast.success('Vendor deleted');
+      toast.success(udhar.transaction.deleted);
       fetchData();
     } catch (error) {
       console.error('Error deleting vendor:', error);
-      toast.error('Failed to delete vendor');
+      toast.error(udhar.vendorDetails.notFound);
     }
   };
 
@@ -103,17 +105,17 @@ export default function VendorManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <PageHeader
-          title="Vendor Management"
-          description="Track purchases and payments to your suppliers"
+          title={udhar.vendor.title}
+          description={udhar.vendor.description}
         />
         <div className="flex gap-2">
           <Button onClick={() => window.location.href = '/dashboard/udhar/shopkeeper'} variant="outline" className="shadow-sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Customers
+            {udhar.shopkeeper.customers}
           </Button>
           <Button onClick={() => { setEditVendor(null); setModalOpen(true); }} className="shadow-sm">
             <Plus className="h-4 w-4 mr-2" />
-            Add Vendor
+            {udhar.vendor.addVendor}
           </Button>
         </div>
       </div>
@@ -124,15 +126,15 @@ export default function VendorManagementPage() {
             <TabsList className="grid w-full grid-cols-3 lg:w-auto">
               <TabsTrigger value="dashboard" disabled>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Dashboard
+                {udhar.tabs.dashboard}
               </TabsTrigger>
               <TabsTrigger value="vendors" disabled>
                 <Store className="h-4 w-4 mr-2" />
-                Vendors
+                {udhar.tabs.vendors}
               </TabsTrigger>
               <TabsTrigger value="insights" disabled>
                 <CreditCard className="h-4 w-4 mr-2" />
-                Insights
+                {udhar.tabs.insights}
               </TabsTrigger>
             </TabsList>
             <AnalyticsSkeleton />
@@ -142,15 +144,15 @@ export default function VendorManagementPage() {
           <TabsList className="grid w-full grid-cols-3 lg:w-auto">
             <TabsTrigger value="dashboard">
               <BarChart3 className="h-4 w-4 mr-2" />
-              Dashboard
+              {udhar.tabs.dashboard}
             </TabsTrigger>
             <TabsTrigger value="vendors">
               <Store className="h-4 w-4 mr-2" />
-              Vendors
+              {udhar.tabs.vendors}
             </TabsTrigger>
             <TabsTrigger value="insights">
               <CreditCard className="h-4 w-4 mr-2" />
-              Insights
+              {udhar.tabs.insights}
             </TabsTrigger>
           </TabsList>
 
@@ -165,7 +167,7 @@ export default function VendorManagementPage() {
                   <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/20">
                     <Store className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                   </div>
-                  <span>All Vendors</span>
+                  <span>{udhar.shopkeeper.vendors}</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="px-2 py-3 sm:p-6">
