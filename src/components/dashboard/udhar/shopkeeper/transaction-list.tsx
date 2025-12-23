@@ -16,7 +16,7 @@ interface Transaction {
   type: 'purchase' | 'payment';
   amount: number;
   description: string;
-  customerId: string;
+  customerId?: string;
   items?: { name: string; quantity: number; price: number }[];
   paymentMethod?: 'cash' | 'upi' | 'card' | 'other';
   date: string;
