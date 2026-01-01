@@ -51,6 +51,8 @@ export default function ContactDetailPage() {
   };
 
   const handleAddPayment = async () => {
+    if (!contact) return;
+    
     const amount = parseFloat(paymentAmount);
     
     if (!paymentAmount || isNaN(amount) || amount <= 0) {
@@ -91,6 +93,8 @@ export default function ContactDetailPage() {
   };
 
   const handleExport = async () => {
+    if (!contact) return;
+    
     try {
       const res = await fetch(`/api/udhar/personal/contacts/${contactId}/export`);
       const blob = await res.blob();
