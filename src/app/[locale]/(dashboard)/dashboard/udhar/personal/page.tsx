@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, TrendingUp, TrendingDown, Users, Download, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,9 +13,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { StatsCardSkeleton, ContactCardSkeleton } from '@/components/dashboard/udhar/personal-udhar-skeletons';
+import type { PersonalContact } from '@/types/personal-udhar';
 
 export default function PersonalUdharPage() {
-  const { user } = useUser();
   const router = useRouter();
   const [stats, setStats] = useState({
     totalLent: 0,
@@ -24,10 +23,10 @@ export default function PersonalUdharPage() {
     netBalance: 0,
     totalContacts: 0,
   });
-  const [lentContacts, setLentContacts] = useState([]);
-  const [borrowedContacts, setBorrowedContacts] = useState([]);
-  const [filteredLent, setFilteredLent] = useState([]);
-  const [filteredBorrowed, setFilteredBorrowed] = useState([]);
+  const [lentContacts, setLentContacts] = useState<PersonalContact[]>([]);
+  const [borrowedContacts, setBorrowedContacts] = useState<PersonalContact[]>([]);
+  const [filteredLent, setFilteredLent] = useState<PersonalContact[]>([]);
+  const [filteredBorrowed, setFilteredBorrowed] = useState<PersonalContact[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -44,23 +43,33 @@ export default function PersonalUdharPage() {
     fetchData();
   }, []);
 
+  const filterContacts = useCallback(() => {
+    const query = searchQuery.toLowerCase();
+    setFilteredLent(lentContacts.filter((c) => 
+      c.name.toLowerCase().includes(query) || c.phone?.includes(query)
+    ));
+    setFilteredBorrowed(borrowedContacts.filter((c) => 
+      c.name.toLowerCase().includes(query) || c.phone?.includes(query)
+    ));
+  }, [searchQuery, lentContacts, borrowedContacts]);
+
   useEffect(() => {
     filterContacts();
-  }, [searchQuery, lentContacts, borrowedContacts]);
+  }, [filterContacts]);
 
   const fetchData = async () => {
     try {
       const res = await fetch('/api/udhar/personal/contacts');
-      const data = await res.json();
+      const data: PersonalContact[] = await res.json();
       
-      const lent = data.filter((c: any) => c.type === 'lent');
-      const borrowed = data.filter((c: any) => c.type === 'borrowed');
+      const lent = data.filter((c) => c.type === 'lent');
+      const borrowed = data.filter((c) => c.type === 'borrowed');
       
       setLentContacts(lent);
       setBorrowedContacts(borrowed);
       
-      const totalLent = lent.reduce((sum: number, c: any) => sum + c.remainingAmount, 0);
-      const totalBorrowed = borrowed.reduce((sum: number, c: any) => sum + c.remainingAmount, 0);
+      const totalLent = lent.reduce((sum, c) => sum + c.remainingAmount, 0);
+      const totalBorrowed = borrowed.reduce((sum, c) => sum + c.remainingAmount, 0);
       
       setStats({
         totalLent,
@@ -68,21 +77,11 @@ export default function PersonalUdharPage() {
         netBalance: totalLent - totalBorrowed,
         totalContacts: data.length,
       });
-    } catch (error) {
+    } catch {
       toast.error('Failed to load data');
     } finally {
       setLoading(false);
     }
-  };
-
-  const filterContacts = () => {
-    const query = searchQuery.toLowerCase();
-    setFilteredLent(lentContacts.filter((c: any) => 
-      c.name.toLowerCase().includes(query) || c.phone?.includes(query)
-    ));
-    setFilteredBorrowed(borrowedContacts.filter((c: any) => 
-      c.name.toLowerCase().includes(query) || c.phone?.includes(query)
-    ));
   };
 
   const handleAddContact = async () => {
@@ -122,7 +121,7 @@ export default function PersonalUdharPage() {
       } else {
         toast.error(data.error || 'Failed to add contact');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to add contact');
     }
   };
@@ -137,7 +136,7 @@ export default function PersonalUdharPage() {
       a.download = 'personal_udhar_report.csv';
       a.click();
       toast.success('Exported successfully');
-    } catch (error) {
+    } catch {
       toast.error('Export failed');
     }
   };
@@ -363,7 +362,7 @@ export default function PersonalUdharPage() {
                   </CardContent>
                 </Card>
               ) : (
-                filteredLent.map((contact: any) => (
+                filteredLent.map((contact) => (
                   <Card 
                     key={contact._id} 
                     className="cursor-pointer transition-colors hover:bg-muted/50"
@@ -410,7 +409,7 @@ export default function PersonalUdharPage() {
                   </CardContent>
                 </Card>
               ) : (
-                filteredBorrowed.map((contact: any) => (
+                filteredBorrowed.map((contact) => (
                   <Card 
                     key={contact._id} 
                     className="cursor-pointer transition-colors hover:bg-muted/50"

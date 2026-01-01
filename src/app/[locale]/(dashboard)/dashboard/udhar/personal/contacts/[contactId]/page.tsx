@@ -12,15 +12,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { TransactionCardSkeleton } from '@/components/dashboard/udhar/personal-udhar-skeletons';
+import type { PersonalContact, PersonalTransaction } from '@/types/personal-udhar';
 
 export default function ContactDetailPage() {
   const params = useParams();
   const router = useRouter();
   const contactId = params.contactId as string;
   
-  const [contact, setContact] = useState<any>(null);
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [contact, setContact] = useState<PersonalContact | null>(null);
+  const [transactions, setTransactions] = useState<PersonalTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentDescription, setPaymentDescription] = useState('');
@@ -28,6 +28,7 @@ export default function ContactDetailPage() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contactId]);
 
   const fetchData = async () => {
@@ -37,12 +38,12 @@ export default function ContactDetailPage() {
         fetch(`/api/udhar/personal/contacts/${contactId}/transactions`),
       ]);
 
-      const contactData = await contactRes.json();
-      const transactionsData = await transactionsRes.json();
+      const contactData: PersonalContact = await contactRes.json();
+      const transactionsData: PersonalTransaction[] = await transactionsRes.json();
 
       setContact(contactData);
       setTransactions(transactionsData);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load data');
     } finally {
       setLoading(false);
@@ -84,7 +85,7 @@ export default function ContactDetailPage() {
       } else {
         toast.error(data.error || 'Failed to record payment');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to record payment');
     }
   };
@@ -99,7 +100,7 @@ export default function ContactDetailPage() {
       a.download = `${contact.name}_transactions.csv`;
       a.click();
       toast.success('Exported successfully');
-    } catch (error) {
+    } catch {
       toast.error('Export failed');
     }
   };
