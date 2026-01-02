@@ -13,6 +13,9 @@ import { IncomeStats } from '@/components/dashboard/incomes/income-stats';
 import { IncomeCharts } from '@/components/dashboard/incomes/income-charts';
 import { IncomeFilters } from '@/components/dashboard/incomes/income-filters';
 import { useDashboardTranslations } from '@/hooks/i18n';
+import { PageHeader } from '@/components/dashboard/layout/page-header';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileFAB } from '@/components/dashboard/shared/mobile-fab';
 
 export default function IncomePage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +26,7 @@ export default function IncomePage() {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     dispatch(
@@ -36,23 +40,21 @@ export default function IncomePage() {
 
   return (
     <div className="space-y-4 p-2 sm:p-4 lg:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">
-            {income.incomeManagement}
-          </h1>
-          <p className="text-muted-foreground text-sm sm:text-base">
-            {income.trackAndManageIncome}
-          </p>
-        </div>
-        <Button
-          onClick={() => setShowAddModal(true)}
-          className="w-full sm:w-auto"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          {income.addIncome}
-        </Button>
-      </div>
+      <PageHeader
+        title={income.incomeManagement}
+        description={income.trackAndManageIncome}
+        actions={
+          !isMobile ? (
+            <Button
+              onClick={() => setShowAddModal(true)}
+              className="w-full sm:w-auto"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {income.addIncome}
+            </Button>
+          ) : null
+        }
+      />
 
       <Tabs
         value={activeTab}
@@ -87,7 +89,11 @@ export default function IncomePage() {
           <IncomeCharts />
         </TabsContent>
       </Tabs>
-
+      
+        <MobileFAB
+        onClick={()=> setShowAddModal(true)}
+        label={income.addIncome}
+        />
       <AddIncomeModal
         open={showAddModal}
         onOpenChange={setShowAddModal}

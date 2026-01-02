@@ -30,7 +30,8 @@ export default function DashboardLayout({
   const hideGlobalFAB =
     pathname?.includes('/expenses/free') ||
     pathname?.includes('/expenses/budget') ||
-    pathname.includes('/udhar/shopkeeper/');
+    pathname.includes('/udhar/shopkeeper/') ||
+    pathname.includes('/income');
 
   // Create user in database on first visit
   useEffect(() => {
