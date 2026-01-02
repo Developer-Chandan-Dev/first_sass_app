@@ -18,20 +18,6 @@ import { useLocale as useLocaleContext } from '@/contexts/locale-context';
 import { UniversalStatCard } from '../shared/universal-stat-card';
 import { useDashboardTranslations } from '@/hooks/i18n';
 
-function StatCardSkeleton() {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="h-4 w-20 bg-muted animate-pulse rounded" />
-        <div className="h-4 w-4 bg-muted animate-pulse rounded" />
-      </CardHeader>
-      <CardContent>
-        <div className="h-8 w-24 bg-muted animate-pulse rounded mb-2" />
-        <div className="h-3 w-16 bg-muted animate-pulse rounded" />
-      </CardContent>
-    </Card>
-  );
-}
 
 function InsightCardSkeleton() {
   return (
@@ -146,9 +132,15 @@ export function IncomeStats() {
     return (
       <div className="space-y-4">
         {/* Main Stats Grid Skeleton */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <StatCardSkeleton key={i} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <UniversalStatCard
+              key={i}
+              title="Loading..."
+              value="..."
+              icon={DollarSign}
+              className="animate-pulse"
+            />
           ))}
         </div>
 
@@ -250,7 +242,7 @@ export function IncomeStats() {
   return (
     <div className="space-y-4">
       {/* Main Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {statCards.map((stat) => (
           <UniversalStatCard
             key={stat.title}
