@@ -39,22 +39,13 @@ export default function ExpensesPage() {
 
       <Tabs defaultValue="overview" className="space-y-4 md:space-y-6">
         <TabsList className="grid w-full grid-cols-3 h-auto p-1">
-          <TabsTrigger
-            value="overview"
-            className="text-xs sm:text-sm px-2 py-2"
-          >
+          <TabsTrigger value="overview" className="text-xs sm:text-sm px-1 sm:px-2 py-2">
             {expenses.overview}
           </TabsTrigger>
-          <TabsTrigger
-            value="analytics"
-            className="text-xs sm:text-sm px-2 py-2"
-          >
+          <TabsTrigger value="analytics" className="text-xs sm:text-sm px-1 sm:px-2 py-2">
             {expenses.analytics}
           </TabsTrigger>
-          <TabsTrigger
-            value="expenses"
-            className="text-xs sm:text-sm px-2 py-2"
-          >
+          <TabsTrigger value="expenses" className="text-xs sm:text-sm px-1 sm:px-2 py-2">
             {expenses?.title?.split(' ')[0]}
           </TabsTrigger>
         </TabsList>

@@ -114,10 +114,72 @@ export function ExpenseFilters({
   );
 
   return (
-    <Card>
+    <Card className="py-3 px-1 text-xs">
       <CardContent className="p-4 space-y-4">
         {/* Quick Filters */}
-        <div className="flex flex-wrap gap-2">
+        {/* Select for small screens */}
+        <div className="flex justify-between items-center gap-2 sm:hidden">
+          <Select
+            value={filters.period || 'all'}
+            onValueChange={(value) => updateFilter('period', value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {periods.map((period) => (
+                <SelectItem
+                  className="w-40"
+                  key={period.key}
+                  value={period.key}
+                >
+                  {period.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex-shrink-0"
+          >
+            <Filter className="w-4 h-4 sm:mr-2" />
+            <span className="max-sm:hidden">{expenses.advancedFilters}</span>
+            {activeFiltersCount > 0 && (
+              <Badge variant="secondary" className="ml-1 sm:ml-2">
+                {activeFiltersCount}
+              </Badge>
+            )}
+          </Button>
+          <div className="flex gap-1 sm:gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={loading}
+              className="px-2 sm:px-3"
+            >
+              <RefreshCw
+                className={`w-4 h-4 sm:mr-1 ${loading ? 'animate-spin' : ''}`}
+              />
+              <span className="max-sm:hidden">{expenses.refresh}</span>
+            </Button>
+            {activeFiltersCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="px-2 sm:px-3"
+              >
+                <X className="w-4 h-4 sm:mr-1" />
+                <span className="max-sm:hidden">{expenses.clear}</span>
+              </Button>
+            )}
+          </div>
+        </div>
+        {/* Buttons for larger screens */}
+        <div className="hidden sm:flex flex-wrap gap-2">
           {periods.map((period) => (
             <Button
               key={period.key}
@@ -131,11 +193,12 @@ export function ExpenseFilters({
         </div>
 
         {/* Controls */}
-        <div className="flex sm:flex-row sm:justify-between gap-2 max-sm:flex-wrap">
+        <div className="hidden sm:flex justify-between gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex-shrink-0"
           >
             <Filter className="w-4 h-4 sm:mr-2" />
             <span className="max-sm:hidden">{expenses.advancedFilters}</span>
@@ -146,22 +209,28 @@ export function ExpenseFilters({
             )}
           </Button>
 
-          <div className="flex gap-2">
+          <div className="hidden sm:flex gap-1 sm:gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={handleRefresh}
               disabled={loading}
+              className="px-2 sm:px-3"
             >
               <RefreshCw
-                className={`w-4 h-4 mr-1 ${loading ? 'animate-spin' : ''}`}
+                className={`w-4 h-4 sm:mr-1 ${loading ? 'animate-spin' : ''}`}
               />
-              {expenses.refresh}
+              <span className="max-sm:hidden">{expenses.refresh}</span>
             </Button>
             {activeFiltersCount > 0 && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                <X className="w-4 h-4 mr-1" />
-                {expenses.clear}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="px-2 sm:px-3"
+              >
+                <X className="w-4 h-4 sm:mr-1" />
+                <span className="max-sm:hidden">{expenses.clear}</span>
               </Button>
             )}
           </div>
@@ -171,7 +240,7 @@ export function ExpenseFilters({
         {showAdvanced && (
           <div className="space-y-4 pt-4 border-t">
             {/* Category, Recurring, and Budget in a row on larger screens */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-4">
               <div>
                 <Label className="text-sm font-medium">{common.category}</Label>
                 <div className="mt-2">
@@ -210,7 +279,7 @@ export function ExpenseFilters({
             </div>
 
             {/* Date Range - stays as 2 columns */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               <div>
                 <Label className="text-sm font-medium">
                   {expenses.startDate}
