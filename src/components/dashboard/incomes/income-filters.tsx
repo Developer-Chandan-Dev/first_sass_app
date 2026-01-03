@@ -127,10 +127,60 @@ export function IncomeFilters() {
   );
 
   return (
-    <Card>
+    <Card className="py-3 px-1 text-xs">
       <CardContent className="p-4 space-y-4">
         {/* Quick Filters */}
-        <div className="flex flex-wrap gap-2">
+        {/* Select for small screens */}
+        <div className="flex justify-between items-center gap-2 sm:hidden">
+          <Select
+            value={filters.period || 'all'}
+            onValueChange={(value) => updateFilter('period', value)}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {periods.map((period) => (
+                <SelectItem
+                  className="w-40"
+                  key={period.key}
+                  value={period.key}
+                >
+                  {period.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="flex-shrink-0"
+          >
+            <Filter className="w-4 h-4 sm:mr-2" />
+            <span className="max-sm:hidden">{income.advancedFilters}</span>
+            {activeFiltersCount > 0 && (
+              <Badge variant="secondary" className="ml-1 sm:ml-2">
+                {activeFiltersCount}
+              </Badge>
+            )}
+          </Button>
+          <div className="flex gap-1 sm:gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={loading}
+              className="px-2 sm:px-3"
+            >
+              <RefreshCw
+                className={`w-4 h-4 sm:mr-1 ${loading ? 'animate-spin' : ''}`}
+              />
+              <span className="max-sm:hidden">{income.refresh}</span>
+            </Button>
+          </div>
+        </div>
+        <div className="hidden sm:flex flex-wrap gap-2">
           {periods.map((period) => (
             <Button
               key={period.key}
@@ -144,7 +194,7 @@ export function IncomeFilters() {
         </div>
 
         {/* Controls */}
-        <div className="flex sm:flex-row sm:justify-between gap-2 max-sm:flex-wrap">
+        <div className="hidden sm:flex sm:flex-row sm:justify-between gap-2 max-sm:flex-wrap">
           <Button
             variant="ghost"
             size="sm"
