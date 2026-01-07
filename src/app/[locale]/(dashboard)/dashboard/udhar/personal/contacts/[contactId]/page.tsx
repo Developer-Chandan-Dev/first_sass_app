@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Download, Calendar, CreditCard, Receipt } from 'lucide-react';
+import { ArrowLeft, Plus, Download, Calendar, CreditCard, Receipt, Percent, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
@@ -25,6 +25,13 @@ export default function ContactDetailPage() {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [paymentDescription, setPaymentDescription] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isUdharDialogOpen, setIsUdharDialogOpen] = useState(false);
+  const [isInterestDialogOpen, setIsInterestDialogOpen] = useState(false);
+  const [udharAmount, setUdharAmount] = useState('');
+  const [udharDescription, setUdharDescription] = useState('');
+  const [interestAmount, setInterestAmount] = useState('');
+  const [interestRate, setInterestRate] = useState('');
+  const [interestDescription, setInterestDescription] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -89,6 +96,81 @@ export default function ContactDetailPage() {
       }
     } catch {
       toast.error('Failed to record payment');
+    }
+  };
+
+  const handleAddUdhar = async () => {
+    if (!contact) return;
+    
+    const amount = parseFloat(udharAmount);
+    
+    if (!udharAmount || isNaN(amount) || amount <= 0) {
+      toast.error('Enter valid amount');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/udhar/personal/contacts/${contactId}/transactions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: contact.type,
+          amount,
+          description: udharDescription,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success('Udhar added successfully');
+        setUdharAmount('');
+        setUdharDescription('');
+        setIsUdharDialogOpen(false);
+        fetchData();
+      } else {
+        toast.error(data.error || 'Failed to add udhar');
+      }
+    } catch {
+      toast.error('Failed to add udhar');
+    }
+  };
+
+  const handleAddInterest = async () => {
+    if (!contact) return;
+    
+    const amount = parseFloat(interestAmount);
+    
+    if (!interestAmount || isNaN(amount) || amount <= 0) {
+      toast.error('Enter valid interest amount');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/udhar/personal/contacts/${contactId}/transactions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'interest',
+          amount,
+          description: interestDescription || `Interest ${interestRate ? `@ ${interestRate}%` : ''}`,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success('Interest added successfully');
+        setInterestAmount('');
+        setInterestRate('');
+        setInterestDescription('');
+        setIsInterestDialogOpen(false);
+        fetchData();
+      } else {
+        toast.error(data.error || 'Failed to add interest');
+      }
+    } catch {
+      toast.error('Failed to add interest');
     }
   };
 
@@ -219,56 +301,168 @@ export default function ContactDetailPage() {
               <CardTitle>Transaction History</CardTitle>
               <CardDescription>All payments and transactions</CardDescription>
             </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Record Payment
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Record Payment</DialogTitle>
-                  <DialogDescription>
-                    Record a payment received from {contact.name}
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="amount">Amount *</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      placeholder="Enter amount"
-                      value={paymentAmount}
-                      onChange={(e) => setPaymentAmount(e.target.value)}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Remaining: ₹{contact.remainingAmount.toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="description">Description (Optional)</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Add a note about this payment"
-                      value={paymentDescription}
-                      onChange={(e) => setPaymentDescription(e.target.value)}
-                      rows={3}
-                    />
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex justify-end gap-3">
-                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                    Cancel
+            <div className="flex gap-2">
+              <Dialog open={isUdharDialogOpen} onOpenChange={setIsUdharDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Add Udhar
                   </Button>
-                  <Button onClick={handleAddPayment}>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Udhar</DialogTitle>
+                    <DialogDescription>
+                      Add additional {contact.type === 'lent' ? 'money lent to' : 'money borrowed from'} {contact.name}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="udhar-amount">Amount *</Label>
+                      <Input
+                        id="udhar-amount"
+                        type="number"
+                        placeholder="Enter amount"
+                        value={udharAmount}
+                        onChange={(e) => setUdharAmount(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="udhar-description">Description (Optional)</Label>
+                      <Textarea
+                        id="udhar-description"
+                        placeholder="Add a note about this udhar"
+                        value={udharDescription}
+                        onChange={(e) => setUdharDescription(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-end gap-3">
+                    <Button variant="outline" onClick={() => setIsUdharDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddUdhar}>
+                      Add Udhar
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isInterestDialogOpen} onOpenChange={setIsInterestDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <Percent className="h-4 w-4 mr-2" />
+                    Add Interest
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Interest</DialogTitle>
+                    <DialogDescription>
+                      Add interest charges to {contact.name}&apos;s account
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="interest-rate">Interest Rate % (Optional)</Label>
+                      <Input
+                        id="interest-rate"
+                        type="number"
+                        step="0.01"
+                        placeholder="e.g., 2.5"
+                        value={interestRate}
+                        onChange={(e) => setInterestRate(e.target.value)}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="interest-amount">Interest Amount *</Label>
+                      <Input
+                        id="interest-amount"
+                        type="number"
+                        placeholder="Enter interest amount"
+                        value={interestAmount}
+                        onChange={(e) => setInterestAmount(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Current Total: ₹{contact.totalAmount.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="interest-description">Description (Optional)</Label>
+                      <Textarea
+                        id="interest-description"
+                        placeholder="Add a note about this interest"
+                        value={interestDescription}
+                        onChange={(e) => setInterestDescription(e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-end gap-3">
+                    <Button variant="outline" onClick={() => setIsInterestDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddInterest}>
+                      Add Interest
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
                     Record Payment
                   </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Record Payment</DialogTitle>
+                    <DialogDescription>
+                      Record a payment received from {contact.name}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="amount">Amount *</Label>
+                      <Input
+                        id="amount"
+                        type="number"
+                        placeholder="Enter amount"
+                        value={paymentAmount}
+                        onChange={(e) => setPaymentAmount(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Remaining: ₹{contact.remainingAmount.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="description">Description (Optional)</Label>
+                      <Textarea
+                        id="description"
+                        placeholder="Add a note about this payment"
+                        value={paymentDescription}
+                        onChange={(e) => setPaymentDescription(e.target.value)}
+                        rows={3}
+                      />
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-end gap-3">
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddPayment}>
+                      Record Payment
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
